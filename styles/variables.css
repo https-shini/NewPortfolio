@@ -1,0 +1,78 @@
+:root {
+    /* Cores exatas do projeto original */
+    --clr-background: rgb(241, 245, 249);
+    --clr-text-primary: rgb(7, 10, 19);
+    --clr-text-secondary: rgb(30, 41, 59);
+    --clr-accent: rgb(91, 83, 223);
+    --clr-button: rgb(225, 29, 72);
+    --clr-button-text: rgb(255, 255, 255);
+
+    --clr-rose: #e11d48; /* Cor principal */
+    --clr-indigo: #5b53df; /* Cor secundária */
+    --clr-light: #f1f5f9; /* Texto claro */
+    --clr-slate400: #94a3b8; /* Texto secundário */
+    --clr-slate600: #475569; /* Texto terciário */
+
+    /* Cores para tema escuro - mantendo a mesma identidade */
+    --clr-dark-background: rgb(15, 23, 42);
+    --clr-dark-text-primary: rgb(241, 245, 249);
+    --clr-dark-text-secondary: rgb(203, 213, 225);
+    --clr-dark-accent: rgb(91, 83, 223);
+
+    /* Tipografia */
+    --ff-primary: "General Sans", sans-serif;
+    --ff-secondary: "Poppins", sans-serif;
+
+    /* Tamanhos de fonte */
+    --text-sm: 0.875rem; /* 14px */
+    --text-base: 1rem; /* 16px */
+    --text-lg: 1.125rem; /* 18px */
+    --text-xl: 1.25rem; /* 20px */
+    --text-2xl: 1.5rem; /* 24px */
+    --text-3xl: 1.875rem; /* 30px */
+
+    /* Espaçamentos */
+    --spacing-sm: 0.75rem; /* 12px */
+    --spacing-md: 1rem; /* 16px */
+    --spacing-lg: 1.5rem; /* 24px */
+    --spacing-xl: 2rem; /* 32px */
+    --spacing-xxl: 3rem; /* 48px */
+
+    /* Breakpoints */
+    --bp-small: 576px;
+    --bp-medium: 768px;
+    --bp-large: 992px;
+    --bp-xlarge: 1200px;
+
+    /* Bordas e sombras */
+    --border-radius-sm: 0.25rem;
+    --border-radius-md: 0.5rem;
+    --border-radius-lg: 1rem;
+    --box-shadow-light: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --box-shadow-medium: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+    /* Efeitos de neon (inspirado no RamziBach) */
+    --neon-glow:
+        0 0 10px rgba(225, 29, 72, 0.7), 0 0 20px rgba(225, 29, 72, 0.5);
+
+    /* Transições */
+    --transition-fast: 0.2s ease;
+    --transition-medium: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* Tema claro (padrão) */
+.light-mode {
+    --clr-current-background: var(--clr-background);
+    --clr-current-text-primary: var(--clr-text-primary);
+    --clr-current-text-secondary: var(--clr-text-secondary);
+    --clr-current-accent: var(--clr-accent);
+}
+
+/* Tema escuro */
+.dark-mode {
+    --clr-current-background: var(--clr-dark-background);
+    --clr-current-text-primary: var(--clr-dark-text-primary);
+    --clr-current-text-secondary: var(--clr-dark-text-secondary);
+    --clr-current-accent: var(--clr-dark-accent);
+}

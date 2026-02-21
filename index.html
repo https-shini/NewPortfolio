@@ -1,0 +1,2840 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <!-- =========================================================
+            PORTFÓLIO PROFISSIONAL — GUILHERME CRUZ
+            ========================================================= -->
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Portfolio Website</title>
+        <!-- ================= SEO ================= -->
+        <meta
+            name="description"
+            content="Portfolio profissional de Guilherme Cruz - Desenvolvedor Mobile & Web com expertise em React, JavaScript e tecnologias modernas."
+        />
+        <meta
+            name="keywords"
+            content="desenvolvedor, web developer, mobile developer, react, javascript, portfolio"
+        />
+        <meta name="author" content="Guilherme Cruz" />
+        <meta name="theme-color" content="#070a13" />
+        <!-- ============== OPEN GRAPH ============== -->
+        <meta property="og:type" content="website" />
+        <meta
+            property="og:title"
+            content="Guilherme Cruz | Desenvolvedor Mobile & Web"
+        />
+        <meta
+            property="og:description"
+            content="Portfolio profissional com projetos em React, JavaScript e tecnologias web modernas."
+        />
+        <meta property="og:url" content="https://bl4ck404.dev.br/" />
+        <meta property="og:image" content="https://bl4ck404.dev.br/about.png" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta property="og:site_name" content="Guilherme Cruz Portfolio" />
+        <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+        <!-- Fonts & Icons -->
+        <link href="/public/vite.svg" rel="icon" type="image/x-icon" />
+        <link
+            href="https://api.fontshare.com/v2/css?f[]=general-sans@500,600,400,700&display=swap"
+            rel="stylesheet"
+        />
+        <!-- ============== TEMA ============== -->
+        <script>
+            (function () {
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme) {
+                    document.documentElement.classList.add(savedTheme);
+                } else if (
+                    window.matchMedia("(prefers-color-scheme: dark)").matches
+                ) {
+                    document.documentElement.classList.add("dark-mode");
+                } else {
+                    document.documentElement.classList.add("light-mode");
+                }
+            })();
+        </script>
+    </head>
+    <body>
+        <!-- Skip link para acessibilidade -->
+        <a href="#main-content" class="skip-link">
+            Pular para o conteúdo principal
+        </a>
+        <!-- ── HEADER ────────────────────────────────────────────────────────────── -->
+        <header id="home" class="header" role="banner">
+            <div class="header-container container">
+                <nav class="header__nav" aria-label="Navegação principal">
+                    <!-- Menu desktop -->
+                    <ul class="header__menu">
+                        <li>
+                            <a
+                                class="header__link"
+                                href="#hero"
+                                data-i18n="nav.home"
+                                >Início</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                class="header__link"
+                                href="#about"
+                                data-i18n="nav.about"
+                                >Sobre</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                class="header__link"
+                                href="#timeline"
+                                data-i18n="nav.career"
+                                >Carreira</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                class="header__link"
+                                href="#featured"
+                                data-i18n="nav.featured"
+                                >Destaque</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                class="header__link"
+                                href="#work"
+                                data-i18n="nav.projects"
+                                >Projetos</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                class="header__link"
+                                href="#contact"
+                                data-i18n="nav.contact"
+                                >Contato</a
+                            >
+                        </li>
+                        <!-- Divisor decorativo -->
+                        <li class="header__line" aria-hidden="true"></li>
+                        <!-- Botão de idioma PT/EN -->
+                        <li>
+                            <button
+                                type="button"
+                                id="lang-toggle"
+                                class="header__lang"
+                                aria-label="Alternar idioma"
+                            >
+                                <span
+                                    class="header__lang-text"
+                                    aria-hidden="true"
+                                    >PT</span
+                                >
+                            </button>
+                        </li>
+                        <!-- Botão de tema claro/escuro -->
+                        <li>
+                            <button
+                                type="button"
+                                id="theme-toggle"
+                                class="header__theme"
+                                aria-label="Alternar entre modo claro e escuro"
+                                aria-pressed="false"
+                            >
+                                <!-- Ícone sol (light mode) -->
+                                <svg
+                                    class="header__theme-icon header__theme-icon--light"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                >
+                                    <path
+                                        d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"
+                                    />
+                                </svg>
+                                <!-- Ícone lua (dark mode) -->
+                                <svg
+                                    class="header__theme-icon header__theme-icon--dark"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                            </button>
+                        </li>
+                    </ul>
+                    <!-- Botão hamburguer (mobile) -->
+                    <button
+                        type="button"
+                        class="header__bars"
+                        aria-label="Abrir menu de navegação"
+                        aria-expanded="false"
+                        aria-controls="mobile-menu"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                            aria-hidden="true"
+                            focusable="false"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
+                                clip-rule="evenodd"
+                            />
+                        </svg>
+                    </button>
+                </nav>
+            </div>
+        </header>
+        <!-- ── MOBILE NAV ─────────────────────────────────────────────────────────── -->
+        <div
+            class="mobile-nav"
+            id="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu de navegação"
+            aria-hidden="true"
+        >
+            <!-- Botão fechar flutuante -->
+            <button
+                type="button"
+                class="mobile-nav__close"
+                aria-label="Fechar menu de navegação"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    focusable="false"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
+                        clip-rule="evenodd"
+                    />
+                </svg>
+            </button>
+            <nav aria-label="Navegação mobile">
+                <ul class="mobile-nav__menu">
+                    <li>
+                        <a
+                            class="mobile-nav__link"
+                            href="#hero"
+                            data-i18n="nav.home"
+                            >Início</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            class="mobile-nav__link"
+                            href="#about"
+                            data-i18n="nav.about"
+                            >Sobre</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            class="mobile-nav__link"
+                            href="#timeline"
+                            data-i18n="nav.career"
+                            >Carreira</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            class="mobile-nav__link"
+                            href="#featured"
+                            data-i18n="nav.featured"
+                            >Destaque</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            class="mobile-nav__link"
+                            href="#work"
+                            data-i18n="nav.projects"
+                            >Projetos</a
+                        >
+                    </li>
+                    <li>
+                        <a
+                            class="mobile-nav__link"
+                            href="#contact"
+                            data-i18n="nav.contact"
+                            >Contato</a
+                        >
+                    </li>
+                    <!-- Divisor decorativo -->
+                    <li class="mobile-nav__line" aria-hidden="true"></li>
+                    <!-- Botão de idioma PT/EN duplicado no mobile -->
+                    <li>
+                        <button
+                            type="button"
+                            class="mobile-nav__lang"
+                            aria-label="Alternar idioma"
+                        >
+                            <span
+                                class="mobile-nav__lang-text"
+                                aria-hidden="true"
+                                >PT</span
+                            >
+                        </button>
+                    </li>
+                    <!-- Botão de tema duplicado no mobile -->
+                    <li>
+                        <button
+                            type="button"
+                            class="mobile-nav__theme"
+                            aria-label="Alternar entre modo claro e escuro"
+                            aria-pressed="false"
+                        >
+                            <svg
+                                class="mobile-nav__theme-icon mobile-nav__theme-icon--light"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                aria-hidden="true"
+                                focusable="false"
+                            >
+                                <path
+                                    d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"
+                                />
+                            </svg>
+                            <svg
+                                class="mobile-nav__theme-icon mobile-nav__theme-icon--dark"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                aria-hidden="true"
+                                focusable="false"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <main id="main-content">
+            <!-- ═════════════════════════════════════════════════════════
+                SEÇÃO HERO
+                ═════════════════════════════════════════════════════════   -->
+            <section
+                id="hero"
+                class="hero-section"
+                aria-labelledby="hero-title"
+            >
+                <div class="container hero-container">
+                    <!-- Conteúdo Principal -->
+                    <div class="hero-content">
+                        <!-- Bloco de Texto -->
+                        <div class="hero-text">
+                            <!-- Saudação -->
+                            <p class="hero-greeting">Olá, eu sou</p>
+                            <!-- Nome Principal -->
+                            <h1 id="hero-title" class="hero-title">
+                                Guilherme Cruz
+                            </h1>
+                            <!-- Subtítulo/Cargo -->
+                            <p class="hero-subtitle">
+                                <span class="hero-subtitle-text"
+                                    >Desenvolvedor Full Stack</span
+                                >
+                                <span class="hero-subtitle-highlight"
+                                    >Mobile & Web</span
+                                >
+                            </p>
+                            <!-- Descrição Breve -->
+                            <p class="hero-description">
+                                Transformo ideias em soluções digitais
+                                escaláveis e funcionais, com foco em experiência
+                                do usuário e código de alta qualidade.
+                            </p>
+                            <!-- Call To Actions -->
+                            <div class="hero-actions">
+                                <button
+                                    type="button"
+                                    class="btn btn-primary hero-btn"
+                                    data-scroll-to="about"
+                                    aria-label="Ver mais sobre mim"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                        />
+                                    </svg>
+                                    <span>Conheça Meu Trabalho</span>
+                                </button>
+                                <a
+                                    href="/public/curriculo.pdf"
+                                    class="btn btn-secondary hero-btn"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Baixar currículo em PDF (abre em nova aba)"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                        />
+                                    </svg>
+                                    <span>Baixar Currículo</span>
+                                </a>
+                            </div>
+                            <!-- Links Sociais Rápidos -->
+                            <div class="hero-social">
+                                <a
+                                    href="https://github.com/guilherme-cruz"
+                                    class="hero-social-link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="GitHub (abre em nova aba)"
+                                    title="GitHub"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                                        />
+                                    </svg>
+                                </a>
+                                <a
+                                    href="https://linkedin.com/in/oguilherme-cruz"
+                                    class="hero-social-link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="LinkedIn (abre em nova aba)"
+                                    title="LinkedIn"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                                        />
+                                    </svg>
+                                </a>
+                                <a
+                                    href="https://twitter.com/guilhermecruz"
+                                    class="hero-social-link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Twitter (abre em nova aba)"
+                                    title="Twitter"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"
+                                        />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Elemento Visual -->
+                        <div class="hero-visual">
+                            <div class="hero-image-wrapper">
+                                <!-- Decoração de Fundo -->
+                                <div
+                                    class="hero-image-bg"
+                                    aria-hidden="true"
+                                ></div>
+                                <!-- Imagem Principal -->
+                                <img
+                                    src="./public/avatar.png"
+                                    alt="Guilherme Cruz - Desenvolvedor Full Stack"
+                                    class="hero-image"
+                                    loading="eager"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Scroll Indicator -->
+                    <a href="#about">
+                        <button
+                            type="button"
+                            class="hero-scroll-indicator"
+                            data-scroll-to="about"
+                            aria-label="Rolar para a próxima seção"
+                        >
+                            <span class="scroll-indicator-text"
+                                >Role para baixo</span
+                            >
+                            <div
+                                class="scroll-indicator-icon"
+                                aria-hidden="true"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                                    />
+                                </svg>
+                            </div>
+                        </button>
+                    </a>
+                </div>
+            </section>
+            <!-- ══════════════════════════════════════════════════════════
+                SEÇÃO SOBRE
+                ═════════════════════════════════════════════════════════   -->
+            <section
+                id="about"
+                class="about-section section"
+                aria-labelledby="about-title"
+            >
+                <div class="container">
+                    <!-- Header com Título Principal -->
+                    <header class="about-header">
+                        <div class="about-header__wrapper">
+                            <h2 id="about-title" class="about-header__title">
+                                Sobre Mim
+                            </h2>
+                            <a
+                                class="about-header__link"
+                                href="https://devlinks-rocketseat-five.vercel.app/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Visitar página de projetos destacados (abre em nova aba)"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="1.5"
+                                    stroke="currentColor"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+                                    />
+                                </svg>
+                            </a>
+                        </div>
+                    </header>
+                    <!-- Grid Principal: Duas Colunas Equilibradas -->
+                    <div class="about-layout">
+                        <!-- Coluna Esquerda: Conteúdo Textual -->
+                        <div class="about-content">
+                            <!-- Card de Apresentação -->
+                            <article class="about-card about-card--intro">
+                                <div class="about-card__header">
+                                    <h3 class="about-card__title">
+                                        Apresentação
+                                    </h3>
+                                    <div class="about-card__accent"></div>
+                                </div>
+                                <div class="about-card__body">
+                                    <p class="about-text">
+                                        Sou <strong>Guilherme</strong>,
+                                        estudante de
+                                        <strong>Ciência da Computação</strong>
+                                        na Universidade Cruzeiro do Sul, com
+                                        sólida formação técnica pela
+                                        <strong>Etec Vila Formosa</strong>.
+                                        Minha trajetória na tecnologia começou
+                                        antes do ensino médio, onde desenvolvi
+                                        paixão por
+                                        <strong>programação</strong> e
+                                        <strong>resolução de problemas</strong>.
+                                    </p>
+                                    <p class="about-text">
+                                        Atuo com
+                                        <strong
+                                            >desenvolvimento web full
+                                            stack</strong
+                                        >, criando aplicações modernas,
+                                        escaláveis e bem estruturadas. Tenho
+                                        experiência com HTML, CSS, JavaScript,
+                                        React no front-end, e PHP, Node.js,
+                                        MySQL no back-end, sempre focado em
+                                        <strong>código limpo</strong> e
+                                        <strong>boas práticas</strong>.
+                                    </p>
+                                </div>
+                            </article>
+                            <!-- Grid de Especialidades (2 colunas) -->
+                            <div class="about-specialties">
+                                <h3 class="about-subtitle">
+                                    Áreas de Especialização
+                                </h3>
+                                <div class="specialty-grid">
+                                    <div class="specialty-card">
+                                        <div class="specialty-card__icon">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    d="M21.721 12.752a9.711 9.711 0 00-.945-5.003 12.754 12.754 0 01-4.339 2.708 18.991 18.991 0 01-.214 4.772 17.165 17.165 0 005.498-2.477zM14.634 15.55a17.324 17.324 0 00.332-4.647c-.952.227-1.945.347-2.966.347-1.021 0-2.014-.12-2.966-.347a17.515 17.515 0 00.332 4.647 17.385 17.385 0 005.268 0zM9.772 17.119a18.963 18.963 0 004.456 0A17.182 17.182 0 0112 21.724a17.18 17.18 0 01-2.228-4.605zM7.777 15.23a18.87 18.87 0 01-.214-4.774 12.753 12.753 0 01-4.34-2.708 9.711 9.711 0 00-.944 5.004 17.165 17.165 0 005.498 2.477zM21.356 14.752a9.765 9.765 0 01-7.478 6.817 18.64 18.64 0 001.988-4.718 18.627 18.627 0 005.49-2.098zM2.644 14.752c1.682.971 3.53 1.688 5.49 2.099a18.64 18.64 0 001.988 4.718 9.765 9.765 0 01-7.478-6.816zM13.878 2.43a9.755 9.755 0 016.116 3.986 11.267 11.267 0 01-3.746 2.504 18.63 18.63 0 00-2.37-6.49zM12 2.276a17.152 17.152 0 012.805 7.121c-.897.23-1.837.353-2.805.353-.968 0-1.908-.122-2.805-.353A17.151 17.151 0 0112 2.276zM10.122 2.43a18.629 18.629 0 00-2.37 6.49 11.266 11.266 0 01-3.746-2.504 9.754 9.754 0 016.116-3.985z"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <h4 class="specialty-card__title">
+                                            Front-end
+                                        </h4>
+                                        <p class="specialty-card__desc">
+                                            Interfaces modernas com React,
+                                            JavaScript e design responsivo
+                                        </p>
+                                    </div>
+                                    <div class="specialty-card">
+                                        <div class="specialty-card__icon">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M2.25 6a3 3 0 013-3h13.5a3 3 0 013 3v12a3 3 0 01-3 3H5.25a3 3 0 01-3-3V6zm3.97.97a.75.75 0 011.06 0l2.25 2.25a.75.75 0 010 1.06l-2.25 2.25a.75.75 0 01-1.06-1.06l1.72-1.72-1.72-1.72a.75.75 0 010-1.06zm4.28 4.28a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <h4 class="specialty-card__title">
+                                            Back-end
+                                        </h4>
+                                        <p class="specialty-card__desc">
+                                            APIs RESTful, Node.js, PHP e
+                                            arquitetura escalável
+                                        </p>
+                                    </div>
+                                    <div class="specialty-card">
+                                        <div class="specialty-card__icon">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    d="M11.644 1.59a.75.75 0 01.712 0l9.75 5.25a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.712 0l-9.75-5.25a.75.75 0 010-1.32l9.75-5.25z"
+                                                />
+                                                <path
+                                                    d="M3.265 10.602l7.668 4.129a2.25 2.25 0 002.134 0l7.668-4.13 1.37.739a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.71 0l-9.75-5.25a.75.75 0 010-1.32l1.37-.738z"
+                                                />
+                                                <path
+                                                    d="M10.933 19.231l-7.668-4.13-1.37.739a.75.75 0 000 1.32l9.75 5.25c.221.12.489.12.71 0l9.75-5.25a.75.75 0 000-1.32l-1.37-.738-7.668 4.13a2.25 2.25 0 01-2.134-.001z"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <h4 class="specialty-card__title">
+                                            Banco de Dados
+                                        </h4>
+                                        <p class="specialty-card__desc">
+                                            MySQL, Firebase e modelagem de dados
+                                            relacionais
+                                        </p>
+                                    </div>
+                                    <div class="specialty-card">
+                                        <div class="specialty-card__icon">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path
+                                                    fill-rule="evenodd"
+                                                    d="M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm14.25 6a.75.75 0 01-.22.53l-2.25 2.25a.75.75 0 11-1.06-1.06L15.44 12l-1.72-1.72a.75.75 0 111.06-1.06l2.25 2.25c.141.14.22.331.22.53zm-10.28-.53a.75.75 0 000 1.06l2.25 2.25a.75.75 0 101.06-1.06L8.56 12l1.72-1.72a.75.75 0 10-1.06-1.06l-2.25 2.25z"
+                                                    clip-rule="evenodd"
+                                                />
+                                            </svg>
+                                        </div>
+                                        <h4 class="specialty-card__title">
+                                            Qualidade de Software
+                                        </h4>
+                                        <p class="specialty-card__desc">
+                                            Testes, versionamento Git e boas
+                                            práticas de código
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Card de Objetivo Profissional -->
+                            <article class="about-card about-card--cta">
+                                <div class="about-card__header">
+                                    <h3 class="about-card__title">
+                                        Objetivo Profissional
+                                    </h3>
+                                    <div class="about-card__accent"></div>
+                                </div>
+                                <div class="about-card__body">
+                                    <p class="about-text about-text--highlight">
+                                        Busco
+                                        <strong
+                                            >oportunidade como desenvolvedor
+                                            full stack</strong
+                                        >, onde possa aplicar meus conhecimentos
+                                        em projetos reais, trabalhar em equipe
+                                        multidisciplinar e contribuir com código
+                                        limpo e soluções escaláveis. Tenho
+                                        grande interesse em aprender novas
+                                        tecnologias e metodologias ágeis.
+                                    </p>
+                                </div>
+                            </article>
+                        </div>
+                        <!-- Coluna Direita: Imagem + Stack Tecnológico -->
+                        <aside class="about-sidebar">
+                            <!-- Imagem de Perfil Profissional -->
+                            <div class="about-profile">
+                                <img
+                                    class="about-profile__image"
+                                    src="./public/hero.png"
+                                    data-src="/public/hero2.png"
+                                    alt="Guilherme Cruz em ambiente profissional de trabalho"
+                                    loading="lazy"
+                                    width="480"
+                                    height="600"
+                                />
+                            </div>
+                            <!-- Stack Tecnológico -->
+                            <div class="about-stack">
+                                <h3 class="about-subtitle">
+                                    Stack Tecnológico
+                                </h3>
+                                <!-- Grid de Tecnologias -->
+                                <div class="tech-grid">
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=html"
+                                            alt="HTML5"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>HTML5</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=css"
+                                            alt="CSS3"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>CSS3</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=js"
+                                            alt="JavaScript"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>JavaScript</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=react"
+                                            alt="React"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>React</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=nodejs"
+                                            alt="Node.js"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>Node.js</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=php"
+                                            alt="PHP"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>PHP</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=mysql"
+                                            alt="MySQL"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>MySQL</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=git"
+                                            alt="Git"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>Git</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=vite"
+                                            alt="Vite"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>Vite</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=sass"
+                                            alt="Sass"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>Sass</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=python"
+                                            alt="Python"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>Python</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=java"
+                                            alt="Java"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>Java</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=firebase"
+                                            alt="Firebase"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>Firebase</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=docker"
+                                            alt="Docker"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>Docker</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=vscode"
+                                            alt="VSCode"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>VSCode</span>
+                                    </div>
+                                    <div class="tech-item">
+                                        <img
+                                            src="https://skillicons.dev/icons?i=figma"
+                                            alt="Figma"
+                                            loading="lazy"
+                                            width="48"
+                                            height="48"
+                                        />
+                                        <span>Figma</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+            <!-- ========================================================================
+                SEÇÃO TIMELINE - Carreira Profissional e Acadêmica
+                ======================================================================== -->
+            <section
+                id="timeline"
+                class="timeline-section section"
+                aria-labelledby="timeline-title"
+            >
+                <div class="timeline-container container">
+                    <!-- Header -->
+                    <header class="timeline-header">
+                        <h2 id="timeline-title" class="timeline-title">
+                            Minha Trajetória
+                        </h2>
+                        <p class="timeline-subtitle">
+                            Conheça minha trajetória acadêmica e profissional,
+                            destacando as principais experiências, aprendizados
+                            e marcos que contribuíram para a construção da minha
+                            carreira e para o desenvolvimento dos meus
+                            conhecimentos técnicos.
+                        </p>
+                    </header>
+                    <!-- Tabs Navigation -->
+                    <div
+                        class="timeline-tabs"
+                        role="tablist"
+                        aria-label="Categorias da timeline"
+                    >
+                        <button
+                            class="timeline-tab"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="timeline-panel-courses"
+                            data-tab="timeline-panel-courses"
+                            id="tab-courses"
+                            tabindex="-1"
+                        >
+                            <i
+                                class="bx bxs-book-bookmark"
+                                aria-hidden="true"
+                            ></i>
+                            <span class="timeline-tab__text"
+                                >Cursos & Certificações</span
+                            >
+                        </button>
+                        <button
+                            class="timeline-tab"
+                            role="tab"
+                            aria-selected="true"
+                            aria-controls="timeline-panel-education"
+                            data-tab="timeline-panel-education"
+                            id="tab-education"
+                            tabindex="0"
+                        >
+                            <i class="bx bxs-graduation" aria-hidden="true"></i>
+                            <span class="timeline-tab__text"
+                                >Formação Acadêmica</span
+                            >
+                        </button>
+                        <button
+                            class="timeline-tab"
+                            role="tab"
+                            aria-selected="false"
+                            aria-controls="timeline-panel-experience"
+                            data-tab="timeline-panel-experience"
+                            id="tab-experience"
+                            tabindex="-1"
+                        >
+                            <i class="bx bxs-briefcase" aria-hidden="true"></i>
+                            <span class="timeline-tab__text"
+                                >Experiência Profissional</span
+                            >
+                        </button>
+                    </div>
+                    <!-- Timeline Panels -->
+                    <!-- Panel: Educação -->
+                    <div
+                        id="timeline-panel-education"
+                        class="timeline-panel active"
+                        role="tabpanel"
+                        aria-labelledby="tab-education"
+                        aria-hidden="false"
+                    >
+                        <div class="timeline-line" aria-hidden="true"></div>
+                        <div class="timeline-items">
+                            <!-- Itens serão inseridos via JavaScript -->
+                        </div>
+                    </div>
+                    <!-- Panel: Cursos -->
+                    <div
+                        id="timeline-panel-courses"
+                        class="timeline-panel"
+                        role="tabpanel"
+                        aria-labelledby="tab-courses"
+                        aria-hidden="true"
+                    >
+                        <div class="timeline-line" aria-hidden="true"></div>
+                        <div class="timeline-items">
+                            <!-- Itens serão inseridos via JavaScript -->
+                        </div>
+                    </div>
+                    <!-- Panel: Experiência -->
+                    <div
+                        id="timeline-panel-experience"
+                        class="timeline-panel"
+                        role="tabpanel"
+                        aria-labelledby="tab-experience"
+                        aria-hidden="true"
+                    >
+                        <div class="timeline-line" aria-hidden="true"></div>
+                        <div class="timeline-items">
+                            <!-- Itens serão inseridos via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ========================================================================
+                SEÇÃO FEATURED - Projeto HomeMade Gourmet
+                Site de receitas inteligente | TCC ETEC Vila Formosa 2022
+                ======================================================================== -->
+            <section
+                id="featured"
+                class="featured-section section"
+                aria-labelledby="featured-title"
+            >
+                <div class="featured-container container">
+                    <!-- Header -->
+                    <header class="featured-header">
+                        <span
+                            class="featured-badge"
+                            aria-label="Badge de destaque"
+                        >
+                            <svg
+                                class="featured-badge__icon"
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M8 1L10.163 5.38197L15 6.12124L11.5 9.5438L12.326 14.3787L8 12.118L3.674 14.3787L4.5 9.5438L1 6.12124L5.837 5.38197L8 1Z"
+                                    fill="currentColor"
+                                />
+                            </svg>
+                            Projeto em Destaque - TCC ETEC
+                        </span>
+                        <h2 id="featured-title" class="featured-title">
+                            HomeMade
+                            <span class="featured-title__highlight"
+                                >Gourmet</span
+                            >
+                        </h2>
+                        <p class="featured-subtitle">
+                            Site de receitas inteligente com recomendações
+                            personalizadas e cálculo automático de calorias
+                        </p>
+                    </header>
+                    <!-- Featured Project Card -->
+                    <article class="featured-project">
+                        <!-- Carousel de Mídias (Acima de Tudo) -->
+                        <div
+                            class="featured-carousel"
+                            role="region"
+                            aria-label="Galeria do projeto"
+                            aria-roledescription="carrossel"
+                        >
+                            <div class="carousel-container">
+                                <div
+                                    class="carousel-track"
+                                    id="featuredCarousel"
+                                >
+                                    <!-- Slide 1 -->
+                                    <div
+                                        class="carousel-slide active"
+                                        data-slide="1"
+                                    >
+                                        <img
+                                            src="./public/teste01.png"
+                                            alt="Tela inicial do HomeMade Gourmet mostrando receitas tradicionais e sistema de navegação intuitivo"
+                                            loading="eager"
+                                            class="carousel-img"
+                                        />
+                                    </div>
+                                    <!-- Slide 2 -->
+                                    <div class="carousel-slide" data-slide="2">
+                                        <img
+                                            src="./public/teste01.png"
+                                            alt="Interface de login e cadastro de usuários com validação de dados"
+                                            loading="lazy"
+                                            class="carousel-img"
+                                        />
+                                    </div>
+                                    <!-- Slide 3 -->
+                                    <div class="carousel-slide" data-slide="3">
+                                        <img
+                                            src="./public/teste01.png"
+                                            alt="Página de receita com ingredientes, modo de preparo e cálculo automático de calorias"
+                                            loading="lazy"
+                                            class="carousel-img"
+                                        />
+                                    </div>
+                                    <!-- Slide 4 -->
+                                    <div class="carousel-slide" data-slide="4">
+                                        <img
+                                            src="./public/teste01.png"
+                                            alt="Sistema de categorias de alimentos incluindo massas, doces, carnes e opções vegetarianas"
+                                            loading="lazy"
+                                            class="carousel-img"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Controles de Navegação -->
+                            <button
+                                class="carousel-nav carousel-nav--prev"
+                                id="carouselPrev"
+                                aria-label="Imagem anterior"
+                                type="button"
+                            >
+                                <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M15 18L9 12L15 6"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                            <button
+                                class="carousel-nav carousel-nav--next"
+                                id="carouselNext"
+                                aria-label="Próxima imagem"
+                                type="button"
+                            >
+                                <svg
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M9 18L15 12L9 6"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                            <!-- Indicadores -->
+                            <div
+                                class="carousel-indicators"
+                                role="tablist"
+                                aria-label="Slides do projeto"
+                            >
+                                <button
+                                    class="carousel-dot active"
+                                    data-slide-to="1"
+                                    role="tab"
+                                    aria-label="Slide 1"
+                                    aria-selected="true"
+                                    type="button"
+                                ></button>
+                                <button
+                                    class="carousel-dot"
+                                    data-slide-to="2"
+                                    role="tab"
+                                    aria-label="Slide 2"
+                                    aria-selected="false"
+                                    type="button"
+                                ></button>
+                                <button
+                                    class="carousel-dot"
+                                    data-slide-to="3"
+                                    role="tab"
+                                    aria-label="Slide 3"
+                                    aria-selected="false"
+                                    type="button"
+                                ></button>
+                                <button
+                                    class="carousel-dot"
+                                    data-slide-to="4"
+                                    role="tab"
+                                    aria-label="Slide 4"
+                                    aria-selected="false"
+                                    type="button"
+                                ></button>
+                            </div>
+                        </div>
+                        <!-- Conteúdo do Projeto -->
+                        <div class="featured-content">
+                            <!-- Descrição -->
+                            <p class="featured-description">
+                                <strong
+                                    >Trabalho de Conclusão de Curso desenvolvido
+                                    na ETEC de Vila Formosa</strong
+                                >
+                                em 2022. <br />
+                                O HomeMade Gourmet é um site de receitas
+                                inovador que vai além de apenas listar pratos
+                                tradicionais. O sistema conversa com o usuário
+                                para recomendar receitas personalizadas baseadas
+                                em suas preferências alimentares, calcula
+                                automaticamente as calorias de cada receita e
+                                permite filtros avançados por tipo de
+                                alimentação.
+                            </p>
+                            <!-- Informações -->
+                            <div class="featured-info">
+                                <!-- Stack Tecnológica -->
+                                <div class="featured-info__item">
+                                    <h4 class="featured-info__label">
+                                        Stack Principal
+                                    </h4>
+                                    <ul class="featured-tech" role="list">
+                                        <li role="listitem">
+                                            <span class="tech-tag">
+                                                <img
+                                                    src="https://skillicons.dev/icons?i=html"
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                    width="20"
+                                                    height="20"
+                                                />
+                                                HTML5
+                                            </span>
+                                        </li>
+                                        <li role="listitem">
+                                            <span class="tech-tag">
+                                                <img
+                                                    src="https://skillicons.dev/icons?i=css"
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                    width="20"
+                                                    height="20"
+                                                />
+                                                CSS3
+                                            </span>
+                                        </li>
+                                        <li role="listitem">
+                                            <span class="tech-tag">
+                                                <img
+                                                    src="https://skillicons.dev/icons?i=js"
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                    width="20"
+                                                    height="20"
+                                                />
+                                                JavaScript
+                                            </span>
+                                        </li>
+                                    </ul>
+                                    <ul class="featured-tech" role="list">
+                                        <li role="listitem">
+                                            <span class="tech-tag">
+                                                <img
+                                                    src="https://skillicons.dev/icons?i=php"
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                    width="20"
+                                                    height="20"
+                                                />
+                                                PHP
+                                            </span>
+                                        </li>
+                                        <li role="listitem">
+                                            <span class="tech-tag">
+                                                <img
+                                                    src="https://skillicons.dev/icons?i=mysql"
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                    width="20"
+                                                    height="20"
+                                                />
+                                                MySQL
+                                            </span>
+                                        </li>
+                                        <li role="listitem">
+                                            <span class="tech-tag">
+                                                <img
+                                                    src="https://skillicons.dev/icons?i=figma"
+                                                    alt=""
+                                                    aria-hidden="true"
+                                                    width="20"
+                                                    height="20"
+                                                />
+                                                Figma
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- Funcionalidades -->
+                                <div class="featured-info__item">
+                                    <h4 class="featured-info__label">
+                                        Funcionalidades
+                                    </h4>
+                                    <ul class="featured-features">
+                                        <li>
+                                            <i
+                                                class="bx bx-check"
+                                                aria-hidden="true"
+                                            ></i>
+                                            Sistema de recomendação
+                                            personalizada
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="bx bx-check"
+                                                aria-hidden="true"
+                                            ></i>
+                                            Calculadora automática de calorias
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="bx bx-check"
+                                                aria-hidden="true"
+                                            ></i>
+                                            Filtros por tipo de alimentação
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="bx bx-check"
+                                                aria-hidden="true"
+                                            ></i>
+                                            Sistema de login e favoritos
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="bx bx-check"
+                                                aria-hidden="true"
+                                            ></i>
+                                            Histórias e origem das receitas
+                                        </li>
+                                        <li>
+                                            <i
+                                                class="bx bx-check"
+                                                aria-hidden="true"
+                                            ></i>
+                                            Avaliações da comunidade
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- Botões de Ação -->
+                            <div class="featured-actions">
+                                <a
+                                    href="https://seu-projeto-demo.com"
+                                    class="btn btn--secondary"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Acessar demonstração online (abre em nova aba)"
+                                >
+                                    <i
+                                        class="bx bx-link-external"
+                                        aria-hidden="true"
+                                    ></i>
+                                    Acessar Projeto
+                                </a>
+                                <a
+                                    href="https://github.com/seu-usuario/homemade-gourmet"
+                                    class="btn btn--primary"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Acessar repositório no GitHub (abre em nova aba)"
+                                >
+                                    <i
+                                        class="bx bxl-github"
+                                        aria-hidden="true"
+                                    ></i>
+                                    Acessar Repositório
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                    <!-- Stats Bar -->
+                    <div
+                        class="featured-stats"
+                        aria-label="Estatísticas do projeto"
+                    >
+                        <div class="stat-item">
+                            <div class="stat-item__value">6 meses</div>
+                            <div class="stat-item__label">Desenvolvimento</div>
+                        </div>
+                        <div class="stat-divider" aria-hidden="true"></div>
+                        <div class="stat-item">
+                            <div class="stat-item__value">7 devs</div>
+                            <div class="stat-item__label">Equipe</div>
+                        </div>
+                        <div class="stat-divider" aria-hidden="true"></div>
+                        <div class="stat-item">
+                            <div class="stat-item__value">TCC 2022</div>
+                            <div class="stat-item__label">
+                                ETEC Vila Formosa
+                            </div>
+                        </div>
+                        <div class="stat-divider" aria-hidden="true"></div>
+                        <div class="stat-item">
+                            <div class="stat-item__value">6 techs</div>
+                            <div class="stat-item__label">Tecnologias</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- JavaScript do Carrossel -->
+            <script>
+                (function () {
+                    "use strict";
+
+                    const FeaturedCarousel = {
+                        carousel: null,
+                        track: null,
+                        slides: [],
+                        dots: [],
+                        prevBtn: null,
+                        nextBtn: null,
+                        currentIndex: 0,
+                        totalSlides: 0,
+                        isTransitioning: false,
+
+                        init() {
+                            this.carousel =
+                                document.getElementById("featuredCarousel");
+                            if (!this.carousel) return;
+
+                            this.track = this.carousel;
+                            this.slides = Array.from(
+                                this.carousel.querySelectorAll(
+                                    ".carousel-slide",
+                                ),
+                            );
+                            this.dots = Array.from(
+                                document.querySelectorAll(".carousel-dot"),
+                            );
+                            this.prevBtn =
+                                document.getElementById("carouselPrev");
+                            this.nextBtn =
+                                document.getElementById("carouselNext");
+                            this.totalSlides = this.slides.length;
+
+                            if (this.totalSlides === 0) return;
+
+                            this.setupControls();
+                            this.setupKeyboard();
+                            this.setupTouch();
+                        },
+
+                        setupControls() {
+                            if (this.prevBtn) {
+                                this.prevBtn.addEventListener("click", () =>
+                                    this.prev(),
+                                );
+                            }
+
+                            if (this.nextBtn) {
+                                this.nextBtn.addEventListener("click", () =>
+                                    this.next(),
+                                );
+                            }
+
+                            this.dots.forEach((dot, index) => {
+                                dot.addEventListener("click", () =>
+                                    this.goToSlide(index),
+                                );
+                            });
+                        },
+
+                        setupKeyboard() {
+                            const carouselSection =
+                                document.querySelector(".featured-carousel");
+                            if (!carouselSection) return;
+
+                            carouselSection.addEventListener("keydown", (e) => {
+                                if (e.key === "ArrowLeft") {
+                                    e.preventDefault();
+                                    this.prev();
+                                } else if (e.key === "ArrowRight") {
+                                    e.preventDefault();
+                                    this.next();
+                                }
+                            });
+                        },
+
+                        setupTouch() {
+                            let touchStartX = 0;
+                            let touchEndX = 0;
+
+                            this.track.addEventListener(
+                                "touchstart",
+                                (e) => {
+                                    touchStartX = e.touches[0].clientX;
+                                },
+                                { passive: true },
+                            );
+
+                            this.track.addEventListener(
+                                "touchend",
+                                (e) => {
+                                    touchEndX = e.changedTouches[0].clientX;
+                                    const diff = touchStartX - touchEndX;
+
+                                    if (Math.abs(diff) > 50) {
+                                        if (diff > 0) {
+                                            this.next();
+                                        } else {
+                                            this.prev();
+                                        }
+                                    }
+                                },
+                                { passive: true },
+                            );
+                        },
+
+                        goToSlide(index) {
+                            if (
+                                this.isTransitioning ||
+                                index === this.currentIndex ||
+                                index < 0 ||
+                                index >= this.totalSlides
+                            ) {
+                                return;
+                            }
+
+                            this.isTransitioning = true;
+
+                            this.slides.forEach((slide) =>
+                                slide.classList.remove("active"),
+                            );
+                            this.dots.forEach((dot) => {
+                                dot.classList.remove("active");
+                                dot.setAttribute("aria-selected", "false");
+                            });
+
+                            this.slides[index].classList.add("active");
+                            this.dots[index].classList.add("active");
+                            this.dots[index].setAttribute(
+                                "aria-selected",
+                                "true",
+                            );
+
+                            this.currentIndex = index;
+
+                            setTimeout(() => {
+                                this.isTransitioning = false;
+                            }, 600);
+                        },
+
+                        next() {
+                            const nextIndex =
+                                (this.currentIndex + 1) % this.totalSlides;
+                            this.goToSlide(nextIndex);
+                        },
+
+                        prev() {
+                            const prevIndex =
+                                (this.currentIndex - 1 + this.totalSlides) %
+                                this.totalSlides;
+                            this.goToSlide(prevIndex);
+                        },
+                    };
+
+                    if (document.readyState === "loading") {
+                        document.addEventListener("DOMContentLoaded", () =>
+                            FeaturedCarousel.init(),
+                        );
+                    } else {
+                        FeaturedCarousel.init();
+                    }
+                })();
+            </script>
+            <!-- ========================================================================
+                SEÇÃO WORK - Outros Projetos
+                ====================================================================== -->
+            <section
+                id="work"
+                class="work-section section"
+                aria-labelledby="work-title"
+            >
+                <div class="work-container container">
+                    <!-- ── Cabeçalho ────────────────────────────────────────────── -->
+                    <header class="work-header">
+                        <h2
+                            id="work-title"
+                            class="work-title"
+                            data-i18n="work.title"
+                        >
+                            Meus Projetos
+                        </h2>
+                        <p class="work-subtitle" data-i18n="work.subtitle">
+                            Cada projeto representa uma etapa importante da
+                            minha trajetória, evidenciando meu aprendizado
+                            constante e a busca por qualidade e excelência
+                            técnica.
+                        </p>
+                    </header>
+                    <!-- ── Grid de projetos ─────────────────────────────────────── -->
+                    <div class="work-grid">
+                        <!-- ─────────────────────── Projeto 01 ─────────────────────── -->
+                        <article class="work-card">
+                            <div class="work-card__image">
+                                <img
+                                    src="./public/projetos/work01.png"
+                                    alt="Interface da plataforma de e-commerce"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </div>
+                            <div class="work-card__content">
+                                <h3 class="work-card__title">💬 Web Chat</h3>
+                                <p class="work-card__description">
+                                    O Web Chat é uma aplicação de mensagens
+                                    instantâneas que funciona direto no
+                                    navegador. Os usuários entram com um nome,
+                                    escolhem uma sala e conversam em tempo real
+                                    com qualquer pessoa conectada.
+                                </p>
+                                <!-- Tecnologias -->
+                                <ul
+                                    class="work-card__tech"
+                                    role="list"
+                                    aria-label="Tecnologias"
+                                >
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=html"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            HTML5
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=css"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            CSS3
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=js"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            JavaScript
+                                        </span>
+                                    </li>
+                                </ul>
+                                <ul class="featured-tech" role="list">
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=nodejs"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            Node.js
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=htmx"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            WebSocket
+                                        </span>
+                                    </li>
+                                </ul>
+                                <!-- ── Botões de ação (NOVO) ────────────────────────── -->
+                                <div class="work-card__actions">
+                                    <a
+                                        href="https://chat-frontend-g42t.onrender.com"
+                                        class="work-btn work-btn--primary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Acessar projeto Web Chat online (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bx-link-external"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Projeto</span>
+                                    </a>
+                                    <a
+                                        href="https://github.com/https-shini/web-chat"
+                                        class="work-btn work-btn--secondary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Acessar código-fonte no GitHub (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bxl-github"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Repositório</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- ─────────────────────── Projeto 02 ─────────────────────── -->
+                        <article class="work-card">
+                            <div class="work-card__image">
+                                <img
+                                    src="./public/projetos/work02.png"
+                                    alt="Interface do Controle Financeiro"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </div>
+                            <div class="work-card__content">
+                                <h3 class="work-card__title">
+                                    💰 Controle Financeiro
+                                </h3>
+                                <p class="work-card__description">
+                                    O Controle Financeiro é uma aplicação web
+                                    construída com ReactJS para registrar e
+                                    visualizar suas finanças pessoais. Você
+                                    adiciona entradas e saídas, acompanha seu
+                                    saldo em tempo real e pode exportar ou
+                                    importar suas transações em diferentes
+                                    formatos.
+                                </p>
+                                <!-- Tecnologias -->
+                                <ul
+                                    class="work-card__tech"
+                                    role="list"
+                                    aria-label="Tecnologias"
+                                >
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=html"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            HTML5
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=css"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            CSS3
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=js"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            JavaScript
+                                        </span>
+                                    </li>
+                                </ul>
+                                <ul class="featured-tech" role="list">
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=react"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            ReactJS
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=htmx"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            Google Fonts
+                                        </span>
+                                    </li>
+                                </ul>
+                                <!-- ── Botões de ação (NOVO) ────────────────────────── -->
+                                <div class="work-card__actions">
+                                    <a
+                                        href="https://financas-reactjs.vercel.app"
+                                        class="work-btn work-btn--primary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Acessar projeto Controle Financeiro online (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bx-link-external"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Projeto</span>
+                                    </a>
+                                    <a
+                                        href="https://github.com/https-shini/financas-reactjs"
+                                        class="work-btn work-btn--secondary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Acessar código-fonte no GitHub (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bxl-github"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Repositório</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- ─────────────────────── Projeto 03 ─────────────────────── -->
+                        <article class="work-card">
+                            <div class="work-card__image">
+                                <img
+                                    src="./public/projetos/work03.png"
+                                    alt="Interface do jogo Space Invaders"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </div>
+                            <div class="work-card__content">
+                                <h3 class="work-card__title">
+                                    👾 Space Invaders
+                                </h3>
+                                <p class="work-card__description">
+                                    Uma recriação do famoso jogo Space Invaders
+                                    feita com JavaScript puro e a API Canvas do
+                                    navegador. O jogador controla uma nave
+                                    espacial e precisa destruir ondas de
+                                    invasores antes de ser atingido.
+                                </p>
+                                <!-- Tecnologias -->
+                                <ul
+                                    class="work-card__tech"
+                                    role="list"
+                                    aria-label="Tecnologias"
+                                >
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=html"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            HTML5
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=css"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            CSS3
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=js"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            JavaScript
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=htmx"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            API
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=htmx"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            Google Fonts
+                                        </span>
+                                    </li>
+                                </ul>
+                                <!-- ── Botões de ação (NOVO) ────────────────────────── -->
+                                <div class="work-card__actions">
+                                    <a
+                                        href="https://https-shini.github.io/space-invaders/"
+                                        class="work-btn work-btn--primary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Ver projeto Space Invaders online (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bx-link-external"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Projeto</span>
+                                    </a>
+                                    <a
+                                        href="https://github.com/https-shini/space-invaders"
+                                        class="work-btn work-btn--secondary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Ver código-fonte no GitHub (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bxl-github"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Repositório</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- ─────────────────────── Projeto 04 ─────────────────────── -->
+                        <article class="work-card">
+                            <div class="work-card__image">
+                                <img
+                                    src="./public/teste02.png"
+                                    alt="Interface do site portfólio"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </div>
+                            <div class="work-card__content">
+                                <h3 class="work-card__title">
+                                    Portfolio Website
+                                </h3>
+                                <p class="work-card__description">
+                                    Site portfólio responsivo com dark mode,
+                                    animações e otimização de performance.
+                                </p>
+                                <!-- Tecnologias -->
+                                <ul
+                                    class="work-card__tech"
+                                    role="list"
+                                    aria-label="Tecnologias"
+                                >
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=html"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            HTML5
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=css"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            CSS3
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=js"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            JavaScript
+                                        </span>
+                                    </li>
+                                </ul>
+                                <ul class="featured-tech" role="list">
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=php"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            PHP
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=mysql"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            MySQL
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=figma"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            Figma
+                                        </span>
+                                    </li>
+                                </ul>
+                                <!-- ── Botões de ação (NOVO) ────────────────────────── -->
+                                <div class="work-card__actions">
+                                    <a
+                                        href="https://portfolio-demo.example.com"
+                                        class="work-btn work-btn--primary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Acessar projeto Portfolio Website online (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bx-link-external"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Projeto</span>
+                                    </a>
+                                    <a
+                                        href="https://github.com/guilherme-cruz/portfolio-website"
+                                        class="work-btn work-btn--secondary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Acessar código-fonte no GitHub (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bxl-github"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Repositório</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- ─────────────────────── Projeto 05 ─────────────────────── -->
+                        <article class="work-card">
+                            <div class="work-card__image">
+                                <img
+                                    src="./public/teste02.png"
+                                    alt="Interface do dashboard de redes sociais"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </div>
+                            <div class="work-card__content">
+                                <h3 class="work-card__title">
+                                    Social Media Dashboard
+                                </h3>
+                                <p class="work-card__description">
+                                    Dashboard analítico para gerenciamento de
+                                    múltiplas redes sociais com métricas em
+                                    tempo real.
+                                </p>
+                                <!-- Tecnologias -->
+                                <ul
+                                    class="work-card__tech"
+                                    role="list"
+                                    aria-label="Tecnologias"
+                                >
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=html"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            HTML5
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=css"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            CSS3
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=js"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            JavaScript
+                                        </span>
+                                    </li>
+                                </ul>
+                                <ul class="featured-tech" role="list">
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=php"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            PHP
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=mysql"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            MySQL
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=figma"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            Figma
+                                        </span>
+                                    </li>
+                                </ul>
+                                <!-- ── Botões de ação (NOVO) ────────────────────────── -->
+                                <div class="work-card__actions">
+                                    <a
+                                        href="https://social-dashboard-demo.example.com"
+                                        class="work-btn work-btn--primary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Acessar projeto Social Media Dashboard online (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bx-link-external"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Projeto</span>
+                                    </a>
+                                    <a
+                                        href="https://github.com/guilherme-cruz/social-media-dashboard"
+                                        class="work-btn work-btn--secondary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Acessar código-fonte no GitHub (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bxl-github"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Repositório</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- ─────────────────────── Projeto 06 ─────────────────────── -->
+                        <article class="work-card">
+                            <div class="work-card__image">
+                                <img
+                                    src="https://user-images.githubusercontent.com/100307080/234482780-c6ec2cd1-c50b-47c5-bee1-2f18c8e2908f.png"
+                                    alt="Interface da plataforma de blog"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
+                            </div>
+                            <div class="work-card__content">
+                                <h3 class="work-card__title">
+                                    🪢 Jogo da Forca
+                                </h3>
+                                <p class="work-card__description">
+                                    Uma versão web do clássico Jogo da Forca. O
+                                    jogador tenta adivinhar uma palavra secreta
+                                    escolhendo letras pelo teclado virtual. A
+                                    cada erro, uma parte do boneco é desenhada
+                                    na forca. O jogador tem 6 tentativas antes
+                                    de perder.
+                                </p>
+                                <!-- Tecnologias -->
+                                <ul
+                                    class="work-card__tech"
+                                    role="list"
+                                    aria-label="Tecnologias"
+                                >
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=html"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            HTML5
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=css"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            CSS3
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=js"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            JavaScript
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=bootstrap"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            Bootstrap
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=htmx"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            Boxicons
+                                        </span>
+                                    </li>
+                                    <li role="listitem">
+                                        <span class="tech-tag">
+                                            <img
+                                                src="https://skillicons.dev/icons?i=htmx"
+                                                alt=""
+                                                aria-hidden="true"
+                                                width="20"
+                                                height="20"
+                                            />
+                                            Google Fonts
+                                        </span>
+                                    </li>
+                                </ul>
+                                <!-- ── Botões de ação (NOVO) ────────────────────────── -->
+                                <div class="work-card__actions">
+                                    <a
+                                        href="https://https-shini.github.io/Jogo-Forca/"
+                                        class="work-btn work-btn--primary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Acessar projeto Jogo da Forca online (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bx-link-external"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Projeto</span>
+                                    </a>
+                                    <a
+                                        href="https://github.com/https-shini/Jogo-Forca"
+                                        class="work-btn work-btn--secondary"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        aria-label="Acessar código-fonte no GitHub (abre em nova aba)"
+                                    >
+                                        <i
+                                            class="bx bxl-github"
+                                            aria-hidden="true"
+                                        ></i>
+                                        <span>Acessar Repositório</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <!-- /work-grid -->
+                </div>
+                <!-- /work-container -->
+            </section>
+            <!-- ========================================================================
+                SEÇÃO CONTACT - Informações de Contato
+                ======================================================================== -->
+            <section
+                id="contact"
+                class="contact-section section"
+                aria-labelledby="contact-title"
+            >
+                <div class="contact-container container">
+                    <!-- ── Cabeçalho (original preservado) ─────────────────────── -->
+                    <header class="contact-header">
+                        <h2 id="contact-title" class="contact-title">
+                            Contato
+                        </h2>
+                        <p class="contact-subtitle">
+                            Estou aberto a oportunidades profissionais nas quais
+                            eu possa contribuir ativamente, aprender
+                            continuamente e crescer como desenvolvedor. Caso
+                            tenha uma oportunidade alinhada às minhas
+                            habilidades e experiências, ficarei à disposição
+                            para conversar.
+                        </p>
+                    </header>
+                    <!-- ── Cards (originais preservados) ────────────────────────── -->
+                    <div class="contact-grid">
+                        <!-- Card E-mail -->
+                        <article class="contact-card">
+                            <div class="contact-card__icon" aria-hidden="true">
+                                <i class="bx bx-envelope"></i>
+                            </div>
+                            <div class="contact-card__content">
+                                <h3 class="contact-card__label">Email</h3>
+                                <!--
+                                    O e-mail real é resolvido pelo JS (contact.js)
+                                    via constante AUTHOR_EMAIL — não fica exposto
+                                    como texto puro no HTML de produção.
+                                    -->
+                                <a
+                                    href="mailto:contato.guilhermescruz@gmail.com"
+                                    class="contact-card__link"
+                                    aria-label="Enviar e-mail para contato.guilhermescruz@gmail.com"
+                                    >contato.guilhermescruz@gmail.com</a
+                                >
+                                <p class="contact-card__info">
+                                    Respondo em até 24 horas
+                                </p>
+                            </div>
+                        </article>
+                        <!-- Card LinkedIn -->
+                        <article class="contact-card">
+                            <div class="contact-card__icon" aria-hidden="true">
+                                <i class="bx bxl-linkedin-square"></i>
+                            </div>
+                            <div class="contact-card__content">
+                                <h3 class="contact-card__label">LinkedIn</h3>
+                                <a
+                                    href="https://www.linkedin.com/in/oguilherme-cruz/"
+                                    class="contact-card__link"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Acessar perfil no LinkedIn (abre em nova aba)"
+                                    >linkedin.com/in/oguilherme-cruz/</a
+                                >
+                                <p class="contact-card__info">
+                                    Conecte-se comigo
+                                </p>
+                            </div>
+                        </article>
+                    </div>
+                    <!-- /contact-grid -->
+                    <!-- ── Formulário (novo) ──────────────────────────────────────
+                        Visualmente integrado aos cards acima:
+                        mesma borda, mesmo fundo, mesmo border-radius.
+                        ─────────────────────────────────────────────────────────────── -->
+                    <div class="contact-form-wrapper" id="contact-form-area">
+                        <form
+                            id="contact-form"
+                            class="contact-form"
+                            novalidate
+                            aria-label="Formulário de contato"
+                        >
+                            <!-- ── Honeypot anti-spam ──────────────────────────────
+                                Campo completamente invisível para usuários reais.
+                                Bots o preenchem → envio bloqueado silenciosamente.
+                                tabindex="-1" garante que TAB nunca o alcança.
+                                ─────────────────────────────────────────────────────── -->
+                            <div class="cf-honeypot" aria-hidden="true">
+                                <label for="cf-bot-field">Website</label>
+                                <input
+                                    type="text"
+                                    id="cf-bot-field"
+                                    name="bot_field"
+                                    tabindex="-1"
+                                    autocomplete="off"
+                                />
+                            </div>
+                            <!-- Linha 1: Nome + E-mail (lado a lado em ≥ 640px) -->
+                            <div class="cf-row">
+                                <div class="cf-field" id="cf-field-name">
+                                    <label class="cf-label" for="cf-name">
+                                        Nome
+                                        <span class="cf-req" aria-hidden="true"
+                                            >*</span
+                                        >
+                                    </label>
+                                    <input
+                                        class="cf-input"
+                                        type="text"
+                                        id="cf-name"
+                                        name="name"
+                                        placeholder="Seu nome completo"
+                                        autocomplete="name"
+                                        required
+                                        aria-required="true"
+                                        aria-describedby="cf-err-name"
+                                    />
+                                    <span
+                                        class="cf-error"
+                                        id="cf-err-name"
+                                        role="alert"
+                                        aria-live="polite"
+                                    ></span>
+                                </div>
+                                <div class="cf-field" id="cf-field-email">
+                                    <label class="cf-label" for="cf-email">
+                                        E-mail
+                                        <span class="cf-req" aria-hidden="true"
+                                            >*</span
+                                        >
+                                    </label>
+                                    <input
+                                        class="cf-input"
+                                        type="email"
+                                        id="cf-email"
+                                        name="email"
+                                        placeholder="seu@email.com"
+                                        autocomplete="email"
+                                        required
+                                        aria-required="true"
+                                        aria-describedby="cf-err-email"
+                                    />
+                                    <span
+                                        class="cf-error"
+                                        id="cf-err-email"
+                                        role="alert"
+                                        aria-live="polite"
+                                    ></span>
+                                </div>
+                            </div>
+                            <!-- /cf-row -->
+                            <!-- Assunto (largura total) -->
+                            <div class="cf-field" id="cf-field-subject">
+                                <label class="cf-label" for="cf-subject">
+                                    Assunto
+                                    <span class="cf-req" aria-hidden="true"
+                                        >*</span
+                                    >
+                                </label>
+                                <input
+                                    class="cf-input"
+                                    type="text"
+                                    id="cf-subject"
+                                    name="subject"
+                                    placeholder="Ex.: Proposta de trabalho, parceria, dúvida…"
+                                    required
+                                    aria-required="true"
+                                    aria-describedby="cf-err-subject"
+                                />
+                                <span
+                                    class="cf-error"
+                                    id="cf-err-subject"
+                                    role="alert"
+                                    aria-live="polite"
+                                ></span>
+                            </div>
+                            <!-- Mensagem (largura total) -->
+                            <div class="cf-field" id="cf-field-message">
+                                <label class="cf-label" for="cf-message">
+                                    Mensagem
+                                    <span class="cf-req" aria-hidden="true"
+                                        >*</span
+                                    >
+                                </label>
+                                <textarea
+                                    class="cf-input cf-textarea"
+                                    id="cf-message"
+                                    name="message"
+                                    placeholder="Escreva sua mensagem aqui…"
+                                    rows="5"
+                                    required
+                                    aria-required="true"
+                                    aria-describedby="cf-err-message"
+                                ></textarea>
+                                <span
+                                    class="cf-error"
+                                    id="cf-err-message"
+                                    role="alert"
+                                    aria-live="polite"
+                                ></span>
+                            </div>
+                            <!-- Rodapé: botão + feedback global -->
+                            <div class="cf-footer">
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary cf-submit-btn"
+                                    id="cf-submit"
+                                    aria-describedby="cf-status"
+                                >
+                                    <!-- Estado 1: padrão -->
+                                    <span
+                                        class="cf-btn-state cf-btn-state--idle"
+                                    >
+                                        <i
+                                            class="bx bx-send"
+                                            aria-hidden="true"
+                                        ></i>
+                                        Enviar mensagem
+                                    </span>
+                                    <!-- Estado 2: enviando -->
+                                    <span
+                                        class="cf-btn-state cf-btn-state--loading"
+                                        aria-hidden="true"
+                                    >
+                                        <span
+                                            class="cf-spinner"
+                                            aria-hidden="true"
+                                        ></span>
+                                        Enviando…
+                                    </span>
+                                    <!-- Estado 3: concluído -->
+                                    <span
+                                        class="cf-btn-state cf-btn-state--sent"
+                                        aria-hidden="true"
+                                    >
+                                        <i
+                                            class="bx bx-check-double"
+                                            aria-hidden="true"
+                                        ></i>
+                                        Enviado!
+                                    </span>
+                                </button>
+                                <!-- Área de feedback global (sucesso / erro) -->
+                                <div
+                                    class="cf-status"
+                                    id="cf-status"
+                                    role="status"
+                                    aria-live="polite"
+                                    aria-atomic="true"
+                                ></div>
+                            </div>
+                            <!-- /cf-footer -->
+                        </form>
+                    </div>
+                    <!-- /contact-form-wrapper -->
+                </div>
+                <!-- /contact-container -->
+            </section>
+        </main>
+        <!-- ========================================================================
+            FOOTER - Rodapé
+            ====================================================================== -->
+        <footer class="footer" role="contentinfo">
+            <div class="footer-container container">
+                <div class="footer-content">
+                    <!-- ── Coluna 1: Informações principais ─────────────────── -->
+                    <div class="footer-col footer-col--brand">
+                        <h3 class="footer-brand-name" data-i18n="footer.name">
+                            Guilherme de Souza Cruz
+                        </h3>
+                        <p
+                            class="footer-brand-tagline"
+                            data-i18n="footer.tagline"
+                        >
+                            Desenvolvedor Mobile & Web apaixonado por criar
+                            experiências digitais excepcionais.
+                        </p>
+                        <!-- Redes sociais -->
+                        <div class="footer-social">
+                            <a
+                                href="https://github.com/guilherme-cruz"
+                                class="footer-social-link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="GitHub (abre em nova aba)"
+                                title="GitHub"
+                            >
+                                <i class="bx bxl-github" aria-hidden="true"></i>
+                            </a>
+                            <a
+                                href="https://linkedin.com/in/oguilherme-cruz"
+                                class="footer-social-link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="LinkedIn (abre em nova aba)"
+                                title="LinkedIn"
+                            >
+                                <i
+                                    class="bx bxl-linkedin-square"
+                                    aria-hidden="true"
+                                ></i>
+                            </a>
+                            <a
+                                href="https://twitter.com/guilhermecruz"
+                                class="footer-social-link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Twitter (abre em nova aba)"
+                                title="Twitter"
+                            >
+                                <i
+                                    class="bx bxl-twitter"
+                                    aria-hidden="true"
+                                ></i>
+                            </a>
+                            <a
+                                href="https://instagram.com/guilhermecruz.dev"
+                                class="footer-social-link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label="Instagram (abre em nova aba)"
+                                title="Instagram"
+                            >
+                                <i
+                                    class="bx bxl-instagram"
+                                    aria-hidden="true"
+                                ></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- ── Coluna 2: Navegação ──────────────────────────────── -->
+                    <div class="footer-col footer-col--nav">
+                        <h4
+                            class="footer-col-title"
+                            data-i18n="footer.navigation"
+                        >
+                            Navegação
+                        </h4>
+                        <nav aria-label="Links de navegação do rodapé">
+                            <ul class="footer-links">
+                                <li>
+                                    <a
+                                        class="footer-link"
+                                        href="#hero"
+                                        data-i18n="nav.home"
+                                        >Início</a
+                                    >
+                                </li>
+                                <li>
+                                    <a
+                                        class="footer-link"
+                                        href="#about"
+                                        data-i18n="nav.about"
+                                        >Sobre</a
+                                    >
+                                </li>
+                                <li>
+                                    <a
+                                        class="footer-link"
+                                        href="#timeline"
+                                        data-i18n="nav.career"
+                                        >Carreira</a
+                                    >
+                                </li>
+                                <li>
+                                    <a
+                                        class="footer-link"
+                                        href="#work"
+                                        data-i18n="nav.projects"
+                                        >Projetos</a
+                                    >
+                                </li>
+                                <li>
+                                    <a
+                                        class="footer-link"
+                                        href="#contact"
+                                        data-i18n="nav.contact"
+                                        >Contato</a
+                                    >
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <!-- ── Coluna 3: Contato ────────────────────────────────── -->
+                    <div class="footer-col footer-col--contact">
+                        <h4 class="footer-col-title" data-i18n="footer.contact">
+                            Contato
+                        </h4>
+                        <ul class="footer-links">
+                            <li>
+                                <a
+                                    class="footer-link"
+                                    href="mailto:contato.guilhermescruz@gmail.com"
+                                    >contato.guilhermescruz@gmail.com</a
+                                >
+                            </li>
+                            <li>
+                                <span
+                                    class="footer-text"
+                                    data-i18n="footer.location"
+                                    >São Paulo, Brasil</span
+                                >
+                            </li>
+                            <li>
+                                <a
+                                    class="footer-link"
+                                    href="https://github.com/guilherme-cruz"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    data-i18n="footer.repos"
+                                    >Repositórios GitHub</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- /footer-content -->
+                <!-- ── Rodapé inferior: Copyright ────────────────────────── -->
+                <div class="footer-bottom">
+                    <p class="footer-copyright">
+                        <span data-i18n="footer.copyright">&copy;</span>
+                        <span id="current-year"></span>
+                        <span data-i18n="footer.author"
+                            >Guilherme Cruz. Todos os direitos reservados.</span
+                        >
+                    </p>
+                </div>
+            </div>
+            <!-- /footer-container -->
+        </footer>
+        <!-- Script ano atual -->
+        <script>
+            document.getElementById("current-year").textContent =
+                new Date().getFullYear();
+        </script>
+        <!-- Scripts externos -->
+        <script
+            data-cfasync="false"
+            src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+        ></script>
+        <script type="module" src="./src/main.js"></script>
+        <!-- Script da Timeline -->
+        <script src="./src/utils/timeline-component.js"></script>
+        <div
+            id="aria-live-region"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            class="sr-only"
+        ></div>
+    </body>
+</html>

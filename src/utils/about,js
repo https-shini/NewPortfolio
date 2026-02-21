@@ -1,0 +1,315 @@
+/**
+ * ============================================================================
+ * ABOUT SECTION - JAVASCRIPT (OPCIONAL)
+ * ============================================================================
+ * Funcionalidades para melhorar a experiência em 1920×1080
+ * - Lazy loading de imagem otimizado
+ * - Scroll reveal suave (opcional)
+ * - Animações de entrada (opcional)
+ * ============================================================================
+ */
+
+/**
+ * CONFIGURAÇÃO
+ */
+const CONFIG = {
+    enableScrollReveal: false, // Mude para true se quiser animações ao scroll
+    lazyLoadRootMargin: "100px", // Começa a carregar antes de entrar no viewport
+    observerThreshold: 0.1,
+};
+
+/**
+ * LAZY LOADING DA IMAGEM DE PERFIL
+ * ----------------------------------------------------------------------------
+ * Carrega a imagem apenas quando próxima ao viewport
+ */
+function initProfileImageLazyLoad() {
+    const image = document.querySelector(".about-profile__image");
+
+    if (!image || !image.dataset.src) {
+        return;
+    }
+
+    // Verifica suporte ao IntersectionObserver
+    if (!("IntersectionObserver" in window)) {
+        loadImage(image);
+        return;
+    }
+
+    // Cria observer
+    const observer = new IntersectionObserver(
+        (entries, observer) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    loadImage(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        {
+            rootMargin: CONFIG.lazyLoadRootMargin,
+            threshold: CONFIG.observerThreshold,
+        },
+    );
+
+    observer.observe(image);
+}
+
+/**
+ * CARREGA A IMAGEM
+ * ----------------------------------------------------------------------------
+ */
+function loadImage(img) {
+    const src = img.dataset.src;
+
+    if (!src) return;
+
+    // Pré-carrega a imagem
+    const tempImg = new Image();
+
+    tempImg.onload = () => {
+        // Remove placeholder e define imagem real
+        img.src = src;
+        img.removeAttribute("data-src");
+        img.classList.add("loaded");
+
+        // Remove animação de loading
+        img.style.animation = "none";
+    };
+
+    tempImg.onerror = () => {
+        console.error("Erro ao carregar imagem:", src);
+        img.alt = "Erro ao carregar imagem. Por favor, recarregue a página.";
+    };
+
+    tempImg.src = src;
+}
+
+/**
+ * SCROLL REVEAL (OPCIONAL)
+ * ----------------------------------------------------------------------------
+ * Anima elementos quando entram no viewport
+ * Desabilitado por padrão - ative em CONFIG.enableScrollReveal
+ */
+function initScrollReveal() {
+    if (!CONFIG.enableScrollReveal) {
+        return;
+    }
+
+    // Verifica preferência de movimento reduzido
+    const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (prefersReducedMotion) {
+        return;
+    }
+
+    const elementsToReveal = document.querySelectorAll(`
+        .about-card,
+        .specialty-card,
+        .about-profile,
+        .about-stack
+    `);
+
+    if (elementsToReveal.length === 0) {
+        return;
+    }
+
+    // Verifica suporte ao IntersectionObserver
+    if (!("IntersectionObserver" in window)) {
+        elementsToReveal.forEach((el) => el.classList.add("is-revealed"));
+        return;
+    }
+
+    // Adiciona classe inicial
+    elementsToReveal.forEach((el) => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(30px)";
+    });
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    // Anima o elemento
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+                    entry.target.style.transition =
+                        "opacity 0.6s ease, transform 0.6s ease";
+
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        {
+            threshold: 0.1,
+            rootMargin: "0px 0px -80px 0px",
+        },
+    );
+
+    elementsToReveal.forEach((el) => observer.observe(el));
+}
+
+/**
+ * SMOOTH SCROLL PARA LINKS INTERNOS
+ * ----------------------------------------------------------------------------
+ * Melhora a navegação interna
+ */
+function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+            const href = this.getAttribute("href");
+
+            // Ignora links vazios ou apenas "#"
+            if (href === "#" || href === "") return;
+
+            const target = document.querySelector(href);
+
+            if (target) {
+                e.preventDefault();
+
+                // Offset para compensar header fixo (ajuste conforme necessário)
+                const headerOffset = 100;
+                const elementPosition = target.getBoundingClientRect().top;
+                const offsetPosition =
+                    elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth",
+                });
+
+                // Atualiza focus para acessibilidade
+                target.focus({ preventScroll: true });
+            }
+        });
+    });
+}
+
+/**
+ * OTIMIZAÇÃO DE PERFORMANCE
+ * ----------------------------------------------------------------------------
+ * Pausa animações quando página não está visível
+ */
+function initPerformanceOptimizations() {
+    document.addEventListener("visibilitychange", () => {
+        const animatedElements = document.querySelectorAll(
+            ".about-header__link svg",
+        );
+
+        animatedElements.forEach((el) => {
+            if (document.hidden) {
+                el.style.animationPlayState = "paused";
+            } else {
+                el.style.animationPlayState = "running";
+            }
+        });
+    });
+}
+
+/**
+ * ANALYTICS (OPCIONAL)
+ * ----------------------------------------------------------------------------
+ * Rastreia interações do usuário
+ * Descomente se usar Google Analytics ou similar
+ */
+function trackInteractions() {
+    // Exemplo: rastrear cliques em tecnologias
+    document.querySelectorAll(".tech-item").forEach((item) => {
+        item.addEventListener("click", () => {
+            const techName = item.querySelector("span")?.textContent;
+
+            // Exemplo com Google Analytics
+            // if (typeof gtag !== 'undefined') {
+            //     gtag('event', 'tech_click', {
+            //         'tech_name': techName
+            //     });
+            // }
+
+            console.log("Tech clicked:", techName);
+        });
+    });
+
+    // Exemplo: rastrear tempo na seção
+    const aboutSection = document.querySelector(".about-section");
+    let timeOnSection = 0;
+    let intervalId = null;
+
+    if (aboutSection) {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        // Começa a contar
+                        intervalId = setInterval(() => {
+                            timeOnSection++;
+                        }, 1000);
+                    } else {
+                        // Para de contar
+                        if (intervalId) {
+                            clearInterval(intervalId);
+
+                            // Envia para analytics (exemplo)
+                            // if (typeof gtag !== 'undefined' && timeOnSection > 3) {
+                            //     gtag('event', 'time_on_about', {
+                            //         'seconds': timeOnSection
+                            //     });
+                            // }
+
+                            console.log(
+                                "Time on About section:",
+                                timeOnSection,
+                                "seconds",
+                            );
+                            timeOnSection = 0;
+                        }
+                    }
+                });
+            },
+            { threshold: 0.5 },
+        );
+
+        observer.observe(aboutSection);
+    }
+}
+
+/**
+ * INICIALIZAÇÃO PRINCIPAL
+ * ----------------------------------------------------------------------------
+ */
+function initAboutSection() {
+    console.log("🎨 About Section: Initializing...");
+
+    // Lazy loading da imagem (sempre ativo)
+    initProfileImageLazyLoad();
+
+    // Scroll reveal (opcional - veja CONFIG)
+    initScrollReveal();
+
+    // Smooth scroll
+    initSmoothScroll();
+
+    // Otimizações de performance
+    initPerformanceOptimizations();
+
+    // Analytics (descomente se quiser)
+    // trackInteractions();
+
+    console.log("✅ About Section: Initialized");
+}
+
+// Inicializa quando DOM estiver pronto
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAboutSection);
+} else {
+    initAboutSection();
+}
+
+// Exporta para uso em outros módulos (ES6)
+export {
+    initProfileImageLazyLoad,
+    initScrollReveal,
+    initSmoothScroll,
+    initAboutSection,
+};

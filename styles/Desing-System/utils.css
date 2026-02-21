@@ -1,0 +1,1274 @@
+/* ==========================================
+   UTILS.CSS - UTILITY CLASSES
+   
+   Sistema de Design Metal Edition v1.0
+   Classes auxiliares e utilitárias
+   ========================================== */
+
+/* ==========================================
+   BREAKPOINTS REFERENCE
+   
+   xs: 475px
+   sm: 640px
+   md: 768px
+   lg: 1024px
+   xl: 1280px
+   2xl: 1536px
+   ========================================== */
+
+/* ==========================================
+   1. CONTAINER RESPONSIVE
+   ========================================== */
+
+.container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+}
+
+/* xs */
+@media (min-width: 475px) {
+    .container {
+        max-width: 475px;
+    }
+}
+
+/* sm */
+@media (min-width: 640px) {
+    .container {
+        max-width: 640px;
+    }
+}
+
+/* md */
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px;
+    }
+}
+
+/* lg */
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+
+/* xl */
+@media (min-width: 1280px) {
+    .container {
+        max-width: 1280px;
+    }
+}
+
+/* 2xl */
+@media (min-width: 1536px) {
+    .container {
+        max-width: 1536px;
+    }
+}
+
+/* ==========================================
+   2. BUTTONS - METAL STYLE
+   ========================================== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-3) var(--space-6);
+    border: 0;
+    transition: all var(--transition-fast);
+    border-radius: var(--radius-md);
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-base);
+    color: #fff;
+    background: var(--clr-primary);
+    box-shadow: 0 10px 20px rgba(220, 38, 38, 0.5),
+        0 6px 6px rgba(220, 38, 38, 0.5), 0 0 25px -10px var(--clr-primary);
+    cursor: pointer;
+    user-select: none;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(220, 38, 38, 0.25),
+        0 10px 10px rgba(220, 38, 38, 0.22), 0 0 70px -10px var(--clr-primary);
+}
+
+.btn:active {
+    transform: translateY(-1px);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Button Variants */
+.btn--secondary {
+    background: var(--clr-secondary);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.5),
+        0 6px 6px rgba(139, 92, 246, 0.5), 0 0 25px -10px var(--clr-secondary);
+}
+
+.btn--secondary:hover {
+    box-shadow: 0 14px 28px rgba(139, 92, 246, 0.25),
+        0 10px 10px rgba(139, 92, 246, 0.22),
+        0 0 70px -10px var(--clr-secondary);
+}
+
+.btn--success {
+    background: var(--clr-success);
+    box-shadow: 0 10px 20px rgba(34, 197, 94, 0.5),
+        0 6px 6px rgba(34, 197, 94, 0.5), 0 0 25px -10px var(--clr-success);
+}
+
+.btn--success:hover {
+    box-shadow: 0 14px 28px rgba(34, 197, 94, 0.25),
+        0 10px 10px rgba(34, 197, 94, 0.22), 0 0 70px -10px var(--clr-success);
+}
+
+.btn--outline {
+    background: transparent;
+    color: var(--clr-primary);
+    border: 2px solid var(--clr-primary);
+    box-shadow: none;
+}
+
+.btn--outline:hover {
+    background: var(--clr-primary);
+    color: white;
+    box-shadow: var(--glow-primary);
+}
+
+.btn--ghost {
+    background: transparent;
+    color: var(--clr-text);
+    box-shadow: none;
+}
+
+.btn--ghost:hover {
+    background: var(--clr-bg-surface);
+    transform: translateY(0);
+}
+
+/* Button Sizes */
+.btn--sm {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+}
+
+.btn--lg {
+    padding: var(--space-4) var(--space-8);
+    font-size: var(--text-lg);
+}
+
+.btn--xl {
+    padding: var(--space-5) var(--space-10);
+    font-size: var(--text-xl);
+}
+
+/* ==========================================
+   3. SECTION SPACING
+   ========================================== */
+
+.section {
+    margin-top: var(--space-10);
+    margin-bottom: var(--space-10);
+}
+
+@media (min-width: 1024px) {
+    .section {
+        margin-top: var(--space-20);
+        margin-bottom: var(--space-20);
+    }
+}
+
+.section--sm {
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.section--lg {
+    margin-top: var(--space-16);
+    margin-bottom: var(--space-16);
+}
+
+/* ==========================================
+   4. SPACING UTILITIES
+   ========================================== */
+
+/* Margin All Sides */
+.m-0 {
+    margin: var(--space-0);
+}
+.m-1 {
+    margin: var(--space-1);
+}
+.m-2 {
+    margin: var(--space-2);
+}
+.m-3 {
+    margin: var(--space-3);
+}
+.m-4 {
+    margin: var(--space-4);
+}
+.m-5 {
+    margin: var(--space-5);
+}
+.m-6 {
+    margin: var(--space-6);
+}
+.m-8 {
+    margin: var(--space-8);
+}
+.m-10 {
+    margin: var(--space-10);
+}
+.m-12 {
+    margin: var(--space-12);
+}
+.m-auto {
+    margin: auto;
+}
+
+/* Margin Top */
+.mt-0 {
+    margin-top: var(--space-0);
+}
+.mt-1 {
+    margin-top: var(--space-1);
+}
+.mt-2 {
+    margin-top: var(--space-2);
+}
+.mt-3 {
+    margin-top: var(--space-3);
+}
+.mt-4 {
+    margin-top: var(--space-4);
+}
+.mt-5 {
+    margin-top: var(--space-5);
+}
+.mt-6 {
+    margin-top: var(--space-6);
+}
+.mt-8 {
+    margin-top: var(--space-8);
+}
+.mt-10 {
+    margin-top: var(--space-10);
+}
+.mt-12 {
+    margin-top: var(--space-12);
+}
+.mt-16 {
+    margin-top: var(--space-16);
+}
+.mt-20 {
+    margin-top: var(--space-20);
+}
+
+/* Margin Bottom */
+.mb-0 {
+    margin-bottom: var(--space-0);
+}
+.mb-1 {
+    margin-bottom: var(--space-1);
+}
+.mb-2 {
+    margin-bottom: var(--space-2);
+}
+.mb-3 {
+    margin-bottom: var(--space-3);
+}
+.mb-4 {
+    margin-bottom: var(--space-4);
+}
+.mb-5 {
+    margin-bottom: var(--space-5);
+}
+.mb-6 {
+    margin-bottom: var(--space-6);
+}
+.mb-8 {
+    margin-bottom: var(--space-8);
+}
+.mb-10 {
+    margin-bottom: var(--space-10);
+}
+.mb-12 {
+    margin-bottom: var(--space-12);
+}
+.mb-16 {
+    margin-bottom: var(--space-16);
+}
+.mb-20 {
+    margin-bottom: var(--space-20);
+}
+
+/* Margin Left */
+.ml-0 {
+    margin-left: var(--space-0);
+}
+.ml-1 {
+    margin-left: var(--space-1);
+}
+.ml-2 {
+    margin-left: var(--space-2);
+}
+.ml-3 {
+    margin-left: var(--space-3);
+}
+.ml-4 {
+    margin-left: var(--space-4);
+}
+.ml-6 {
+    margin-left: var(--space-6);
+}
+.ml-8 {
+    margin-left: var(--space-8);
+}
+.ml-auto {
+    margin-left: auto;
+}
+
+/* Margin Right */
+.mr-0 {
+    margin-right: var(--space-0);
+}
+.mr-1 {
+    margin-right: var(--space-1);
+}
+.mr-2 {
+    margin-right: var(--space-2);
+}
+.mr-3 {
+    margin-right: var(--space-3);
+}
+.mr-4 {
+    margin-right: var(--space-4);
+}
+.mr-6 {
+    margin-right: var(--space-6);
+}
+.mr-8 {
+    margin-right: var(--space-8);
+}
+.mr-auto {
+    margin-right: auto;
+}
+
+/* Margin X (Left & Right) */
+.mx-0 {
+    margin-left: var(--space-0);
+    margin-right: var(--space-0);
+}
+.mx-1 {
+    margin-left: var(--space-1);
+    margin-right: var(--space-1);
+}
+.mx-2 {
+    margin-left: var(--space-2);
+    margin-right: var(--space-2);
+}
+.mx-3 {
+    margin-left: var(--space-3);
+    margin-right: var(--space-3);
+}
+.mx-4 {
+    margin-left: var(--space-4);
+    margin-right: var(--space-4);
+}
+.mx-6 {
+    margin-left: var(--space-6);
+    margin-right: var(--space-6);
+}
+.mx-8 {
+    margin-left: var(--space-8);
+    margin-right: var(--space-8);
+}
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Margin Y (Top & Bottom) */
+.my-0 {
+    margin-top: var(--space-0);
+    margin-bottom: var(--space-0);
+}
+.my-1 {
+    margin-top: var(--space-1);
+    margin-bottom: var(--space-1);
+}
+.my-2 {
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+.my-3 {
+    margin-top: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+.my-4 {
+    margin-top: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+.my-6 {
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-6);
+}
+.my-8 {
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-8);
+}
+.my-10 {
+    margin-top: var(--space-10);
+    margin-bottom: var(--space-10);
+}
+.my-12 {
+    margin-top: var(--space-12);
+    margin-bottom: var(--space-12);
+}
+
+/* Padding All Sides */
+.p-0 {
+    padding: var(--space-0);
+}
+.p-1 {
+    padding: var(--space-1);
+}
+.p-2 {
+    padding: var(--space-2);
+}
+.p-3 {
+    padding: var(--space-3);
+}
+.p-4 {
+    padding: var(--space-4);
+}
+.p-5 {
+    padding: var(--space-5);
+}
+.p-6 {
+    padding: var(--space-6);
+}
+.p-8 {
+    padding: var(--space-8);
+}
+.p-10 {
+    padding: var(--space-10);
+}
+.p-12 {
+    padding: var(--space-12);
+}
+
+/* Padding Top */
+.pt-0 {
+    padding-top: var(--space-0);
+}
+.pt-1 {
+    padding-top: var(--space-1);
+}
+.pt-2 {
+    padding-top: var(--space-2);
+}
+.pt-3 {
+    padding-top: var(--space-3);
+}
+.pt-4 {
+    padding-top: var(--space-4);
+}
+.pt-6 {
+    padding-top: var(--space-6);
+}
+.pt-8 {
+    padding-top: var(--space-8);
+}
+.pt-10 {
+    padding-top: var(--space-10);
+}
+
+/* Padding Bottom */
+.pb-0 {
+    padding-bottom: var(--space-0);
+}
+.pb-1 {
+    padding-bottom: var(--space-1);
+}
+.pb-2 {
+    padding-bottom: var(--space-2);
+}
+.pb-3 {
+    padding-bottom: var(--space-3);
+}
+.pb-4 {
+    padding-bottom: var(--space-4);
+}
+.pb-6 {
+    padding-bottom: var(--space-6);
+}
+.pb-8 {
+    padding-bottom: var(--space-8);
+}
+.pb-10 {
+    padding-bottom: var(--space-10);
+}
+
+/* Padding X */
+.px-0 {
+    padding-left: var(--space-0);
+    padding-right: var(--space-0);
+}
+.px-1 {
+    padding-left: var(--space-1);
+    padding-right: var(--space-1);
+}
+.px-2 {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+}
+.px-3 {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+}
+.px-4 {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+}
+.px-6 {
+    padding-left: var(--space-6);
+    padding-right: var(--space-6);
+}
+.px-8 {
+    padding-left: var(--space-8);
+    padding-right: var(--space-8);
+}
+
+/* Padding Y */
+.py-0 {
+    padding-top: var(--space-0);
+    padding-bottom: var(--space-0);
+}
+.py-1 {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+}
+.py-2 {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+}
+.py-3 {
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-3);
+}
+.py-4 {
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
+}
+.py-6 {
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+}
+.py-8 {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+}
+
+/* ==========================================
+   5. DISPLAY UTILITIES
+   ========================================== */
+
+.hidden {
+    display: none;
+}
+.block {
+    display: block;
+}
+.inline {
+    display: inline;
+}
+.inline-block {
+    display: inline-block;
+}
+.flex {
+    display: flex;
+}
+.inline-flex {
+    display: inline-flex;
+}
+.grid {
+    display: grid;
+}
+.inline-grid {
+    display: inline-grid;
+}
+
+/* ==========================================
+   6. FLEXBOX UTILITIES
+   ========================================== */
+
+.flex-row {
+    flex-direction: row;
+}
+.flex-row-reverse {
+    flex-direction: row-reverse;
+}
+.flex-col {
+    flex-direction: column;
+}
+.flex-col-reverse {
+    flex-direction: column-reverse;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+.flex-nowrap {
+    flex-wrap: nowrap;
+}
+.flex-wrap-reverse {
+    flex-wrap: wrap-reverse;
+}
+
+.items-start {
+    align-items: flex-start;
+}
+.items-center {
+    align-items: center;
+}
+.items-end {
+    align-items: flex-end;
+}
+.items-baseline {
+    align-items: baseline;
+}
+.items-stretch {
+    align-items: stretch;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+.justify-center {
+    justify-content: center;
+}
+.justify-end {
+    justify-content: flex-end;
+}
+.justify-between {
+    justify-content: space-between;
+}
+.justify-around {
+    justify-content: space-around;
+}
+.justify-evenly {
+    justify-content: space-evenly;
+}
+
+.flex-1 {
+    flex: 1 1 0%;
+}
+.flex-auto {
+    flex: 1 1 auto;
+}
+.flex-initial {
+    flex: 0 1 auto;
+}
+.flex-none {
+    flex: none;
+}
+
+.gap-0 {
+    gap: var(--space-0);
+}
+.gap-1 {
+    gap: var(--space-1);
+}
+.gap-2 {
+    gap: var(--space-2);
+}
+.gap-3 {
+    gap: var(--space-3);
+}
+.gap-4 {
+    gap: var(--space-4);
+}
+.gap-5 {
+    gap: var(--space-5);
+}
+.gap-6 {
+    gap: var(--space-6);
+}
+.gap-8 {
+    gap: var(--space-8);
+}
+.gap-10 {
+    gap: var(--space-10);
+}
+.gap-12 {
+    gap: var(--space-12);
+}
+
+/* ==========================================
+   7. GRID UTILITIES
+   ========================================== */
+
+.grid-cols-1 {
+    grid-template-columns: var(--grid-cols-1);
+}
+.grid-cols-2 {
+    grid-template-columns: var(--grid-cols-2);
+}
+.grid-cols-3 {
+    grid-template-columns: var(--grid-cols-3);
+}
+.grid-cols-4 {
+    grid-template-columns: var(--grid-cols-4);
+}
+.grid-cols-6 {
+    grid-template-columns: var(--grid-cols-6);
+}
+.grid-cols-12 {
+    grid-template-columns: var(--grid-cols-12);
+}
+
+/* ==========================================
+   8. TEXT UTILITIES
+   ========================================== */
+
+.text-left {
+    text-align: left;
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+.text-justify {
+    text-align: justify;
+}
+
+.text-2xs {
+    font-size: var(--text-2xs);
+}
+.text-xs {
+    font-size: var(--text-xs);
+}
+.text-sm {
+    font-size: var(--text-sm);
+}
+.text-base {
+    font-size: var(--text-base);
+}
+.text-lg {
+    font-size: var(--text-lg);
+}
+.text-xl {
+    font-size: var(--text-xl);
+}
+.text-2xl {
+    font-size: var(--text-2xl);
+}
+.text-3xl {
+    font-size: var(--text-3xl);
+}
+.text-4xl {
+    font-size: var(--text-4xl);
+}
+.text-5xl {
+    font-size: var(--text-5xl);
+}
+.text-6xl {
+    font-size: var(--text-6xl);
+}
+
+.font-thin {
+    font-weight: var(--weight-thin);
+}
+.font-light {
+    font-weight: var(--weight-light);
+}
+.font-normal {
+    font-weight: var(--weight-normal);
+}
+.font-medium {
+    font-weight: var(--weight-medium);
+}
+.font-semibold {
+    font-weight: var(--weight-semibold);
+}
+.font-bold {
+    font-weight: var(--weight-bold);
+}
+.font-extrabold {
+    font-weight: var(--weight-extrabold);
+}
+.font-black {
+    font-weight: var(--weight-black);
+}
+
+.leading-none {
+    line-height: var(--leading-none);
+}
+.leading-tight {
+    line-height: var(--leading-tight);
+}
+.leading-snug {
+    line-height: var(--leading-snug);
+}
+.leading-normal {
+    line-height: var(--leading-normal);
+}
+.leading-relaxed {
+    line-height: var(--leading-relaxed);
+}
+.leading-loose {
+    line-height: var(--leading-loose);
+}
+
+.tracking-tighter {
+    letter-spacing: var(--tracking-tighter);
+}
+.tracking-tight {
+    letter-spacing: var(--tracking-tight);
+}
+.tracking-normal {
+    letter-spacing: var(--tracking-normal);
+}
+.tracking-wide {
+    letter-spacing: var(--tracking-wide);
+}
+.tracking-wider {
+    letter-spacing: var(--tracking-wider);
+}
+.tracking-widest {
+    letter-spacing: var(--tracking-widest);
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+.lowercase {
+    text-transform: lowercase;
+}
+.capitalize {
+    text-transform: capitalize;
+}
+.normal-case {
+    text-transform: none;
+}
+
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ==========================================
+   9. COLOR UTILITIES
+   ========================================== */
+
+.text-primary {
+    color: var(--clr-primary);
+}
+.text-secondary {
+    color: var(--clr-secondary);
+}
+.text-tertiary {
+    color: var(--clr-tertiary);
+}
+.text-muted {
+    color: var(--clr-text-muted);
+}
+.text-dim {
+    color: var(--clr-text-dim);
+}
+.text-success {
+    color: var(--clr-success);
+}
+.text-warning {
+    color: var(--clr-warning);
+}
+.text-error {
+    color: var(--clr-error);
+}
+.text-info {
+    color: var(--clr-info);
+}
+
+.bg-primary {
+    background-color: var(--clr-primary);
+}
+.bg-secondary {
+    background-color: var(--clr-secondary);
+}
+.bg-surface {
+    background-color: var(--clr-bg-surface);
+}
+.bg-elevated {
+    background-color: var(--clr-bg-elevated);
+}
+.bg-success {
+    background-color: var(--clr-success);
+}
+.bg-warning {
+    background-color: var(--clr-warning);
+}
+.bg-error {
+    background-color: var(--clr-error);
+}
+.bg-info {
+    background-color: var(--clr-info);
+}
+
+/* ==========================================
+   10. BORDER UTILITIES
+   ========================================== */
+
+.border {
+    border: 1px solid var(--clr-border);
+}
+.border-2 {
+    border: 2px solid var(--clr-border);
+}
+.border-4 {
+    border: 4px solid var(--clr-border);
+}
+.border-0 {
+    border: 0;
+}
+
+.border-t {
+    border-top: 1px solid var(--clr-border);
+}
+.border-r {
+    border-right: 1px solid var(--clr-border);
+}
+.border-b {
+    border-bottom: 1px solid var(--clr-border);
+}
+.border-l {
+    border-left: 1px solid var(--clr-border);
+}
+
+.border-primary {
+    border-color: var(--clr-primary);
+}
+.border-secondary {
+    border-color: var(--clr-secondary);
+}
+
+.rounded-none {
+    border-radius: var(--radius-none);
+}
+.rounded-sm {
+    border-radius: var(--radius-sm);
+}
+.rounded {
+    border-radius: var(--radius);
+}
+.rounded-md {
+    border-radius: var(--radius-md);
+}
+.rounded-lg {
+    border-radius: var(--radius-lg);
+}
+.rounded-xl {
+    border-radius: var(--radius-xl);
+}
+.rounded-2xl {
+    border-radius: var(--radius-2xl);
+}
+.rounded-full {
+    border-radius: var(--radius-full);
+}
+
+/* ==========================================
+   11. SHADOW UTILITIES
+   ========================================== */
+
+.shadow-none {
+    box-shadow: none;
+}
+.shadow-xs {
+    box-shadow: var(--shadow-xs);
+}
+.shadow-sm {
+    box-shadow: var(--shadow-sm);
+}
+.shadow {
+    box-shadow: var(--shadow);
+}
+.shadow-md {
+    box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+    box-shadow: var(--shadow-lg);
+}
+.shadow-xl {
+    box-shadow: var(--shadow-xl);
+}
+.shadow-2xl {
+    box-shadow: var(--shadow-2xl);
+}
+.shadow-inner {
+    box-shadow: var(--shadow-inner);
+}
+
+/* ==========================================
+   12. SPECIAL EFFECTS
+   ========================================== */
+
+.glow-primary {
+    box-shadow: var(--glow-primary);
+}
+
+.glow-primary-intense {
+    box-shadow: var(--glow-primary-intense);
+}
+
+.glow-secondary {
+    box-shadow: var(--glow-secondary);
+}
+
+.glow-secondary-intense {
+    box-shadow: var(--glow-secondary-intense);
+}
+
+.glow-accent {
+    box-shadow: var(--glow-accent);
+}
+
+.gradient-text {
+    background: var(--gradient-blood);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-bg-metal {
+    background: var(--gradient-metal);
+}
+
+.gradient-bg-blood {
+    background: var(--gradient-blood);
+}
+
+.gradient-bg-electric {
+    background: var(--gradient-electric);
+}
+
+/* ==========================================
+   13. POSITIONING
+   ========================================== */
+
+.relative {
+    position: relative;
+}
+.absolute {
+    position: absolute;
+}
+.fixed {
+    position: fixed;
+}
+.sticky {
+    position: sticky;
+}
+
+.inset-0 {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.top-0 {
+    top: 0;
+}
+.right-0 {
+    right: 0;
+}
+.bottom-0 {
+    bottom: 0;
+}
+.left-0 {
+    left: 0;
+}
+
+/* ==========================================
+   14. OVERFLOW
+   ========================================== */
+
+.overflow-auto {
+    overflow: auto;
+}
+.overflow-hidden {
+    overflow: hidden;
+}
+.overflow-visible {
+    overflow: visible;
+}
+.overflow-scroll {
+    overflow: scroll;
+}
+
+.overflow-x-auto {
+    overflow-x: auto;
+}
+.overflow-y-auto {
+    overflow-y: auto;
+}
+
+/* ==========================================
+   15. WIDTH & HEIGHT
+   ========================================== */
+
+.w-full {
+    width: 100%;
+}
+.w-auto {
+    width: auto;
+}
+.w-screen {
+    width: 100vw;
+}
+.w-fit {
+    width: fit-content;
+}
+
+.h-full {
+    height: 100%;
+}
+.h-auto {
+    height: auto;
+}
+.h-screen {
+    height: 100vh;
+}
+.h-fit {
+    height: fit-content;
+}
+
+.min-h-screen {
+    min-height: 100vh;
+}
+.max-w-full {
+    max-width: 100%;
+}
+
+/* ==========================================
+   16. OPACITY
+   ========================================== */
+
+.opacity-0 {
+    opacity: var(--opacity-0);
+}
+.opacity-10 {
+    opacity: var(--opacity-10);
+}
+.opacity-20 {
+    opacity: var(--opacity-20);
+}
+.opacity-30 {
+    opacity: var(--opacity-30);
+}
+.opacity-40 {
+    opacity: var(--opacity-40);
+}
+.opacity-50 {
+    opacity: var(--opacity-50);
+}
+.opacity-60 {
+    opacity: var(--opacity-60);
+}
+.opacity-70 {
+    opacity: var(--opacity-70);
+}
+.opacity-80 {
+    opacity: var(--opacity-80);
+}
+.opacity-90 {
+    opacity: var(--opacity-90);
+}
+.opacity-100 {
+    opacity: var(--opacity-100);
+}
+
+/* ==========================================
+   17. CURSOR
+   ========================================== */
+
+.cursor-pointer {
+    cursor: pointer;
+}
+.cursor-default {
+    cursor: default;
+}
+.cursor-not-allowed {
+    cursor: not-allowed;
+}
+.cursor-move {
+    cursor: move;
+}
+
+/* ==========================================
+   18. USER SELECT
+   ========================================== */
+
+.select-none {
+    user-select: none;
+}
+.select-text {
+    user-select: text;
+}
+.select-all {
+    user-select: all;
+}
+.select-auto {
+    user-select: auto;
+}
+
+/* ==========================================
+   19. ANIMATIONS
+   ========================================== */
+
+.animate-fade-in {
+    animation: fadeIn var(--duration-500) var(--ease-out);
+}
+
+.animate-pulse {
+    animation: pulse var(--duration-1000) var(--ease-in-out) infinite;
+}
+
+.animate-glow {
+    animation: glow var(--duration-1000) var(--ease-in-out) infinite;
+}
+
+.wind-animation {
+    animation: wind 1s ease-in-out infinite alternate;
+    transition: transform 0.2s ease-in-out;
+}
+
+/* ==========================================
+   20. TRANSITIONS
+   ========================================== */
+
+.transition-none {
+    transition: none;
+}
+.transition-all {
+    transition: all var(--transition-base);
+}
+.transition-fast {
+    transition: all var(--transition-fast);
+}
+.transition-slow {
+    transition: all var(--transition-slow);
+}

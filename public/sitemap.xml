@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Sitemap para o Portfólio Vite-Portfolio
+    Este arquivo lista as URLs do site para ajudar os motores de busca a indexar o conteúdo.
+    Para Single Page Applications (SPAs) com navegação por âncoras, é comum listar a URL base
+    e, opcionalmente, as URLs com as âncoras para as seções principais, se o conteúdo de cada seção
+    for considerado distinto e relevante para indexação.
+
+    Especificação do Sitemap: https://www.sitemaps.org/protocol.html
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- URL da página inicial -->
+    <url>
+        <loc>https://bl4ck404.dev.br/</loc>
+        <lastmod>2026-02-15</lastmod> <!-- Data da última modificação (formato YYYY-MM-DD) -->
+        <changefreq>monthly</changefreq> <!-- Frequência de mudança esperada para esta URL -->
+        <priority>1.0</priority> <!-- Prioridade relativa desta URL em relação a outras no site (0.0 a 1.0) -->
+    </url>
+
+    <!-- URLs para as seções principais (âncoras) -->
+    <!-- Embora SPAs geralmente tenham uma única URL, listar as âncoras pode ajudar
+         motores de busca a entender a estrutura de conteúdo e indexar seções específicas.
+         A data de última modificação e a frequência de mudança podem ser as mesmas da página principal
+         se o conteúdo for atualizado em conjunto. -->
+    <url>
+        <loc>https://bl4ck404.dev.br/#hero</loc>
+        <lastmod>2026-02-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://bl4ck404.dev.br/#about</loc>
+        <lastmod>2026-02-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://bl4ck404.dev.br/#timeline</loc>
+        <lastmod>2026-02-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://bl4ck404.dev.br/#featured</loc>
+        <lastmod>2026-02-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://bl4ck404.dev.br/#work</loc>
+        <lastmod>2026-02-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://bl4ck404.dev.br/#contact</loc>
+        <lastmod>2026-02-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+</urlset>

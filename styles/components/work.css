@@ -1,0 +1,329 @@
+/* ============================================================================
+   WORK.CSS
+   ============================================================================ */
+
+.work-section {
+    background: var(--color-bg-primary);
+}
+
+.work-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Header */
+.work-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.work-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--clr-light);
+    margin-bottom: 1rem;
+}
+
+.light-mode .work-title {
+    color: var(--clr-dark);
+}
+
+.work-subtitle {
+    font-size: 1.125rem;
+    color: var(--clr-slate400);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.light-mode .work-subtitle {
+    color: var(--clr-slate600);
+}
+
+/* Grid */
+.work-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: 1fr;
+}
+
+/* Card */
+.work-card {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.light-mode .work-card {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+.work-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border: 3px solid rgba(225, 29, 72);
+    transform: translateY(-0.5rem);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.light-mode .work-card:hover {
+    background: rgba(0, 0, 0, 0.04);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Image */
+.work-card__image {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.light-mode .work-card__image {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.work-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.work-card:hover .work-card__image img {
+    transform: scale(1.1);
+}
+
+.work-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.work-card:hover .work-card__overlay {
+    opacity: 1;
+}
+
+.work-card__overlay-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background: var(--clr-rose);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.work-card__overlay-link:hover {
+    background: #fff;
+    color: var(--clr-rose);
+    transform: scale(1.1);
+}
+
+/* Content */
+.work-card__content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.work-card__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--clr-light);
+}
+
+.light-mode .work-card__title {
+    color: var(--clr-dark);
+}
+
+.work-card__description {
+    font-size: 0.9375rem;
+    color: var(--clr-slate600);
+    line-height: 1.6;
+}
+
+.light-mode .work-card__description {
+    color: var(--clr-slate600);
+}
+
+.work-card__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tech-badge {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--clr-slate400);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.light-mode .tech-badge {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: var(--clr-slate600);
+}
+
+/* ── BOTÕES DE AÇÃO (adicionado) ────────────────────────────────────────── */
+
+.work-card__actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.work-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+/* Botão primário — Ver Projeto */
+.work-btn--primary {
+    background: var(--clr-rose);
+    color: #fff;
+    border: 1px solid var(--clr-rose);
+}
+
+.work-btn--primary:hover {
+    background: #c91841;
+    border-color: #c91841;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(225, 29, 72, 0.3);
+}
+
+.work-btn--primary:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(225, 29, 72, 0.2);
+}
+
+.work-btn--primary:focus-visible {
+    outline: 2px solid var(--clr-rose);
+    outline-offset: 3px;
+}
+
+/* Botão secundário — Repositório */
+.work-btn--secondary {
+    background: transparent;
+    color: var(--clr-slate400);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.light-mode .work-btn--secondary {
+    color: var(--clr-slate600);
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+.work-btn--secondary:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--clr-rose);
+    color: var(--clr-rose);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.light-mode .work-btn--secondary:hover {
+    background: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.work-btn--secondary:active {
+    transform: translateY(0);
+}
+
+.work-btn--secondary:focus-visible {
+    outline: 2px solid var(--clr-rose);
+    outline-offset: 3px;
+}
+
+/* Ícones dos botões */
+.work-btn i {
+    font-size: 1.125rem;
+    flex-shrink: 0;
+}
+
+/* ── Responsividade ────────────────────────────────────────────────────────── */
+
+/* sm: grid 2 colunas */
+@media (min-width: 640px) {
+    .work-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* md: botões lado a lado em cards maiores */
+@media (min-width: 768px) {
+    .work-card__actions {
+        gap: 1rem;
+    }
+
+    .work-btn {
+        font-size: 0.9375rem;
+        padding: 0.75rem 1.25rem;
+    }
+}
+
+/* lg: grid 3 colunas */
+@media (min-width: 1024px) {
+    .work-section {
+        padding: 8rem 0;
+    }
+
+    .work-title {
+        font-size: 3rem;
+    }
+
+    .work-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+    }
+}
+
+/* xl: botões mais confortáveis */
+@media (min-width: 1280px) {
+    .work-btn {
+        min-height: 3rem;
+    }
+}
+
+/* ── Mobile: empilha botões verticalmente em telas muito pequenas ────────── */
+@media (max-width: 360px) {
+    .work-card__actions {
+        flex-direction: column;
+    }
+
+    .work-btn {
+        width: 100%;
+    }
+}

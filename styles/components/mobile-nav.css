@@ -1,0 +1,89 @@
+/* ============================================================================
+   MOBILE-NAV.CSS
+   Escopo: exclusivamente .mobile-nav e .mobile-nav__*
+   Nenhuma classe de .header ou .hero aqui.
+   ============================================================================ */
+
+.mobile-nav {
+    position: fixed; /* CORRIGIDO: era absolute → escorregava com scroll */
+    inset: 0; /* top/left/right/bottom: 0 */
+    z-index: 999; /* abaixo do header (9999) */
+    background-color: var(--clr-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    /* Estado fechado — usa opacity+visibility para permitir transição CSS */
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease;
+}
+
+/* Classe aplicada pelo JS ao abrir */
+.mobile-nav--open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-nav__menu {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.mobile-nav__link {
+    font-size: var(--size-base);
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--clr-slate600);
+    letter-spacing: -0.05em;
+    transition: color 0.3s;
+}
+
+.mobile-nav__link:hover {
+    color: var(--clr-rose);
+}
+
+.mobile-nav__link:focus-visible {
+    outline: 2px solid var(--clr-rose);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+}
+
+.mobile-nav__link-line {
+    border: 2px solid var(--clr-slate800);
+    border-radius: 3px;
+    padding-right: 1.5em;
+}
+
+.mobile-nav__sun {
+    display: block;
+    width: var(--size-2xl);
+    height: var(--size-2xl);
+    color: var(--clr-slate600);
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: color var(--transition-fast);
+}
+
+.mobile-nav__sun:hover {
+    color: var(--clr-rose);
+}
+
+.mobile-nav__sun:focus-visible {
+    outline: 2px solid var(--clr-rose);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+}
+
+.mobile-nav__btn {
+    font-size: var(--size-sm);
+}

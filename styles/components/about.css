@@ -1,0 +1,700 @@
+/* ============================================================================
+   ABOUT SECTION - OTIMIZADA PARA 1920×1080
+   ============================================================================
+   Resolução nativa: Full HD Desktop (1920×1080)
+   Layout principal projetado para monitores grandes
+   Espaçamento proporcional e hierarquia visual clara
+   Design profissional pronto para recrutadores
+   ============================================================================ */
+
+/* ============================================================================
+   SECTION WRAPPER
+   ============================================================================ */
+
+.about-section {
+    position: relative;
+    padding: 80px 0 100px;
+    background-color: var(--clr-dark, #070a13);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+/* Container principal - largura otimizada para 1920px */
+.about-section .container {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+/* ============================================================================
+   HEADER
+   ============================================================================ */
+
+.about-header {
+    margin-bottom: 60px;
+}
+
+.about-header__wrapper {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    justify-content: flex-start;
+}
+
+.about-header__title {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--clr-light, #f1f5f9);
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.about-header__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--clr-rose, #e11d48);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.about-header__link svg {
+    animation: wind 1s ease-in-out infinite alternate;
+}
+
+.about-header__link:hover {
+    color: var(--clr-light, #f1f5f9);
+    transform: translateY(-3px);
+}
+
+.about-header__link:focus-visible {
+    outline: 2px solid var(--clr-rose, #e11d48);
+    outline-offset: 6px;
+    border-radius: 4px;
+}
+
+/* ============================================================================
+   LAYOUT PRINCIPAL - DUAS COLUNAS (60% / 40%)
+   ============================================================================ */
+
+.about-layout {
+    display: grid;
+    grid-template-columns: 1fr 480px;
+    gap: 60px;
+    align-items: start;
+}
+
+/* ============================================================================
+   COLUNA DE CONTEÚDO (ESQUERDA)
+   ============================================================================ */
+
+.about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+/* ============================================================================
+   CARDS DE CONTEÚDO
+   ============================================================================ */
+
+.about-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 32px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-card:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(225, 29, 72, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.about-card__header {
+    margin-bottom: 24px;
+}
+
+.about-card__title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--clr-light, #f1f5f9);
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+}
+
+.about-card__accent {
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(
+        90deg,
+        var(--clr-rose, #e11d48),
+        var(--clr-indigo, #5b53df)
+    );
+    border-radius: 2px;
+}
+
+.about-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ============================================================================
+   TEXTO
+   ============================================================================ */
+
+.about-text {
+    font-size: 18px;
+    line-height: 1.8;
+    color: var(--clr-slate600, #475569);
+    margin: 0;
+    text-align: justify;
+}
+
+.about-text strong {
+    color: var(--clr-indigo, #5b53df);
+    font-weight: 600;
+}
+
+.about-text--highlight {
+    font-size: 19px;
+    color: var(--clr-slate400, #94a3b8);
+}
+
+.about-text--highlight strong {
+    color: var(--clr-rose, #e11d48);
+}
+
+/* ============================================================================
+   CTA CARD (DESTAQUE)
+   ============================================================================ */
+
+.about-card--cta {
+    background: linear-gradient(
+        135deg,
+        rgba(225, 29, 72, 0.08),
+        rgba(91, 83, 223, 0.08)
+    );
+    border-color: rgba(225, 29, 72, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.about-card--cta::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        var(--clr-rose, #e11d48),
+        var(--clr-indigo, #5b53df)
+    );
+}
+
+.about-card--cta:hover {
+    background: linear-gradient(
+        135deg,
+        rgba(225, 29, 72, 0.12),
+        rgba(91, 83, 223, 0.12)
+    );
+    border-color: rgba(225, 29, 72, 0.4);
+}
+
+/* ============================================================================
+   SUBTÍTULOS
+   ============================================================================ */
+
+.about-subtitle {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--clr-light, #f1f5f9);
+    margin: 0 0 28px 0;
+    line-height: 1.3;
+}
+
+/* ============================================================================
+   ESPECIALIDADES - GRID 2×2
+   ============================================================================ */
+
+.about-specialties {
+    margin: 0;
+}
+
+.specialty-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.specialty-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 3px solid var(--clr-rose, #e11d48);
+    border-radius: 10px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.specialty-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-left-color: var(--clr-indigo, #5b53df);
+    transform: translateX(4px) translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.specialty-card__icon {
+    width: 48px;
+    height: 48px;
+    color: var(--clr-rose, #e11d48);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.specialty-card:hover .specialty-card__icon {
+    color: var(--clr-indigo, #5b53df);
+    transform: scale(1.1) rotate(-5deg);
+}
+
+.specialty-card__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--clr-light, #f1f5f9);
+    margin: 0;
+    line-height: 1.3;
+}
+
+.specialty-card__desc {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--clr-slate600, #475569);
+    margin: 0;
+}
+
+/* ============================================================================
+   SIDEBAR (COLUNA DIREITA)
+   ============================================================================ */
+
+.about-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    position: sticky;
+    top: 120px;
+}
+
+/* ============================================================================
+   PERFIL - IMAGEM
+   ============================================================================ */
+
+.about-profile {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.08);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-profile:hover {
+    transform: translateY(-8px);
+    box-shadow:
+        0 30px 70px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(225, 29, 72, 0.3);
+}
+
+.about-profile__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-profile:hover .about-profile__image {
+    transform: scale(1.05);
+}
+
+/* Efeito de loading */
+.about-profile__image[src*="placeholder"] {
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.05) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    background-size: 200% 100%;
+    animation: loading-shimmer 2s ease-in-out infinite;
+}
+
+/* ============================================================================
+   STACK TECNOLÓGICO
+   ============================================================================ */
+
+.about-stack {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 32px;
+}
+
+.about-stack .about-subtitle {
+    margin-bottom: 24px;
+    font-size: 22px;
+}
+
+/* Grid de Tecnologias - 4 colunas */
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.tech-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tech-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(225, 29, 72, 0.3);
+    transform: translateY(-4px);
+}
+
+.tech-item img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tech-item:hover img {
+    transform: scale(1.15) rotate(-5deg);
+    filter: drop-shadow(0 4px 12px rgba(225, 29, 72, 0.4));
+}
+
+.tech-item span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--clr-slate400, #94a3b8);
+    text-align: center;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tech-item:hover span {
+    color: var(--clr-light, #f1f5f9);
+}
+
+/* ============================================================================
+   ANIMAÇÕES
+   ============================================================================ */
+
+@keyframes wind {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(10deg);
+    }
+    100% {
+        transform: rotate(-10deg);
+    }
+}
+
+@keyframes loading-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* ============================================================================
+   RESPONSIVIDADE - LAPTOP (1366px - 1600px)
+   ============================================================================ */
+
+@media (max-width: 1600px) {
+    .about-section .container {
+        max-width: 1200px;
+        padding: 0 32px;
+    }
+
+    .about-layout {
+        grid-template-columns: 1fr 400px;
+        gap: 48px;
+    }
+
+    .about-header__title {
+        font-size: 42px;
+    }
+
+    .about-card {
+        padding: 28px;
+    }
+
+    .about-card__title {
+        font-size: 22px;
+    }
+
+    .about-text {
+        font-size: 17px;
+    }
+
+    .about-subtitle {
+        font-size: 24px;
+    }
+
+    .specialty-card {
+        padding: 24px;
+    }
+
+    .specialty-card__title {
+        font-size: 18px;
+    }
+
+    .specialty-card__desc {
+        font-size: 15px;
+    }
+
+    .tech-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .tech-item img {
+        width: 44px;
+        height: 44px;
+    }
+
+    .tech-item span {
+        font-size: 12px;
+    }
+}
+
+/* ============================================================================
+   RESPONSIVIDADE - TABLET (768px - 1365px)
+   ============================================================================ */
+
+@media (max-width: 1365px) {
+    .about-section {
+        padding: 60px 0 80px;
+    }
+
+    .about-section .container {
+        max-width: 100%;
+        padding: 0 24px;
+    }
+
+    .about-layout {
+        grid-template-columns: 1fr;
+        gap: 48px;
+    }
+
+    .about-sidebar {
+        position: static;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .about-header__title {
+        font-size: 36px;
+    }
+
+    .specialty-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .tech-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+/* ============================================================================
+   RESPONSIVIDADE - MOBILE (< 768px)
+   ============================================================================ */
+
+@media (max-width: 767px) {
+    .about-section {
+        padding: 40px 0 60px;
+    }
+
+    .about-section .container {
+        padding: 0 16px;
+    }
+
+    .about-header {
+        margin-bottom: 40px;
+    }
+
+    .about-header__title {
+        font-size: 28px;
+    }
+
+    .about-header__link {
+        width: 36px;
+        height: 36px;
+    }
+
+    .about-header__link svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .about-content {
+        gap: 32px;
+    }
+
+    .about-card {
+        padding: 24px;
+    }
+
+    .about-card__title {
+        font-size: 20px;
+    }
+
+    .about-text {
+        font-size: 16px;
+        line-height: 1.7;
+        text-align: left;
+    }
+
+    .about-subtitle {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .specialty-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .specialty-card {
+        padding: 20px;
+    }
+
+    .specialty-card__icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .specialty-card__title {
+        font-size: 17px;
+    }
+
+    .specialty-card__desc {
+        font-size: 14px;
+    }
+
+    .about-sidebar {
+        gap: 32px;
+    }
+
+    .tech-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+
+    .tech-item {
+        padding: 12px 8px;
+    }
+
+    .tech-item img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .tech-item span {
+        font-size: 11px;
+    }
+}
+
+/* ============================================================================
+   ACESSIBILIDADE
+   ============================================================================ */
+
+/* Focus visível */
+.specialty-card:focus-within,
+.tech-item:focus-within {
+    outline: 2px solid var(--clr-rose, #e11d48);
+    outline-offset: 4px;
+}
+
+/* Respeita preferência de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .about-header__link svg {
+        animation: none;
+    }
+
+    .about-profile__image[src*="placeholder"] {
+        animation: none;
+    }
+}
+
+/* Alto contraste */
+@media (prefers-contrast: high) {
+    .about-card,
+    .specialty-card,
+    .tech-item,
+    .about-stack {
+        border-width: 2px;
+    }
+}
+
+/* ============================================================================
+   PRINT
+   ============================================================================ */
+
+@media print {
+    .about-section {
+        background: white;
+        padding: 20px 0;
+    }
+
+    .about-header__link {
+        display: none;
+    }
+
+    .about-card,
+    .specialty-card,
+    .tech-item {
+        break-inside: avoid;
+    }
+
+    .about-sidebar {
+        position: static;
+    }
+}

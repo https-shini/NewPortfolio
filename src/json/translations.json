@@ -1,0 +1,42 @@
+{
+    "pt": {
+        "nav": {
+            "home": "Início",
+            "about": "Sobre",
+            "career": "Carreira",
+            "featured": "Destaque",
+            "projects": "Projetos",
+            "contact": "Contato"
+        },
+        "footer": {
+            "name": "Guilherme de Souza Cruz",
+            "tagline": "Desenvolvedor Mobile & Web apaixonado por criar experiências digitais excepcionais.",
+            "navigation": "Navegação",
+            "contact": "Contato",
+            "location": "São Paulo, Brasil",
+            "repos": "Repositórios GitHub",
+            "copyright": "©",
+            "author": "Guilherme Cruz. Todos os direitos reservados."
+        }
+    },
+    "en": {
+        "nav": {
+            "home": "Home",
+            "about": "About",
+            "career": "Career",
+            "featured": "Featured",
+            "projects": "Projects",
+            "contact": "Contact"
+        },
+        "footer": {
+            "name": "Guilherme de Souza Cruz",
+            "tagline": "Mobile & Web Developer passionate about creating exceptional digital experiences.",
+            "navigation": "Navigation",
+            "contact": "Contact",
+            "location": "São Paulo, Brazil",
+            "repos": "GitHub Repositories",
+            "copyright": "©",
+            "author": "Guilherme Cruz. All rights reserved."
+        }
+    }
+}
