@@ -1,0 +1,587 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   HEADER.CSS — Navegação principal + Mobile nav + Tema + Idioma
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Header shell ───────────────────────────────────────────────────────────── */
+.header {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: var(--z-header);
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition:
+        background var(--transition-slow),
+        border-color var(--transition-slow),
+        backdrop-filter var(--transition-slow);
+}
+
+.header.is-scrolled {
+    background: color-mix(in srgb, var(--color-bg) 82%, transparent);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border-bottom-color: var(--color-border-2);
+}
+
+.header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: var(--layout-max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+    gap: var(--space-6);
+}
+@media (max-width: 768px) {
+    .header__inner {
+        padding-inline: var(--gutter-sm);
+    }
+}
+
+/* ── Logo tipográfico ───────────────────────────────────────────────────────── */
+.header__logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    text-decoration: none;
+    flex-shrink: 0;
+    outline-offset: 6px;
+}
+
+/* Ponto coral pulsante — referência ao terminal / bl4ck404 */
+.header__logo-dot {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-brand) 50%, transparent);
+    animation: logo-pulse 2.8s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+@keyframes logo-pulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0
+            color-mix(in srgb, var(--color-brand) 40%, transparent);
+    }
+    50% {
+        box-shadow: 0 0 0 6px
+            color-mix(in srgb, var(--color-brand) 0%, transparent);
+    }
+}
+
+.header__logo-name {
+    font-family: var(--font-mono, "JetBrains Mono", "Fira Code", monospace);
+    font-size: var(--text-base);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.header__logo-prefix {
+    color: var(--color-text-1);
+    transition: color var(--transition-fast);
+}
+
+.header__logo-suffix {
+    color: var(--color-brand);
+    transition:
+        color var(--transition-fast),
+        opacity var(--transition-fast);
+}
+
+.header__logo:hover .header__logo-prefix {
+    color: var(--color-brand-light);
+}
+.header__logo:hover .header__logo-suffix {
+    opacity: 0.7;
+}
+
+/* ── Nav desktop ────────────────────────────────────────────────────────────── */
+.header__nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+}
+@media (max-width: 900px) {
+    .header__nav {
+        display: none;
+    }
+}
+
+.header__nav-link {
+    position: relative;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-3);
+    border-radius: var(--radius-md);
+    transition:
+        color var(--transition-fast),
+        background var(--transition-fast);
+    white-space: nowrap;
+}
+.header__nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--color-brand);
+    border-radius: var(--radius-full);
+    transform: translateX(-50%);
+    transition: width var(--transition-base);
+}
+.header__nav-link:hover,
+.header__nav-link.is-active {
+    color: var(--color-text-1);
+    background: var(--color-surface-2);
+}
+.header__nav-link.is-active::after,
+.header__nav-link:hover::after {
+    width: 60%;
+}
+
+/* ── Actions row ────────────────────────────────────────────────────────────── */
+.header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+}
+
+/* ── Language pill ──────────────────────────────────────────────────────────── */
+.header__lang {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 10px;
+    border-radius: var(--radius-md);
+
+    background: color-mix(in srgb, var(--color-bg-elevated) 65%, transparent);
+    border: 1px solid var(--color-border-2);
+
+    color: var(--color-text-3);
+
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wider);
+
+    cursor: pointer;
+    overflow: hidden;
+
+    transition:
+        color 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease,
+        transform 0.15s ease,
+        box-shadow 0.25s ease;
+}
+
+/* Conteúdo sempre acima do glow */
+.header__lang > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Glow sutil (efeito premium) */
+.header__lang::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+
+    background: radial-gradient(
+        circle at 50% 50%,
+        color-mix(in srgb, var(--color-brand) 18%, transparent),
+        transparent 70%
+    );
+
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Hover */
+.header__lang:hover {
+    color: var(--color-text-1);
+    border-color: var(--color-brand);
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.12),
+        0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.header__lang:hover::before {
+    opacity: 1;
+}
+
+/* Ícone */
+.header__lang-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0.85;
+
+    transition:
+        transform 0.3s ease,
+        opacity 0.2s ease,
+        filter 0.3s ease;
+}
+
+/* Código idioma (PT / EN) */
+.header__lang-code {
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+
+    transition:
+        transform 0.25s ease,
+        opacity 0.2s ease;
+}
+
+/* Hover animação refinada */
+.header__lang:hover .header__lang-icon {
+    transform: rotate(-8deg) scale(1.1);
+    opacity: 1;
+    filter: brightness(1.1);
+}
+
+.header__lang:hover .header__lang-code {
+    transform: translateX(1px);
+}
+
+/* Click feedback */
+.header__lang:active {
+    transform: scale(0.94);
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Estado de troca (suave e moderno) */
+.header__lang.is-switching {
+    pointer-events: none;
+}
+
+.header__lang.is-switching .header__lang-icon,
+.header__lang.is-switching .header__lang-code {
+    animation: lang-switch 0.35s ease;
+}
+
+@keyframes lang-switch {
+    0% {
+        opacity: 0;
+        transform: translateY(6px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Focus acessível */
+.header__lang:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 4px;
+}
+
+/* Estado ativo (opcional: idioma atual destacado) */
+.header__lang[aria-pressed="true"] {
+    border-color: var(--color-brand);
+    background: color-mix(in srgb, var(--color-brand) 12%, transparent);
+    color: var(--color-text-1);
+}
+
+/* ── Theme control ──────────────────────────────────────────────────────────── */
+.header__ctrl {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+
+    border-radius: var(--radius-md);
+
+    border: 1px solid var(--color-border-2);
+    background: color-mix(in srgb, var(--color-bg-elevated) 65%, transparent);
+
+    color: var(--color-text-3);
+
+    cursor: pointer;
+    overflow: hidden;
+
+    transition:
+        color 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease,
+        transform 0.15s ease,
+        box-shadow 0.25s ease;
+}
+
+/* Conteúdo acima do glow */
+.header__ctrl > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Glow premium */
+.header__ctrl::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+
+    background: radial-gradient(
+        circle at 50% 50%,
+        color-mix(in srgb, var(--color-brand) 18%, transparent),
+        transparent 70%
+    );
+
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Ícone */
+.header__ctrl svg {
+    width: 16px;
+    height: 16px;
+
+    opacity: 0.9;
+
+    transition:
+        transform 0.35s ease,
+        opacity 0.2s ease,
+        filter 0.3s ease;
+}
+
+/* Hover */
+.header__ctrl:hover {
+    color: var(--color-text-1);
+    border-color: var(--color-brand);
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.12),
+        0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.header__ctrl:hover::before {
+    opacity: 1;
+}
+
+.header__ctrl:hover svg {
+    transform: rotate(18deg) scale(1.1);
+    opacity: 1;
+    filter: brightness(1.1);
+}
+
+/* Click feedback */
+.header__ctrl:active {
+    transform: scale(0.94);
+
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Troca de ícone (sun/moon) */
+.header__ctrl svg {
+    animation: theme-pop 0.35s ease;
+}
+
+@keyframes theme-pop {
+    0% {
+        opacity: 0;
+        transform: scale(0.6) rotate(-25deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Focus acessível */
+.header__ctrl:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 4px;
+}
+
+/* ── Hamburger ──────────────────────────────────────────────────────────────── */
+.header__hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-2);
+    background: transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+@media (max-width: 900px) {
+    .header__hamburger {
+        display: flex;
+    }
+}
+
+.header__hamburger-bar {
+    display: block;
+    width: 18px;
+    height: 1.5px;
+    background: var(--color-text-2);
+    border-radius: var(--radius-full);
+    transform-origin: center;
+    transition:
+        transform var(--duration-base) var(--ease-back-out),
+        opacity var(--transition-fast);
+}
+.header__hamburger[aria-expanded="true"] .header__hamburger-bar:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+}
+.header__hamburger[aria-expanded="true"] .header__hamburger-bar:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+.header__hamburger[aria-expanded="true"] .header__hamburger-bar:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+}
+.header__hamburger:hover {
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+}
+
+/* ── Mobile Nav ─────────────────────────────────────────────────────────────── */
+.mobile-nav {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-drawer);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-5);
+    padding-top: var(--header-height);
+    background: color-mix(in srgb, var(--color-bg) 96%, transparent);
+    backdrop-filter: blur(24px) saturate(1.6);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition:
+        opacity var(--transition-base),
+        visibility var(--transition-base),
+        transform var(--transition-base) var(--ease-out);
+}
+.mobile-nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+
+/* Ponto decorativo topo do menu mobile */
+.mobile-nav__logo {
+    position: absolute;
+    top: calc(var(--header-height) + var(--space-6));
+}
+
+/* Links com número de índice à esquerda */
+.mobile-nav__link {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3);
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-2xl), 7vw, var(--text-4xl));
+    font-weight: 700;
+    color: var(--color-text-3);
+    letter-spacing: var(--ls-tight);
+    text-decoration: none;
+    transition:
+        color var(--transition-fast),
+        transform var(--transition-fast);
+
+    /* stagger via custom prop --i */
+    opacity: 0;
+    transform: translateY(12px);
+}
+.mobile-nav.is-open .mobile-nav__link {
+    animation: nav-link-in 0.35s var(--ease-out) forwards;
+    animation-delay: calc(var(--i, 0) * 60ms + 80ms);
+}
+
+@keyframes nav-link-in {
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.mobile-nav__link-num {
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    font-size: var(--text-xs);
+    font-weight: 400;
+    color: var(--color-brand);
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    align-self: center;
+}
+
+.mobile-nav__link:hover,
+.mobile-nav__link.is-active {
+    color: var(--color-text-1);
+    transform: translateX(8px);
+}
+.mobile-nav__link.is-active {
+    color: var(--color-brand-light);
+}
+
+/* Controles (lang + tema) */
+.mobile-nav__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+}
+
+/* CTA mobile — mais robusto que a versão desktop */
+.mobile-nav__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-1);
+    border: 1px solid var(--color-border-brand);
+    border-radius: var(--radius-full);
+    background: var(--color-brand-subtle);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast),
+        transform var(--transition-fast);
+}
+.mobile-nav__cta:hover {
+    background: var(--color-brand);
+    border-color: var(--color-brand);
+    color: #fff;
+    transform: translateY(-1px);
+}

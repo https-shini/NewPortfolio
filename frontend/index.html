@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>
+            Guilherme Cruz — Desenvolvedor Full Stack · React &amp; Node.js
+        </title>
+        <meta
+            name="description"
+            content="Portfólio profissional de Guilherme Cruz — Desenvolvedor Full Stack especializado em React, Node.js e Python."
+        />
+        <meta name="author" content="Guilherme Cruz" />
+        <meta name="robots" content="index, follow" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://bl4ck404.dev.br/" />
+        <meta
+            property="og:title"
+            content="Guilherme Cruz — Desenvolvedor Full Stack"
+        />
+        <meta
+            property="og:description"
+            content="Especialista em React, Node.js e interfaces de alta performance."
+        />
+        <meta
+            property="og:image"
+            content="https://bl4ck404.dev.br/og-preview.jpg"
+        />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="theme-color" content="#040710" />
+
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+        <!-- Fontes -->
+        <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+        <link
+            href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@400,500,600,700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
+
+        <!-- Tema inline — evita flash -->
+        <script>
+            (function () {
+                var saved = localStorage.getItem("portfolio-theme");
+                var dark =
+                    saved === "dark" ||
+                    (!saved &&
+                        window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches);
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    dark ? "dark" : "light",
+                );
+                document.documentElement.style.colorScheme = dark
+                    ? "dark"
+                    : "light";
+            })();
+        </script>
+    </head>
+    <body class="dark-mode">
+        <div id="root"></div>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
+</html>
