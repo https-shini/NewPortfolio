@@ -11,7 +11,7 @@ const PROJECTS: WorkProject[] = [
         title: "💬 Web Chat",
         desc: "Aplicação de chat em tempo real utilizando WebSocket, com suporte a múltiplas salas e interação direta no navegador.",
         imageUrl:
-            "https://raw.githubusercontent.com/https-shini/AuthService/main/read-model/img/Login01.png",
+            "https://raw.githubusercontent.com/https-shini/NewPortfolio/refs/heads/main/frontend/src/public/projetos/work01.png?token=GHSAT0AAAAAADXG77EWNN4IIOVHFG44DXNM2OJQSKQ",
         tech: [
             { label: "Node.js", variant: "accent" },
             { label: "JavaScript", variant: "brand" },
@@ -41,7 +41,7 @@ const PROJECTS: WorkProject[] = [
         title: "💰 Controle Financeiro",
         desc: "Aplicação para gestão financeira pessoal com controle de entradas, saídas e visualização de saldo em tempo real.",
         imageUrl:
-            "https://raw.githubusercontent.com/https-shini/AuthService/main/read-model/img/Login01.png",
+            "https://raw.githubusercontent.com/https-shini/NewPortfolio/refs/heads/main/frontend/src/public/projetos/work02.png?token=GHSAT0AAAAAADXG77EWCHQK5H346RZTMWCK2OJQSRA",
         tech: [
             { label: "React", variant: "brand" },
             { label: "JavaScript", variant: "brand" },
@@ -89,35 +89,6 @@ export const Work: React.FC = () => {
                                     alt={`Preview do projeto ${project.title}`}
                                     loading="lazy"
                                 />
-
-                                {/* Overlay */}
-                                <div
-                                    className="work-card__overlay"
-                                    aria-hidden="true"
-                                >
-                                    <a
-                                        href={project.demoUrl}
-                                        className="work-card__overlay-btn"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        aria-label={`Abrir demo de ${project.title}`}
-                                    >
-                                        <IconExternalLink
-                                            width={18}
-                                            height={18}
-                                        />
-                                    </a>
-
-                                    <a
-                                        href={project.repoUrl}
-                                        className="work-card__overlay-btn"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        aria-label={`Abrir repositório de ${project.title}`}
-                                    >
-                                        <IconGitHub width={18} height={18} />
-                                    </a>
-                                </div>
                             </div>
 
                             {/* Conteúdo */}
