@@ -55,10 +55,11 @@ export type TranslationKey =
     /* ── CONTACT ───────────────────────────────────── */
     | "contact.title"
     | "contact.sub"
-    | "contact.cta.primary"
-    | "contact.cta.sending"
-    | "contact.cta.success"
-    | "contact.cta.error"
+    | "contact.send" // botão: estado inicial
+    | "contact.sending" // botão: enviando
+    | "contact.sent" // botão: enviado com sucesso
+    | "contact.success" // mensagem de feedback positivo
+    | "contact.error" // mensagem de feedback negativo
     | "contact.meta.response"
     | "contact.meta.linkedin"
     | "contact.meta.github"
@@ -104,19 +105,14 @@ const pt: Translations = {
 
     /* ABOUT */
     "about.title": "Sobre Mim",
-
     "about.bio.p1":
         "Sou Guilherme Cruz, estudante de Ciência da Computação com formação técnica em Desenvolvimento de Sistemas. Possuo base sólida em lógica de programação, estruturas de dados e fundamentos de software.",
-
     "about.bio.p2":
         "Tenho experiência prática no desenvolvimento de aplicações web utilizando React, JavaScript/TypeScript, Node.js e MySQL, com foco em interfaces modernas, responsivas e integração com APIs.",
-
     "about.bio.p3":
         "Aplico boas práticas como código limpo, organização de projetos e versionamento com Git, desenvolvendo soluções eficientes, escaláveis e de fácil manutenção.",
-
     "about.bio.p4":
         "Busco minha primeira oportunidade como Desenvolvedor Júnior ou Estagiário, onde eu possa evoluir tecnicamente, atuar em projetos reais e contribuir com o time.",
-
     "about.goal.title": "Objetivo Profissional",
     "about.goal.text":
         "Atuar como desenvolvedor júnior ou estagiário, contribuindo com projetos reais, evoluindo minhas habilidades técnicas e adquirindo experiência prática no mercado.",
@@ -151,10 +147,11 @@ const pt: Translations = {
     "contact.title": "Vamos trabalhar juntos",
     "contact.sub":
         "Desenvolvedor Frontend focado em React, TypeScript e experiências performáticas. Buscando primeira oportunidade profissional para contribuir em projetos reais.",
-    "contact.cta.primary": "Iniciar conversa",
-    "contact.cta.sending": "Enviando mensagem...",
-    "contact.cta.success": "Mensagem enviada!",
-    "contact.cta.error": "Erro ao enviar. Tente novamente.",
+    "contact.send": "Enviar mensagem",
+    "contact.sending": "Enviando...",
+    "contact.sent": "Mensagem enviada!",
+    "contact.success": "Mensagem enviada com sucesso!",
+    "contact.error": "Erro ao enviar. Tente novamente.",
     "contact.meta.response": "Respondo em até 24h",
     "contact.meta.linkedin": "Aberto a networking e oportunidades",
     "contact.meta.github": "Projetos reais e código limpo",
@@ -200,19 +197,14 @@ const en: Translations = {
 
     /* ABOUT */
     "about.title": "About Me",
-
     "about.bio.p1":
         "I'm Guilherme Cruz, a Computer Science student with a technical background in Systems Development. I have a solid foundation in programming logic, data structures and software fundamentals.",
-
     "about.bio.p2":
         "I have hands-on experience building web applications using React, JavaScript/TypeScript, Node.js and MySQL, focusing on modern, responsive interfaces and API integration.",
-
     "about.bio.p3":
         "I apply best practices such as clean code, project organization and Git version control, aiming to build efficient, scalable and maintainable solutions.",
-
     "about.bio.p4":
         "I am seeking my first opportunity as a Junior Developer or Intern, where I can grow technically, work on real projects and contribute to the team.",
-
     "about.goal.title": "Professional Goal",
     "about.goal.text":
         "To work as a junior developer or intern, contributing to real projects, improving my technical skills and gaining industry experience.",
@@ -249,6 +241,11 @@ const en: Translations = {
     "contact.sent": "Sent!",
     "contact.success": "Message sent successfully!",
     "contact.error": "Failed to send. Please try again.",
+    "contact.meta.response": "Replies within 24h",
+    "contact.meta.linkedin": "Open to networking and opportunities",
+    "contact.meta.github": "Real projects and clean code",
+    "contact.meta.location": "Available remotely and on-site",
+    "contact.hook": "Got an idea or opportunity? Let's talk.",
 
     /* FOOTER */
     "footer.tagline":
