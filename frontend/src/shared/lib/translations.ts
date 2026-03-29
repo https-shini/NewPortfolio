@@ -55,16 +55,18 @@ export type TranslationKey =
     /* ── CONTACT ───────────────────────────────────── */
     | "contact.title"
     | "contact.sub"
-    | "contact.send" // botão: estado inicial
-    | "contact.sending" // botão: enviando
-    | "contact.sent" // botão: enviado com sucesso
-    | "contact.success" // mensagem de feedback positivo
-    | "contact.error" // mensagem de feedback negativo
+    | "contact.hook"
+    | "contact.send" // botão de envio — estado padrão
+    | "contact.sending" // botão de envio — durante requisição
+    | "contact.sent" // botão de envio — após sucesso
+    | "contact.cta.primary"
+    | "contact.cta.sending"
+    | "contact.cta.success"
+    | "contact.cta.error"
     | "contact.meta.response"
     | "contact.meta.linkedin"
     | "contact.meta.github"
     | "contact.meta.location"
-    | "contact.hook"
 
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
@@ -147,16 +149,18 @@ const pt: Translations = {
     "contact.title": "Vamos trabalhar juntos",
     "contact.sub":
         "Desenvolvedor Frontend focado em React, TypeScript e experiências performáticas. Buscando primeira oportunidade profissional para contribuir em projetos reais.",
+    "contact.hook": "Tem uma ideia ou oportunidade? Vamos conversar.",
     "contact.send": "Enviar mensagem",
     "contact.sending": "Enviando...",
-    "contact.sent": "Mensagem enviada!",
-    "contact.success": "Mensagem enviada com sucesso!",
-    "contact.error": "Erro ao enviar. Tente novamente.",
+    "contact.sent": "Enviado!",
+    "contact.cta.primary": "Iniciar conversa",
+    "contact.cta.sending": "Enviando mensagem...",
+    "contact.cta.success": "Mensagem enviada!",
+    "contact.cta.error": "Erro ao enviar. Tente novamente.",
     "contact.meta.response": "Respondo em até 24h",
     "contact.meta.linkedin": "Aberto a networking e oportunidades",
     "contact.meta.github": "Projetos reais e código limpo",
     "contact.meta.location": "Disponível para remoto e presencial",
-    "contact.hook": "Tem uma ideia ou oportunidade? Vamos conversar.",
 
     /* FOOTER */
     "footer.tagline":
@@ -234,18 +238,21 @@ const en: Translations = {
     "work.more": "View all on GitHub",
 
     /* CONTACT */
-    "contact.title": "Let's talk",
-    "contact.sub": "Open to opportunities as a junior developer or intern.",
+    "contact.title": "Let's work together",
+    "contact.sub":
+        "Frontend developer focused on React, TypeScript and performant experiences. Seeking first professional opportunity to contribute to real projects.",
+    "contact.hook": "Have an idea or opportunity? Let's talk.",
     "contact.send": "Send message",
     "contact.sending": "Sending…",
     "contact.sent": "Sent!",
-    "contact.success": "Message sent successfully!",
-    "contact.error": "Failed to send. Please try again.",
-    "contact.meta.response": "Replies within 24h",
+    "contact.cta.primary": "Start a conversation",
+    "contact.cta.sending": "Sending message…",
+    "contact.cta.success": "Message sent!",
+    "contact.cta.error": "Failed to send. Please try again.",
+    "contact.meta.response": "I reply within 24h",
     "contact.meta.linkedin": "Open to networking and opportunities",
     "contact.meta.github": "Real projects and clean code",
     "contact.meta.location": "Available remotely and on-site",
-    "contact.hook": "Got an idea or opportunity? Let's talk.",
 
     /* FOOTER */
     "footer.tagline":
