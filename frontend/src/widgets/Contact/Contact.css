@@ -451,8 +451,8 @@
 }
 
 .contact__data-icon {
-    width: 32px;
-    height: 32px;
+    width: 48px;
+    height: 48px;
     border-radius: var(--radius-md);
     background: var(--color-surface-2);
     display: flex;
@@ -464,8 +464,8 @@
 }
 
 .contact__data-icon svg {
-    width: 14px;
-    height: 14px;
+    width: 22px;
+    height: 22px;
     fill: currentColor;
 }
 

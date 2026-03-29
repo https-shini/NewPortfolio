@@ -8,7 +8,6 @@ import {
     IconLocation,
     IconBolt,
     IconDev,
-    IconSocial,
     IconShare,
 } from "@/shared/ui/Icons";
 import {
@@ -48,6 +47,13 @@ const PROFILE_DATA = [
         value: "/https-shini",
         href: GITHUB_URL,
         note: "Projetos reais e código limpo",
+    },
+    {
+        icon: <IconDev />,
+        label: "Social Links",
+        value: "DevLinks",
+        href: "https://devlinks-rocketseat-five.vercel.app/",
+        note: "Confira meus links sociais e projetos",
     },
     {
         icon: <IconLocation />,
@@ -134,14 +140,23 @@ export const Contact: React.FC = () => {
                         </h3>
 
                         <p className="contact__cta-desc">
-                            Pronto para iniciar minha trajetória como{" "}
+                            Estou pronto para iniciar minha trajetória como{" "}
                             <strong>Desenvolvedor Júnior</strong> ou{" "}
-                            <strong>Estagiário</strong>, contribuindo com
-                            aplicações web modernas, bem estruturadas e focadas
-                            em performance e experiência do usuário.
-                            <br></br>
-                            Se você busca alguém dedicado, com base sólida e
-                            vontade de evoluir rápido, vamos conversar!
+                            <strong>Estagiário</strong>, contribuindo com{" "}
+                            <strong>aplicações modernas</strong>,{" "}
+                            <strong>bem estruturadas</strong> e voltadas para{" "}
+                            <strong>performance</strong> e{" "}
+                            <strong>experiência do usuário</strong>.
+                        </p>
+
+                        <p className="contact__cta-desc">
+                            Se você procura alguém <strong>dedicado</strong>,
+                            com <strong>vontade de evoluir</strong> e{" "}
+                            <strong>
+                                contribuir de forma prática em projetos reais
+                            </strong>
+                            , vamos conversar e construir{" "}
+                            <strong>soluções juntos</strong>!
                         </p>
 
                         {/* ── Botão principal de email ──────────────── */}
@@ -250,22 +265,16 @@ export const Contact: React.FC = () => {
                         >
                             {/* Header */}
                             <div className="contact__cta-eyebrow">
-                                <div
-                                    className="contact__cta-icon"
-                                    aria-hidden="true"
-                                >
-                                    <IconShare />
-                                </div>
-
-                                <div className="contact__cta-head">
-                                    <span id="profile-title">
-                                        Contato & Redes
+                                <div className="contact__cta-eyebrow">
+                                    <div
+                                        className="contact__cta-icon"
+                                        aria-hidden="true"
+                                    >
+                                        <IconShare />
+                                    </div>
+                                    <span className="contact__cta-label">
+                                        {t("contact.share")}
                                     </span>
-
-                                    <p className="contact__cta-sub">
-                                        Conecte-se comigo ou fale diretamente
-                                        pelas plataformas abaixo.
-                                    </p>
                                 </div>
                             </div>
 

@@ -56,6 +56,7 @@ export type TranslationKey =
     | "contact.title"
     | "contact.sub"
     | "contact.hook"
+    | "contact.share"
     | "contact.send" // botão de envio — estado padrão
     | "contact.sending" // botão de envio — durante requisição
     | "contact.sent" // botão de envio — após sucesso
@@ -148,19 +149,20 @@ const pt: Translations = {
     /* CONTACT */
     "contact.title": "Vamos trabalhar juntos",
     "contact.sub":
-        "Desenvolvedor Frontend focado em React, TypeScript e experiências performáticas. Buscando primeira oportunidade profissional para contribuir em projetos reais.",
-    "contact.hook": "Tem uma ideia ou oportunidade? Vamos conversar.",
+        "Desenvolvedor em início de carreira, com base sólida em programação e engenharia de software. Busco minha primeira oportunidade para contribuir com projetos reais e evoluir continuamente como profissional de tecnologia.",
+    "contact.hook": "Tem uma ideia ou oportunidade? Vamos conversar!",
+    "contact.share": "Conecte-se comigo através das plataformas abaixo:",
     "contact.send": "Enviar mensagem",
     "contact.sending": "Enviando...",
-    "contact.sent": "Enviado!",
+    "contact.sent": "Mensagem enviada!",
     "contact.cta.primary": "Iniciar conversa",
     "contact.cta.sending": "Enviando mensagem...",
-    "contact.cta.success": "Mensagem enviada!",
-    "contact.cta.error": "Erro ao enviar. Tente novamente.",
+    "contact.cta.success": "Mensagem enviada com sucesso!",
+    "contact.cta.error": "Erro ao enviar. Por favor, tente novamente.",
     "contact.meta.response": "Respondo em até 24h",
-    "contact.meta.linkedin": "Aberto a networking e oportunidades",
-    "contact.meta.github": "Projetos reais e código limpo",
-    "contact.meta.location": "Disponível para remoto e presencial",
+    "contact.meta.linkedin": "Aberto a networking e novas oportunidades",
+    "contact.meta.github": "Projetos reais com código limpo e organizado",
+    "contact.meta.location": "Disponível para trabalho remoto ou presencial",
 
     /* FOOTER */
     "footer.tagline":
@@ -242,6 +244,8 @@ const en: Translations = {
     "contact.sub":
         "Frontend developer focused on React, TypeScript and performant experiences. Seeking first professional opportunity to contribute to real projects.",
     "contact.hook": "Have an idea or opportunity? Let's talk.",
+    "contact.share":
+        "Connect with me or reach out directly through the platforms below.",
     "contact.send": "Send message",
     "contact.sending": "Sending…",
     "contact.sent": "Sent!",
