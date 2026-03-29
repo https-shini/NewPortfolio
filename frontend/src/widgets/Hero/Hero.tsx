@@ -126,7 +126,7 @@ export const Hero: React.FC = () => {
                         <div className="hero__avatar-frame" />
 
                         <img
-                            src="../src/public/avatar.png"
+                            src="https://raw.githubusercontent.com/https-shini/NewPortfolio/refs/heads/main/frontend/src/public/avatar.png?token=GHSAT0AAAAAADXG77EXOBBQN44JAPOAX2YW2OJQVDQ"
                             alt="Guilherme Cruz"
                             className="hero__avatar"
                             width={380}
