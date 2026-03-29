@@ -455,7 +455,7 @@ export const About: React.FC = () => {
                         {/* 1. Foto ──────────────────────────────────────────── */}
                         <div className="about__photo-wrap">
                             <img
-                                src="https://raw.githubusercontent.com/https-shini/NewPortfolio/refs/heads/main/frontend/src/public/hero.png?token=GHSAT0AAAAAADXG77EWULWM2KUXWXIGS54S2OJQVDA"
+                                src="https://raw.githubusercontent.com/https-shini/vite-portfolio/refs/heads/main/public/destaque/Icons/hero.png"
                                 alt="Guilherme Cruz em ambiente de trabalho"
                                 className="about__photo"
                                 loading="lazy"
