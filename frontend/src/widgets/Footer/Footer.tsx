@@ -115,8 +115,8 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick }) => (
             aria-label="Guilherme Cruz — voltar ao início da página"
             onClick={onLogoClick}
         >
-            <span className="footer__logo-dot" aria-hidden="true" />
-            <span className="footer__logo-name" aria-hidden="true">
+            <span className="footer__logo-dot" />
+            <span className="footer__logo-name">
                 <span className="footer__logo-prefix">GCruz</span>
                 <span className="footer__logo-suffix">.dev</span>
             </span>
@@ -221,7 +221,7 @@ const FooterContact = memo<FooterContactProps>(
                     className="footer__contact-cta btn btn--primary btn--sm"
                     aria-label={`${ctaLabel} — ${AUTHOR_EMAIL}`}
                 >
-                    <IconGmail width={14} height={14} aria-hidden="true" />
+                    <IconGmail width={14} height={14} />
                     <span>{ctaLabel}</span>
                 </a>
 
@@ -247,7 +247,7 @@ const FooterContact = memo<FooterContactProps>(
 
                 {/* Localização */}
                 <span className="footer__contact-location">
-                    <IconLocation width={12} height={12} aria-hidden="true" />
+                    <IconLocation width={12} height={12} />
                     <span>{location}</span>
                 </span>
             </address>
@@ -274,9 +274,8 @@ const FooterBottom = memo<FooterBottomProps>(
         <div className="footer__bottom">
             {/* Copyright com <time> semântico */}
             <p className="footer__copyright">
-                <span aria-hidden="true">©</span>{" "}
-                <time dateTime={String(year)}>{year}</time> Guilherme Cruz.{" "}
-                {rights}
+                <span>©</span> <time dateTime={String(year)}>{year}</time>{" "}
+                Guilherme Cruz. {rights}
             </p>
 
             {/* Ações secundárias: CV + made with */}
@@ -288,7 +287,7 @@ const FooterBottom = memo<FooterBottomProps>(
                     rel="noopener noreferrer"
                     aria-label="Download do currículo em PDF (abre em nova aba)"
                 >
-                    <IconDownload width={12} height={12} aria-hidden="true" />
+                    <IconDownload width={12} height={12} />
                     {cvLabel}
                 </a>
 
@@ -301,7 +300,6 @@ const FooterBottom = memo<FooterBottomProps>(
                         width={11}
                         height={11}
                         className="footer__heart"
-                        aria-hidden="true"
                     />
                     React &amp; {coffee}
                 </p>
@@ -411,11 +409,7 @@ export const Footer: React.FC = () => {
             </div>
 
             {/* ── 2. Divisor decorativo ────────────────────────────────────────── */}
-            <div
-                className="footer__divider"
-                role="separator"
-                aria-hidden="true"
-            />
+            <div className="footer__divider" role="separator" />
 
             {/* ── 3. Barra inferior ────────────────────────────────────────────── */}
             <div className="footer__bottom-bar">
