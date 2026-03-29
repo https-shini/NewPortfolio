@@ -1,45 +1,107 @@
-import { useState, useEffect, useCallback } from 'react';
-import { THEME_KEY } from '@/shared/config/constants';
+/**
+ * useTheme.ts — Design System v4.0 · bl4ck404.dev.br
+ *
+ * Responsabilidades:
+ * · Lê preferência salva do localStorage (persistência entre sessões)
+ * · Fallback para prefers-color-scheme do OS quando sem preferência salva
+ * · Aplica data-theme no <html>, color-scheme, e classes no <body>
+ * · Sincroniza com mudanças de preferência do OS em tempo real
+ * · Sem flash de tema (FOUC) — o script inline do index.html cobre isso
+ *
+ * O hook NÃO deve ser chamado em múltiplos componentes — use Context se
+ * precisar compartilhar o estado. No App atual, é chamado apenas no Header.
+ */
 
-export type Theme = 'dark' | 'light';
+import { useState, useEffect, useCallback } from "react";
+import { THEME_KEY } from "@/shared/config/constants";
 
+export type Theme = "dark" | "light";
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Utilitários — fora do hook para não recriar em cada render
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/** Lê o tema inicial na ordem: localStorage → prefers-color-scheme → 'dark' */
 function getInitialTheme(): Theme {
-  const saved = localStorage.getItem(THEME_KEY) as Theme | null;
-  if (saved === 'dark' || saved === 'light') return saved;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    try {
+        const saved = localStorage.getItem(THEME_KEY) as Theme | null;
+        if (saved === "dark" || saved === "light") return saved;
+    } catch {
+        /* localStorage pode lançar em contextos restritos (iframe, etc.) */
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light";
 }
 
+/**
+ * Aplica o tema ao DOM e persiste no localStorage.
+ * Centralizado aqui para garantir que as duas fontes de verdade
+ * (data-theme no <html> e classes no <body>) sejam sempre sincronizadas.
+ */
 function applyTheme(theme: Theme): void {
-  const isDark = theme === 'dark';
-  document.documentElement.setAttribute('data-theme', theme);
-  document.documentElement.style.colorScheme = theme;
-  document.body.classList.toggle('light-mode', !isDark);
-  document.body.classList.toggle('dark-mode',  isDark);
-  localStorage.setItem(THEME_KEY, theme);
+    const isDark = theme === "dark";
+    const root = document.documentElement;
+    const body = document.body;
+
+    /* Atributo semântico — usado pelos CSS tokens */
+    root.setAttribute("data-theme", theme);
+
+    /* color-scheme — informa ao browser a paleta de UI nativa (scrollbar, inputs…) */
+    root.style.colorScheme = theme;
+
+    /* Classes no body — usadas pelos seletores body.light-mode / body.dark-mode */
+    body.classList.toggle("dark-mode", isDark);
+    body.classList.toggle("light-mode", !isDark);
+
+    /* Persiste preferência */
+    try {
+        localStorage.setItem(THEME_KEY, theme);
+    } catch {
+        /* silencioso — tema ainda funciona sem persistência */
+    }
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   Hook principal
+   ───────────────────────────────────────────────────────────────────────────── */
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+    /* Inicialização lazy — getInitialTheme roda apenas no mount */
+    const [theme, setTheme] = useState<Theme>(getInitialTheme);
 
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
+    /* Aplica ao DOM sempre que o tema muda */
+    useEffect(() => {
+        applyTheme(theme);
+    }, [theme]);
 
-  // Sync OS preference when no saved preference
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = (e: MediaQueryListEvent) => {
-      if (!localStorage.getItem(THEME_KEY)) {
-        setTheme(e.matches ? 'dark' : 'light');
-      }
-    };
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
+    /* Sincroniza com mudanças de prefers-color-scheme do OS em tempo real,
+     mas SOMENTE quando não há preferência salva pelo usuário. */
+    useEffect(() => {
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
 
-  const toggleTheme = useCallback(() => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  }, []);
+        const handler = (e: MediaQueryListEvent) => {
+            try {
+                if (!localStorage.getItem(THEME_KEY)) {
+                    setTheme(e.matches ? "dark" : "light");
+                }
+            } catch {
+                /* localStorage indisponível — ignora */
+            }
+        };
 
-  return { theme, toggleTheme };
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
+    }, []);
+
+    /** Alterna entre dark e light */
+    const toggleTheme = useCallback(() => {
+        setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+    }, []);
+
+    /** Define um tema específico sem toggle */
+    const setThemeExplicit = useCallback((next: Theme) => {
+        setTheme(next);
+    }, []);
+
+    return { theme, toggleTheme, setTheme: setThemeExplicit };
 }

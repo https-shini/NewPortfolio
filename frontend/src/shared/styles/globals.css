@@ -1,10 +1,32 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    GLOBALS.CSS — Reset moderno, layout, primitivos UI compartilhados
-   Refatorado v3.0 — suporte completo Dark & Light Theme
+   Design System v4.0 · bl4ck404.dev.br
+
    Importado após tokens.css — usa apenas variáveis semânticas.
+   Nunca referencia primitivos --_* diretamente.
+
+   Índice:
+   01. Reset
+   02. Elementos base
+   03. Reduced motion
+   04. Scrollbar
+   05. Focus global
+   06. Skip link / Screen reader
+   07. Layout (.container, .section)
+   08. Section header
+   09. Botões
+   10. Card base
+   11. Badge
+   12. Social link
+   13. Reveal animation
+   14. Keyframes globais
+   15. Divider decorativo
+   16. Glass card
 ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Reset ──────────────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   01. RESET
+══════════════════════════════════════════════════════════════════════════════ */
 *,
 *::before,
 *::after {
@@ -39,21 +61,26 @@ body {
         color var(--transition-slow);
 }
 
-/* ── Elementos base ──────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   02. ELEMENTOS BASE
+══════════════════════════════════════════════════════════════════════════════ */
 img,
 video,
 svg {
     display: block;
     max-width: 100%;
 }
+
 ul,
 ol {
     list-style: none;
 }
+
 a {
     color: inherit;
     text-decoration: none;
 }
+
 button {
     cursor: pointer;
     font-family: inherit;
@@ -61,12 +88,14 @@ button {
     background: none;
     border: none;
 }
+
 input,
 textarea,
 select {
     font-family: inherit;
     font-size: inherit;
 }
+
 p {
     overflow-wrap: break-word;
 }
@@ -88,7 +117,9 @@ h6 {
     color: #fff;
 }
 
-/* ── Reduced motion ──────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   03. REDUCED MOTION
+══════════════════════════════════════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
@@ -103,33 +134,58 @@ h6 {
     }
 }
 
-/* ── Scrollbar ───────────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   04. SCROLLBAR
+══════════════════════════════════════════════════════════════════════════════ */
 ::-webkit-scrollbar {
     width: 5px;
 }
+
 ::-webkit-scrollbar-track {
     background: var(--color-surface-1);
 }
+
 ::-webkit-scrollbar-thumb {
-    background: var(--color-brand);
+    background: color-mix(
+        in srgb,
+        var(--color-brand) 60%,
+        var(--color-surface-3)
+    );
     border-radius: var(--radius-full);
 }
+
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-brand-hover);
+    background: var(--color-brand);
 }
 
 body.light-mode ::-webkit-scrollbar-track {
-    background: var(--color-surface-2);
+    background: var(--color-surface-3);
 }
 
-/* ── Focus global ────────────────────────────────────────────────────────────── */
+body.light-mode ::-webkit-scrollbar-thumb {
+    background: color-mix(
+        in srgb,
+        var(--color-brand) 40%,
+        var(--color-border-3)
+    );
+}
+
+body.light-mode ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-brand);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   05. FOCUS GLOBAL
+══════════════════════════════════════════════════════════════════════════════ */
 :focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: 3px;
     border-radius: var(--radius-sm);
 }
 
-/* ── Skip link ───────────────────────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════════════════════
+   06. SKIP LINK / SCREEN READER
+══════════════════════════════════════════════════════════════════════════════ */
 .skip-link {
     position: absolute;
     top: -100%;
@@ -148,7 +204,6 @@ body.light-mode ::-webkit-scrollbar-track {
     top: var(--space-4);
 }
 
-/* ── Screen reader only ──────────────────────────────────────────────────────── */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -162,7 +217,7 @@ body.light-mode ::-webkit-scrollbar-track {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   LAYOUT
+   07. LAYOUT
 ══════════════════════════════════════════════════════════════════════════════ */
 .container {
     width: 100%;
@@ -195,10 +250,10 @@ body.light-mode ::-webkit-scrollbar-track {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   SECTION HEADER — cabeçalhos de seção padronizados
+   08. SECTION HEADER
 ══════════════════════════════════════════════════════════════════════════════ */
 
-/* eyebrow: linha + label uppercase */
+/* ── Eyebrow: linha decorativa + label uppercase ── */
 .section-eyebrow {
     display: inline-flex;
     align-items: center;
@@ -217,9 +272,10 @@ body.light-mode ::-webkit-scrollbar-track {
     height: 2px;
     background: var(--color-brand);
     flex-shrink: 0;
+    border-radius: var(--radius-full);
 }
 
-/* título de seção */
+/* ── Título ── */
 .section-title {
     font-size: clamp(var(--text-3xl), 4vw, var(--text-5xl));
     font-weight: 700;
@@ -228,7 +284,7 @@ body.light-mode ::-webkit-scrollbar-track {
     line-height: var(--lh-tight);
 }
 
-/* subtítulo */
+/* ── Subtítulo ── */
 .section-subtitle {
     font-size: var(--text-lg);
     line-height: var(--lh-relaxed);
@@ -236,7 +292,7 @@ body.light-mode ::-webkit-scrollbar-track {
     max-width: 54ch;
 }
 
-/* wrapper */
+/* ── Wrapper ── */
 .section-header {
     display: flex;
     flex-direction: column;
@@ -249,13 +305,13 @@ body.light-mode ::-webkit-scrollbar-track {
     margin-inline: auto;
 }
 
-/* ── Light mode ajustes de section-header ── */
+/* Light mode ajustes */
 body.light-mode .section-subtitle {
     color: var(--color-text-3);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   BOTÕES — sistema completo
+   09. BOTÕES
 ══════════════════════════════════════════════════════════════════════════════ */
 .btn {
     display: inline-flex;
@@ -296,17 +352,18 @@ body.light-mode .section-subtitle {
     fill: currentColor;
 }
 
-/* Tamanhos */
+/* ── Tamanhos ── */
 .btn--sm {
     font-size: var(--text-xs);
     padding: 0.6em 1.25em;
 }
+
 .btn--lg {
     font-size: var(--text-lg);
     padding: 0.9em 2.25em;
 }
 
-/* ─── Primary ── */
+/* ── Primary ── */
 .btn--primary {
     background: var(--color-brand);
     border-color: var(--color-brand);
@@ -325,9 +382,7 @@ body.light-mode .section-subtitle {
     box-shadow: none;
 }
 
-/* light mode: primary mantém inalterado (fundo brand já tem contraste) */
-
-/* ─── Outline ── */
+/* ── Outline ── */
 .btn--outline {
     background: transparent;
     border-color: var(--color-border-3);
@@ -341,7 +396,7 @@ body.light-mode .section-subtitle {
     transform: translateY(-2px);
 }
 
-/* light mode outline */
+/* Light mode outline */
 body.light-mode .btn--outline {
     border-color: var(--color-border-3);
     color: var(--color-text-2);
@@ -353,7 +408,7 @@ body.light-mode .btn--outline:hover:not(:disabled) {
     background: var(--color-brand-subtle);
 }
 
-/* ─── Ghost ── */
+/* ── Ghost ── */
 .btn--ghost {
     background: transparent;
     border-color: transparent;
@@ -371,7 +426,7 @@ body.light-mode .btn--ghost:hover:not(:disabled) {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   CARD BASE
+   10. CARD BASE
 ══════════════════════════════════════════════════════════════════════════════ */
 .card {
     background: var(--color-surface-1);
@@ -389,7 +444,7 @@ body.light-mode .btn--ghost:hover:not(:disabled) {
     transform: translateY(-3px);
 }
 
-/* light mode card */
+/* Light mode card */
 body.light-mode .card {
     background: var(--color-surface-1);
     border-color: var(--color-border-2);
@@ -401,7 +456,7 @@ body.light-mode .card--interactive:hover {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   BADGE
+   11. BADGE
 ══════════════════════════════════════════════════════════════════════════════ */
 .badge {
     display: inline-flex;
@@ -423,21 +478,20 @@ body.light-mode .card--interactive:hover {
     flex-shrink: 0;
 }
 
-/* ─── Brand badge (dark) ── */
+/* ── Brand ── */
 .badge--brand {
     background: var(--color-brand-subtle);
     color: var(--color-brand-light);
     border-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
 }
 
-/* light: brand badge com texto escuro (crimson-700 → contraste) */
 body.light-mode .badge--brand {
     background: color-mix(in srgb, var(--_crimson-600) 10%, transparent);
     color: var(--_crimson-700);
     border-color: color-mix(in srgb, var(--_crimson-600) 25%, transparent);
 }
 
-/* ─── Accent badge ── */
+/* ── Accent ── */
 .badge--accent {
     background: var(--color-accent-subtle);
     color: var(--color-accent-light);
@@ -450,7 +504,7 @@ body.light-mode .badge--accent {
     border-color: color-mix(in srgb, var(--_indigo-600) 25%, transparent);
 }
 
-/* ─── Neutral badge ── */
+/* ── Neutral ── */
 .badge--neutral {
     background: var(--color-surface-3);
     color: var(--color-text-3);
@@ -463,7 +517,7 @@ body.light-mode .badge--neutral {
     border-color: var(--color-border-3);
 }
 
-/* ─── Ghost badge ── */
+/* ── Ghost ── */
 .badge--ghost {
     background: transparent;
     color: var(--color-text-4);
@@ -471,7 +525,7 @@ body.light-mode .badge--neutral {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   SOCIAL LINK
+   12. SOCIAL LINK
 ══════════════════════════════════════════════════════════════════════════════ */
 .social-link {
     display: flex;
@@ -500,7 +554,7 @@ body.light-mode .badge--neutral {
     box-shadow: var(--shadow-sm);
 }
 
-/* light mode social link */
+/* Light mode */
 body.light-mode .social-link {
     background: var(--color-surface-1);
     border-color: var(--color-border-2);
@@ -516,7 +570,7 @@ body.light-mode .social-link:hover {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   REVEAL ANIMATION
+   13. REVEAL ANIMATION — [data-reveal]
 ══════════════════════════════════════════════════════════════════════════════ */
 [data-reveal] {
     opacity: 0;
@@ -545,7 +599,7 @@ body.light-mode .social-link:hover {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   KEYFRAMES GLOBAIS
+   14. KEYFRAMES GLOBAIS
 ══════════════════════════════════════════════════════════════════════════════ */
 @keyframes pulse-ring {
     0% {
@@ -614,8 +668,28 @@ body.light-mode .social-link:hover {
     }
 }
 
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 /* ══════════════════════════════════════════════════════════════════════════════
-   DIVIDER DECORATIVO — separador com gradiente brand
+   15. DIVIDER DECORATIVO
 ══════════════════════════════════════════════════════════════════════════════ */
 .divider-brand {
     height: 1px;
@@ -633,15 +707,15 @@ body.light-mode .divider-brand {
     background: linear-gradient(
         to right,
         transparent 0%,
-        color-mix(in srgb, var(--color-brand) 30%, transparent) 25%,
+        color-mix(in srgb, var(--color-brand) 28%, transparent) 25%,
         var(--color-border-2) 50%,
-        color-mix(in srgb, var(--color-accent) 25%, transparent) 75%,
+        color-mix(in srgb, var(--color-accent) 22%, transparent) 75%,
         transparent 100%
     );
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   GLASS CARD — efeito vidro (usado em Header scrolled, mobile nav)
+   16. GLASS CARD
 ══════════════════════════════════════════════════════════════════════════════ */
 .glass {
     background: var(--glass-bg);

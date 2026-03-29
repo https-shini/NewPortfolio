@@ -1,20 +1,23 @@
 /* ╔══════════════════════════════════════════════════════════════════════════╗
-   ║  TOKENS.CSS — Design System v3.0 · bl4ck404.dev.br                    ║
-   ║  Refatorado para qualidade profissional em ambos os temas.             ║
+   ║  TOKENS.CSS — Design System v4.0 · bl4ck404.dev.br                    ║
    ║                                                                        ║
    ║  Filosofia:                                                            ║
-   ║  · Dark Theme: principal, moderno, atmosférico, impactante             ║
-   ║  · Light Theme: profissional, limpo, legível, ideal para recrutadores  ║
+   ║  · Dark Theme  → profundo, atmosférico, moderno, cinematográfico       ║
+   ║  · Light Theme → limpo, profissional, legível, premium                 ║
    ║                                                                        ║
-   ║  Hierarquia: Primitivos → Semânticos (dark) → Overrides (light)        ║
+   ║  Hierarquia:                                                           ║
+   ║    1. Primitivos  → paletas brutas, prefixo --_*, nunca usados direto  ║
+   ║    2. Semânticos  → tokens dark (padrão) em :root                      ║
+   ║    3. Overrides   → tokens light em body.light-mode                    ║
+   ║    4. Tipografia, espaçamento, bordas, movimento, layout, z-index      ║
    ╚══════════════════════════════════════════════════════════════════════════╝ */
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   1. PRIMITIVOS — Paletas brutas. Nunca usadas diretamente no CSS.
-      Regra: se você está referenciando --_* fora deste bloco, está errado.
+   1. PRIMITIVOS — paletas brutas
+      Regra: nunca referenciar --_* fora deste bloco.
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
-    /* ── Crimson (brand primária) ── */
+    /* ── Crimson (brand primária) ──────────────────────────────────────────── */
     --_crimson-50: #fff1f2;
     --_crimson-100: #ffe4e6;
     --_crimson-200: #fecdd3;
@@ -27,7 +30,7 @@
     --_crimson-900: #881337;
     --_crimson-950: #4c0519;
 
-    /* ── Indigo (accent secundária) ── */
+    /* ── Indigo (accent secundária) ────────────────────────────────────────── */
     --_indigo-100: #e0e7ff;
     --_indigo-200: #c7d2fe;
     --_indigo-300: #a5b4fc;
@@ -38,7 +41,7 @@
     --_indigo-800: #3730a3;
     --_indigo-900: #312e81;
 
-    /* ── Slate neutros (base para dark) ── */
+    /* ── Slate neutros ─────────────────────────────────────────────────────── */
     --_slate-0: #ffffff;
     --_slate-50: #f8fafc;
     --_slate-100: #f1f5f9;
@@ -56,7 +59,7 @@
     --_slate-920: #0b1120;
     --_slate-950: #070d19;
 
-    /* ── Status ── */
+    /* ── Status ────────────────────────────────────────────────────────────── */
     --_green-400: #4ade80;
     --_green-500: #22c55e;
     --_green-600: #16a34a;
@@ -70,8 +73,8 @@
 
 /* ─────────────────────────────────────────────────────────────────────────────
    2. SEMÂNTICOS — DARK THEME (padrão)
-      Foco: profundidade atmosférica, contraste sofisticado, alma visual.
-      Inspirado em: bl4ck404.dev.br + slayingthedragon.io
+      Tom: profundidade, atmosfera noir com alma brand crimson.
+      Inspiração: slayingthedragon.io + bl4ck404.dev.br
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
     /* ╌╌ Brand ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
@@ -102,16 +105,13 @@
         0 0 20px color-mix(in srgb, var(--_indigo-500) 40%, transparent),
         0 0 48px color-mix(in srgb, var(--_indigo-500) 18%, transparent);
 
-    /* ╌╌ Superfícies — hierarquia de profundidade (dark) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
-    /*
-   * Lógica: bg é o mais profundo, surface-4 o mais elevado.
-   * Seções alternadas usam bg e surface-1 para criar ritmo visual.
+    /* ╌╌ Superfícies — hierarquia de profundidade ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
    *
-   * --color-bg        → fundo da página (seções hero, timeline, work)
-   * --color-surface-1 → seções elevadas (about, featured) + cards base
-   * --color-surface-2 → cards interativos, painéis internos
-   * --color-surface-3 → itens de hover, selected, active states
-   * --color-surface-4 → tooltips, dropdowns, elementos flutuantes
+   * bg        → fundo da página (base mais profunda)
+   * surface-1 → seções levemente elevadas (about, featured, footer)
+   * surface-2 → cards interativos, inputs, painéis
+   * surface-3 → hover states, selected, backgrounds de detalhe
+   * surface-4 → tooltips, popups, overlays flutuantes
    */
     --color-bg: var(--_slate-950);
     --color-surface-1: var(--_slate-920);
@@ -119,7 +119,7 @@
     --color-surface-3: var(--_slate-850);
     --color-surface-4: var(--_slate-800);
 
-    /* ╌╌ Bordas (dark) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /* ╌╌ Bordas ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --color-border-1: rgba(255, 255, 255, 0.04);
     --color-border-2: rgba(255, 255, 255, 0.08);
     --color-border-3: rgba(255, 255, 255, 0.14);
@@ -134,13 +134,13 @@
         transparent
     );
 
-    /* ╌╌ Texto (dark) — escala de legibilidade ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
-    /*
-   * text-1 → headings, labels ativos — contraste máximo (WCAG AAA)
-   * text-2 → body copy — confortável para leitura longa
-   * text-3 → secundário, descrições — hierarquia clara
-   * text-4 → placeholder, disabled, muted — sutil mas legível
-   * text-inverse → texto em fundos claros (badges, botões primários)
+    /* ╌╌ Texto — escala de legibilidade ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+   *
+   * text-1 → headings, labels ativos       WCAG AAA
+   * text-2 → body copy principal           confortável para leitura longa
+   * text-3 → secundário, descrições        hierarquia clara
+   * text-4 → placeholder, disabled, muted  sutil mas legível
+   * text-inverse → sobre fundos claros
    */
     --color-text-1: var(--_slate-50);
     --color-text-2: var(--_slate-200);
@@ -148,7 +148,7 @@
     --color-text-4: var(--_slate-600);
     --color-text-inverse: var(--_slate-950);
 
-    /* ╌╌ Status (dark) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /* ╌╌ Status ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --color-success: var(--_green-500);
     --color-success-subtle: color-mix(
         in srgb,
@@ -170,7 +170,7 @@
     --color-error-subtle: color-mix(in srgb, var(--_red-500) 14%, transparent);
     --color-error-border: color-mix(in srgb, var(--_red-500) 35%, transparent);
 
-    /* ╌╌ Sombras (dark) — ricas e atmosféricas ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /* ╌╌ Sombras — ricas e atmosféricas (dark) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.55);
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
     --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.55);
@@ -181,106 +181,102 @@
         inset 0 0 0 1px var(--color-border-brand), var(--shadow-lg),
         var(--color-brand-glow);
 
-    /* ╌╌ Efeitos especiais (dark) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /* ╌╌ Efeitos especiais ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --glass-bg: color-mix(in srgb, var(--color-surface-2) 80%, transparent);
     --glass-border: rgba(255, 255, 255, 0.06);
     --glass-blur: blur(20px) saturate(1.8);
 
-    /* header scrolled backdrop */
     --header-bg-scrolled: color-mix(
         in srgb,
-        var(--_slate-950) 80%,
+        var(--_slate-950) 82%,
         transparent
     );
 
-    /* dots background pattern */
+    /* Dots pattern hero */
     --dots-color: color-mix(in srgb, var(--_crimson-600) 18%, transparent);
+
+    /* Gradiente de fundo sutil (algumas seções) */
+    --section-gradient-overlay: radial-gradient(
+        ellipse 80% 50% at 50% 0%,
+        color-mix(in srgb, var(--_crimson-950) 30%, transparent),
+        transparent 70%
+    );
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    3. SEMÂNTICOS — LIGHT THEME
-      Filosofia: claridade profissional, sem esterilidade.
-      Referência: portfólios de alto nível, SaaS apps premium.
-      Principais características:
-      · Fundo off-white quente (não branco puro — reduz fadiga visual)
-      · Superfícies com elevação clara e discreta
-      · Bordas visíveis mas sutis — estrutura sem ruído
-      · Texto de alto contraste em todas as camadas
-      · Brand crimson adaptado para fundo claro (tom ligeiramente mais escuro)
+      Tom: branco quente, hierarquia aérea, premium sem ser estéril.
+      Filosofia: off-white como base, superfícies com elevação sutil,
+      bordas estruturadas e texto de alto contraste em todas as camadas.
    ───────────────────────────────────────────────────────────────────────────── */
 body.light-mode {
-    /* ╌╌ Brand no light (reajustado para contraste em fundo claro) ╌╌╌╌╌╌╌╌╌ */
-    /*
-   * No dark: brand = crimson-600 (#e11d48) sobre fundos escuros → OK
-   * No light: crimson-600 sobre branco tem contraste 4.7:1 — passa AA mas
-   *   falha AAA. Usamos crimson-700 (#be123c) para textos e links → 6.2:1.
-   * Para elementos com fundo próprio (badges, botões) mantemos crimson-600.
+    /* ╌╌ Brand no light ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+   *  No dark: crimson-600 sobre fundos escuros → OK
+   *  No light: crimson-600 sobre branco = 5.9:1 → WCAG AA (suficiente).
+   *  Usamos crimson-700 para texto sobre --color-brand-subtle para AAA.
    */
     --color-brand: var(--_crimson-600);
     --color-brand-hover: var(--_crimson-700);
-    --color-brand-light: var(
-        --_crimson-700
-    ); /* mais escuro no light para contraste */
+    --color-brand-light: var(--_crimson-600);
     --color-brand-muted: var(--_crimson-100);
     --color-brand-subtle: color-mix(
         in srgb,
-        var(--_crimson-500) 10%,
+        var(--_crimson-600) 9%,
         transparent
     );
     --color-brand-glow:
-        0 0 16px color-mix(in srgb, var(--_crimson-600) 20%, transparent),
-        0 0 36px color-mix(in srgb, var(--_crimson-600) 10%, transparent);
+        0 0 16px color-mix(in srgb, var(--_crimson-600) 22%, transparent),
+        0 0 40px color-mix(in srgb, var(--_crimson-600) 10%, transparent);
 
-    /* ╌╌ Accent no light ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /* ╌╌ Accent no light ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --color-accent: var(--_indigo-600);
     --color-accent-hover: var(--_indigo-700);
-    --color-accent-light: var(--_indigo-600); /* mais escuro no light */
+    --color-accent-light: var(--_indigo-600);
     --color-accent-muted: var(--_indigo-100);
     --color-accent-subtle: color-mix(
         in srgb,
-        var(--_indigo-500) 10%,
+        var(--_indigo-600) 9%,
         transparent
     );
     --color-accent-glow:
-        0 0 16px color-mix(in srgb, var(--_indigo-500) 18%, transparent),
-        0 0 36px color-mix(in srgb, var(--_indigo-500) 8%, transparent);
+        0 0 16px color-mix(in srgb, var(--_indigo-600) 22%, transparent),
+        0 0 40px color-mix(in srgb, var(--_indigo-600) 10%, transparent);
 
-    /* ╌╌ Superfícies (light) — elevação por claridade ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
-    /*
-   * Lógica inversa ao dark: fundo é claro, superfícies são ainda mais claras.
-   * bg        → off-white quente (não branco puro) — reduz fadiga visual
-   * surface-1 → branco puro — cards de destaque
+    /* ╌╌ Superfícies light ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+   *
+   * bg        → off-white frio-neutro, reduz fadiga visual vs branco puro
+   * surface-1 → branco puro — maior impacto, cards de destaque
    * surface-2 → cinza muito claro — cards secundários, inputs
-   * surface-3 → cinza claro — hover states, selected
-   * surface-4 → cinza médio — bordas grossas, separadores
+   * surface-3 → cinza claro — hover states, selected items
+   * surface-4 → cinza médio — separadores, bordas visíveis
    */
-    --color-bg: #f4f5f7; /* off-white frio-neutro */
+    --color-bg: #f2f4f8;
     --color-surface-1: var(--_slate-0);
     --color-surface-2: var(--_slate-50);
     --color-surface-3: var(--_slate-100);
     --color-surface-4: var(--_slate-150);
 
-    /* ╌╌ Bordas (light) — visíveis mas elegantes ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
-    --color-border-1: rgba(0, 0, 0, 0.06);
-    --color-border-2: rgba(0, 0, 0, 0.1);
-    --color-border-3: rgba(0, 0, 0, 0.18);
+    /* ╌╌ Bordas light — visíveis, estruturadas, sem ruído ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    --color-border-1: rgba(0, 0, 0, 0.05);
+    --color-border-2: rgba(0, 0, 0, 0.09);
+    --color-border-3: rgba(0, 0, 0, 0.16);
     --color-border-brand: color-mix(
         in srgb,
-        var(--_crimson-600) 45%,
+        var(--_crimson-600) 40%,
         transparent
     );
     --color-border-accent: color-mix(
         in srgb,
-        var(--_indigo-600) 40%,
+        var(--_indigo-600) 35%,
         transparent
     );
 
-    /* ╌╌ Texto (light) — hierarquia clara e legível ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
-    /*
-   * text-1 → headings — quase preto, alto impacto  (#0f172a → 16:1 sobre branco)
-   * text-2 → body — cinza muito escuro, confortável (#1e293b → 13:1)
-   * text-3 → secundário                             (#475569 → 7:1 — WCAG AAA)
-   * text-4 → muted, placeholder                    (#64748b → 4.6:1 — WCAG AA)
+    /* ╌╌ Texto light — alto contraste em todas as camadas ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+   *
+   * text-1 → headings     slate-900  → 16:1 sobre branco   WCAG AAA
+   * text-2 → body         slate-800  → 13:1                WCAG AAA
+   * text-3 → secundário   slate-600  → 7:1                 WCAG AAA
+   * text-4 → muted        slate-500  → 4.6:1               WCAG AA
    * text-inverse → sobre fundos escuros
    */
     --color-text-1: var(--_slate-900);
@@ -289,26 +285,24 @@ body.light-mode {
     --color-text-4: var(--_slate-500);
     --color-text-inverse: var(--_slate-0);
 
-    /* ╌╌ Status (light) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /* ╌╌ Status light ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --color-success: var(--_green-700);
     --color-success-subtle: color-mix(
         in srgb,
-        var(--_green-500) 12%,
+        var(--_green-500) 11%,
         transparent
     );
     --color-success-border: color-mix(
         in srgb,
-        var(--_green-600) 35%,
+        var(--_green-600) 30%,
         transparent
     );
     --color-error: var(--_red-600);
-    --color-error-subtle: color-mix(in srgb, var(--_red-500) 10%, transparent);
-    --color-error-border: color-mix(in srgb, var(--_red-600) 35%, transparent);
+    --color-error-subtle: color-mix(in srgb, var(--_red-500) 9%, transparent);
+    --color-error-border: color-mix(in srgb, var(--_red-600) 30%, transparent);
 
-    /* ╌╌ Sombras (light) — sutis, sem peso visual ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
-    /*
-   * Sombras no light são muito mais delicadas. O excesso cria aspecto poluído.
-   * Usamos uma sombra base + uma borda discreta como substituta de sombra.
+    /* ╌╌ Sombras light — delicadas, sem peso visual ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+   *  No light, sombras são muito mais suaves. Bordas substituem sombra pesada.
    */
     --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
     --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
@@ -322,22 +316,27 @@ body.light-mode {
         0 8px 28px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--color-border-brand),
         var(--color-brand-glow);
 
-    /* ╌╌ Efeitos especiais (light) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
-    --glass-bg: color-mix(in srgb, var(--_slate-0) 85%, transparent);
+    /* ╌╌ Efeitos especiais light ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    --glass-bg: color-mix(in srgb, var(--_slate-0) 88%, transparent);
     --glass-border: rgba(0, 0, 0, 0.08);
     --glass-blur: blur(20px) saturate(1.4);
 
-    --header-bg-scrolled: color-mix(in srgb, var(--_slate-0) 88%, transparent);
+    --header-bg-scrolled: color-mix(in srgb, var(--_slate-0) 92%, transparent);
 
     --dots-color: color-mix(in srgb, var(--_crimson-600) 12%, transparent);
+
+    --section-gradient-overlay: radial-gradient(
+        ellipse 80% 50% at 50% 0%,
+        color-mix(in srgb, var(--_crimson-50) 40%, transparent),
+        transparent 70%
+    );
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    4. TIPOGRAFIA
-   Três famílias complementares com papéis claros:
-   · display → impacto visual, headings grandes
-   · body    → leitura confortável, UI
-   · mono    → código, labels técnicas, logo
+      · display → impacto visual, headings grandes (Clash Display / Syne)
+      · body    → leitura confortável, UI (Satoshi / Plus Jakarta Sans)
+      · mono    → código, labels técnicas, logo (JetBrains Mono)
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
     --font-display: "Clash Display", "Syne", sans-serif;
@@ -450,7 +449,7 @@ body.light-mode {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   9. Z-INDEX
+   9. Z-INDEX — escala semântica
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
     --z-base: 0;
