@@ -324,7 +324,7 @@ export const About: React.FC = () => {
                                 áreas como <strong>Java</strong>,{" "}
                                 <strong>machine learning</strong>,{" "}
                                 <strong>segurança da informação</strong> e{" "}
-                                <strong>arquitetura de software</strong>,
+                                <strong>engenharia de software</strong>,
                                 buscando construir soluções{" "}
                                 <strong>escaláveis</strong> e{" "}
                                 <strong>robustas</strong>. Durante meus

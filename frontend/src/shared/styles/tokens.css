@@ -1,14 +1,20 @@
 /* ╔══════════════════════════════════════════════════════════════════════════╗
-   ║  TOKENS.CSS — Design System v2.0 · bl4ck404.dev.br                    ║
-   ║  Fonte única de verdade. Nenhum outro arquivo declara variáveis aqui.  ║
-   ║  Hierarquia: Primitivos → Semânticos → Componentes                    ║
+   ║  TOKENS.CSS — Design System v3.0 · bl4ck404.dev.br                    ║
+   ║  Refatorado para qualidade profissional em ambos os temas.             ║
+   ║                                                                        ║
+   ║  Filosofia:                                                            ║
+   ║  · Dark Theme: principal, moderno, atmosférico, impactante             ║
+   ║  · Light Theme: profissional, limpo, legível, ideal para recrutadores  ║
+   ║                                                                        ║
+   ║  Hierarquia: Primitivos → Semânticos (dark) → Overrides (light)        ║
    ╚══════════════════════════════════════════════════════════════════════════╝ */
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   1. PRIMITIVOS — Valores brutos. Nunca usados diretamente no CSS.
+   1. PRIMITIVOS — Paletas brutas. Nunca usadas diretamente no CSS.
+      Regra: se você está referenciando --_* fora deste bloco, está errado.
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
-    /* ── Paleta Crimson ── */
+    /* ── Crimson (brand primária) ── */
     --_crimson-50: #fff1f2;
     --_crimson-100: #ffe4e6;
     --_crimson-200: #fecdd3;
@@ -16,112 +22,133 @@
     --_crimson-400: #fb7185;
     --_crimson-500: #f43f5e;
     --_crimson-600: #e11d48;
-    /* brand primary */
     --_crimson-700: #be123c;
     --_crimson-800: #9f1239;
     --_crimson-900: #881337;
     --_crimson-950: #4c0519;
 
-    /* ── Paleta Indigo ── */
+    /* ── Indigo (accent secundária) ── */
+    --_indigo-100: #e0e7ff;
+    --_indigo-200: #c7d2fe;
     --_indigo-300: #a5b4fc;
     --_indigo-400: #818cf8;
     --_indigo-500: #6366f1;
     --_indigo-600: #4f46e5;
     --_indigo-700: #4338ca;
     --_indigo-800: #3730a3;
+    --_indigo-900: #312e81;
 
-    /* ── Paleta Neutros (warm-dark) ── */
-    --_neutral-0: #ffffff;
-    --_neutral-50: #f8fafc;
-    --_neutral-100: #f1f5f9;
-    --_neutral-200: #e2e8f0;
-    --_neutral-300: #cbd5e1;
-    --_neutral-400: #94a3b8;
-    --_neutral-500: #64748b;
-    --_neutral-600: #475569;
-    --_neutral-700: #334155;
-    --_neutral-750: #1e2a3a;
-    --_neutral-800: #0f172a;
-    --_neutral-850: #0a1020;
-    --_neutral-900: #070b14;
-    --_neutral-950: #040710;
+    /* ── Slate neutros (base para dark) ── */
+    --_slate-0: #ffffff;
+    --_slate-50: #f8fafc;
+    --_slate-100: #f1f5f9;
+    --_slate-150: #eaeff5;
+    --_slate-200: #e2e8f0;
+    --_slate-300: #cbd5e1;
+    --_slate-400: #94a3b8;
+    --_slate-500: #64748b;
+    --_slate-600: #475569;
+    --_slate-700: #334155;
+    --_slate-750: #243044;
+    --_slate-800: #1e293b;
+    --_slate-850: #151f2e;
+    --_slate-900: #0f172a;
+    --_slate-920: #0b1120;
+    --_slate-950: #070d19;
 
-    /* ── Paleta Verde ── */
+    /* ── Status ── */
     --_green-400: #4ade80;
     --_green-500: #22c55e;
     --_green-600: #16a34a;
-
-    /* ── Paleta Âmbar ── */
+    --_green-700: #15803d;
     --_amber-400: #fbbf24;
     --_amber-500: #f59e0b;
-
-    /* ── Paleta Vermelho erro ── */
     --_red-400: #f87171;
     --_red-500: #ef4444;
     --_red-600: #dc2626;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   2. SEMÂNTICOS DARK MODE (padrão)
+   2. SEMÂNTICOS — DARK THEME (padrão)
+      Foco: profundidade atmosférica, contraste sofisticado, alma visual.
+      Inspirado em: bl4ck404.dev.br + slayingthedragon.io
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
-    /* ── Brand ── */
+    /* ╌╌ Brand ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --color-brand: var(--_crimson-600);
     --color-brand-hover: var(--_crimson-700);
     --color-brand-light: var(--_crimson-400);
+    --color-brand-muted: var(--_crimson-800);
     --color-brand-subtle: color-mix(
         in srgb,
-        var(--_crimson-600) 12%,
+        var(--_crimson-600) 13%,
         transparent
     );
     --color-brand-glow:
-        0 0 24px color-mix(in srgb, var(--_crimson-600) 45%, transparent),
-        0 0 48px color-mix(in srgb, var(--_crimson-600) 20%, transparent);
+        0 0 20px color-mix(in srgb, var(--_crimson-600) 40%, transparent),
+        0 0 48px color-mix(in srgb, var(--_crimson-600) 18%, transparent);
 
+    /* ╌╌ Accent ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --color-accent: var(--_indigo-500);
     --color-accent-hover: var(--_indigo-600);
     --color-accent-light: var(--_indigo-400);
+    --color-accent-muted: var(--_indigo-800);
     --color-accent-subtle: color-mix(
         in srgb,
-        var(--_indigo-500) 12%,
+        var(--_indigo-500) 13%,
         transparent
     );
-    --color-accent-glow: 0 0 24px
-        color-mix(in srgb, var(--_indigo-500) 40%, transparent);
+    --color-accent-glow:
+        0 0 20px color-mix(in srgb, var(--_indigo-500) 40%, transparent),
+        0 0 48px color-mix(in srgb, var(--_indigo-500) 18%, transparent);
 
-    /* ── Superfícies ── */
-    --color-bg: var(--_neutral-900);
-    --color-surface-1: var(--_neutral-850);
-    --color-surface-2: var(--_neutral-800);
-    --color-surface-3: var(--_neutral-750);
-    --color-surface-4: color-mix(
-        in srgb,
-        var(--_neutral-700) 60%,
-        var(--_neutral-800)
-    );
+    /* ╌╌ Superfícies — hierarquia de profundidade (dark) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /*
+   * Lógica: bg é o mais profundo, surface-4 o mais elevado.
+   * Seções alternadas usam bg e surface-1 para criar ritmo visual.
+   *
+   * --color-bg        → fundo da página (seções hero, timeline, work)
+   * --color-surface-1 → seções elevadas (about, featured) + cards base
+   * --color-surface-2 → cards interativos, painéis internos
+   * --color-surface-3 → itens de hover, selected, active states
+   * --color-surface-4 → tooltips, dropdowns, elementos flutuantes
+   */
+    --color-bg: var(--_slate-950);
+    --color-surface-1: var(--_slate-920);
+    --color-surface-2: var(--_slate-900);
+    --color-surface-3: var(--_slate-850);
+    --color-surface-4: var(--_slate-800);
 
-    /* ── Bordas ── */
-    --color-border-1: rgba(255, 255, 255, 0.05);
-    --color-border-2: rgba(255, 255, 255, 0.09);
-    --color-border-3: rgba(255, 255, 255, 0.16);
+    /* ╌╌ Bordas (dark) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    --color-border-1: rgba(255, 255, 255, 0.04);
+    --color-border-2: rgba(255, 255, 255, 0.08);
+    --color-border-3: rgba(255, 255, 255, 0.14);
     --color-border-brand: color-mix(
         in srgb,
         var(--_crimson-600) 50%,
         transparent
     );
+    --color-border-accent: color-mix(
+        in srgb,
+        var(--_indigo-500) 45%,
+        transparent
+    );
 
-    /* ── Texto ── */
-    --color-text-1: var(--_neutral-50);
-    /* headings, labels — WCAG AA on bg */
-    --color-text-2: var(--_neutral-300);
-    /* body copy */
-    --color-text-3: var(--_neutral-400);
-    /* muted, placeholder */
-    --color-text-4: var(--_neutral-500);
-    /* tertiary, disabled */
-    --color-text-inverse: var(--_neutral-900);
+    /* ╌╌ Texto (dark) — escala de legibilidade ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /*
+   * text-1 → headings, labels ativos — contraste máximo (WCAG AAA)
+   * text-2 → body copy — confortável para leitura longa
+   * text-3 → secundário, descrições — hierarquia clara
+   * text-4 → placeholder, disabled, muted — sutil mas legível
+   * text-inverse → texto em fundos claros (badges, botões primários)
+   */
+    --color-text-1: var(--_slate-50);
+    --color-text-2: var(--_slate-200);
+    --color-text-3: var(--_slate-400);
+    --color-text-4: var(--_slate-600);
+    --color-text-inverse: var(--_slate-950);
 
-    /* ── Status ── */
+    /* ╌╌ Status (dark) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --color-success: var(--_green-500);
     --color-success-subtle: color-mix(
         in srgb,
@@ -143,101 +170,201 @@
     --color-error-subtle: color-mix(in srgb, var(--_red-500) 14%, transparent);
     --color-error-border: color-mix(in srgb, var(--_red-500) 35%, transparent);
 
-    /* ── Sombras ── */
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
-    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.45);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.55);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+    /* ╌╌ Sombras (dark) — ricas e atmosféricas ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.55);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.55);
+    --shadow-lg: 0 8px 34px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 16px 52px rgba(0, 0, 0, 0.65);
     --shadow-card: inset 0 0 0 1px var(--color-border-2), var(--shadow-md);
     --shadow-card-hover:
         inset 0 0 0 1px var(--color-border-brand), var(--shadow-lg),
         var(--color-brand-glow);
+
+    /* ╌╌ Efeitos especiais (dark) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    --glass-bg: color-mix(in srgb, var(--color-surface-2) 80%, transparent);
+    --glass-border: rgba(255, 255, 255, 0.06);
+    --glass-blur: blur(20px) saturate(1.8);
+
+    /* header scrolled backdrop */
+    --header-bg-scrolled: color-mix(
+        in srgb,
+        var(--_slate-950) 80%,
+        transparent
+    );
+
+    /* dots background pattern */
+    --dots-color: color-mix(in srgb, var(--_crimson-600) 18%, transparent);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   3. LIGHT MODE — sobrescreve apenas semânticos
+   3. SEMÂNTICOS — LIGHT THEME
+      Filosofia: claridade profissional, sem esterilidade.
+      Referência: portfólios de alto nível, SaaS apps premium.
+      Principais características:
+      · Fundo off-white quente (não branco puro — reduz fadiga visual)
+      · Superfícies com elevação clara e discreta
+      · Bordas visíveis mas sutis — estrutura sem ruído
+      · Texto de alto contraste em todas as camadas
+      · Brand crimson adaptado para fundo claro (tom ligeiramente mais escuro)
    ───────────────────────────────────────────────────────────────────────────── */
 body.light-mode {
-    --color-bg: var(--_neutral-50);
-    --color-surface-1: var(--_neutral-0);
-    --color-surface-2: var(--_neutral-100);
-    --color-surface-3: var(--_neutral-200);
-    --color-surface-4: var(--_neutral-300);
+    /* ╌╌ Brand no light (reajustado para contraste em fundo claro) ╌╌╌╌╌╌╌╌╌ */
+    /*
+   * No dark: brand = crimson-600 (#e11d48) sobre fundos escuros → OK
+   * No light: crimson-600 sobre branco tem contraste 4.7:1 — passa AA mas
+   *   falha AAA. Usamos crimson-700 (#be123c) para textos e links → 6.2:1.
+   * Para elementos com fundo próprio (badges, botões) mantemos crimson-600.
+   */
+    --color-brand: var(--_crimson-600);
+    --color-brand-hover: var(--_crimson-700);
+    --color-brand-light: var(
+        --_crimson-700
+    ); /* mais escuro no light para contraste */
+    --color-brand-muted: var(--_crimson-100);
+    --color-brand-subtle: color-mix(
+        in srgb,
+        var(--_crimson-500) 10%,
+        transparent
+    );
+    --color-brand-glow:
+        0 0 16px color-mix(in srgb, var(--_crimson-600) 20%, transparent),
+        0 0 36px color-mix(in srgb, var(--_crimson-600) 10%, transparent);
 
+    /* ╌╌ Accent no light ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    --color-accent: var(--_indigo-600);
+    --color-accent-hover: var(--_indigo-700);
+    --color-accent-light: var(--_indigo-600); /* mais escuro no light */
+    --color-accent-muted: var(--_indigo-100);
+    --color-accent-subtle: color-mix(
+        in srgb,
+        var(--_indigo-500) 10%,
+        transparent
+    );
+    --color-accent-glow:
+        0 0 16px color-mix(in srgb, var(--_indigo-500) 18%, transparent),
+        0 0 36px color-mix(in srgb, var(--_indigo-500) 8%, transparent);
+
+    /* ╌╌ Superfícies (light) — elevação por claridade ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /*
+   * Lógica inversa ao dark: fundo é claro, superfícies são ainda mais claras.
+   * bg        → off-white quente (não branco puro) — reduz fadiga visual
+   * surface-1 → branco puro — cards de destaque
+   * surface-2 → cinza muito claro — cards secundários, inputs
+   * surface-3 → cinza claro — hover states, selected
+   * surface-4 → cinza médio — bordas grossas, separadores
+   */
+    --color-bg: #f4f5f7; /* off-white frio-neutro */
+    --color-surface-1: var(--_slate-0);
+    --color-surface-2: var(--_slate-50);
+    --color-surface-3: var(--_slate-100);
+    --color-surface-4: var(--_slate-150);
+
+    /* ╌╌ Bordas (light) — visíveis mas elegantes ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --color-border-1: rgba(0, 0, 0, 0.06);
     --color-border-2: rgba(0, 0, 0, 0.1);
     --color-border-3: rgba(0, 0, 0, 0.18);
-
-    --color-text-1: var(--_neutral-900);
-    --color-text-2: var(--_neutral-700);
-    --color-text-3: var(--_neutral-500);
-    --color-text-4: var(--_neutral-400);
-    --color-text-inverse: var(--_neutral-50);
-
-    --color-brand-subtle: color-mix(
+    --color-border-brand: color-mix(
         in srgb,
-        var(--_crimson-600) 8%,
+        var(--_crimson-600) 45%,
         transparent
     );
-    --color-accent-subtle: color-mix(
+    --color-border-accent: color-mix(
         in srgb,
-        var(--_indigo-500) 8%,
+        var(--_indigo-600) 40%,
         transparent
     );
 
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.08);
-    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.14);
-    --shadow-card: inset 0 0 0 1px var(--color-border-2), var(--shadow-md);
-    --color-brand-glow: 0 0 24px
-        color-mix(in srgb, var(--_crimson-600) 22%, transparent);
+    /* ╌╌ Texto (light) — hierarquia clara e legível ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /*
+   * text-1 → headings — quase preto, alto impacto  (#0f172a → 16:1 sobre branco)
+   * text-2 → body — cinza muito escuro, confortável (#1e293b → 13:1)
+   * text-3 → secundário                             (#475569 → 7:1 — WCAG AAA)
+   * text-4 → muted, placeholder                    (#64748b → 4.6:1 — WCAG AA)
+   * text-inverse → sobre fundos escuros
+   */
+    --color-text-1: var(--_slate-900);
+    --color-text-2: var(--_slate-800);
+    --color-text-3: var(--_slate-600);
+    --color-text-4: var(--_slate-500);
+    --color-text-inverse: var(--_slate-0);
+
+    /* ╌╌ Status (light) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    --color-success: var(--_green-700);
+    --color-success-subtle: color-mix(
+        in srgb,
+        var(--_green-500) 12%,
+        transparent
+    );
+    --color-success-border: color-mix(
+        in srgb,
+        var(--_green-600) 35%,
+        transparent
+    );
+    --color-error: var(--_red-600);
+    --color-error-subtle: color-mix(in srgb, var(--_red-500) 10%, transparent);
+    --color-error-border: color-mix(in srgb, var(--_red-600) 35%, transparent);
+
+    /* ╌╌ Sombras (light) — sutis, sem peso visual ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    /*
+   * Sombras no light são muito mais delicadas. O excesso cria aspecto poluído.
+   * Usamos uma sombra base + uma borda discreta como substituta de sombra.
+   */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.07);
+    --shadow-xl:
+        0 16px 44px rgba(0, 0, 0, 0.13), 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-card:
+        0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--color-border-2);
+    --shadow-card-hover:
+        0 8px 28px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--color-border-brand),
+        var(--color-brand-glow);
+
+    /* ╌╌ Efeitos especiais (light) ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
+    --glass-bg: color-mix(in srgb, var(--_slate-0) 85%, transparent);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-blur: blur(20px) saturate(1.4);
+
+    --header-bg-scrolled: color-mix(in srgb, var(--_slate-0) 88%, transparent);
+
+    --dots-color: color-mix(in srgb, var(--_crimson-600) 12%, transparent);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
    4. TIPOGRAFIA
+   Três famílias complementares com papéis claros:
+   · display → impacto visual, headings grandes
+   · body    → leitura confortável, UI
+   · mono    → código, labels técnicas, logo
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
-    /* Famílias — Clash Display (impacto) + Satoshi (leitura) + Mono */
     --font-display: "Clash Display", "Syne", sans-serif;
     --font-body: "Satoshi", "Plus Jakarta Sans", system-ui, sans-serif;
     --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
-    /* Escala — Minor Third × 1.2 (compacta, profissional) */
-    --text-2xs: 0.625rem;
-    /* 10px */
-    --text-xs: 0.75rem;
-    /* 12px */
-    --text-sm: 0.875rem;
-    /* 14px */
-    --text-md: 1rem;
-    /* 16px — base */
-    --text-lg: 1.125rem;
-    /* 18px */
-    --text-xl: 1.25rem;
-    /* 20px */
-    --text-2xl: 1.5rem;
-    /* 24px */
-    --text-3xl: 1.875rem;
-    /* 30px */
-    --text-4xl: 2.25rem;
-    /* 36px */
-    --text-5xl: 3rem;
-    /* 48px */
-    --text-6xl: 3.75rem;
-    /* 60px */
-    --text-7xl: 4.5rem;
-    /* 72px */
+    /* ── Escala tipográfica — Minor Third (1.25) ── */
+    --text-2xs: 0.625rem; /* 10px */
+    --text-xs: 0.75rem; /* 12px */
+    --text-sm: 0.875rem; /* 14px */
+    --text-md: 1rem; /* 16px — base */
+    --text-lg: 1.125rem; /* 18px */
+    --text-xl: 1.25rem; /* 20px */
+    --text-2xl: 1.5rem; /* 24px */
+    --text-3xl: 1.875rem; /* 30px */
+    --text-4xl: 2.25rem; /* 36px */
+    --text-5xl: 3rem; /* 48px */
+    --text-6xl: 3.75rem; /* 60px */
+    --text-7xl: 4.5rem; /* 72px */
 
-    /* Line heights */
+    /* ── Line heights ── */
     --lh-tight: 1.15;
     --lh-snug: 1.3;
     --lh-base: 1.6;
     --lh-relaxed: 1.75;
 
-    /* Letter spacing */
+    /* ── Letter spacing ── */
     --ls-tight: -0.04em;
     --ls-snug: -0.025em;
     --ls-base: 0;
@@ -249,38 +376,22 @@ body.light-mode {
    5. ESPAÇAMENTO — Escala 4px
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
-    --space-1: 0.25rem;
-    /* 4px  */
-    --space-2: 0.5rem;
-    /* 8px  */
-    --space-3: 0.75rem;
-    /* 12px */
-    --space-4: 1rem;
-    /* 16px */
-    --space-5: 1.25rem;
-    /* 20px */
-    --space-6: 1.5rem;
-    /* 24px */
-    --space-7: 1.75rem;
-    /* 28px */
-    --space-8: 2rem;
-    /* 32px */
-    --space-10: 2.5rem;
-    /* 40px */
-    --space-12: 3rem;
-    /* 48px */
-    --space-14: 3.5rem;
-    /* 56px */
-    --space-16: 4rem;
-    /* 64px */
-    --space-20: 5rem;
-    /* 80px */
-    --space-24: 6rem;
-    /* 96px */
-    --space-28: 7rem;
-    /* 112px */
-    --space-32: 8rem;
-    /* 128px */
+    --space-1: 0.25rem; /*  4px */
+    --space-2: 0.5rem; /*  8px */
+    --space-3: 0.75rem; /* 12px */
+    --space-4: 1rem; /* 16px */
+    --space-5: 1.25rem; /* 20px */
+    --space-6: 1.5rem; /* 24px */
+    --space-7: 1.75rem; /* 28px */
+    --space-8: 2rem; /* 32px */
+    --space-10: 2.5rem; /* 40px */
+    --space-12: 3rem; /* 48px */
+    --space-14: 3.5rem; /* 56px */
+    --space-16: 4rem; /* 64px */
+    --space-20: 5rem; /* 80px */
+    --space-24: 6rem; /* 96px */
+    --space-28: 7rem; /* 112px */
+    --space-32: 8rem; /* 128px */
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

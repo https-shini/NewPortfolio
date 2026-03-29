@@ -1,14 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAIN.TSX — atualizado para v3.0
+   Adicione a importação do theme-patches.css APÓS os outros estilos.
+═══════════════════════════════════════════════════════════════════════════ */
 
-// ── Global styles — order matters: tokens → base → (component CSS loaded per widget)
-import '@/shared/styles/tokens.css';
-import '@/shared/styles/globals.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-import App from '@/app/App';
+// ── Global styles — ordem obrigatória ─────────────────────────────────────────
+import "@/shared/styles/tokens.css"; // 1. Primitivos + semânticos (dark + light)
+import "@/shared/styles/globals.css"; // 2. Reset + utilitários base
+import "@/shared/styles/theme-patches.css"; // 3. Overrides de light mode por seção
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+import App from "@/app/App";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>,
 );
