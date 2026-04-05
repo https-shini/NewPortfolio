@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export type TimelineStatusType = 'active' | 'done';
 export type TimelineCategory   = 'edu' | 'cert' | 'exp';
 
@@ -114,4 +113,3 @@ export interface TimelineFilterState {
   query:     string;
   activeTab: TimelineCategory;
 }
->>>>>>> master

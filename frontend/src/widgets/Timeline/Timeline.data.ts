@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { TimelineData } from './Timeline.types';
 
 export const TIMELINE_DATA: TimelineData = {
@@ -606,4 +605,3 @@ O curso aprofundou competências em programação com C e Python, algoritmos, es
             "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
     },
 ];
->>>>>>> master

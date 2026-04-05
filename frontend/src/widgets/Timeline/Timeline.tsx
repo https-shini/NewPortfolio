@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useEffect, useRef } from 'react';
 import './Timeline.css';
 import { useLang } from '@/shared/hooks/useLang';
@@ -597,5 +596,4 @@ export const Timeline: React.FC = () => {
             </Suspense>
         </section>
     );
->>>>>>> master
 };
