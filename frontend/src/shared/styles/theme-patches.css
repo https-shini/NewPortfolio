@@ -1,0 +1,993 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   THEME-PATCHES.CSS — Overrides de light mode por seção
+   Design System v4.0 · bl4ck404.dev.br
+
+   Filosofia:
+   · Importado APÓS tokens.css, globals.css e todos os .css de componente.
+   · Não cria novos elementos — apenas sobrescreve valores de cor/sombra.
+   · Usa exclusivamente variáveis semânticas do tokens.css.
+   · Cada seção tem seus overrides isolados em bloco comentado.
+
+   Índice:
+   1.  Global light-mode (body, seleção, scrollbar)
+   2.  Header
+   3.  Hero
+   4.  About
+   5.  Timeline
+   6.  Featured
+   7.  Work
+   8.  Contact
+   9.  Footer
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   1. GLOBAL LIGHT-MODE
+      Ajustes no nível de body e elementos universais.
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* Seleção de texto adaptada */
+body.light-mode ::selection {
+    background: color-mix(in srgb, var(--color-brand) 20%, transparent);
+    color: var(--_crimson-900);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   2. HEADER
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Header scrolled — glassmorphism limpo ── */
+body.light-mode .header.is-scrolled {
+    background: color-mix(in srgb, var(--_slate-0) 92%, transparent);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border-bottom-color: var(--color-border-2);
+    box-shadow:
+        0 1px 0 var(--color-border-1),
+        var(--shadow-sm);
+}
+
+/* ── Logo ── */
+body.light-mode .header__logo-prefix {
+    color: var(--color-text-1);
+}
+
+body.light-mode .header__logo-suffix {
+    color: var(--color-brand);
+}
+
+body.light-mode .header__logo:hover .header__logo-prefix {
+    color: var(--color-brand);
+}
+
+body.light-mode .header__logo:hover .header__logo-suffix {
+    opacity: 0.75;
+}
+
+/* ── Nav desktop ── */
+body.light-mode .header__nav-link {
+    color: var(--color-text-3);
+}
+
+body.light-mode .header__nav-link:hover,
+body.light-mode .header__nav-link.is-active {
+    color: var(--color-text-1);
+    background: var(--color-surface-3);
+}
+
+body.light-mode .header__nav-link.is-active::after,
+body.light-mode .header__nav-link:hover::after {
+    background: var(--color-brand);
+}
+
+/* ── Language pill ── */
+body.light-mode .header__lang {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    color: var(--color-text-3);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .header__lang:hover {
+    border-color: var(--color-brand);
+    color: var(--color-brand);
+    background: var(--color-brand-subtle);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+}
+
+/* ── Theme control ── */
+body.light-mode .header__ctrl {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    color: var(--color-text-3);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .header__ctrl:hover {
+    border-color: var(--color-brand);
+    color: var(--color-brand);
+    background: var(--color-brand-subtle);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+}
+
+/* ── Hamburger ── */
+body.light-mode .header__hamburger {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .header__hamburger-bar {
+    background: var(--color-text-2);
+}
+
+body.light-mode .header__hamburger:hover {
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+}
+
+/* ── Mobile nav drawer ── */
+body.light-mode .mobile-nav {
+    background: color-mix(in srgb, var(--_slate-0) 97%, transparent);
+    backdrop-filter: blur(28px) saturate(1.5);
+    -webkit-backdrop-filter: blur(28px) saturate(1.5);
+}
+
+body.light-mode .mobile-nav__link {
+    color: var(--color-text-3);
+}
+
+body.light-mode .mobile-nav__link:hover {
+    color: var(--color-text-1);
+}
+
+body.light-mode .mobile-nav__link.is-active {
+    color: var(--color-brand);
+}
+
+body.light-mode .mobile-nav__cta {
+    color: var(--color-text-1);
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+}
+
+body.light-mode .mobile-nav__cta:hover {
+    background: var(--color-brand);
+    border-color: var(--color-brand);
+    color: #fff;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   3. HERO
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Fundo ── */
+body.light-mode .hero {
+    background: var(--color-bg);
+}
+
+/* ── Grid dots — mais suave no light ── */
+body.light-mode .hero__grid-bg {
+    background-image: radial-gradient(
+        circle,
+        var(--dots-color) 1px,
+        transparent 1px
+    );
+    opacity: 0.65;
+}
+
+/* ── Status badge de disponibilidade ── */
+body.light-mode .hero__status {
+    background: color-mix(in srgb, var(--_green-500) 10%, transparent);
+    border-color: color-mix(in srgb, var(--_green-600) 28%, transparent);
+    color: var(--_green-700);
+}
+
+body.light-mode .hero__status-dot {
+    background: var(--_green-600);
+}
+
+/* ── Tipografia ── */
+body.light-mode .hero__greeting {
+    color: var(--color-text-3);
+}
+
+body.light-mode .hero__name {
+    color: var(--color-text-1);
+}
+
+/* Gradiente do role adaptado para fundos claros */
+body.light-mode .hero__role {
+    background: linear-gradient(
+        135deg,
+        var(--_crimson-600),
+        var(--_crimson-700),
+        var(--_indigo-600),
+        var(--_crimson-600)
+    );
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.light-mode .hero__subrole {
+    color: var(--color-text-4);
+}
+
+body.light-mode .hero__desc {
+    color: var(--color-text-3);
+}
+
+/* ── Avatar — frame e glow mais sutis ── */
+body.light-mode .hero__avatar {
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-md);
+}
+
+body.light-mode .hero__avatar-frame {
+    opacity: 0.22;
+}
+
+body.light-mode .hero__avatar-glow {
+    opacity: 0.28;
+}
+
+body.light-mode .hero__avatar-wrap:hover .hero__avatar-glow {
+    opacity: 0.5;
+}
+
+body.light-mode .hero__avatar-wrap:hover .hero__avatar-frame {
+    opacity: 0.38;
+}
+
+body.light-mode .hero__avatar-wrap:hover .hero__avatar {
+    border-color: color-mix(in srgb, var(--color-brand) 35%, transparent);
+}
+
+/* ── Scroll indicator ── */
+body.light-mode .hero__scroll {
+    color: var(--color-text-4);
+}
+
+body.light-mode .hero__scroll-dot {
+    background: var(--color-brand);
+}
+
+body.light-mode .hero__scroll-line {
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        var(--color-border-3),
+        transparent
+    );
+}
+
+/* ── Social bar ── */
+body.light-mode .hero__social-divider {
+    background: var(--color-border-3);
+}
+
+body.light-mode .hero__social-label {
+    color: var(--color-text-4);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   4. ABOUT
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Fundo da seção (elevada em relação ao hero/timeline) ── */
+body.light-mode .about {
+    background: var(--color-surface-1);
+}
+
+/* ── Bio paragraphs ── */
+body.light-mode .about__text {
+    color: var(--color-text-3);
+}
+
+body.light-mode .about__text strong {
+    color: var(--color-text-1);
+    font-weight: 600;
+}
+
+/* ── Foto ── */
+body.light-mode .about__photo-wrap {
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-sm);
+}
+
+body.light-mode .about__photo-wrap:hover {
+    border-color: var(--color-border-brand);
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* ── Spec cards ── */
+body.light-mode .spec-card {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-xs);
+    /* Sem gradiente dark — fundo limpo no light */
+    background-image: none;
+}
+
+body.light-mode .spec-card::before {
+    background: radial-gradient(
+        circle at top left,
+        color-mix(in srgb, var(--_crimson-600) 5%, transparent),
+        transparent 70%
+    );
+}
+
+body.light-mode .spec-card:hover {
+    border-color: var(--color-border-brand);
+    box-shadow: var(--shadow-md);
+    transform: translate3d(0, -4px, 0);
+}
+
+/* Ícone do spec-card */
+body.light-mode .spec-card__icon {
+    background: color-mix(in srgb, var(--_crimson-600) 8%, transparent);
+    border-color: color-mix(in srgb, var(--_crimson-600) 18%, transparent);
+    box-shadow: var(--shadow-xs);
+    color: var(--_crimson-700);
+    /* Remove backdrop-filter no light — não agrega valor */
+    backdrop-filter: none;
+}
+
+body.light-mode .spec-card:hover .spec-card__icon {
+    color: var(--_indigo-700);
+    background: color-mix(in srgb, var(--_indigo-600) 8%, transparent);
+    border-color: color-mix(in srgb, var(--_indigo-600) 20%, transparent);
+}
+
+/* Texto */
+body.light-mode .spec-card__title {
+    color: var(--color-text-1);
+}
+
+body.light-mode .spec-card__desc {
+    color: var(--color-text-3);
+}
+
+/* ── Stats cards ── */
+body.light-mode .stat-card {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .stat-card--brand {
+    border-color: color-mix(in srgb, var(--_crimson-600) 20%, transparent);
+}
+
+body.light-mode .stat-card--brand:hover {
+    border-color: var(--color-border-brand);
+    box-shadow: var(--shadow-lg), var(--color-brand-glow);
+}
+
+body.light-mode .stat-card--accent {
+    border-color: color-mix(in srgb, var(--_indigo-600) 18%, transparent);
+}
+
+body.light-mode .stat-card--accent:hover {
+    border-color: color-mix(in srgb, var(--_indigo-600) 40%, transparent);
+    box-shadow: var(--shadow-lg), var(--color-accent-glow);
+}
+
+body.light-mode .stat-card--brand .stat-card__icon {
+    background: color-mix(in srgb, var(--_crimson-600) 10%, transparent);
+    color: var(--_crimson-700);
+    border-color: color-mix(in srgb, var(--_crimson-600) 22%, transparent);
+}
+
+body.light-mode .stat-card--accent .stat-card__icon {
+    background: color-mix(in srgb, var(--_indigo-600) 10%, transparent);
+    color: var(--_indigo-700);
+    border-color: color-mix(in srgb, var(--_indigo-600) 22%, transparent);
+}
+
+body.light-mode .stat-card--brand .stat-card__value {
+    color: var(--_crimson-700);
+}
+
+body.light-mode .stat-card--accent .stat-card__value {
+    color: var(--_indigo-700);
+}
+
+body.light-mode .stat-card__label {
+    color: var(--color-text-2);
+}
+
+body.light-mode .stat-card__sublabel {
+    color: var(--color-text-4);
+}
+
+/* ── Tech stack ── */
+body.light-mode .about__tech-item {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .about__tech-item:hover {
+    border-color: var(--color-border-brand);
+    background: var(--color-surface-2);
+    box-shadow: var(--shadow-sm);
+}
+
+body.light-mode .about__tech-item span {
+    color: var(--color-text-4);
+}
+
+/* ── Objetivo profissional ── */
+body.light-mode .about__objective {
+    background: var(--color-surface-2);
+    border-color: var(--color-border-2);
+    border-left-color: var(--color-brand);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .about__objective:hover {
+    border-left-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
+}
+
+body.light-mode .about__objective-title {
+    color: var(--color-brand);
+}
+
+body.light-mode .about__objective-text {
+    color: var(--color-text-3);
+}
+
+body.light-mode .about__objective-text strong {
+    color: var(--color-text-1);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   5. TIMELINE
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Fundo ── */
+body.light-mode .timeline {
+    background: var(--color-bg);
+}
+
+/* ── Tabs ── */
+body.light-mode .timeline__tab {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    color: var(--color-text-3);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .timeline__tab:hover {
+    color: var(--color-brand);
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+    box-shadow: var(--shadow-sm);
+}
+
+body.light-mode .timeline__tab[aria-selected="true"] {
+    background: var(--color-brand);
+    border-color: var(--color-brand);
+    color: #fff;
+    box-shadow: var(--color-brand-glow), var(--shadow-sm);
+}
+
+/* ── Cards ── */
+body.light-mode .timeline__card {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    border-left-color: var(--color-brand);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .timeline__item:hover .timeline__card {
+    background: var(--color-surface-2);
+    box-shadow: var(--shadow-md);
+    border-left-color: var(--color-accent);
+}
+
+/* Tipografia dos cards */
+body.light-mode .timeline__card-title {
+    color: var(--color-text-1);
+}
+
+body.light-mode .timeline__card-subtitle {
+    color: var(--color-text-3);
+}
+
+body.light-mode .timeline__card-desc {
+    color: var(--color-text-4);
+}
+
+body.light-mode .timeline__date {
+    color: var(--color-brand);
+}
+
+/* Status badges */
+body.light-mode .timeline__status--active {
+    background: color-mix(in srgb, var(--_green-500) 10%, transparent);
+    color: var(--_green-700);
+    border-color: color-mix(in srgb, var(--_green-600) 28%, transparent);
+}
+
+body.light-mode .timeline__status--done {
+    background: color-mix(in srgb, var(--_crimson-600) 8%, transparent);
+    color: var(--_crimson-700);
+    border-color: color-mix(in srgb, var(--_crimson-600) 22%, transparent);
+}
+
+/* Tags */
+body.light-mode .timeline__tag {
+    background: color-mix(in srgb, var(--_indigo-600) 8%, transparent);
+    color: var(--_indigo-700);
+    border-color: color-mix(in srgb, var(--_indigo-600) 20%, transparent);
+}
+
+body.light-mode .timeline__tag:hover {
+    background: color-mix(in srgb, var(--_indigo-600) 15%, transparent);
+}
+
+/* Link de certificado */
+body.light-mode .timeline__cert-link {
+    color: var(--color-brand);
+}
+
+body.light-mode .timeline__cert-link:hover {
+    color: var(--color-brand-hover);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   6. FEATURED
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Fundo da seção ── */
+body.light-mode .featured {
+    background: var(--color-surface-1);
+}
+
+/* ── Card do projeto ── */
+body.light-mode .featured__project {
+    background: var(--color-surface-2);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-sm);
+}
+
+body.light-mode .featured__project:hover {
+    border-color: var(--color-border-brand);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Galeria */
+body.light-mode .featured__gallery {
+    background: var(--color-surface-3);
+}
+
+/* Placeholder de slide */
+body.light-mode .featured__slide-ph {
+    background: linear-gradient(
+        135deg,
+        var(--color-surface-2),
+        var(--color-surface-3)
+    ) !important;
+}
+
+/* Dots */
+body.light-mode .featured__dot {
+    background: rgba(0, 0, 0, 0.25);
+}
+
+body.light-mode .featured__dot.is-active,
+body.light-mode .featured__dot:hover {
+    background: var(--color-brand);
+}
+
+/* Setas */
+body.light-mode .featured__arrow {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: var(--color-border-2);
+    color: var(--color-text-2);
+    box-shadow: var(--shadow-sm);
+}
+
+body.light-mode .featured__arrow:hover {
+    background: var(--color-brand);
+    color: #fff;
+}
+
+/* ── Corpo do projeto ── */
+body.light-mode .featured__eyebrow {
+    background: color-mix(in srgb, var(--_crimson-600) 8%, transparent);
+    border-color: color-mix(in srgb, var(--_crimson-600) 20%, transparent);
+    color: var(--_crimson-700);
+}
+
+body.light-mode .featured__title {
+    color: var(--color-text-1);
+}
+
+body.light-mode .featured__title span {
+    color: var(--color-brand);
+}
+
+body.light-mode .featured__desc {
+    color: var(--color-text-3);
+}
+
+/* ── Detail cards ── */
+body.light-mode .detail-card {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .detail-card:hover {
+    border-color: var(--color-border-brand);
+    box-shadow: var(--shadow-md);
+}
+
+body.light-mode .detail-card__label {
+    color: var(--color-brand);
+}
+
+body.light-mode .detail-card__text {
+    color: var(--color-text-3);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   7. WORK
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Fundo ── */
+body.light-mode .work {
+    background: var(--color-bg);
+}
+
+/* ── Cards ── */
+body.light-mode .work-card {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .work-card:hover {
+    border-color: var(--color-border-brand);
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* Tipografia */
+body.light-mode .work-card__title {
+    color: var(--color-text-1);
+}
+
+body.light-mode .work-card__desc {
+    color: var(--color-text-3);
+}
+
+/* Footer do card */
+body.light-mode .work-card__footer {
+    border-top-color: var(--color-border-2);
+    background: var(--color-surface-2);
+}
+
+/* Botões do card */
+body.light-mode .work-btn--primary {
+    background: var(--color-brand);
+    color: #fff;
+}
+
+body.light-mode .work-btn--primary:hover {
+    background: var(--color-brand-hover);
+}
+
+body.light-mode .work-btn--outline {
+    border-color: var(--color-border-3);
+    color: var(--color-text-2);
+    background: transparent;
+}
+
+body.light-mode .work-btn--outline:hover {
+    border-color: var(--color-brand);
+    color: var(--color-brand);
+    background: var(--color-brand-subtle);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   8. CONTACT
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Fundo ── */
+body.light-mode .contact {
+    background: var(--color-bg);
+}
+
+/* ── Badge de disponibilidade ── */
+body.light-mode .contact__availability {
+    background: color-mix(in srgb, var(--_green-500) 10%, transparent);
+    border-color: color-mix(in srgb, var(--_green-600) 25%, transparent);
+    color: var(--_green-700);
+}
+
+body.light-mode .contact__availability-dot {
+    background: var(--_green-600);
+}
+
+/* ── CTA card (coluna esquerda) ── */
+body.light-mode .contact__cta-card {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ── Info card (coluna direita) ── */
+body.light-mode .contact__info-card {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ── Tipografia ── */
+body.light-mode .contact__cta-heading {
+    color: var(--color-text-1);
+}
+
+body.light-mode .contact__cta-heading span {
+    color: var(--color-brand);
+}
+
+body.light-mode .contact__cta-desc {
+    color: var(--color-text-3);
+}
+
+body.light-mode .contact__cta-label {
+    color: var(--color-text-3);
+}
+
+/* ── Email button ── */
+body.light-mode .contact__email-btn {
+    background: var(--color-surface-2);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .contact__email-btn:hover {
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+    box-shadow: var(--shadow-md);
+}
+
+body.light-mode .contact__email-btn-icon {
+    background: color-mix(in srgb, var(--_crimson-600) 10%, transparent);
+    color: var(--_crimson-700);
+    border-color: color-mix(in srgb, var(--_crimson-600) 22%, transparent);
+}
+
+body.light-mode .contact__email-btn-label {
+    color: var(--color-text-1);
+}
+
+body.light-mode .contact__email-btn-value {
+    color: var(--color-text-3);
+}
+
+body.light-mode .contact__email-btn-arrow {
+    color: var(--color-brand);
+}
+
+/* ── Alt links (LinkedIn, GitHub) ── */
+body.light-mode .contact__alt-link {
+    background: var(--color-surface-2);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .contact__alt-link:hover {
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+    box-shadow: var(--shadow-sm);
+}
+
+body.light-mode .contact__alt-link-icon {
+    color: var(--color-brand);
+}
+
+body.light-mode .contact__alt-link-name {
+    color: var(--color-text-1);
+}
+
+body.light-mode .contact__alt-link-handle {
+    color: var(--color-text-3);
+}
+
+/* ── Separador "ou" ── */
+body.light-mode .contact__or {
+    color: var(--color-text-4);
+}
+
+/* ── Perfil de dados (DL/DT/DD) ── */
+body.light-mode .contact__data-icon {
+    color: var(--color-brand);
+}
+
+body.light-mode .contact__data-label {
+    color: var(--color-text-4);
+}
+
+body.light-mode .contact__data-value {
+    color: var(--color-text-2);
+}
+
+body.light-mode .contact__data-value a {
+    color: var(--color-text-2);
+}
+
+body.light-mode .contact__data-value a:hover {
+    color: var(--color-brand);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+body.light-mode .contact__data-note {
+    color: var(--color-text-4);
+}
+
+body.light-mode .contact__data-row {
+    border-bottom-color: var(--color-border-2);
+}
+
+/* ── Card de disponibilidade ── */
+body.light-mode .contact__response {
+    background: var(--color-surface-2);
+    border-color: var(--color-border-2);
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .contact__response-icon {
+    color: var(--color-brand);
+}
+
+body.light-mode .contact__response-title {
+    color: var(--color-text-1);
+}
+
+body.light-mode .contact__response-sub {
+    color: var(--color-text-3);
+}
+
+/* ── CTA eyebrow ── */
+body.light-mode .contact__cta-icon {
+    color: var(--color-brand);
+}
+
+body.light-mode .contact__cta-sub {
+    color: var(--color-text-3);
+}
+
+/* Profile section heading */
+body.light-mode #profile-title {
+    color: var(--color-text-1);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   9. FOOTER
+══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Shell ── */
+body.light-mode .footer {
+    background: var(--color-surface-1);
+    border-top: 4px solid
+        color-mix(in srgb, var(--color-brand) 14%, transparent);
+}
+
+/* ── Brand / Logo ── */
+body.light-mode .footer__logo-prefix {
+    color: var(--color-text-1);
+}
+
+body.light-mode .footer__logo-suffix {
+    color: var(--color-brand);
+}
+
+body.light-mode .footer__logo:hover .footer__logo-prefix {
+    color: var(--color-brand);
+}
+
+body.light-mode .footer__logo-dot {
+    background: var(--color-brand);
+}
+
+body.light-mode .footer__brand-tagline {
+    color: var(--color-text-4);
+}
+
+/* ── Títulos de coluna ── */
+body.light-mode .footer__col-title {
+    color: var(--color-text-4);
+}
+
+body.light-mode .footer__col-title::before {
+    background: var(--color-brand);
+    opacity: 0.5;
+}
+
+/* ── Links de navegação e projetos ── */
+body.light-mode .footer__link {
+    color: var(--color-text-3);
+}
+
+body.light-mode .footer__link:hover {
+    color: var(--color-brand);
+}
+
+body.light-mode .footer__link::after {
+    background: var(--color-brand);
+}
+
+/* ── Contato / address ── */
+body.light-mode .footer__contact-item {
+    color: var(--color-text-3);
+}
+
+body.light-mode .footer__contact-item:hover {
+    color: var(--color-brand);
+}
+
+body.light-mode .footer__contact-location {
+    color: var(--color-text-4);
+}
+
+body.light-mode .footer__contact-location svg {
+    fill: var(--color-brand);
+}
+
+/* ── Divisor decorativo ── */
+body.light-mode .footer__divider {
+    background: linear-gradient(
+        to right,
+        transparent 0%,
+        color-mix(in srgb, var(--color-brand) 25%, transparent) 25%,
+        var(--color-border-2) 50%,
+        color-mix(in srgb, var(--color-accent) 18%, transparent) 75%,
+        transparent 100%
+    );
+}
+
+/* ── Barra inferior ── */
+body.light-mode .footer__copyright {
+    color: var(--color-text-4);
+}
+
+/* CV link */
+body.light-mode .footer__cv-link {
+    color: var(--color-text-3);
+    border-color: var(--color-border-2);
+    background: transparent;
+}
+
+body.light-mode .footer__cv-link:hover {
+    color: var(--color-brand);
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+}
+
+/* Made with */
+body.light-mode .footer__made {
+    color: var(--color-text-4);
+}
+
+body.light-mode .footer__heart {
+    fill: var(--color-brand);
+    color: var(--color-brand);
+}
+
+/* ── Focus visível (acessibilidade) ── */
+body.light-mode .footer a:focus-visible,
+body.light-mode .footer button:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+}

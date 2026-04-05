@@ -1,0 +1,163 @@
+/* ═══════════════════════════════════════════════════════════
+   TIMELINEITEMCOMPACT.CSS
+═══════════════════════════════════════════════════════════ */
+
+.tl-compact {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-1);
+  cursor: pointer;
+  transition:
+    background     var(--transition-fast),
+    border-color   var(--transition-fast),
+    transform      var(--transition-fast),
+    box-shadow     var(--transition-fast);
+  outline: none;
+  animation: slide-in-up 0.3s var(--ease-out) both;
+}
+
+.tl-compact:hover {
+  background: var(--color-surface-2);
+  border-color: var(--color-border-brand);
+  transform: translateX(5px);
+}
+
+.tl-compact:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  background: var(--color-surface-2);
+}
+
+/* ── Status dot ─────────────────────────────────────────── */
+.tl-compact__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tl-compact__dot--active {
+  background: var(--color-success);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-success) 25%, transparent);
+  animation: tl-compact-pulse 2.4s ease-in-out infinite;
+}
+
+.tl-compact__dot--done    { background: var(--color-brand); }
+.tl-compact__dot--planned { background: var(--color-accent); }
+
+@keyframes tl-compact-pulse {
+  0%,  100% { box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-success) 25%, transparent); }
+  50%        { box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-success) 0%, transparent); }
+}
+
+/* ── Body ───────────────────────────────────────────────── */
+.tl-compact__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  overflow: hidden;
+}
+
+.tl-compact__title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tl-compact__sep {
+  color: var(--color-border-3);
+  flex-shrink: 0;
+  font-size: var(--text-xs);
+}
+
+.tl-compact__institution {
+  font-size: var(--text-sm);
+  color: var(--color-text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Meta ───────────────────────────────────────────────── */
+.tl-compact__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.tl-compact__period {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-brand-light);
+  white-space: nowrap;
+}
+
+.tl-compact__duration {
+  font-size: var(--text-2xs);
+  color: var(--color-text-4);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+/* ── Status pill ────────────────────────────────────────── */
+.tl-compact__status {
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  padding: 0.2em 0.7em;
+  border-radius: var(--radius-full);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+.tl-compact__status--active {
+  background: var(--color-success-subtle);
+  color: var(--color-success);
+  border: 1px solid var(--color-success-border);
+}
+.tl-compact__status--done {
+  background: var(--color-brand-subtle);
+  color: var(--color-brand-light);
+  border: 1px solid color-mix(in srgb, var(--color-brand) 28%, transparent);
+}
+.tl-compact__status--planned {
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-light);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
+}
+
+/* ── Light mode ─────────────────────────────────────────── */
+body.light-mode .tl-compact:hover,
+body.light-mode .tl-compact:focus-visible {
+  background: var(--color-surface-2);
+  border-color: var(--color-border-brand);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ── Mobile ─────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .tl-compact          { flex-wrap: wrap; }
+  .tl-compact__meta    { display: none; }
+  .tl-compact__body    { flex-direction: column; gap: 2px; overflow: visible; }
+  .tl-compact__sep     { display: none; }
+  .tl-compact__title,
+  .tl-compact__institution { white-space: normal; overflow: visible; text-overflow: clip; }
+}
+
+/* ── Reduced motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .tl-compact       { animation: none; transition: none; }
+  .tl-compact__dot--active { animation: none; }
+}
