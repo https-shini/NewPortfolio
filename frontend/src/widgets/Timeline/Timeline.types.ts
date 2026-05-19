@@ -1,115 +1,194 @@
-export type TimelineStatusType = 'active' | 'done';
-export type TimelineCategory   = 'edu' | 'cert' | 'exp';
+/* ─────────────────────────────────────────────────────────
+   Timeline.types
+   ──────────────
+   Tipos centrais de "Carreira" + Formação + Certificações.
 
-export interface TimelineItem {
-  id:          string;
-  title:       string;
-  institution: string;
-  period:      string;
-  status:      string;
-  statusType:  TimelineStatusType;
-  description: string;
-  tags:        string[];
-  certUrl:     string | null;
-}
+   PRINCÍPIO: enums i18n usam tokens estáveis (UPPER_SNAKE).
+   O texto display é resolvido via `t('career.employment.*')`
+   / `t('career.modality.*')` no idioma corrente — o data
+   permanece desacoplado de idioma.
 
-export type TimelineData = Record<TimelineCategory, TimelineItem[]>;
-=======
-import React from 'react';
+   ──────────────────────────────────────────────────────────
+   I18N KEYS REQUIRED (registrar no arquivo de traduções):
+
+   timeline.eyebrow / timeline.title / timeline.sub
+
+   career.visit
+   career.positions
+   career.openDetails
+   career.present
+   career.modalOpened
+   career.close
+   career.activities
+   career.summary           ← NOVO
+   career.highlights        ← NOVO
+   career.about             ← NOVO
+   career.skills
+
+   career.employment.FULL_TIME      ← NOVO ("Tempo integral" / "Full-time")
+   career.employment.PART_TIME      ← NOVO ("Meio período" / "Part-time")
+   career.employment.INTERNSHIP     ← NOVO ("Estágio" / "Internship")
+   career.employment.CLT            ← NOVO ("CLT" / "CLT (Full-time)")
+   career.employment.FREELANCER     ← NOVO ("Freelancer" / "Freelancer")
+   career.employment.CONTRACTOR     ← NOVO ("Prestador de serviços" / "Contractor")
+   career.employment.TEMPORARY      ← NOVO ("Temporário" / "Temporary")
+
+   career.modality.ON_SITE          ← NOVO ("Presencial" / "On-site")
+   career.modality.REMOTE           ← NOVO ("Remoto" / "Remote")
+   career.modality.HYBRID           ← NOVO ("Híbrido" / "Hybrid")
+   career.modality.EAD              ← NOVO ("EAD" / "Distance learning")
+
+   (career.fact.* foram REMOVIDAS — o sidebar foi consolidado
+   no novo design e não precisa mais desses labels duplicados.)
+───────────────────────────────────────────────────────── */
 
 /* ─────────────────────────────────────────────────────────
    ENUMERATIONS
 ───────────────────────────────────────────────────────── */
-export type TimelineStatusType = 'active' | 'done' | 'planned';
-export type TimelineCategory   = 'edu' | 'cert' | 'exp';
-export type TimelineModality   = 'presencial' | 'remoto' | 'híbrido' | 'ead';
+export type TimelineStatusType = "active" | "done" | "planned";
+export type TimelineCategory = "edu" | "cert" | "exp";
+
+/** Modalidade de trabalho/estudo — token estável, traduzido no render. */
+export type Modality = "ON_SITE" | "REMOTE" | "HYBRID" | "EAD";
+
+/** Tipo de contrato/vínculo — token estável, traduzido no render. */
+export type EmploymentType =
+    | "FULL_TIME"
+    | "PART_TIME"
+    | "INTERNSHIP"
+    | "CLT"
+    | "FREELANCER"
+    | "CONTRACTOR"
+    | "TEMPORARY";
 
 /* ─────────────────────────────────────────────────────────
    NESTED STRUCTURES
 ───────────────────────────────────────────────────────── */
 export interface TimelineResponsibility {
-  /** Descriptive text for this responsibility */
-  text:       string;
-  /** When true, renders with stronger emphasis (accent color, bold) */
-  highlight?: boolean;
+    /** Texto descritivo */
+    text: string;
+    /** Quando true, renderiza com ênfase mais forte (cor accent, bold) */
+    highlight?: boolean;
 }
 
 export interface TimelineProjectLink {
-  label: string;
-  url:   string;
+    label: string;
+    url: string;
+}
+
+/** Bullet de uma posição de carreira — pode ser destacado para a seção
+ *  "Destaques" do modal. Mantém paridade com `TimelineResponsibility`. */
+export interface CareerBullet {
+    text: string;
+    /** Quando true, aparece também na seção "Destaques" no topo do modal */
+    highlight?: boolean;
 }
 
 /* ─────────────────────────────────────────────────────────
-   CORE ITEM — single source of truth
-   All fields used by both the card and the modal.
+   TIMELINE ITEM (Formação Acadêmica + Certificações)
 ───────────────────────────────────────────────────────── */
 export interface TimelineItem {
-  /** Unique identifier — used for deep-linking (?item=exp-1) */
-  id:               string;
-  /** Which tab this item belongs to */
-  category:         TimelineCategory;
+    id: string;
+    category: TimelineCategory;
 
-  /* ── Identification ── */
-  title:            string;
-  institution:      string;
-  institutionUrl?:  string;   // link to company/university site
-  institutionLogo?: string;   // CDN or imported image URL
+    /* Identificação */
+    title: string;
+    institution: string;
+    institutionUrl?: string;
+    institutionLogo?: string;
 
-  /* ── Period ── */
-  /** Display string, e.g. "Jan 2026 — Presente" */
-  period:           string;
-  /** ISO "YYYY-MM" — used for duration calculation */
-  startDate:        string;
-  /** ISO "YYYY-MM" — undefined means ongoing */
-  endDate?:         string;
+    /* Período */
+    period: string;
+    startDate: string; // ISO "YYYY-MM"
+    endDate?: string; // undefined = em andamento
 
-  /* ── Location ── */
-  location?:        string;
-  modality?:        TimelineModality;
+    /* Localização */
+    location?: string;
+    modality?: Modality; // ← agora usa o mesmo enum de carreira
 
-  /* ── Status ── */
-  /** Human-readable label, e.g. "Cursando", "Concluído" */
-  status:           string;
-  statusType:       TimelineStatusType;
+    /* Status */
+    status: string;
+    statusType: TimelineStatusType;
 
-  /* ── Content ── */
-  /** Short paragraph — shown on the card */
-  description:      string;
-  /** Longer paragraph — shown in the modal */
-  longDescription?: string;
-  /** Bulleted list of responsibilities — shown in the modal */
-  responsibilities?: TimelineResponsibility[];
+    /* Conteúdo */
+    description: string;
+    longDescription?: string;
+    responsibilities?: TimelineResponsibility[];
 
-  /* ── Tags & skills ── */
-  /** Text-only tags used for filtering and display */
-  tags:             string[];
-  /** Names resolved by skillicons.dev (e.g. 'react', 'nodejs') */
-  techIcons?:       string[];
+    /* Tags & skills */
+    tags: string[];
+    techIcons?: string[];
 
-  /* ── Links ── */
-  certUrl?:         string | null;
-  projectLinks?:    TimelineProjectLink[];
+    /* Links */
+    certUrl?: string | null;
+    projectLinks?: TimelineProjectLink[];
 }
 
-/* ─────────────────────────────────────────────────────────
-   DERIVED TYPES
-───────────────────────────────────────────────────────── */
-
-/** The authoritative flat list — export from Timeline.data.ts */
 export type TimelineRawData = TimelineItem[];
-
-/** Grouped by category — derived in useTimelineFilter */
 export type TimelineGrouped = Record<TimelineCategory, TimelineItem[]>;
 
-/** Tab configuration shape for the tab bar */
-export interface TimelineTabConfig {
-  key:      TimelineCategory;
-  labelKey: 'timeline.tab.edu' | 'timeline.tab.cert' | 'timeline.tab.exp';
-  icon:     React.ReactNode;
+/* ─────────────────────────────────────────────────────────
+   CAREER — uma posição dentro de uma empresa
+───────────────────────────────────────────────────────── */
+export interface CareerPosition {
+    id: string;
+
+    /** Cargo/função */
+    title: string;
+    /** Tipo de contrato — token i18n */
+    employmentType: EmploymentType;
+
+    /**
+     * Display do período. **Opcional** — se ausente, derivado de
+     * startDate/endDate via `careerDates.ts` no idioma corrente.
+     */
+    period?: string;
+    /**
+     * Duração display. **Opcional** — se ausente, derivada de
+     * startDate/endDate (ex.: "4 meses", "1 ano e 2 meses").
+     */
+    duration?: string;
+    /** ISO "YYYY-MM" — fonte de verdade */
+    startDate: string;
+    /** ISO "YYYY-MM" — undefined = atual */
+    endDate?: string;
+
+    /** Modalidade — token i18n */
+    modality?: Modality;
+
+    /** Status textual + tipo (para cor) */
+    status: string;
+    statusType: TimelineStatusType;
+
+    /** Resumo curto (1-2 frases). Aparece no card e no modal. */
+    summary?: string;
+    /** Lista de atividades/responsabilidades. Itens com `highlight: true`
+     *  também aparecem na seção "Destaques" no topo do modal. */
+    bullets: CareerBullet[];
+
+    /** Tags de competências/tecnologias */
+    tags: string[];
 }
 
-/** Filter state snapshot — used for URL serialization */
-export interface TimelineFilterState {
-  query:     string;
-  activeTab: TimelineCategory;
+/** Empresa — agrupa uma ou mais posições */
+export interface CareerCompany {
+    id: string;
+
+    name: string;
+    /** URL do site / LinkedIn */
+    url?: string;
+    /** URL do logo (opcional — fallback usa iniciais) */
+    logo?: string;
+
+    /**
+     * Duração total na empresa. **Opcional** — se ausente, calculada
+     * automaticamente da posição mais antiga até a mais recente
+     * (ou "agora" se houver posição ativa).
+     */
+    totalDuration?: string;
+    /** Localização principal */
+    location: string;
+
+    /** Posições, mais recentes primeiro */
+    positions: CareerPosition[];
 }

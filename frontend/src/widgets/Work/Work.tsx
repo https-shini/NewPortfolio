@@ -57,7 +57,7 @@ export const Work: React.FC = () => {
 
     return (
         <section
-            id="work"
+            id="projetos"
             className="work section"
             aria-labelledby="work-title"
             data-reveal

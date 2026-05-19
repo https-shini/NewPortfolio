@@ -258,7 +258,7 @@ export const About: React.FC = () => {
 
     return (
         <section
-            id="about"
+            id="sobre"
             className="about section"
             aria-labelledby="about-title"
             data-reveal

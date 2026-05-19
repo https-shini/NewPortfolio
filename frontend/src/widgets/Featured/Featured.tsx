@@ -91,7 +91,7 @@ export const Featured: React.FC = () => {
   const skillBase = 'https://skillicons.dev/icons?i=';
 
   return (
-    <section id="featured" className="featured section" aria-labelledby="featured-title" data-reveal>
+    <section id="destaque" className="featured section" aria-labelledby="featured-title" data-reveal>
       <div className="container">
         <header className="section-header">
           <span className="section-eyebrow">Destaque</span>

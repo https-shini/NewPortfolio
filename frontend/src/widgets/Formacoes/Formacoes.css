@@ -1,0 +1,142 @@
+/* ═══════════════════════════════════════════════════════════
+   FORMATIONS — section layout
+   Two subgroups (Education + Certifications) with header bar
+   and responsive card grids.
+═══════════════════════════════════════════════════════════ */
+
+.formations {
+    background: var(--color-surface-1);
+}
+
+/* Section reveal */
+.formations[data-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+        opacity 0.6s var(--ease-out),
+        transform 0.6s var(--ease-out);
+}
+
+.formations[data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* ── Subgroup ────────────────────────────────────────────── */
+.formations__group {
+    margin-top: var(--space-12);
+}
+
+.formations__group:first-of-type {
+    margin-top: var(--space-10);
+}
+
+/* ── Group header: icon + title + count ──────────────────── */
+.formations__group-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-border-1);
+}
+
+.formations__group-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-md);
+    background: var(--color-brand-subtle);
+    border: 1px solid var(--color-border-brand);
+    color: var(--color-brand-light);
+    flex-shrink: 0;
+}
+
+.formations__group-title {
+    flex: 1;
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-text-1);
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+
+.formations__group-count {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-text-4);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.03em;
+    padding: 2px var(--space-2);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+}
+
+/* ── Grid ────────────────────────────────────────────────── */
+.formations__grid {
+    display: grid;
+    gap: var(--space-5);
+}
+
+/* Education: 2 cards side-by-side on desktop */
+.formations__grid--edu {
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+}
+
+/* Certifications: 3 columns, wraps */
+.formations__grid--cert {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.formations__cell {
+    display: flex;
+    min-width: 0;
+}
+
+.formations__cell > * {
+    width: 100%;
+}
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .formations__group {
+        margin-top: var(--space-10);
+    }
+
+    .formations__group:first-of-type {
+        margin-top: var(--space-8);
+    }
+
+    .formations__group-head {
+        gap: var(--space-2);
+        margin-bottom: var(--space-5);
+    }
+
+    .formations__group-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .formations__group-title {
+        font-size: var(--text-md);
+    }
+
+    .formations__grid {
+        gap: var(--space-4);
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .formations[data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

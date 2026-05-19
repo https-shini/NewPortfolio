@@ -6,6 +6,8 @@ import {
     GITHUB_URL,
     LINKEDIN_URL,
     AUTHOR_EMAIL,
+    CV_URL,
+    SECTION_IDS,
 } from "@/shared/config/constants";
 import {
     IconCode,
@@ -25,7 +27,7 @@ export const Hero: React.FC = () => {
     };
 
     return (
-        <section id="hero" className="hero" aria-labelledby="hero-name">
+        <section id={SECTION_IDS.HOME} className="hero" aria-labelledby="hero-name">
             <div className="hero__grid-bg" aria-hidden="true" />
             <div className="hero__glow" aria-hidden="true" />
 
@@ -67,7 +69,7 @@ export const Hero: React.FC = () => {
                             onClick={(e) =>
                                 handleScroll(
                                     e as unknown as React.MouseEvent,
-                                    "work",
+                                    SECTION_IDS.WORK,
                                 )
                             }
                         >
@@ -75,7 +77,7 @@ export const Hero: React.FC = () => {
                             <span>{t("hero.cta.work")}</span>
                         </button>
                         <a
-                            href="https://https-shini.github.io/portfolio/docs/curriculo.pdf"
+                            href={CV_URL}
                             className="btn btn--outline btn--lg"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -146,7 +148,7 @@ export const Hero: React.FC = () => {
                 type="button"
                 className="hero__scroll"
                 aria-label="Rolar para a próxima seção"
-                onClick={(e) => handleScroll(e, "about")}
+                onClick={(e) => handleScroll(e, SECTION_IDS.ABOUT)}
             >
                 <span className="hero__scroll-text">Explorar</span>
 

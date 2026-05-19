@@ -5,8 +5,10 @@ export type TranslationKey =
     | "nav.home"
     | "nav.about"
     | "nav.career"
+    | "nav.education"
     | "nav.featured"
     | "nav.work"
+    | "nav.recommendations"
     | "nav.contact"
 
     /* ── HERO ──────────────────────────────────────── */
@@ -29,12 +31,36 @@ export type TranslationKey =
     | "about.goal.title"
     | "about.goal.text"
 
-    /* ── TIMELINE ──────────────────────────────────── */
+    /* ── TIMELINE (Carreira) ───────────────────────── */
     | "timeline.title"
     | "timeline.sub"
-    | "timeline.tab.edu"
-    | "timeline.tab.cert"
-    | "timeline.tab.exp"
+    | "timeline.eyebrow"
+    | "timeline.exp.title"
+
+    /* ── CAREER (cards e modal de posição) ─────────── */
+    | "career.visit"
+    | "career.positions"
+    | "career.openDetails"
+    | "career.activities"
+    | "career.skills"
+    | "career.company"
+    | "career.modalOpened"
+    | "career.fact.employment"
+    | "career.fact.duration"
+    | "career.fact.modality"
+    | "career.fact.location"
+    | "career.fact.period"
+    | "career.summary"
+    | "career.close"
+    | "career.present"
+
+    /* ── EDUCATION (Formações) ─────────────────────── */
+    | "education.title"
+    | "education.sub"
+    | "education.eyebrow"
+    | "education.edu.title"
+    | "education.cert.title"
+    | "education.cert.link"
 
     /* ── FEATURED ──────────────────────────────────── */
     | "featured.badge"
@@ -57,9 +83,9 @@ export type TranslationKey =
     | "contact.sub"
     | "contact.hook"
     | "contact.share"
-    | "contact.send" // botão de envio — estado padrão
-    | "contact.sending" // botão de envio — durante requisição
-    | "contact.sent" // botão de envio — após sucesso
+    | "contact.send"
+    | "contact.sending"
+    | "contact.sent"
     | "contact.cta.primary"
     | "contact.cta.sending"
     | "contact.cta.success"
@@ -68,6 +94,11 @@ export type TranslationKey =
     | "contact.meta.linkedin"
     | "contact.meta.github"
     | "contact.meta.location"
+
+    /* ── RECOMMENDATIONS ───────────────────────────── */
+    | "rec.title"
+    | "rec.sub"
+    | "rec.eyebrow"
 
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
@@ -90,8 +121,10 @@ const pt: Translations = {
     "nav.home": "Início",
     "nav.about": "Sobre",
     "nav.career": "Carreira",
+    "nav.education": "Formações",
     "nav.featured": "Destaque",
     "nav.work": "Projetos",
+    "nav.recommendations": "Recomendações",
     "nav.contact": "Contato",
 
     /* HERO */
@@ -120,13 +153,36 @@ const pt: Translations = {
     "about.goal.text":
         "Atuar como desenvolvedor júnior ou estagiário, contribuindo com projetos reais, evoluindo minhas habilidades técnicas e adquirindo experiência prática no mercado.",
 
-    /* TIMELINE */
-    "timeline.title": "Minha Trajetória",
-    "timeline.sub":
-        "Formação acadêmica, certificações e evolução profissional.",
-    "timeline.tab.edu": "Formação",
-    "timeline.tab.cert": "Certificações",
-    "timeline.tab.exp": "Experiência",
+    /* TIMELINE (Carreira) */
+    "timeline.title": "Carreira",
+    "timeline.sub": "Trajetória profissional e evolução na área de tecnologia.",
+    "timeline.eyebrow": "Profissional",
+    "timeline.exp.title": "Experiência Profissional",
+
+    /* CAREER — cards e modal */
+    "career.visit": "Visitar empresa",
+    "career.positions": "Posições na empresa",
+    "career.openDetails": "Ver detalhes da posição",
+    "career.activities": "Atividades",
+    "career.skills": "Competências",
+    "career.company": "Empresa",
+    "career.modalOpened": "Modal aberto: descrição completa da posição",
+    "career.fact.employment": "Vínculo",
+    "career.fact.duration": "Duração",
+    "career.fact.modality": "Modalidade",
+    "career.fact.location": "Localização",
+    "career.fact.period": "Período",
+    "career.summary": "Resumo",
+    "career.close": "Fechar modal",
+    "career.present": "o momento",
+
+    /* EDUCATION (Formações) */
+    "education.title": "Formações",
+    "education.sub": "Trajetória acadêmica e certificações.",
+    "education.eyebrow": "Acadêmico",
+    "education.edu.title": "Formação Acadêmica",
+    "education.cert.title": "Certificações",
+    "education.cert.link": "Ver certificado",
 
     /* FEATURED */
     "featured.badge": "Projeto em Destaque",
@@ -164,6 +220,12 @@ const pt: Translations = {
     "contact.meta.github": "Projetos reais com código limpo e organizado",
     "contact.meta.location": "Disponível para trabalho remoto ou presencial",
 
+    /* RECOMMENDATIONS */
+    "rec.title": "Recomendações",
+    "rec.sub":
+        "O que pessoas que trabalharam comigo dizem sobre minha atuação profissional.",
+    "rec.eyebrow": "Depoimentos",
+
     /* FOOTER */
     "footer.tagline":
         "Desenvolvedor focado em evolução constante e criação de soluções modernas.",
@@ -185,8 +247,10 @@ const en: Translations = {
     "nav.home": "Home",
     "nav.about": "About",
     "nav.career": "Career",
+    "nav.education": "Education",
     "nav.featured": "Featured",
     "nav.work": "Projects",
+    "nav.recommendations": "Recommendations",
     "nav.contact": "Contact",
 
     /* HERO */
@@ -215,12 +279,36 @@ const en: Translations = {
     "about.goal.text":
         "To work as a junior developer or intern, contributing to real projects, improving my technical skills and gaining industry experience.",
 
-    /* TIMELINE */
-    "timeline.title": "My Journey",
-    "timeline.sub": "Education, certifications and professional growth.",
-    "timeline.tab.edu": "Education",
-    "timeline.tab.cert": "Certifications",
-    "timeline.tab.exp": "Experience",
+    /* TIMELINE (Career) */
+    "timeline.title": "Career",
+    "timeline.sub": "Professional journey and growth in the tech industry.",
+    "timeline.eyebrow": "Career",
+    "timeline.exp.title": "Professional Experience",
+
+    /* CAREER — cards and modal */
+    "career.visit": "Visit company",
+    "career.positions": "Positions at company",
+    "career.openDetails": "View position details",
+    "career.activities": "Responsibilities",
+    "career.skills": "Skills",
+    "career.company": "Company",
+    "career.modalOpened": "Modal opened: full position description",
+    "career.fact.employment": "Employment",
+    "career.fact.duration": "Duration",
+    "career.fact.modality": "Mode",
+    "career.fact.location": "Location",
+    "career.fact.period": "Period",
+    "career.summary": "Overview",
+    "career.close": "Close modal",
+    "career.present": "Present",
+
+    /* EDUCATION */
+    "education.title": "Education",
+    "education.sub": "Academic path and certifications.",
+    "education.eyebrow": "Academic",
+    "education.edu.title": "Academic Education",
+    "education.cert.title": "Certifications",
+    "education.cert.link": "View certificate",
 
     /* FEATURED */
     "featured.badge": "Featured Project",
@@ -257,6 +345,12 @@ const en: Translations = {
     "contact.meta.linkedin": "Open to networking and opportunities",
     "contact.meta.github": "Real projects and clean code",
     "contact.meta.location": "Available remotely and on-site",
+
+    /* RECOMMENDATIONS */
+    "rec.title": "Recommendations",
+    "rec.sub":
+        "What people who worked with me say about my professional performance.",
+    "rec.eyebrow": "Testimonials",
 
     /* FOOTER */
     "footer.tagline":

@@ -3,8 +3,10 @@ import { Header } from "@/widgets/Header/Header";
 import { Hero } from "@/widgets/Hero/Hero";
 import { About } from "@/widgets/About/About";
 import { Timeline } from "@/widgets/Timeline/Timeline";
+import { Formacoes } from "@/widgets/Formacoes/Formacoes";
 import { Featured } from "@/widgets/Featured/Featured";
 import { Work } from "@/widgets/Work/Work";
+import { Recommendations } from "@/widgets/Recommendations/Recommendations";
 import { Contact } from "@/widgets/Contact/Contact";
 import { Footer } from "@/widgets/Footer/Footer";
 import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
@@ -24,8 +26,10 @@ export const HomePage: React.FC = () => {
                 <Hero />
                 <About />
                 <Timeline />
+                <Formacoes />
                 <Featured />
                 <Work />
+                <Recommendations />
                 <Contact />
             </main>
             <Footer />

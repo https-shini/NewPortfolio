@@ -1,0 +1,194 @@
+/* ═══════════════════════════════════════════════════════════
+   CAROUSEL CONTROLS
+   Prev ◀ [counter + dots] ▶ Next
+═══════════════════════════════════════════════════════════ */
+
+.rec-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-5);
+    margin-top: var(--space-8);
+}
+
+/* ── Middle group: counter + dots ────────────────────────── */
+.rec-controls__middle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+/* ── Counter (01 / 02) ───────────────────────────────────── */
+.rec-controls__counter {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-4);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    min-width: 52px;
+    justify-content: center;
+}
+
+.rec-controls__counter strong {
+    color: var(--color-text-1);
+    font-weight: 700;
+}
+
+.rec-controls__counter-sep {
+    opacity: 0.5;
+}
+
+.rec-controls__counter-total {
+    color: var(--color-text-4);
+}
+
+/* ── Dot indicators (now clickable buttons) ──────────────── */
+.rec-controls__dots {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.rec-controls__dot {
+    /* reset button */
+    appearance: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    background: var(--color-border-3, color-mix(in srgb, var(--color-brand) 25%, transparent));
+
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transition:
+        width       0.25s var(--ease-out),
+        background  var(--transition-fast),
+        transform   var(--transition-fast);
+}
+
+.rec-controls__dot:hover {
+    background: color-mix(in srgb, var(--color-brand) 60%, transparent);
+    transform: scale(1.2);
+}
+
+.rec-controls__dot:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+}
+
+.rec-controls__dot.is-active {
+    width: 24px;
+    border-radius: var(--radius-full);
+    background: var(--color-brand);
+    transform: none;
+}
+
+/* ── Prev / Next buttons ─────────────────────────────────── */
+.rec-controls__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border-2);
+    color: var(--color-text-3);
+    cursor: pointer;
+    transition:
+        background   var(--transition-fast),
+        color        var(--transition-fast),
+        border-color var(--transition-fast),
+        transform    var(--transition-fast),
+        box-shadow   var(--transition-fast);
+}
+
+.rec-controls__btn:hover:not(:disabled) {
+    background: var(--color-brand-subtle);
+    color: var(--color-brand-light);
+    border-color: var(--color-border-brand);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.rec-controls__btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.rec-controls__btn:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+
+.rec-controls__btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ── Screen-reader-only live region ──────────────────────── */
+.rec-controls__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .rec-controls {
+        gap: var(--space-3);
+    }
+
+    .rec-controls__middle {
+        gap: var(--space-3);
+    }
+
+    .rec-controls__counter {
+        min-width: 46px;
+        font-size: var(--text-xs);
+    }
+
+    .rec-controls__btn {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+/* ── Light mode ──────────────────────────────────────────── */
+body.light-mode .rec-controls__btn {
+    box-shadow: var(--shadow-xs);
+}
+
+body.light-mode .rec-controls__btn:hover:not(:disabled) {
+    box-shadow: var(--shadow-sm);
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .rec-controls__dot {
+        transition: background var(--transition-fast);
+        width: 8px;
+    }
+
+    .rec-controls__dot:hover {
+        transform: none;
+    }
+
+    .rec-controls__dot.is-active {
+        width: 8px;
+    }
+
+    .rec-controls__btn,
+    .rec-controls__btn:hover:not(:disabled) {
+        transition: background var(--transition-fast), color var(--transition-fast);
+        transform: none;
+    }
+}
