@@ -2,6 +2,7 @@
    ScrollUtils — Progress bar (topo) + Back-to-top (canto)
 ═══════════════════════════════════════════════════════════════ */
 
+/* ── Scroll progress bar ──────────────────────────────────────── */
 .scroll-progress {
     position: fixed;
     top: 0;
@@ -30,6 +31,7 @@
     box-shadow: 0 0 8px color-mix(in srgb, var(--color-brand) 60%, transparent);
 }
 
+/* ── Back-to-top button ────────────────────────────────────────── */
 .back-to-top {
     position: fixed;
     right: var(--space-6);
@@ -89,7 +91,9 @@
         0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-.back-to-top:active { transform: translateY(0) scale(0.95); }
+.back-to-top:active {
+    transform: translateY(0) scale(0.95);
+}
 
 .back-to-top:focus-visible {
     outline: 2px solid var(--color-brand);
@@ -107,5 +111,7 @@
 
 @media (prefers-reduced-motion: reduce) {
     .scroll-progress__bar,
-    .back-to-top { transition: none; }
+    .back-to-top {
+        transition: none;
+    }
 }

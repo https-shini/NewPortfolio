@@ -88,6 +88,7 @@ export const Work: React.FC = () => {
                                     src={project.imageUrl}
                                     alt={`Preview do projeto ${project.title}`}
                                     loading="lazy"
+                                    decoding="async"
                                 />
                             </div>
 

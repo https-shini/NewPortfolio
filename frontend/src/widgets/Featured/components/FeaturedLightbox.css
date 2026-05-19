@@ -1,18 +1,23 @@
 /* ════════════════════════════════════════════════════════════════
    FeaturedLightbox — Modal premium para visualização de imagens
+   Layout: backdrop + dialog (topbar + main [stage + sidebar] + thumbs)
 ═══════════════════════════════════════════════════════════════ */
 
+/* ── Backdrop ──────────────────────────────────────────────────── */
 .fl-backdrop {
     position: fixed;
     inset: 0;
     z-index: var(--z-modal, 300);
+
     display: flex;
     align-items: center;
     justify-content: center;
     padding: var(--space-5);
+
     background: rgba(5, 8, 14, 0.78);
     backdrop-filter: blur(12px) saturate(1.1);
     -webkit-backdrop-filter: blur(12px) saturate(1.1);
+
     animation: fl-backdrop-in 0.28s ease-out;
 }
 
@@ -21,8 +26,10 @@
     to   { opacity: 1; }
 }
 
+/* ── Dialog ────────────────────────────────────────────────────── */
 .fl-dialog {
     --fl-radius: var(--radius-2xl, 24px);
+
     position: relative;
     display: flex;
     flex-direction: column;
@@ -37,14 +44,22 @@
         0 0 0 1px color-mix(in srgb, var(--color-text-1) 4%, transparent) inset,
         0 24px 60px rgba(0, 0, 0, 0.55),
         0 4px 12px rgba(0, 0, 0, 0.4);
+
     animation: fl-dialog-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 @keyframes fl-dialog-in {
-    from { opacity: 0; transform: scale(0.96) translateY(12px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
+/* ── Topbar ────────────────────────────────────────────────────── */
 .fl-topbar {
     display: flex;
     align-items: center;
@@ -71,7 +86,10 @@
     letter-spacing: var(--ls-snug);
 }
 
-.fl-meta-sep { color: var(--color-text-4); opacity: 0.5; }
+.fl-meta-sep {
+    color: var(--color-text-4);
+    opacity: 0.5;
+}
 
 .fl-counter {
     font-family: var(--font-mono);
@@ -98,7 +116,11 @@
     color: var(--color-text-2);
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 0.25s ease-out, border-color 0.25s ease-out, color 0.25s ease-out, transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition:
+        background 0.25s ease-out,
+        border-color 0.25s ease-out,
+        color 0.25s ease-out,
+        transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .fl-close:hover {
@@ -113,6 +135,7 @@
     outline-offset: 3px;
 }
 
+/* ── Main: stage (image) + sidebar (description) ───────────────── */
 .fl-main {
     display: grid;
     grid-template-columns: minmax(0, 1.6fr) minmax(280px, 360px);
@@ -120,6 +143,7 @@
     min-height: 0;
 }
 
+/* ── Stage (área da imagem) ────────────────────────────────────── */
 .fl-stage {
     position: relative;
     overflow: hidden;
@@ -131,6 +155,7 @@
     min-height: 0;
 }
 
+/* Backdrop blur da própria imagem como ambiente */
 .fl-stage-backdrop {
     position: absolute;
     inset: -8%;
@@ -145,6 +170,7 @@
     transition: opacity 0.5s ease-out;
 }
 
+/* Figure que envolve a imagem */
 .fl-figure {
     position: relative;
     z-index: 1;
@@ -158,6 +184,7 @@
     min-height: 0;
 }
 
+/* Imagem com proporção original respeitada */
 .fl-image {
     display: block;
     max-width: 100%;
@@ -183,6 +210,7 @@
     transform: scale(1);
 }
 
+/* Animação de entrada da stage conforme direção */
 .fl-stage.is-from-right .fl-figure {
     animation: fl-slide-from-right 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
@@ -201,6 +229,7 @@
     to   { transform: translateX(0);     opacity: 1;   }
 }
 
+/* ── Arrows ────────────────────────────────────────────────────── */
 .fl-arrow {
     position: absolute;
     top: 50%;
@@ -218,7 +247,11 @@
     border-radius: var(--radius-full);
     color: #fff;
     cursor: pointer;
-    transition: background 0.25s ease-out, border-color 0.25s ease-out, transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.3s ease-out;
+    transition:
+        background 0.25s ease-out,
+        border-color 0.25s ease-out,
+        transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+        box-shadow 0.3s ease-out;
 }
 
 .fl-arrow--prev { left: var(--space-4); }
@@ -238,6 +271,7 @@
     outline-offset: 3px;
 }
 
+/* ── Sidebar ───────────────────────────────────────────────────── */
 .fl-sidebar {
     display: flex;
     flex-direction: column;
@@ -247,6 +281,8 @@
     border-left: 1px solid var(--color-border-2);
     overflow-y: auto;
     overflow-x: hidden;
+
+    /* Custom scrollbar */
     scrollbar-width: thin;
     scrollbar-color: var(--color-border-3) transparent;
 }
@@ -329,6 +365,7 @@
     gap: 6px;
 }
 
+/* ── Thumbnails ────────────────────────────────────────────────── */
 .fl-thumbs {
     display: flex;
     align-items: center;
@@ -353,7 +390,10 @@
     border-radius: var(--radius-md);
     overflow: hidden;
     cursor: pointer;
-    transition: border-color 0.25s ease-out, transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.25s ease-out;
+    transition:
+        border-color 0.25s ease-out,
+        transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+        box-shadow 0.25s ease-out;
 }
 
 .fl-thumb img {
@@ -380,44 +420,102 @@
     transform: translateY(-2px);
 }
 
-.fl-thumb:hover img { opacity: 0.85; filter: saturate(1); }
+.fl-thumb:hover img {
+    opacity: 0.85;
+    filter: saturate(1);
+}
 
 .fl-thumb.is-active {
     border-color: var(--color-brand);
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-brand) 50%, transparent), 0 6px 18px color-mix(in srgb, var(--color-brand) 25%, transparent);
 }
 
-.fl-thumb.is-active img { opacity: 1; filter: saturate(1); }
-.fl-thumb.is-active .fl-thumb-overlay { background: transparent; }
+.fl-thumb.is-active img {
+    opacity: 1;
+    filter: saturate(1);
+}
+
+.fl-thumb.is-active .fl-thumb-overlay {
+    background: transparent;
+}
 
 .fl-thumb:focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: 3px;
 }
 
+/* ── Responsivo ────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-    .fl-main { grid-template-columns: minmax(0, 1.4fr) minmax(260px, 320px); }
-    .fl-sidebar { padding: var(--space-6) var(--space-5); }
+    .fl-main {
+        grid-template-columns: minmax(0, 1.4fr) minmax(260px, 320px);
+    }
+
+    .fl-sidebar {
+        padding: var(--space-6) var(--space-5);
+    }
 }
 
 @media (max-width: 768px) {
-    .fl-backdrop { padding: var(--space-3); }
-    .fl-dialog { max-height: calc(100vh - var(--space-6)); }
-    .fl-main { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
-    .fl-sidebar { border-left: none; border-top: 1px solid var(--color-border-2); max-height: 38vh; padding: var(--space-5); }
-    .fl-title { font-size: var(--text-xl); }
-    .fl-figure { padding: var(--space-4); }
-    .fl-arrow { width: 38px; height: 38px; }
+    .fl-backdrop {
+        padding: var(--space-3);
+    }
+
+    .fl-dialog {
+        max-height: calc(100vh - var(--space-6));
+    }
+
+    .fl-main {
+        grid-template-columns: 1fr;
+        grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    .fl-sidebar {
+        border-left: none;
+        border-top: 1px solid var(--color-border-2);
+        max-height: 38vh;
+        padding: var(--space-5);
+    }
+
+    .fl-title {
+        font-size: var(--text-xl);
+    }
+
+    .fl-figure {
+        padding: var(--space-4);
+    }
+
+    .fl-arrow {
+        width: 38px;
+        height: 38px;
+    }
+
     .fl-arrow--prev { left: var(--space-3); }
     .fl-arrow--next { right: var(--space-3); }
 }
 
 @media (max-width: 480px) {
-    .fl-topbar { padding: 10px 12px; }
-    .fl-thumbs { padding: 10px 12px; gap: 6px; }
-    .fl-thumb { flex: 0 0 72px; height: 48px; }
-    .fl-sidebar { max-height: 42vh; gap: var(--space-3); }
-    .fl-description { font-size: 13px; }
+    .fl-topbar {
+        padding: 10px 12px;
+    }
+
+    .fl-thumbs {
+        padding: 10px 12px;
+        gap: 6px;
+    }
+
+    .fl-thumb {
+        flex: 0 0 72px;
+        height: 48px;
+    }
+
+    .fl-sidebar {
+        max-height: 42vh;
+        gap: var(--space-3);
+    }
+
+    .fl-description {
+        font-size: 13px;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -18,13 +18,13 @@ export interface ProjectBadge {
 }
 
 export interface ProjectTech {
-    key: string;
-    label: string;
+    key: string;       // skillicons key
+    label: string;     // display name
     variant: "brand" | "accent" | "neutral";
 }
 
 export interface ProjectSlide {
-    src: string;
+    src: string;       // image URL
     label: { pt: string; en: string };
     sub:   { pt: string; en: string };
     /** Descrição rica para exibir no lightbox (texto contextual) */
@@ -37,6 +37,9 @@ export interface ArchitectureCard {
     text:  { pt: string; en: string };
 }
 
+/* ─────────────────────────────────────────────────────────
+   AUTHSERVICE — dados completos do projeto
+───────────────────────────────────────────────────────── */
 export const FEATURED_PROJECT = {
     id: "authservice",
     name: "AuthService",
@@ -55,43 +58,43 @@ export const FEATURED_PROJECT = {
     repoHost: "github.com/https-shini/AuthService",
 
     badges: [
-        { label: "LIVE",        variant: "live"      },
-        { label: "MIT",         variant: "license"   },
-        { label: "DOCKER",      variant: "neutral"   },
-        { label: "FASTAPI",     variant: "framework" },
-        { label: "PYTHON 3.11", variant: "language"  },
+        { label: "LIVE",    variant: "live"      },
+        { label: "MIT",     variant: "license"   },
+        { label: "DOCKER",  variant: "neutral"   },
+        { label: "FASTAPI", variant: "framework" },
+        { label: "PYTHON 3.11", variant: "language" },
     ] as ProjectBadge[],
 
     tech: [
-        { key: "fastapi", label: "FastAPI",    variant: "brand"   },
-        { key: "python",  label: "Python",     variant: "brand"   },
-        { key: "docker",  label: "Docker",     variant: "accent"  },
-        { key: "html",    label: "HTML5",      variant: "neutral" },
-        { key: "css",     label: "CSS3",       variant: "neutral" },
+        { key: "fastapi", label: "FastAPI",   variant: "brand"   },
+        { key: "python",  label: "Python",    variant: "brand"   },
+        { key: "docker",  label: "Docker",    variant: "accent"  },
+        { key: "html",    label: "HTML5",     variant: "neutral" },
+        { key: "css",     label: "CSS3",      variant: "neutral" },
         { key: "js",      label: "JavaScript", variant: "neutral" },
     ] as ProjectTech[],
 
     endpoints: [
         {
-            method: "GET",
-            path: "/health",
+            method:      "GET",
+            path:        "/health",
             description: { pt: "Status da API e latência", en: "API status & latency" },
         },
         {
-            method: "POST",
-            path: "/register",
+            method:      "POST",
+            path:        "/register",
             description: { pt: "Cadastro de novo usuário", en: "New user registration" },
         },
         {
-            method: "POST",
-            path: "/token",
+            method:      "POST",
+            path:        "/token",
             description: { pt: "Autenticação JWT", en: "JWT authentication" },
         },
         {
-            method: "GET",
-            path: "/me",
+            method:      "GET",
+            path:        "/me",
             description: { pt: "Dados do usuário autenticado", en: "Authenticated user data" },
-            protected: true,
+            protected:   true,
         },
     ] as ProjectEndpoint[],
 
@@ -162,10 +165,11 @@ export const FEATURED_PROJECT = {
     ] as ArchitectureCard[],
 } as const;
 
+/* Cor por método HTTP — terminal-style */
 export const METHOD_COLOR: Record<HttpMethod, { fg: string; bg: string; border: string }> = {
-    GET:    { fg: "var(--_green-400)",         bg: "color-mix(in srgb, var(--_green-500) 13%, transparent)", border: "color-mix(in srgb, var(--_green-500) 32%, transparent)" },
-    POST:   { fg: "var(--color-accent-light)", bg: "var(--color-accent-subtle)",                              border: "color-mix(in srgb, var(--color-accent) 32%, transparent)" },
-    PUT:    { fg: "var(--_amber-400)",         bg: "color-mix(in srgb, var(--_amber-500) 13%, transparent)", border: "color-mix(in srgb, var(--_amber-500) 32%, transparent)" },
-    DELETE: { fg: "var(--_red-400)",           bg: "color-mix(in srgb, var(--_red-500) 13%, transparent)",   border: "color-mix(in srgb, var(--_red-500) 32%, transparent)" },
-    PATCH:  { fg: "var(--color-brand-light)",  bg: "var(--color-brand-subtle)",                              border: "color-mix(in srgb, var(--color-brand) 32%, transparent)" },
+    GET:    { fg: "var(--_green-400)",  bg: "color-mix(in srgb, var(--_green-500) 13%, transparent)",  border: "color-mix(in srgb, var(--_green-500) 32%, transparent)" },
+    POST:   { fg: "var(--color-accent-light)", bg: "var(--color-accent-subtle)", border: "color-mix(in srgb, var(--color-accent) 32%, transparent)" },
+    PUT:    { fg: "var(--_amber-400)",  bg: "color-mix(in srgb, var(--_amber-500) 13%, transparent)",  border: "color-mix(in srgb, var(--_amber-500) 32%, transparent)" },
+    DELETE: { fg: "var(--_red-400)",    bg: "color-mix(in srgb, var(--_red-500) 13%, transparent)",    border: "color-mix(in srgb, var(--_red-500) 32%, transparent)" },
+    PATCH:  { fg: "var(--color-brand-light)", bg: "var(--color-brand-subtle)", border: "color-mix(in srgb, var(--color-brand) 32%, transparent)" },
 };

@@ -1,77 +1,90 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import './Recommendations.css';
-import { useLang } from '@/shared/hooks/useLang';
-import { SECTION_IDS } from '@/shared/config/constants';
-import { recommendations } from './Recommendations.data';
-import { RecommendationItem } from './Recommendations.types';
-import { RecommendationCard } from './components/RecommendationCard';
-import { RecommendationModal } from './components/RecommendationModal';
-import { CarouselControls } from './components/CarouselControls';
+import React, {
+    useState,
+    useRef,
+    useEffect,
+    useCallback,
+    useMemo,
+} from "react";
+import "./Recommendations.css";
+import { useLang } from "@/shared/hooks/useLang";
+import { SECTION_IDS, LINKEDIN_URL } from "@/shared/config/constants";
+import { recommendations } from "./Recommendations.data";
+import { RecommendationCard } from "./components/RecommendationCard";
+import { RecommendationModal } from "./components/RecommendationModal";
+import { CarouselControls } from "./components/CarouselControls";
+import { IconLinkedIn } from "@/shared/ui/Icons";
+import type { RecommendationItem } from "./Recommendations.types";
 
-/* ─────────────────────────────────────────────────────────
-   COMPONENT — one recommendation per slide (foco + legibilidade)
-───────────────────────────────────────────────────────── */
+const MOBILE_BREAKPOINT = 880;
+
 export const Recommendations: React.FC = () => {
-    const { lang, t } = useLang();
-
-    /* ── Carousel: one-per-page ───────────────────────── */
-    const visibleCount = 1;
+    const { t, lang } = useLang();
+    const [openItem, setOpenItem] = useState<RecommendationItem | null>(null);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState<boolean>(
+        typeof window !== "undefined" ? window.innerWidth < MOBILE_BREAKPOINT : false,
+    );
+    const lastTrigger = useRef<HTMLElement | null>(null);
+    const carouselRef = useRef<HTMLDivElement>(null);
     const total = recommendations.length;
-    const [index, setIndex] = useState(0);
-    const maxIndex = Math.max(0, total - visibleCount);
+    const maxIndex = Math.max(0, total - 1);
 
-    const goPrev = useCallback(
-        () => setIndex(prev => (prev <= 0 ? maxIndex : prev - 1)),
-        [maxIndex],
-    );
-    const goNext = useCallback(
-        () => setIndex(prev => (prev >= maxIndex ? 0 : prev + 1)),
-        [maxIndex],
-    );
+    /* Responsive switch */
+    useEffect(() => {
+        const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 0.1}px)`);
+        const update = () => setIsMobile(mq.matches);
+        update();
+        mq.addEventListener("change", update);
+        return () => mq.removeEventListener("change", update);
+    }, []);
+
+    const goPrev = useCallback(() => {
+        setActiveIndex(i => (i === 0 ? maxIndex : i - 1));
+    }, [maxIndex]);
+
+    const goNext = useCallback(() => {
+        setActiveIndex(i => (i === maxIndex ? 0 : i + 1));
+    }, [maxIndex]);
+
     const goTo = useCallback(
-        (target: number) => setIndex(Math.min(Math.max(target, 0), maxIndex)),
+        (idx: number) => setActiveIndex(Math.max(0, Math.min(maxIndex, idx))),
         [maxIndex],
     );
 
-    /* ── Touch / swipe ────────────────────────────────── */
-    const touchStartX = useRef(0);
-    const handleTouchStart = (e: React.TouchEvent) => {
-        touchStartX.current = e.changedTouches[0].clientX;
+    const touchX = useRef(0);
+    const onTouchStart = (e: React.TouchEvent) => {
+        touchX.current = e.touches[0]!.clientX;
     };
-    const handleTouchEnd = (e: React.TouchEvent) => {
-        const delta = touchStartX.current - e.changedTouches[0].clientX;
+    const onTouchEnd = (e: React.TouchEvent) => {
+        const delta = touchX.current - e.changedTouches[0]!.clientX;
         if (Math.abs(delta) > 48) (delta > 0 ? goNext : goPrev)();
     };
 
-    /* ── Keyboard navigation ──────────────────────────── */
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'ArrowRight') { e.preventDefault(); goNext(); }
-        if (e.key === 'ArrowLeft')  { e.preventDefault(); goPrev(); }
-        if (e.key === 'Home')       { e.preventDefault(); goTo(0); }
-        if (e.key === 'End')        { e.preventDefault(); goTo(maxIndex); }
+    const onKeyDown = (e: React.KeyboardEvent) => {
+        if (!isMobile) return;
+        if (e.key === "ArrowLeft")       { e.preventDefault(); goPrev(); }
+        else if (e.key === "ArrowRight") { e.preventDefault(); goNext(); }
+        else if (e.key === "Home")       { e.preventDefault(); goTo(0); }
+        else if (e.key === "End")        { e.preventDefault(); goTo(maxIndex); }
     };
 
-    /* ── Modal state + focus return ───────────────────── */
-    const [modalItem, setModalItem] = useState<RecommendationItem | null>(null);
-    const lastFocused = useRef<HTMLElement | null>(null);
-
-    const openModal = useCallback((item: RecommendationItem, trigger: HTMLElement) => {
-        lastFocused.current = trigger;
-        setModalItem(item);
-    }, []);
+    const openModal = useCallback(
+        (item: RecommendationItem, trigger?: HTMLElement) => {
+            lastTrigger.current = trigger ?? null;
+            setOpenItem(item);
+        },
+        [],
+    );
 
     const closeModal = useCallback(() => {
-        setModalItem(null);
-        requestAnimationFrame(() => {
-            lastFocused.current?.focus();
-        });
+        setOpenItem(null);
+        requestAnimationFrame(() => lastTrigger.current?.focus());
     }, []);
 
-    /* ── Carousel translate ───────────────────────────── */
-    const translateX = -(index * 100);
-
-    /* ── Only the active slide is tabbable ────────────── */
-    const isVisible = useCallback((idx: number) => idx === index, [index]);
+    const trackStyle = useMemo(
+        () => ({ transform: `translateX(-${activeIndex * 100}%)` }),
+        [activeIndex],
+    );
 
     return (
         <section
@@ -81,74 +94,102 @@ export const Recommendations: React.FC = () => {
             data-reveal
         >
             <div className="container">
-                {/* Section header */}
                 <header className="section-header">
-                    <span className="section-eyebrow">{t('rec.eyebrow')}</span>
+                    <span className="section-eyebrow">{t("rec.eyebrow")}</span>
                     <h2 className="section-title" id="rec-title">
-                        {t('rec.title')}
+                        {t("rec.title")}
                     </h2>
-                    <p className="section-subtitle">{t('rec.sub')}</p>
+                    <p className="section-subtitle">{t("rec.sub")}</p>
                 </header>
 
-                {/* Carousel */}
-                <div
-                    className="rec-carousel"
-                    onTouchStart={handleTouchStart}
-                    onTouchEnd={handleTouchEnd}
-                    onKeyDown={handleKeyDown}
-                    tabIndex={0}
-                    aria-roledescription="carousel"
-                    aria-label={
-                        lang === 'pt'
-                            ? 'Carrossel de recomendações — use as setas para navegar'
-                            : 'Recommendations carousel — use arrow keys to navigate'
-                    }
-                >
-                    <div className="rec-carousel__viewport">
-                    <div
-                        className="rec-carousel__track"
-                        aria-live="polite"
-                        aria-atomic="false"
-                        style={{ transform: `translateX(${translateX}%)` }}
+                {/* Stats bar */}
+                <div className="rec__stats" role="status">
+                    <div className="rec__stats-counter">
+                        <span className="rec__stats-num">
+                            {String(total).padStart(2, "0")}
+                        </span>
+                        <span className="rec__stats-label">
+                            {total === 1 ? t("rec.count.one") : t("rec.count.many")}
+                        </span>
+                    </div>
+
+                    <a
+                        href={LINKEDIN_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rec__source-link"
+                        aria-label={t("rec.source.label")}
                     >
-                        {recommendations.map((rec, idx) => (
-                            <div
-                                key={rec.id}
-                                className="rec-carousel__slide"
-                                aria-hidden={!isVisible(idx)}
-                                role="group"
-                                aria-roledescription="slide"
-                                aria-label={
-                                    lang === 'pt'
-                                        ? `${idx + 1} de ${total}`
-                                        : `${idx + 1} of ${total}`
-                                }
-                            >
+                        <IconLinkedIn width={14} height={14} aria-hidden="true" />
+                        <span>{t("rec.source.text")}</span>
+                    </a>
+                </div>
+
+                {/* Desktop: Grid · Mobile: Carousel */}
+                {isMobile ? (
+                    <>
+                        <div
+                            ref={carouselRef}
+                            className="rec__carousel"
+                            role="region"
+                            aria-roledescription="carrossel"
+                            aria-label={t("rec.title")}
+                            onTouchStart={onTouchStart}
+                            onTouchEnd={onTouchEnd}
+                            onKeyDown={onKeyDown}
+                            tabIndex={0}
+                        >
+                            <div className="rec__viewport">
+                                <div className="rec__track" style={trackStyle}>
+                                    {recommendations.map((item, idx) => (
+                                        <div
+                                            key={item.id}
+                                            className="rec__slide"
+                                            role="group"
+                                            aria-roledescription="slide"
+                                            aria-label={`${idx + 1} / ${total}`}
+                                            aria-hidden={idx !== activeIndex}
+                                        >
+                                            <RecommendationCard
+                                                item={item}
+                                                index={idx}
+                                                onOpen={openModal}
+                                                tabbable={idx === activeIndex}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <CarouselControls
+                            currentIndex={activeIndex}
+                            total={total}
+                            visibleCount={1}
+                            onPrev={goPrev}
+                            onNext={goNext}
+                            onGoTo={goTo}
+                            lang={lang}
+                        />
+                    </>
+                ) : (
+                    <div className="rec__grid" role="list">
+                        {recommendations.map((item, idx) => (
+                            <div key={item.id} role="listitem" className="rec__grid-item">
                                 <RecommendationCard
-                                    item={rec}
+                                    item={item}
                                     index={idx}
                                     onOpen={openModal}
-                                    tabbable={isVisible(idx)}
+                                    tabbable
                                 />
                             </div>
                         ))}
                     </div>
-                    </div>
-
-                    <CarouselControls
-                        currentIndex={index}
-                        total={total}
-                        visibleCount={visibleCount}
-                        onPrev={goPrev}
-                        onNext={goNext}
-                        onGoTo={goTo}
-                        lang={lang}
-                    />
-                </div>
+                )}
             </div>
 
-            {modalItem && (
-                <RecommendationModal item={modalItem} onClose={closeModal} />
+            {openItem && (
+                <RecommendationModal item={openItem} onClose={closeModal} />
             )}
         </section>
     );

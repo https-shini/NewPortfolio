@@ -1,106 +1,183 @@
-/* ═══════════════════════════════════════════════════════════
-   RECOMMENDATIONS.CSS
-   Section wrapper + carousel track layout.
-   Card, modal and controls have their own CSS files.
-═══════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   RECOMMENDATIONS — Premium grid (desktop) + carousel (mobile)
+═══════════════════════════════════════════════════════════════ */
 
-/* ── Section ─────────────────────────────────────────────── */
 .rec {
     background: var(--color-bg);
+    position: relative;
 }
 
-/* ── Scroll-reveal for the section wrapper ───────────────── */
 .rec[data-reveal] {
     opacity: 0;
     transform: translateY(20px);
     transition:
-        opacity   0.6s var(--ease-out),
-        transform 0.6s var(--ease-out);
+        opacity 0.6s ease-out,
+        transform 0.6s ease-out;
 }
 
 .rec[data-reveal].is-visible {
     opacity: 1;
-    transform: none;
+    transform: translateY(0);
 }
 
-/* ── Carousel outer ──────────────────────────────────────── */
-.rec-carousel {
+/* ── Stats bar ─────────────────────────────────────────────────── */
+.rec__stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin: var(--space-10) 0 var(--space-7);
+    padding: var(--space-4) var(--space-5);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-xl);
+}
+
+.rec__stats-counter {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-3);
+}
+
+.rec__stats-num {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--ls-tight);
+    background: linear-gradient(
+        135deg,
+        var(--color-brand-light) 0%,
+        var(--color-accent-light) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-variant-numeric: tabular-nums;
+}
+
+.rec__stats-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.rec__source-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 7px 14px;
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    color: var(--color-text-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition:
+        background 0.25s,
+        border-color 0.25s,
+        color 0.25s,
+        transform 0.25s;
+}
+
+.rec__source-link:hover {
+    background: color-mix(in srgb, #0a66c2 10%, var(--color-surface-1));
+    border-color: color-mix(in srgb, #0a66c2 40%, var(--color-border-2));
+    color: var(--color-text-1);
+    transform: translateY(-1px);
+}
+
+.rec__source-link svg {
+    color: #0a66c2;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DESKTOP — Grid layout
+═══════════════════════════════════════════════════════════════ */
+.rec__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: var(--space-5);
+    align-items: stretch;
+}
+
+.rec__grid-item {
+    list-style: none;
+    display: flex;
+    /* stretch card to full cell height */
+}
+
+.rec__grid-item > .rec-card {
+    width: 100%;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE — Carousel layout
+═══════════════════════════════════════════════════════════════ */
+.rec__carousel {
     position: relative;
-    margin-top: var(--space-10);
-    outline: none;
+    width: 100%;
+    isolation: isolate;
 }
 
-.rec-carousel:focus-visible {
+.rec__carousel:focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: 4px;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-md);
 }
 
-/* ── Viewport: clips the sliding track ───────────────────── */
-.rec-carousel__viewport {
+.rec__viewport {
+    width: 100%;
     overflow: hidden;
-    border-radius: var(--radius-xl);
 }
 
-/* ── Track: flex row that slides horizontally ────────────── */
-.rec-carousel__track {
+.rec__track {
     display: flex;
     will-change: transform;
-    transition: transform 0.45s var(--ease-out);
+    transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-/* ── Individual slide wrapper ────────────────────────────── */
-.rec-carousel__slide {
+.rec__slide {
     flex: 0 0 100%;
-    max-width: 100%;
-    padding: var(--space-2) var(--space-3);
-    box-sizing: border-box;
+    min-width: 0;
+    display: flex;
+    padding: 0 2px;
 }
 
-/* Fade out slides that are not active (still visible during transition) */
-.rec-carousel__slide[aria-hidden="true"] {
-    opacity: 0.35;
-    filter: saturate(0.7);
-    transition:
-        opacity    0.45s var(--ease-out),
-        filter     0.45s var(--ease-out);
-    pointer-events: none;
+.rec__slide > .rec-card {
+    width: 100%;
 }
 
-.rec-carousel__slide[aria-hidden="false"] {
-    opacity: 1;
-    filter: none;
-    transition:
-        opacity    0.45s var(--ease-out),
-        filter     0.45s var(--ease-out);
-}
-
-/* Ensure cards inside fill the slide height */
-.rec-carousel__slide > * {
-    height: 100%;
-}
-
-/* ── Mobile: tighter padding ─────────────────────────────── */
+/* ── Responsivo ────────────────────────────────────────────────── */
 @media (max-width: 640px) {
-    .rec-carousel__slide {
-        padding: var(--space-2) var(--space-1);
+    .rec__stats {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+        padding: var(--space-4);
+    }
+
+    .rec__stats-counter {
+        justify-content: space-between;
+    }
+
+    .rec__source-link {
+        justify-content: center;
+        padding: 8px 14px;
     }
 }
 
-/* ── Reduced motion ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-    .rec[data-reveal] {
-        opacity: 1;
-        transform: none;
+    .rec[data-reveal],
+    .rec__track {
         transition: none;
     }
-
-    .rec-carousel__track {
-        transition: none;
-    }
-}
-
-/* ── Light mode ──────────────────────────────────────────── */
-body.light-mode .rec {
-    background: var(--color-bg);
 }

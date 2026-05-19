@@ -144,3 +144,17 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ── prefers-reduced-motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .work,
+    .work[data-reveal],
+    .work-card,
+    .work-card__thumb img,
+    .work-card__overlay,
+    .work-card__tag,
+    .work-card__link {
+        animation: none !important;
+        transition: none !important;
+    }
+}

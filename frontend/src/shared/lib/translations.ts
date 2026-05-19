@@ -53,6 +53,8 @@ export type TranslationKey =
     | "career.summary"
     | "career.close"
     | "career.present"
+    | "career.highlights"
+    | "career.about"
 
     /* ── EDUCATION (Formações) ─────────────────────── */
     | "education.title"
@@ -61,12 +63,34 @@ export type TranslationKey =
     | "education.edu.title"
     | "education.cert.title"
     | "education.cert.link"
+    | "education.edu.label"
+    | "education.cert.label"
+    | "education.achievements"
+    | "education.filterLabel"
+    | "education.filter.all"
+    | "education.filter.edu"
+    | "education.filter.cert"
+    | "education.showMore"
+    | "education.showLess"
 
     /* ── FEATURED ──────────────────────────────────── */
     | "featured.badge"
+    | "featured.eyebrow"
     | "featured.desc"
     | "featured.btn.live"
     | "featured.btn.repo"
+    | "featured.btn.docs"
+    | "featured.gallery.label"
+    | "featured.autoplay.play"
+    | "featured.autoplay.pause"
+    | "featured.arrow.prev"
+    | "featured.arrow.next"
+    | "featured.block.tech"
+    | "featured.block.endpoints"
+    | "featured.endpoint.protected"
+    | "featured.lightbox.open"
+    | "featured.lightbox.close"
+    | "featured.lightbox.thumbnails"
 
     /* ── DETAILS ───────────────────────────────────── */
     | "detail.challenge"
@@ -99,6 +123,10 @@ export type TranslationKey =
     | "rec.title"
     | "rec.sub"
     | "rec.eyebrow"
+    | "rec.count.one"
+    | "rec.count.many"
+    | "rec.source.text"
+    | "rec.source.label"
 
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
@@ -175,21 +203,45 @@ const pt: Translations = {
     "career.summary": "Resumo",
     "career.close": "Fechar modal",
     "career.present": "o momento",
+    "career.highlights": "Destaques",
+    "career.about": "Sobre a posição",
 
     /* EDUCATION (Formações) */
     "education.title": "Formações",
-    "education.sub": "Trajetória acadêmica e certificações.",
+    "education.sub": "Trajetória acadêmica e certificações que sustentam minha base técnica.",
     "education.eyebrow": "Acadêmico",
     "education.edu.title": "Formação Acadêmica",
     "education.cert.title": "Certificações",
     "education.cert.link": "Ver certificado",
+    "education.edu.label": "Graduação",
+    "education.cert.label": "Certificação",
+    "education.achievements": "conquistas",
+    "education.filterLabel": "Filtrar formações",
+    "education.filter.all": "Tudo",
+    "education.filter.edu": "Acadêmico",
+    "education.filter.cert": "Certificações",
+    "education.showMore": "Ver mais",
+    "education.showLess": "Ver menos",
 
     /* FEATURED */
+    "featured.eyebrow": "Destaque",
     "featured.badge": "Projeto em Destaque",
     "featured.desc":
         "Projeto web com foco em usabilidade, performance e boas práticas de desenvolvimento.",
-    "featured.btn.live": "Ver projeto",
+    "featured.btn.live": "Ver demo",
     "featured.btn.repo": "Repositório",
+    "featured.btn.docs": "Swagger Docs",
+    "featured.gallery.label": "Capturas do projeto",
+    "featured.autoplay.play": "Iniciar autoplay",
+    "featured.autoplay.pause": "Pausar autoplay",
+    "featured.arrow.prev": "Slide anterior",
+    "featured.arrow.next": "Próximo slide",
+    "featured.block.tech": "Stack",
+    "featured.block.endpoints": "Endpoints da API",
+    "featured.endpoint.protected": "Rota protegida (requer Bearer Token)",
+    "featured.lightbox.open": "Ampliar",
+    "featured.lightbox.close": "Fechar visualização",
+    "featured.lightbox.thumbnails": "Miniaturas dos slides",
 
     /* DETAILS */
     "detail.challenge": "Desafio",
@@ -225,6 +277,10 @@ const pt: Translations = {
     "rec.sub":
         "O que pessoas que trabalharam comigo dizem sobre minha atuação profissional.",
     "rec.eyebrow": "Depoimentos",
+    "rec.count.one": "recomendação",
+    "rec.count.many": "recomendações",
+    "rec.source.text": "Via LinkedIn",
+    "rec.source.label": "Ver recomendações no LinkedIn",
 
     /* FOOTER */
     "footer.tagline":
@@ -301,21 +357,45 @@ const en: Translations = {
     "career.summary": "Overview",
     "career.close": "Close modal",
     "career.present": "Present",
+    "career.highlights": "Highlights",
+    "career.about": "About this role",
 
     /* EDUCATION */
     "education.title": "Education",
-    "education.sub": "Academic path and certifications.",
+    "education.sub": "Academic path and certifications that build my technical foundation.",
     "education.eyebrow": "Academic",
     "education.edu.title": "Academic Education",
     "education.cert.title": "Certifications",
     "education.cert.link": "View certificate",
+    "education.edu.label": "Degree",
+    "education.cert.label": "Certification",
+    "education.achievements": "achievements",
+    "education.filterLabel": "Filter formations",
+    "education.filter.all": "All",
+    "education.filter.edu": "Academic",
+    "education.filter.cert": "Certifications",
+    "education.showMore": "Show more",
+    "education.showLess": "Show less",
 
     /* FEATURED */
+    "featured.eyebrow": "Featured",
     "featured.badge": "Featured Project",
     "featured.desc":
         "Web project focused on usability, performance and development best practices.",
-    "featured.btn.live": "View project",
+    "featured.btn.live": "View demo",
     "featured.btn.repo": "Repository",
+    "featured.btn.docs": "Swagger Docs",
+    "featured.gallery.label": "Project screenshots",
+    "featured.autoplay.play": "Start autoplay",
+    "featured.autoplay.pause": "Pause autoplay",
+    "featured.arrow.prev": "Previous slide",
+    "featured.arrow.next": "Next slide",
+    "featured.block.tech": "Stack",
+    "featured.block.endpoints": "API Endpoints",
+    "featured.endpoint.protected": "Protected route (requires Bearer Token)",
+    "featured.lightbox.open": "Expand",
+    "featured.lightbox.close": "Close viewer",
+    "featured.lightbox.thumbnails": "Slide thumbnails",
 
     /* DETAILS */
     "detail.challenge": "Challenge",
@@ -351,6 +431,10 @@ const en: Translations = {
     "rec.sub":
         "What people who worked with me say about my professional performance.",
     "rec.eyebrow": "Testimonials",
+    "rec.count.one": "recommendation",
+    "rec.count.many": "recommendations",
+    "rec.source.text": "Via LinkedIn",
+    "rec.source.label": "View recommendations on LinkedIn",
 
     /* FOOTER */
     "footer.tagline":

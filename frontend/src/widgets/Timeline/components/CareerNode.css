@@ -45,6 +45,7 @@
     border-radius: var(--radius-full);
 }
 
+/* Reflexo decorativo no rail */
 .career-node__rail::before {
     content: "";
     position: absolute;
@@ -165,6 +166,7 @@
     }
 }
 
+/* Pequeno decorativo no topo do nó */
 .career-node__marker-glint {
     position: absolute;
     top: 6px;

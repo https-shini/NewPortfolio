@@ -39,8 +39,10 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index, isLast }
             className={`career-node${hasActivePosition ? " career-node--active" : ""}${isLast ? " career-node--last" : ""}`}
             data-reveal
         >
+            {/* Spine vertical (linha) */}
             <span className="career-node__rail" aria-hidden="true" />
 
+            {/* Marker / nó circular com iniciais ou logo */}
             <span className="career-node__marker" aria-hidden="true">
                 {company.logo ? (
                     <img src={company.logo} alt="" />
@@ -50,6 +52,7 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index, isLast }
                 <span className="career-node__marker-glint" aria-hidden="true" />
             </span>
 
+            {/* Conteúdo: header da empresa + lista de posições */}
             <div className="career-node__content">
                 <header className="career-node__header">
                     <div className="career-node__identity">

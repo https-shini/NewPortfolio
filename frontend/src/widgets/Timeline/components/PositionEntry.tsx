@@ -47,14 +47,17 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
     const highlights = position.bullets.filter(b => b.highlight);
     const allBullets = position.bullets;
 
+    // Mede a altura do body para a transição suave
     useEffect(() => {
         if (!bodyRef.current) return;
         const measure = () => {
             if (!bodyRef.current) return;
+            // Mede usando scrollHeight para pegar a altura real do conteúdo
             const h = bodyRef.current.scrollHeight;
             setBodyHeight(isOpen ? h : 0);
         };
         measure();
+        // re-mede em resize (responsivo)
         const ro = new ResizeObserver(measure);
         ro.observe(bodyRef.current);
         return () => ro.disconnect();
@@ -75,6 +78,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                 aria-controls={panelId}
                 onClick={toggle}
             >
+                {/* Header row 1: title + status */}
                 <div className="position-entry__title-row">
                     <h4 className="position-entry__title">{position.title}</h4>
                     <span
@@ -86,6 +90,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                     </span>
                 </div>
 
+                {/* Meta row */}
                 <div className="position-entry__meta">
                     <span className="position-entry__meta-item">{employment}</span>
                     <span className="position-entry__meta-sep" aria-hidden="true">·</span>
@@ -100,6 +105,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                     )}
                 </div>
 
+                {/* Summary preview (closed state) */}
                 {position.summary && (
                     <p className="position-entry__summary" aria-hidden={isOpen}>
                         {position.summary}
@@ -111,6 +117,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                 </span>
             </button>
 
+            {/* Expandable body */}
             <div
                 id={panelId}
                 role="region"
@@ -120,10 +127,12 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                 aria-hidden={!isOpen}
             >
                 <div ref={bodyRef} className="position-entry__panel-inner">
+                    {/* Full summary (when open) */}
                     {position.summary && (
                         <p className="position-entry__about">{position.summary}</p>
                     )}
 
+                    {/* Highlights */}
                     {highlights.length > 0 && (
                         <section className="position-entry__section position-entry__section--highlights">
                             <h5 className="position-entry__section-title">
@@ -140,6 +149,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                         </section>
                     )}
 
+                    {/* All activities */}
                     {allBullets.length > 0 && (
                         <section className="position-entry__section">
                             <h5 className="position-entry__section-title">
@@ -155,6 +165,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                         </section>
                     )}
 
+                    {/* Tags */}
                     {position.tags.length > 0 && (
                         <section className="position-entry__section">
                             <h5 className="position-entry__section-title">

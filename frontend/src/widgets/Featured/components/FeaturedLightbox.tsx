@@ -20,6 +20,7 @@ interface FeaturedLightboxProps {
     onClose: () => void;
 }
 
+/** Direção da última navegação — usada para animar entrada/saída do conteúdo */
 type Direction = "next" | "prev" | "none";
 
 export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
@@ -42,6 +43,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
     const total = slides.length;
     const slide = slides[index]!;
 
+    /* ── Navigation ─────────────────────────────────────────────── */
     const goTo = useCallback(
         (target: number, dir: Direction = "none") => {
             const safe = ((target % total) + total) % total;
@@ -56,27 +58,42 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
     const goPrev = useCallback(() => goTo(index - 1, "prev"), [goTo, index]);
     const goNext = useCallback(() => goTo(index + 1, "next"), [goTo, index]);
 
+    /* ── Keyboard ───────────────────────────────────────────────── */
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === "Escape")           { e.preventDefault(); onClose(); }
-            else if (e.key === "ArrowLeft")   { e.preventDefault(); goPrev(); }
-            else if (e.key === "ArrowRight")  { e.preventDefault(); goNext(); }
-            else if (e.key === "Home")        { e.preventDefault(); goTo(0); }
-            else if (e.key === "End")         { e.preventDefault(); goTo(total - 1); }
+            if (e.key === "Escape") {
+                e.preventDefault();
+                onClose();
+            } else if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                goPrev();
+            } else if (e.key === "ArrowRight") {
+                e.preventDefault();
+                goNext();
+            } else if (e.key === "Home") {
+                e.preventDefault();
+                goTo(0);
+            } else if (e.key === "End") {
+                e.preventDefault();
+                goTo(total - 1);
+            }
         };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
     }, [goNext, goPrev, goTo, onClose, total]);
 
+    /* ── Body scroll lock + initial focus ──────────────────────── */
     useEffect(() => {
         const original = document.body.style.overflow;
         document.body.style.overflow = "hidden";
+        // foco no botão fechar (sem capturar scroll para baixo)
         requestAnimationFrame(() => closeBtnRef.current?.focus({ preventScroll: true }));
         return () => {
             document.body.style.overflow = original;
         };
     }, []);
 
+    /* ── Preload adjacent images for smoother carousel ─────────── */
     useEffect(() => {
         const prev = slides[(index - 1 + total) % total];
         const next = slides[(index + 1) % total];
@@ -87,6 +104,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
         });
     }, [index, slides, total]);
 
+    /* ── Touch swipe ────────────────────────────────────────────── */
     const onTouchStart = (e: React.TouchEvent) => {
         touchX.current = e.touches[0]!.clientX;
         touchY.current = e.touches[0]!.clientY;
@@ -94,15 +112,18 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
     const onTouchEnd = (e: React.TouchEvent) => {
         const dx = touchX.current - e.changedTouches[0]!.clientX;
         const dy = touchY.current - e.changedTouches[0]!.clientY;
+        // Swipe horizontal — ignorar se for predominantemente vertical (scroll)
         if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
             dx > 0 ? goNext() : goPrev();
         }
     };
 
+    /* ── Backdrop click (não fecha em clique dentro do dialog) ─ */
     const onBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) onClose();
     };
 
+    /* ── Focus trap simples ────────────────────────────────────── */
     const onDialogKeyDown = (e: React.KeyboardEvent) => {
         if (e.key !== "Tab" || !dialogRef.current) return;
         const focusables = dialogRef.current.querySelectorAll<HTMLElement>(
@@ -143,6 +164,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                 onKeyDown={onDialogKeyDown}
                 onClick={e => e.stopPropagation()}
             >
+                {/* Top bar — counter + close */}
                 <header className="fl-topbar">
                     <div className="fl-meta">
                         <span className="fl-project">{projectName}</span>
@@ -169,14 +191,17 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                     </button>
                 </header>
 
+                {/* Main area — image + sidebar */}
                 <div className="fl-main">
                     <div className={`fl-stage${directionClass}`} key={index}>
+                        {/* Backdrop blur of the image */}
                         <div
                             className="fl-stage-backdrop"
                             style={{ backgroundImage: `url(${slide.src})` }}
                             aria-hidden="true"
                         />
 
+                        {/* Actual image */}
                         <figure className="fl-figure">
                             <img
                                 key={slide.src}
@@ -190,6 +215,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                             </figcaption>
                         </figure>
 
+                        {/* Arrows (overlay on stage) */}
                         {total > 1 && (
                             <>
                                 <button
@@ -212,6 +238,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                         )}
                     </div>
 
+                    {/* Sidebar — description */}
                     <aside className="fl-sidebar">
                         <span className="fl-tag">
                             <span className="fl-tag-num">
@@ -257,6 +284,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                     </aside>
                 </div>
 
+                {/* Bottom bar — thumbnails */}
                 {total > 1 && (
                     <nav className="fl-thumbs" aria-label={t("featured.lightbox.thumbnails")}>
                         {slides.map((s, i) => (

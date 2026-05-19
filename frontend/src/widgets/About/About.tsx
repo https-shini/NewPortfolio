@@ -459,6 +459,7 @@ export const About: React.FC = () => {
                                 alt="Guilherme Cruz em ambiente de trabalho"
                                 className="about__photo"
                                 loading="lazy"
+                                decoding="async"
                                 width={480}
                                 height={600}
                             />
@@ -489,6 +490,7 @@ export const About: React.FC = () => {
                                             width={32}
                                             height={32}
                                             loading="lazy"
+                                            decoding="async"
                                         />
                                         <span>{tech.label}</span>
                                     </div>

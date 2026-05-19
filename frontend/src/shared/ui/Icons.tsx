@@ -8,7 +8,8 @@ export interface IconProps {
     className?: string;
     width?: number;
     height?: number;
-    "aria-hidden"?: boolean;
+    /** Aceita boolean ou string "true"/"false" — compatível com uso JSX literal */
+    "aria-hidden"?: boolean | "true" | "false";
     "aria-label"?: string;
 }
 
@@ -343,6 +344,21 @@ export const IconPackage: React.FC<IconProps> = (props) => (
         <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
         <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
         <line x1="12" y1="22.08" x2="12" y2="12" />
+    </S>
+);
+
+/** Shield (segurança / auth) */
+export const IconShield: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </S>
+);
+
+/** Lock (endpoint protegido / auth required) */
+export const IconLock: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0110 0v4" />
     </S>
 );
 

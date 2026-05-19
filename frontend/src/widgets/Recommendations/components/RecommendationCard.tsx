@@ -1,13 +1,14 @@
-import React, { useMemo } from 'react';
-import './RecommendationCard.css';
+import React, { useMemo } from "react";
+import "./RecommendationCard.css";
 import {
     RecommendationItem,
     summarize,
     formatRecommendationDate,
-} from '../Recommendations.types';
-import { useLang } from '@/shared/hooks/useLang';
-import { useRevealOnScroll } from '@/shared/hooks/useRevealOnScroll';
-import { getInitials } from '@/shared/lib/text';
+} from "../Recommendations.types";
+import { useLang } from "@/shared/hooks/useLang";
+import { useRevealOnScroll } from "@/shared/hooks/useRevealOnScroll";
+import { getInitials } from "@/shared/lib/text";
+import { IconArrowRight } from "@/shared/ui/Icons";
 
 interface RecommendationCardProps {
     item:      RecommendationItem;
@@ -16,22 +17,26 @@ interface RecommendationCardProps {
     tabbable?: boolean;
 }
 
-/**
- * RecommendationCard — visão essencial.
- * Exibe apenas: resumo curto + autor + cargo + data.
- * Tags e relação completa ficam reservadas para o modal.
- */
+const PREVIEW_CHARS = 360;
+const MAX_VISIBLE_TAGS = 3;
+
 export const RecommendationCard = React.memo<RecommendationCardProps>(
     ({ item, index, onOpen, tabbable = true }) => {
         const { lang } = useLang();
-        const ref = useRevealOnScroll<HTMLButtonElement>(index, 100);
+        const ref = useRevealOnScroll<HTMLButtonElement>(index, 110);
 
-        // Resumo mais enxuto no card (≈ 420 chars) — hierarquia visual clara
-        const summary = useMemo(() => summarize(item.text, 420), [item.text]);
+        const summary = useMemo(
+            () => summarize(item.text, PREVIEW_CHARS),
+            [item.text],
+        );
 
-        const readMore = lang === 'pt'
-            ? 'Ler recomendação completa'
-            : 'Read full recommendation';
+        const visibleTags = (item.tags ?? []).slice(0, MAX_VISIBLE_TAGS);
+        const remainingTags = (item.tags?.length ?? 0) - visibleTags.length;
+
+        const readMore = lang === "pt"
+            ? "Ler recomendação completa"
+            : "Read full recommendation";
+        const readMoreShort = lang === "pt" ? "Ler completo" : "Read full";
 
         const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
             onOpen(item, e.currentTarget);
@@ -46,16 +51,40 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
                 onClick={handleClick}
                 aria-label={`${readMore} — ${item.authorName}`}
             >
-                {/* Decorative opening quote */}
-                <span className="rec-card__quote" aria-hidden="true">“</span>
+                {/* Decorative glow */}
+                <span className="rec-card__glow" aria-hidden="true" />
 
-                {/* Summary (clean, no keyword highlights — focus on legibility) */}
+                {/* Decorative opening quote */}
+                <span className="rec-card__quote" aria-hidden="true">"</span>
+
+                {/* Date pill */}
+                <time className="rec-card__date" dateTime={item.date}>
+                    {formatRecommendationDate(item.date, lang)}
+                </time>
+
+                {/* Summary */}
                 <p className="rec-card__summary">{summary}</p>
+
+                {/* Tags */}
+                {visibleTags.length > 0 && (
+                    <ul className="rec-card__tags" aria-label="Tópicos">
+                        {visibleTags.map(tag => (
+                            <li key={tag} className="rec-card__tag">
+                                {tag}
+                            </li>
+                        ))}
+                        {remainingTags > 0 && (
+                            <li className="rec-card__tag rec-card__tag--more">
+                                +{remainingTags}
+                            </li>
+                        )}
+                    </ul>
+                )}
 
                 {/* Divider */}
                 <span className="rec-card__divider" aria-hidden="true" />
 
-                {/* Footer: avatar + author */}
+                {/* Footer */}
                 <div className="rec-card__footer">
                     <div className="rec-card__avatar" aria-hidden="true">
                         {item.authorPhoto ? (
@@ -63,6 +92,9 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
                                 src={item.authorPhoto}
                                 alt={item.authorName}
                                 loading="lazy"
+                                decoding="async"
+                                width={44}
+                                height={44}
                                 className="rec-card__avatar-img"
                             />
                         ) : (
@@ -77,29 +109,14 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
                         <span className="rec-card__role">{item.authorRole}</span>
                     </div>
 
-                    <time className="rec-card__date" dateTime={item.date}>
-                        {formatRecommendationDate(item.date, lang)}
-                    </time>
+                    <span className="rec-card__cta" aria-hidden="true">
+                        {readMoreShort}
+                        <IconArrowRight width={12} height={12} aria-hidden="true" />
+                    </span>
                 </div>
-
-                {/* Read-more hint (arrow only — subtle) */}
-                <span className="rec-card__hint" aria-hidden="true">
-                    <svg
-                        viewBox="0 0 24 24"
-                        width={16}
-                        height={16}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                </span>
             </button>
         );
     },
 );
 
-RecommendationCard.displayName = 'RecommendationCard';
+RecommendationCard.displayName = "RecommendationCard";

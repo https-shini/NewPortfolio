@@ -29,6 +29,7 @@
     transform: translateY(0);
 }
 
+/* Conector horizontal do spine até o card */
 .position-entry::before {
     content: "";
     position: absolute;
@@ -61,6 +62,7 @@
         var(--shadow-md);
 }
 
+/* Accent strip lateral (esquerda) — aparece em active e is-open */
 .position-entry::after {
     content: "";
     position: absolute;
@@ -89,6 +91,7 @@
     transform: translateX(0);
 }
 
+/* Estado "Atual" — accent brand subtle no fundo */
 .position-entry--active {
     background:
         linear-gradient(
@@ -136,6 +139,7 @@
     border-radius: var(--radius-lg);
 }
 
+/* ── Title row ─────────────────────────────────────────────────── */
 .position-entry__title-row {
     display: flex;
     align-items: flex-start;
@@ -156,6 +160,7 @@
     margin: 0;
 }
 
+/* ── Status pill ───────────────────────────────────────────────── */
 .position-entry__status {
     display: inline-flex;
     align-items: center;
@@ -211,6 +216,7 @@
     border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
 }
 
+/* ── Meta row (employment · period · duration · modality) ─────── */
 .position-entry__meta {
     display: flex;
     align-items: center;
@@ -243,6 +249,7 @@
     opacity: 0.45;
 }
 
+/* ── Summary preview (sempre visível) ──────────────────────────── */
 .position-entry__summary {
     font-size: var(--text-sm);
     line-height: 1.55;
@@ -267,6 +274,7 @@
     pointer-events: none;
 }
 
+/* ── Chevron ───────────────────────────────────────────────────── */
 .position-entry__chevron {
     position: absolute;
     top: 22px;
@@ -302,6 +310,7 @@
     box-shadow: 0 4px 12px color-mix(in srgb, var(--color-brand) 22%, transparent);
 }
 
+/* ── Painel expansível ─────────────────────────────────────────── */
 .position-entry__panel {
     height: 0;
     overflow: hidden;
@@ -320,6 +329,7 @@
     transform: translateY(0);
 }
 
+/* ── Seções dentro do painel ───────────────────────────────────── */
 .position-entry__about {
     font-size: var(--text-sm);
     line-height: 1.65;
@@ -387,6 +397,7 @@
     color: var(--color-brand-light);
 }
 
+/* ── Bullets / Highlights ──────────────────────────────────────── */
 .position-entry__highlights,
 .position-entry__bullets {
     list-style: none;
@@ -433,6 +444,7 @@
     transform: scale(1.3);
 }
 
+/* ── Tags ──────────────────────────────────────────────────────── */
 .position-entry__tags {
     list-style: none;
     margin: 0;

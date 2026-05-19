@@ -1,227 +1,443 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import './Featured.css';
-import { useLang } from '@/shared/hooks/useLang';
-import { IconStar, IconChevronLeft, IconChevronRight } from '@/shared/ui/Icons';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import "./Featured.css";
+import { useLang } from "@/shared/hooks/useLang";
+import {
+    IconStar,
+    IconChevronLeft,
+    IconChevronRight,
+    IconExternalLink,
+    IconGitHub,
+    IconLayers,
+    IconShield,
+    IconPackage,
+    IconLock,
+    IconSearch,
+    type IconProps,
+} from "@/shared/ui/Icons";
+import { FEATURED_PROJECT, METHOD_COLOR, type HttpMethod } from "./Featured.data";
+import { FeaturedLightbox } from "./components/FeaturedLightbox";
 
-const SLIDES = [
-  { bg: undefined,         label: 'HomeMade Gourmet', sub: 'Site de receitas inteligente' },
-  { bg: 'linear-gradient(135deg,#0a1a14,#051210)', label: 'Receitas', sub: 'Sistema de recomendação' },
-  { bg: 'linear-gradient(135deg,#12080a,#1a0a0f)', label: 'Calorias', sub: 'Cálculo automático' },
-  { bg: 'linear-gradient(135deg,#0a1020,#07080f)', label: 'Admin',    sub: 'Painel administrativo' },
-];
+const INTERVAL = 7000;
 
-const TECH = [
-  { key: 'html',   label: 'HTML5',      variant: 'brand' },
-  { key: 'css',    label: 'CSS3',       variant: 'brand' },
-  { key: 'js',     label: 'JavaScript', variant: 'brand' },
-  { key: 'php',    label: 'PHP',        variant: 'accent' },
-  { key: 'mysql',  label: 'MySQL',      variant: 'accent' },
-  { key: 'figma',  label: 'Figma',      variant: 'neutral' },
-];
+const ARCH_ICON: Record<"layers" | "shield" | "package", React.ComponentType<IconProps>> = {
+    layers:  IconLayers,
+    shield:  IconShield,
+    package: IconPackage,
+};
 
-const DETAILS = [
-  {
-    key:  'challenge' as const,
-    text: 'Criar um sistema de recomendação personalizado de receitas sem dependências externas, com cálculo automático de macronutrientes.',
-  },
-  {
-    key:  'solution' as const,
-    text: 'Algoritmo próprio baseado em preferências e ingredientes favoritos, integrado a banco de dados relacional MySQL normalizado.',
-  },
-  {
-    key:  'result' as const,
-    text: 'TCC aprovado com louvor — 200+ receitas, painel administrativo completo e sistema de avaliação da comunidade em produção.',
-  },
-];
-
-const INTERVAL = 4500;
+const SKILLICONS_BASE = "https://skillicons.dev/icons?i=";
 
 export const Featured: React.FC = () => {
-  const { t } = useLang();
-  const [current, setCurrent]   = useState(0);
-  const [animating, setAnimating] = useState(false);
-  const timerRef  = useRef<ReturnType<typeof setInterval> | null>(null);
-  const touchX    = useRef(0);
-  const galleryRef = useRef<HTMLDivElement>(null);
-  const noMotion   = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const { lang, t } = useLang();
+    const [current, setCurrent] = useState(0);
+    const [animating, setAnimating] = useState(false);
+    const [autoPlay, setAutoPlay] = useState(true);
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const touchX = useRef(0);
+    const galleryRef = useRef<HTMLDivElement>(null);
+    const noMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  const goTo = useCallback((index: number) => {
-    if (animating) return;
-    const next = ((index % SLIDES.length) + SLIDES.length) % SLIDES.length;
-    if (next === current) return;
-    setAnimating(true);
-    setCurrent(next);
-    setTimeout(() => setAnimating(false), 600);
-  }, [animating, current]);
+    const slides = FEATURED_PROJECT.slides;
 
-  const next = useCallback(() => goTo(current + 1), [current, goTo]);
-  const prev = useCallback(() => goTo(current - 1), [current, goTo]);
+    const goTo = useCallback(
+        (index: number) => {
+            if (animating) return;
+            const next = ((index % slides.length) + slides.length) % slides.length;
+            if (next === current) return;
+            setAnimating(true);
+            setCurrent(next);
+            setTimeout(() => setAnimating(false), 600);
+        },
+        [animating, current, slides.length],
+    );
 
-  const startAuto = useCallback(() => {
-    if (noMotion || SLIDES.length < 2) return;
-    timerRef.current = setInterval(next, INTERVAL);
-  }, [next, noMotion]);
+    const next = useCallback(() => goTo(current + 1), [current, goTo]);
+    const prev = useCallback(() => goTo(current - 1), [current, goTo]);
 
-  const stopAuto = useCallback(() => {
-    if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
-  }, []);
+    const startAuto = useCallback(() => {
+        if (noMotion || !autoPlay || slides.length < 2) return;
+        timerRef.current = setInterval(next, INTERVAL);
+    }, [autoPlay, next, noMotion, slides.length]);
 
-  const resetAuto = useCallback(() => { stopAuto(); startAuto(); }, [stopAuto, startAuto]);
+    const stopAuto = useCallback(() => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+    }, []);
 
-  useEffect(() => { startAuto(); return stopAuto; }, [startAuto, stopAuto]);
+    const resetAuto = useCallback(() => {
+        stopAuto();
+        startAuto();
+    }, [startAuto, stopAuto]);
 
-  // Pause when hidden
-  useEffect(() => {
-    const handler = () => document.hidden ? stopAuto() : startAuto();
-    document.addEventListener('visibilitychange', handler);
-    return () => document.removeEventListener('visibilitychange', handler);
-  }, [startAuto, stopAuto]);
+    useEffect(() => {
+        startAuto();
+        return stopAuto;
+    }, [startAuto, stopAuto]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowLeft')  { prev(); resetAuto(); }
-    if (e.key === 'ArrowRight') { next(); resetAuto(); }
-  };
+    useEffect(() => {
+        const handler = () => (document.hidden ? stopAuto() : startAuto());
+        document.addEventListener("visibilitychange", handler);
+        return () => document.removeEventListener("visibilitychange", handler);
+    }, [startAuto, stopAuto]);
 
-  const onTouchStart = (e: React.TouchEvent) => { touchX.current = e.touches[0].clientX; };
-  const onTouchEnd   = (e: React.TouchEvent) => {
-    const delta = touchX.current - e.changedTouches[0].clientX;
-    if (Math.abs(delta) > 48) { delta > 0 ? next() : prev(); resetAuto(); }
-  };
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "ArrowLeft") {
+            prev();
+            resetAuto();
+        }
+        if (e.key === "ArrowRight") {
+            next();
+            resetAuto();
+        }
+    };
 
-  const skillBase = 'https://skillicons.dev/icons?i=';
+    const onTouchStart = (e: React.TouchEvent) => {
+        touchX.current = e.touches[0]!.clientX;
+    };
+    const onTouchEnd = (e: React.TouchEvent) => {
+        const delta = touchX.current - e.changedTouches[0]!.clientX;
+        if (Math.abs(delta) > 48) {
+            delta > 0 ? next() : prev();
+            resetAuto();
+        }
+    };
 
-  return (
-    <section id="destaque" className="featured section" aria-labelledby="featured-title" data-reveal>
-      <div className="container">
-        <header className="section-header">
-          <span className="section-eyebrow">Destaque</span>
-          <span className="featured__eyebrow">
-            <IconStar />
-            <span>{t('featured.badge')}</span>
-          </span>
-          <h2 className="section-title" id="featured-title">HomeMade Gourmet</h2>
-          <p className="section-subtitle">{t('featured.desc')}</p>
-        </header>
+    const toggleAutoPlay = () => {
+        const nextState = !autoPlay;
+        setAutoPlay(nextState);
+        if (nextState) startAuto();
+        else stopAuto();
+    };
 
-        <article className="featured__project" aria-label="Projeto HomeMade Gourmet">
-          {/* Gallery */}
-          <div
-            ref={galleryRef}
-            className="featured__gallery"
-            role="region"
-            aria-label="Imagens do projeto"
-            aria-roledescription="carrossel"
-            onMouseEnter={stopAuto}
-            onMouseLeave={startAuto}
-            onKeyDown={handleKeyDown}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
-            tabIndex={0}
-          >
-            <div className="featured__slides">
-              {SLIDES.map((slide, i) => (
-                <div
-                  key={i}
-                  className={`featured__slide${i === current ? ' is-active' : ''}`}
-                >
-                  <div
-                    className="featured__slide-ph"
-                    style={slide.bg ? { background: slide.bg } : undefined}
-                  >
-                    {slide.label}
-                    <span className="featured__slide-ph-sub">{slide.sub}</span>
-                  </div>
+    const project = FEATURED_PROJECT;
+    const currentSlide = slides[current]!;
+
+    return (
+        <section
+            id="destaque"
+            className="featured section"
+            aria-labelledby="featured-title"
+            data-reveal
+        >
+            <div className="container">
+                {/* ─── Header ─── */}
+                <header className="section-header">
+                    <span className="section-eyebrow">{t("featured.eyebrow")}</span>
+                    <span className="featured__badge">
+                        <IconStar width={14} height={14} aria-hidden="true" />
+                        {t("featured.badge")}
+                    </span>
+                    <h2 className="section-title" id="featured-title">
+                        {project.name}
+                    </h2>
+                    <p className="section-subtitle">{project.tagline[lang]}</p>
+                </header>
+
+                {/* ─── Main grid: gallery (browser mockup) + tech profile ─── */}
+                <div className="featured__main">
+                    {/* Gallery — Browser mockup */}
+                    <div
+                        ref={galleryRef}
+                        className="featured__gallery"
+                        role="region"
+                        aria-label={t("featured.gallery.label")}
+                        aria-roledescription="carrossel"
+                        onMouseEnter={stopAuto}
+                        onMouseLeave={() => autoPlay && startAuto()}
+                        onKeyDown={handleKeyDown}
+                        onTouchStart={onTouchStart}
+                        onTouchEnd={onTouchEnd}
+                        tabIndex={0}
+                    >
+                        {/* Browser chrome */}
+                        <div className="featured__browser-chrome" aria-hidden="true">
+                            <div className="featured__browser-dots">
+                                <span className="featured__browser-dot featured__browser-dot--red"   />
+                                <span className="featured__browser-dot featured__browser-dot--amber" />
+                                <span className="featured__browser-dot featured__browser-dot--green" />
+                            </div>
+                            <div className="featured__browser-url">
+                                <span className="featured__browser-url-protocol">https://</span>
+                                <span>authservice-mbul.onrender.com</span>
+                            </div>
+                            <button
+                                type="button"
+                                className={`featured__autoplay${autoPlay ? " is-playing" : ""}`}
+                                onClick={toggleAutoPlay}
+                                aria-label={autoPlay ? t("featured.autoplay.pause") : t("featured.autoplay.play")}
+                                title={autoPlay ? t("featured.autoplay.pause") : t("featured.autoplay.play")}
+                            >
+                                {autoPlay ? (
+                                    <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
+                                        <rect x="3" y="2" width="2" height="8" rx="0.5" fill="currentColor" />
+                                        <rect x="7" y="2" width="2" height="8" rx="0.5" fill="currentColor" />
+                                    </svg>
+                                ) : (
+                                    <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true">
+                                        <path d="M3.5 2L9.5 6L3.5 10V2Z" fill="currentColor" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
+
+                        {/* Slides */}
+                        <div className="featured__slides">
+                            {slides.map((slide, i) => (
+                                <div
+                                    key={slide.src}
+                                    className={`featured__slide${i === current ? " is-active" : ""}`}
+                                    aria-hidden={i !== current}
+                                >
+                                    {/* Backdrop blur ambient — usa a própria imagem */}
+                                    <div
+                                        className="featured__slide-backdrop"
+                                        style={{ backgroundImage: `url(${slide.src})` }}
+                                        aria-hidden="true"
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="featured__slide-trigger"
+                                        onClick={() => setLightboxIndex(i)}
+                                        tabIndex={i === current ? 0 : -1}
+                                        aria-label={`${t("featured.lightbox.open")}: ${slide.label[lang]}`}
+                                    >
+                                        <img
+                                            src={slide.src}
+                                            alt={`${project.name} — ${slide.label[lang]}`}
+                                            className="featured__slide-img"
+                                            loading={i === 0 ? "eager" : "lazy"}
+                                        />
+                                        <span className="featured__slide-zoom" aria-hidden="true">
+                                            <IconSearch width={16} height={16} aria-hidden="true" />
+                                            <span>{t("featured.lightbox.open")}</span>
+                                        </span>
+                                    </button>
+
+                                    <div className="featured__slide-caption">
+                                        <span className="featured__slide-label">{slide.label[lang]}</span>
+                                        <span className="featured__slide-sub">{slide.sub[lang]}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Dots + counter */}
+                        <div className="featured__dots-row">
+                            <span className="featured__counter" aria-hidden="true">
+                                {String(current + 1).padStart(2, "0")}
+                                <span className="featured__counter-sep"> / </span>
+                                <span className="featured__counter-total">
+                                    {String(slides.length).padStart(2, "0")}
+                                </span>
+                            </span>
+                            <div className="featured__dots" role="group" aria-label="Slides">
+                                {slides.map((_, i) => (
+                                    <button
+                                        key={i}
+                                        type="button"
+                                        className={`featured__dot${i === current ? " is-active" : ""}`}
+                                        onClick={() => {
+                                            goTo(i);
+                                            resetAuto();
+                                        }}
+                                        aria-label={`Slide ${i + 1}`}
+                                        aria-current={i === current}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Arrows */}
+                        <button
+                            type="button"
+                            className="featured__arrow featured__arrow--prev"
+                            onClick={() => {
+                                prev();
+                                resetAuto();
+                            }}
+                            aria-label={t("featured.arrow.prev")}
+                            tabIndex={-1}
+                        >
+                            <IconChevronLeft width={16} height={16} aria-hidden="true" />
+                        </button>
+                        <button
+                            type="button"
+                            className="featured__arrow featured__arrow--next"
+                            onClick={() => {
+                                next();
+                                resetAuto();
+                            }}
+                            aria-label={t("featured.arrow.next")}
+                            tabIndex={-1}
+                        >
+                            <IconChevronRight width={16} height={16} aria-hidden="true" />
+                        </button>
+
+                        {/* Slide name caption (bottom-left subtle) */}
+                        <div className="featured__slide-name" aria-live="polite">
+                            <span className="featured__slide-name-text">{currentSlide.label[lang]}</span>
+                        </div>
+                    </div>
+
+                    {/* ─── Tech Profile ─── */}
+                    <aside className="featured__profile" aria-labelledby="featured-profile-title">
+                        {/* Repo path */}
+                        <div className="featured__repo-path">
+                            <IconGitHub width={14} height={14} aria-hidden="true" />
+                            <span>{project.repoHost}</span>
+                        </div>
+
+                        {/* Badges */}
+                        <div className="featured__badges" role="list">
+                            {project.badges.map(b => (
+                                <span
+                                    key={b.label}
+                                    role="listitem"
+                                    className={`featured__pill featured__pill--${b.variant}`}
+                                >
+                                    {b.variant === "live" && <span className="featured__pill-dot" aria-hidden="true" />}
+                                    {b.label}
+                                </span>
+                            ))}
+                        </div>
+
+                        {/* Description */}
+                        <p className="featured__description" id="featured-profile-title">
+                            {project.description[lang]}
+                        </p>
+
+                        {/* Tech stack */}
+                        <section className="featured__block">
+                            <h3 className="featured__block-title">{t("featured.block.tech")}</h3>
+                            <ul className="featured__tech" aria-label={t("featured.block.tech")}>
+                                {project.tech.map(item => (
+                                    <li
+                                        key={item.key}
+                                        className={`featured__tech-chip featured__tech-chip--${item.variant}`}
+                                    >
+                                        <img
+                                            src={`${SKILLICONS_BASE}${item.key}`}
+                                            alt=""
+                                            width={18}
+                                            height={18}
+                                            loading="lazy"
+                                            decoding="async"
+                                            aria-hidden="true"
+                                        />
+                                        <span>{item.label}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+
+                        {/* Endpoints — terminal style */}
+                        <section className="featured__block">
+                            <h3 className="featured__block-title">
+                                {t("featured.block.endpoints")}
+                            </h3>
+                            <ul className="featured__endpoints" aria-label="API endpoints">
+                                {project.endpoints.map(ep => {
+                                    const color = METHOD_COLOR[ep.method as HttpMethod];
+                                    return (
+                                        <li key={ep.path} className="featured__endpoint">
+                                            <span
+                                                className="featured__method"
+                                                style={{
+                                                    color: color.fg,
+                                                    background: color.bg,
+                                                    borderColor: color.border,
+                                                }}
+                                            >
+                                                {ep.method}
+                                            </span>
+                                            <code className="featured__path">{ep.path}</code>
+                                            {ep.protected && (
+                                                <span
+                                                    className="featured__protected"
+                                                    title={t("featured.endpoint.protected")}
+                                                    aria-label={t("featured.endpoint.protected")}
+                                                >
+                                                    <IconLock width={11} height={11} aria-hidden="true" />
+                                                </span>
+                                            )}
+                                            <span className="featured__endpoint-desc">
+                                                {ep.description[lang]}
+                                            </span>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </section>
+
+                        {/* CTAs */}
+                        <div className="featured__actions">
+                            <a
+                                href={project.liveUrl}
+                                className="btn btn--primary btn--sm featured__cta"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {t("featured.btn.live")}
+                                <IconExternalLink width={13} height={13} aria-hidden="true" />
+                            </a>
+                            <a
+                                href={project.repoUrl}
+                                className="btn btn--outline btn--sm featured__cta"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <IconGitHub width={14} height={14} aria-hidden="true" />
+                                {t("featured.btn.repo")}
+                            </a>
+                            <a
+                                href={project.docsUrl}
+                                className="featured__docs-link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {t("featured.btn.docs")}
+                                <IconExternalLink width={11} height={11} aria-hidden="true" />
+                            </a>
+                        </div>
+                    </aside>
                 </div>
-              ))}
+
+                {/* ─── Architecture cards ─── */}
+                <div className="featured__architecture" role="list">
+                    {project.architecture.map((card, i) => {
+                        const Icon = ARCH_ICON[card.icon];
+                        return (
+                            <article
+                                key={card.icon}
+                                role="listitem"
+                                className="arch-card"
+                                style={{ ["--stagger-index" as string]: i }}
+                            >
+                                <span className="arch-card__icon" aria-hidden="true">
+                                    <Icon width={20} height={20} />
+                                </span>
+                                <h3 className="arch-card__title">{card.title[lang]}</h3>
+                                <p className="arch-card__text">{card.text[lang]}</p>
+                            </article>
+                        );
+                    })}
+                </div>
             </div>
 
-            {/* Dots */}
-            <div className="featured__dots" role="group" aria-label="Navegar entre imagens">
-              {SLIDES.map((_, i) => (
-                <button
-                  key={i}
-                  className={`featured__dot${i === current ? ' is-active' : ''}`}
-                  type="button"
-                  aria-label={`Imagem ${i + 1}`}
-                  aria-selected={i === current}
-                  onClick={() => { goTo(i); resetAuto(); }}
+            {lightboxIndex !== null && (
+                <FeaturedLightbox
+                    slides={slides}
+                    initialIndex={lightboxIndex}
+                    projectName={project.name}
+                    liveUrl={project.liveUrl}
+                    repoUrl={project.repoUrl}
+                    onClose={() => setLightboxIndex(null)}
                 />
-              ))}
-            </div>
-
-            {/* Arrows */}
-            <button
-              className="featured__arrow featured__arrow--prev"
-              type="button"
-              id="featured-prev"
-              aria-label="Imagem anterior"
-              tabIndex={-1}
-              onClick={() => { prev(); resetAuto(); }}
-            >
-              <IconChevronLeft width={16} height={16} />
-            </button>
-            <button
-              className="featured__arrow featured__arrow--next"
-              type="button"
-              id="featured-next"
-              aria-label="Próxima imagem"
-              tabIndex={-1}
-              onClick={() => { next(); resetAuto(); }}
-            >
-              <IconChevronRight width={16} height={16} />
-            </button>
-          </div>
-
-          {/* Body */}
-          <div className="featured__body">
-            <p className="featured__desc">
-              <strong>TCC desenvolvido na ETEC Vila Formosa em 2022.</strong> O HomeMade Gourmet
-              vai além de listar receitas — o sistema recomenda receitas personalizadas, calcula
-              calorias automaticamente e oferece filtros por tipo de alimentação.
-            </p>
-
-            <div className="featured__tech">
-              {TECH.map(item => (
-                <span className={`badge badge--${item.variant}`} key={item.key}>
-                  <img src={`${skillBase}${item.key}`} alt="" width={14} height={14} loading="lazy" />
-                  {item.label}
-                </span>
-              ))}
-            </div>
-
-            <div className="featured__actions">
-              <a
-                href="https://https-shini.github.io/homemade-gourmet/"
-                className="btn btn--primary btn--sm"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t('featured.btn.live')}
-              </a>
-              <a
-                href="https://github.com/https-shini/homemade-gourmet"
-                className="btn btn--outline btn--sm"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t('featured.btn.repo')}
-              </a>
-            </div>
-          </div>
-        </article>
-
-        {/* Details */}
-        <div className="featured__details">
-          {DETAILS.map(d => (
-            <div className="detail-card" key={d.key}>
-              <p className="detail-card__label">
-                {t(`detail.${d.key}` as 'detail.challenge' | 'detail.solution' | 'detail.result')}
-              </p>
-              <p className="detail-card__text">{d.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+            )}
+        </section>
+    );
 };

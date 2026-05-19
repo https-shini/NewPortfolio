@@ -1,47 +1,62 @@
-/* ═══════════════════════════════════════════════════════════
-   CAREER — section wrapper
-   Each company is a self-contained card with its own internal
-   timeline of positions.
-═══════════════════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════════
+   Timeline (Carreira) — Container da seção
+   Spine vertical com nós (CareerNode) sequenciais.
+═══════════════════════════════════════════════════════════════ */
 
 .career {
     background: var(--color-bg);
+    position: relative;
 }
 
-/* Section reveal */
+/* Reveal animation (compatível com useScrollReveal) */
 .career[data-reveal] {
     opacity: 0;
     transform: translateY(20px);
     transition:
-        opacity   0.6s var(--ease-out),
-        transform 0.6s var(--ease-out);
+        opacity 0.6s ease-out,
+        transform 0.6s ease-out;
 }
 
 .career[data-reveal].is-visible {
     opacity: 1;
-    transform: none;
+    transform: translateY(0);
 }
 
-/* ── List wrapper ────────────────────────────────────────── */
-.career__list {
+/* ── Timeline list ─────────────────────────────────────────────── */
+.career__timeline {
     list-style: none;
+    margin: var(--space-10) 0 0;
     padding: 0;
-    margin: var(--space-10) auto 0;
     max-width: 880px;
+
+    display: flex;
+    flex-direction: column;
 }
 
-/* ── Mobile ──────────────────────────────────────────────── */
+/* Decoração final do spine — pequeno indicador de "fim da trajetória" */
+.career__timeline::after {
+    content: "";
+    display: block;
+    width: 8px;
+    height: 8px;
+    margin-left: 22px;
+    border-radius: 50%;
+    background: var(--color-border-3);
+    margin-top: calc(var(--space-2) * -1);
+}
+
 @media (max-width: 640px) {
-    .career__list {
+    .career__timeline {
         margin-top: var(--space-8);
+    }
+
+    .career__timeline::after {
+        margin-left: 16px;
     }
 }
 
-/* ── Reduced motion ──────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
     .career[data-reveal] {
-        opacity: 1;
-        transform: none;
         transition: none;
     }
 }

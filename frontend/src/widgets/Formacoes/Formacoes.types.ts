@@ -6,7 +6,7 @@ export type {
     TimelineItem,
     TimelineStatusType,
     TimelineCategory,
-    TimelineModality,
+    Modality,
     TimelineResponsibility,
     TimelineProjectLink,
-} from '@/widgets/Timeline/Timeline.types';
+} from "@/widgets/Timeline/Timeline.types";

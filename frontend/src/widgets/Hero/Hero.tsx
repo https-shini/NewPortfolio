@@ -134,7 +134,7 @@ export const Hero: React.FC = () => {
                             width={380}
                             height={420}
                             loading="eager"
-                            fetchPriority="high"
+                            decoding="async"
                         />
 
                         <div className="hero__avatar-overlay" />
