@@ -140,8 +140,7 @@ export const IconDevTo: React.FC<IconProps> = (props) => (
 export const IconTranslate: React.FC<IconProps> = (props) => (
     <F
         {...props}
-        aria-label="Traduzir idioma"
-        aria-hidden={false}
+        aria-hidden={true}
         viewBox="0 0 24 24"
     >
         <path d="M12.87 15.07l-2.54-2.54.02-.02A7.49 7.49 0 0013.5 6h2V4h-5V2h-2v2H3v2h7.17a5.48 5.48 0 01-1.64 3.54c-.63-.63-1.17-1.33-1.62-2.08H5.1c.57 1.22 1.37 2.33 2.34 3.25L3 17h2l3.66-3.66 2.28 2.28.93-.55zM18.5 10h-2l-4 10h2l1-2.5h4l1 2.5h2l-4-10zm-2.5 5.5l1.5-4 1.5 4h-3z" />
@@ -359,6 +358,32 @@ export const IconLock: React.FC<IconProps> = (props) => (
     <S {...props}>
         <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
         <path d="M7 11V7a5 5 0 0110 0v4" />
+    </S>
+);
+
+/** Calendar (período) */
+export const IconCalendar: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+    </S>
+);
+
+/** Clock (duração) */
+export const IconClock: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+    </S>
+);
+
+/** Trending up (crescimento / progressão de carreira) */
+export const IconTrendingUp: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+        <polyline points="17 6 23 6 23 12" />
     </S>
 );
 

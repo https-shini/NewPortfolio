@@ -4,25 +4,25 @@ import { useLang } from "@/shared/hooks/useLang";
 import { SECTION_IDS } from "@/shared/config/constants";
 import { careerCompanies } from "./Timeline.data";
 import { CareerNode } from "./components/CareerNode";
+import { CareerStats } from "./components/CareerStats";
 
 /* ─────────────────────────────────────────────────────────
    Timeline → "Carreira"
    ─────────────────────
-   Layout: spine vertical com nós por empresa, posições
-   expandem inline em acordeão (sem modal).
+   Layout: faixa de visão geral (CareerStats) + card de
+   destaque por empresa (CareerNode), cada um contendo uma
+   trilha interna de progressão de cargos com a narrativa de
+   evolução (estágio → efetivação) explicitada.
 
-   ┌──── eyebrow + title + sub ────┐
-   │                                │
-   │  ●━━━━━━━━━━━━ Empresa         │
-   │  │   meta · duração            │
-   │  │                             │
-   │  │  ┌─ Posição (acordeão) ─┐   │
-   │  │  └──────────────────────┘   │
-   │  │  ┌─ Posição (acordeão) ─┐   │
-   │  │  └──────────────────────┘   │
-   │  │                             │
-   │  ●  Próxima empresa…          │
-   └────────────────────────────────┘
+   ┌──── eyebrow + title + sub ────────────────┐
+   │  ⏱ experiência  🏢 empresas  📈 cargos     │
+   │                                            │
+   │  ┌─ Wise System ───────────────[Atual]─┐  │
+   │  │ ● Analista N1 · CLT      ↗ Efetivado │  │
+   │  │ │   detalhes (acordeão)              │  │
+   │  │ ● Analista · Estágio                 │  │
+   │  └──────────────────────────────────────┘  │
+   └────────────────────────────────────────────┘
 ───────────────────────────────────────────────────────── */
 export const Timeline: React.FC = () => {
     const { t } = useLang();
@@ -43,16 +43,15 @@ export const Timeline: React.FC = () => {
                     <p className="section-subtitle">{t("timeline.sub")}</p>
                 </header>
 
-                <ol className="career__timeline" aria-label={t("timeline.title")}>
-                    {careerCompanies.map((company, idx) => (
-                        <CareerNode
-                            key={company.id}
-                            company={company}
-                            index={idx}
-                            isLast={idx === careerCompanies.length - 1}
-                        />
-                    ))}
-                </ol>
+                <div className="career__layout">
+                    <div className="career__companies">
+                        {careerCompanies.map((company, idx) => (
+                            <CareerNode key={company.id} company={company} index={idx} />
+                        ))}
+                    </div>
+
+                    <CareerStats companies={careerCompanies} />
+                </div>
             </div>
         </section>
     );

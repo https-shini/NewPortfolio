@@ -50,10 +50,10 @@
 /* ── Main grid ─────────────────────────────────────────────────── */
 .featured__main {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     gap: var(--space-7);
     margin-top: var(--space-10);
-    align-items: stretch;
+    align-items: start;
 }
 
 @media (max-width: 1024px) {
@@ -61,6 +61,131 @@
         grid-template-columns: 1fr;
         gap: var(--space-6);
     }
+}
+
+/* ── Left column (mockup + filmstrip) ──────────────────────────── */
+.featured__media {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+}
+
+/* ── Thumbnail filmstrip (dinâmico) ────────────────────────────── */
+.featured__filmstrip {
+    display: flex;
+    gap: var(--space-3);
+    justify-content: center;
+}
+
+/* Variante carrossel — ativada quando há mais de 4 imagens */
+.featured__filmstrip--scroll {
+    justify-content: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-behavior: smooth;
+    scrollbar-width: none;            /* Firefox */
+    -ms-overflow-style: none;         /* Edge/IE legacy */
+    padding-bottom: 4px;
+    /* fade nas bordas indicando que há mais conteúdo a navegar */
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 22px,
+        #000 calc(100% - 22px),
+        transparent 100%
+    );
+    mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 22px,
+        #000 calc(100% - 22px),
+        transparent 100%
+    );
+}
+
+.featured__filmstrip--scroll::-webkit-scrollbar {
+    display: none;                    /* Chrome/Safari */
+}
+
+.featured__thumb {
+    position: relative;
+    flex: 1 1 0;
+    max-width: 180px;
+    aspect-ratio: 16 / 9;
+    margin: 0;
+    padding: 0;
+    background: #06080d;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.5;
+    filter: saturate(0.8);
+    transition:
+        opacity 0.3s ease-out,
+        filter 0.3s ease-out,
+        border-color 0.3s ease-out,
+        transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1),
+        box-shadow 0.3s ease-out;
+}
+
+/* No modo carrossel: largura fixa, sem crescer, com snap ao centro */
+.featured__filmstrip--scroll .featured__thumb {
+    flex: 0 0 auto;
+    width: clamp(116px, 24%, 152px);
+    max-width: none;
+    scroll-snap-align: center;
+}
+
+.featured__thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+}
+
+.featured__thumb:hover {
+    opacity: 0.85;
+    filter: saturate(1);
+    transform: translateY(-2px);
+    border-color: var(--color-border-3);
+}
+
+.featured__thumb:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    opacity: 0.9;
+}
+
+.featured__thumb.is-active {
+    opacity: 1;
+    filter: none;
+    border-color: var(--color-brand);
+    box-shadow:
+        0 0 0 1px var(--color-brand),
+        0 6px 18px color-mix(in srgb, var(--color-brand) 20%, transparent);
+}
+
+.featured__thumb-index {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    padding: 1px 5px;
+    background: rgba(0, 0, 0, 0.62);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: #fff;
+    line-height: 1.5;
+}
+
+.featured__thumb.is-active .featured__thumb-index {
+    background: var(--color-brand);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -175,8 +300,9 @@
 .featured__slides {
     position: relative;
     width: 100%;
-    /* aspect-ratio dinâmico — adequa-se a screenshots de app típicos */
-    aspect-ratio: 16 / 10;
+    /* 16:9 — proporção nativa dos screenshots; preenche o mockup edge-to-edge,
+       como o viewport de um navegador real (sem letterbox, sem corte) */
+    aspect-ratio: 16 / 9;
     overflow: hidden;
     background: #06080d;
     isolation: isolate;
@@ -186,14 +312,12 @@
     position: absolute;
     inset: 0;
     opacity: 0;
-    transform: scale(1.015);
+    transform: scale(1.04);
     transition:
-        opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
-        transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+        opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 1.25s cubic-bezier(0.22, 0.61, 0.36, 1);
     pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    will-change: opacity, transform;
 }
 
 .featured__slide.is-active {
@@ -203,68 +327,43 @@
     z-index: 1;
 }
 
-/* Backdrop blur — usa a própria imagem como ambiente, preenche espaço com elegância */
-.featured__slide-backdrop {
-    position: absolute;
-    inset: -8%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: blur(40px) saturate(1.4) brightness(0.5);
-    transform: scale(1.1);
-    opacity: 0.65;
-    pointer-events: none;
-    z-index: 0;
-}
-
 /* Trigger clicável que envolve a imagem (abre o lightbox) */
 .featured__slide-trigger {
     position: relative;
     z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
     width: 100%;
     height: 100%;
-    padding: var(--space-5);
+    margin: 0;
+    padding: 0;
     background: transparent;
     border: none;
     cursor: zoom-in;
     color: inherit;
     font: inherit;
     text-align: inherit;
-    transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-.featured__slide-trigger:hover {
-    transform: scale(1.005);
+    overflow: hidden;
 }
 
 .featured__slide-trigger:focus-visible {
     outline: 2px solid var(--color-brand);
-    outline-offset: -4px;
+    outline-offset: -3px;
 }
 
 .featured__slide-img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    /* object-fit: contain respeita proporção original da imagem */
-    object-fit: contain;
-    border-radius: var(--radius-md);
+    width: 100%;
+    height: 100%;
+    /* cover preenche o frame 16:9; como os screenshots SÃO 16:9 não há corte,
+       e object-position prioriza o topo (header/nav) caso haja qualquer divergência */
+    object-fit: cover;
+    object-position: top center;
     display: block;
-    box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
-        0 10px 30px rgba(0, 0, 0, 0.4),
-        0 2px 8px rgba(0, 0, 0, 0.3);
-    transition:
-        filter 0.4s ease-out,
-        transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+    transition: transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.featured__slide-trigger:hover .featured__slide-img {
-    filter: brightness(1.05);
+.featured__slide-trigger:hover .featured__slide-img,
+.featured__slide-trigger:focus-visible .featured__slide-img {
+    transform: scale(1.025);
 }
 
 /* Zoom hint que aparece no hover/focus */
@@ -415,30 +514,22 @@
     font-weight: 500;
 }
 
-.featured__dots {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.featured__dot {
-    width: 7px;
-    height: 7px;
-    padding: 0;
-    background: var(--color-border-3);
-    border: none;
+.featured__progress {
+    flex: 1;
+    max-width: 180px;
+    height: 4px;
     border-radius: var(--radius-full);
-    cursor: pointer;
-    transition: width 0.35s cubic-bezier(0.22, 0.61, 0.36, 1), background 0.25s;
+    background: var(--color-border-2);
+    overflow: hidden;
 }
 
-.featured__dot:hover {
-    background: var(--color-text-3);
-}
-
-.featured__dot.is-active {
-    width: 22px;
-    background: var(--color-brand);
+.featured__progress-fill {
+    display: block;
+    height: 100%;
+    min-width: 8px;
+    border-radius: inherit;
+    background: linear-gradient(to right, var(--color-brand), var(--color-accent));
+    transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -902,13 +993,25 @@
 @media (prefers-reduced-motion: reduce) {
     .featured[data-reveal],
     .featured__slide,
-    .featured__dot,
     .featured__arrow,
     .featured__tech-chip,
+    .featured__slide-img,
     .arch-card {
         transition: none;
         animation: none;
         opacity: 1;
+        transform: none;
+    }
+    .featured__thumb,
+    .featured__progress-fill {
+        transition: none;
+    }
+    .featured__filmstrip--scroll {
+        scroll-behavior: auto;
+    }
+    .featured__thumb:hover,
+    .featured__slide-trigger:hover .featured__slide-img,
+    .featured__slide-trigger:focus-visible .featured__slide-img {
         transform: none;
     }
     .featured__pill--live .featured__pill-dot {

@@ -17,6 +17,7 @@ import {
 
 /* ── Hook de i18n ────────────────────────────────────────────────────────── */
 import { useLang } from "@/shared/hooks/useLang";
+import { renderRichParagraphs } from "@/shared/lib/richText";
 
 /* ── Foto (import estático resolvido pelo Vite — sem path relativo frágil) ── */
 import heroImg from "@/public/hero.png";
@@ -48,23 +49,35 @@ const TECH_STACK = [
 /* ── Specs — 4 cards de área de especialização (coluna esquerda) ─────────── */
 const SPECS = [
     {
-        title: "Front-end",
-        desc: "Desenvolvimento de interfaces modernas com React, foco em componentização, performance e experiência do usuário (UX/UI), utilizando JavaScript/TypeScript e CSS avançado.",
+        title: { pt: "Front-end", en: "Front-end" },
+        desc: {
+            pt: "Desenvolvimento de interfaces modernas com React, foco em componentização, performance e experiência do usuário (UX/UI), utilizando JavaScript/TypeScript e CSS avançado.",
+            en: "Building modern interfaces with React, focused on componentization, performance and user experience (UX/UI), using JavaScript/TypeScript and advanced CSS.",
+        },
         icon: <IconFrontend />,
     },
     {
-        title: "Back-end",
-        desc: "Criação de APIs e serviços com Node.js e PHP, aplicando arquitetura organizada, integração com banco de dados e construção de aplicações escaláveis.",
+        title: { pt: "Back-end", en: "Back-end" },
+        desc: {
+            pt: "Criação de APIs e serviços com Node.js e PHP, aplicando arquitetura organizada, integração com banco de dados e construção de aplicações escaláveis.",
+            en: "Creating APIs and services with Node.js and PHP, applying organized architecture, database integration and building scalable applications.",
+        },
         icon: <IconBackend />,
     },
     {
-        title: "Banco de Dados",
-        desc: "Modelagem e gerenciamento de dados com MySQL e Firebase, focando em estrutura eficiente, integridade dos dados e otimização de consultas.",
+        title: { pt: "Banco de Dados", en: "Databases" },
+        desc: {
+            pt: "Modelagem e gerenciamento de dados com MySQL e Firebase, focando em estrutura eficiente, integridade dos dados e otimização de consultas.",
+            en: "Data modeling and management with MySQL and Firebase, focusing on efficient structure, data integrity and query optimization.",
+        },
         icon: <IconDatabaseStack />,
     },
     {
-        title: "Qualidade de Software",
-        desc: "Aplicação de boas práticas como Clean Code, versionamento com Git e organização de projetos, garantindo legibilidade, manutenção e evolução do código.",
+        title: { pt: "Qualidade de Software", en: "Software Quality" },
+        desc: {
+            pt: "Aplicação de boas práticas como Clean Code, versionamento com Git e organização de projetos, garantindo legibilidade, manutenção e evolução do código.",
+            en: "Applying best practices like Clean Code, version control with Git and project organization, ensuring readability, maintainability and code evolution.",
+        },
         icon: <IconQuality />,
     },
 ] as const;
@@ -251,7 +264,7 @@ const AboutStats: React.FC = () => {
 ═══════════════════════════════════════════════════════════════════════════ */
 
 export const About: React.FC = () => {
-    const { t } = useLang();
+    const { t, lang } = useLang();
 
     // URL base da CDN de ícones SVG pelo nome da tecnologia
     const skilliconsBase = "https://skillicons.dev/icons?i=";
@@ -283,61 +296,7 @@ export const About: React.FC = () => {
                     <div className="about__body">
                         {/* 1. Biografia ─────────────────────────────────────── */}
                         <div className="about__bio">
-                            <p className="about__text">
-                                Sou um estudante de{" "}
-                                <strong>Ciência da Computação</strong> na
-                                Universidade Cruzeiro do Sul, com formação
-                                técnica em{" "}
-                                <strong>Desenvolvimento de Sistemas</strong>{" "}
-                                pela <strong>ETEC Vila Formosa</strong>. Ao
-                                longo da minha formação, desenvolvi uma base
-                                sólida em <strong>lógica de programação</strong>
-                                , <strong>estruturas de dados</strong> e{" "}
-                                <strong>
-                                    fundamentos de engenharia de software
-                                </strong>
-                                , aplicando esses conceitos na construção de{" "}
-                                <strong>projetos práticos</strong> e soluções
-                                reais.
-                            </p>
-
-                            <p className="about__text">
-                                Tenho experiência no desenvolvimento de{" "}
-                                <strong>aplicações web modernas</strong>, com
-                                foco em <strong>frontend</strong> e integração
-                                com <strong>APIs</strong>. Utilizo tecnologias
-                                como <strong>React</strong>,{" "}
-                                <strong>JavaScript/TypeScript</strong>,{" "}
-                                <strong>Node.js</strong> e{" "}
-                                <strong>MySQL</strong>, criando{" "}
-                                <strong>interfaces responsivas</strong>,
-                                organizadas e com atenção à{" "}
-                                <strong>experiência do usuário (UX/UI)</strong>,
-                                sempre buscando entregar soluções{" "}
-                                <strong>funcionais</strong>,{" "}
-                                <strong>performáticas</strong> e bem
-                                estruturadas.
-                            </p>
-
-                            <p className="about__text">
-                                Além do desenvolvimento web, tenho interesse em
-                                áreas como <strong>Java</strong>,{" "}
-                                <strong>machine learning</strong>,{" "}
-                                <strong>segurança da informação</strong> e{" "}
-                                <strong>engenharia de software</strong>,
-                                buscando construir soluções{" "}
-                                <strong>escaláveis</strong> e{" "}
-                                <strong>robustas</strong>. Durante meus
-                                projetos, aplico <strong>código limpo</strong>,{" "}
-                                <strong>
-                                    boas práticas de desenvolvimento
-                                </strong>{" "}
-                                e <strong>versionamento com Git</strong>,
-                                mantendo foco em <strong>organização</strong>,{" "}
-                                <strong>manutenibilidade</strong> e{" "}
-                                <strong>evolução contínua</strong> como
-                                desenvolvedor.
-                            </p>
+                            {renderRichParagraphs(t("about.bio"), "about__text")}
                         </div>
 
                         {/* 2. Cards de especialização ───────────────────────── */}
@@ -350,16 +309,16 @@ export const About: React.FC = () => {
                                 className="section-eyebrow"
                                 style={{ marginBottom: "var(--space-4)" }}
                             >
-                                Áreas de especialização
+                                {t("about.specs.title")}
                             </h3>
 
                             <div className="about__specs-grid">
-                                {SPECS.map((spec) => (
+                                {SPECS.map((spec, i) => (
                                     <article
                                         className="spec-card"
-                                        key={spec.title}
+                                        key={i}
                                         tabIndex={0}
-                                        aria-label={`Área de especialização: ${spec.title}`}
+                                        aria-label={`${lang === "pt" ? "Área de especialização" : "Area of expertise"}: ${spec.title[lang]}`}
                                     >
                                         {/* HEADER (ícone + título lado a lado) */}
                                         <div className="spec-card__header">
@@ -371,13 +330,13 @@ export const About: React.FC = () => {
                                             </div>
 
                                             <h4 className="spec-card__title">
-                                                {spec.title}
+                                                {spec.title[lang]}
                                             </h4>
                                         </div>
 
                                         {/* DESCRIÇÃO */}
                                         <p className="spec-card__desc">
-                                            {spec.desc}
+                                            {spec.desc[lang]}
                                         </p>
                                     </article>
                                 ))}
@@ -399,44 +358,7 @@ export const About: React.FC = () => {
                             </header>
 
                             <div className="about__objective-content">
-                                <p className="about__objective-text">
-                                    Estou em busca da minha primeira
-                                    oportunidade como{" "}
-                                    <strong>Desenvolvedor Júnior</strong> ou{" "}
-                                    <strong>
-                                        Estagiário em Desenvolvimento
-                                    </strong>
-                                    , com o objetivo de aplicar meus
-                                    conhecimentos em{" "}
-                                    <strong>projetos reais</strong>, evoluir
-                                    minhas <strong>habilidades técnicas</strong>{" "}
-                                    e contribuir ativamente com o time. Tenho
-                                    interesse em{" "}
-                                    <strong>desenvolvimento web</strong> e{" "}
-                                    <strong>Java</strong>, além de explorar
-                                    áreas como{" "}
-                                    <strong>segurança da informação</strong> e{" "}
-                                    <strong>arquitetura de software</strong>,
-                                    ampliando constantemente minha visão
-                                    técnica.
-                                </p>
-
-                                <p className="about__objective-text">
-                                    Meu foco é desenvolver aplicações com{" "}
-                                    <strong>boa estrutura</strong>,{" "}
-                                    <strong>escalabilidade</strong> e{" "}
-                                    <strong>manutenibilidade</strong>, aplicando{" "}
-                                    <strong>boas práticas</strong> e{" "}
-                                    <strong>organização de código</strong>.
-                                    Busco um ambiente onde eu possa crescer
-                                    profissionalmente, contribuir com{" "}
-                                    <strong>resolução de problemas</strong>,
-                                    manter um ritmo de{" "}
-                                    <strong>aprendizado contínuo</strong> e
-                                    entregar soluções com{" "}
-                                    <strong>qualidade</strong> e{" "}
-                                    <strong>performance</strong>.
-                                </p>
+                                {renderRichParagraphs(t("about.goal.body"), "about__objective-text")}
                             </div>
                         </section>
                     </div>
@@ -450,7 +372,7 @@ export const About: React.FC = () => {
                     ════════════════════════════════════════════════════════ */}
                     <aside
                         className="about__sidebar"
-                        aria-label="Foto, estatísticas e stack tecnológico"
+                        aria-label={lang === "pt" ? "Foto, estatísticas e stack tecnológico" : "Photo, stats and tech stack"}
                     >
                         {/* 1. Foto ──────────────────────────────────────────── */}
                         <div className="about__photo-wrap">

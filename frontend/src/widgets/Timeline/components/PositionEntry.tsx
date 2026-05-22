@@ -1,7 +1,15 @@
 import React, { useState, useRef, useEffect, useId, useCallback } from "react";
 import "./PositionEntry.css";
 import { useLang } from "@/shared/hooks/useLang";
-import { IconChevronDown, IconSparkles } from "@/shared/ui/Icons";
+import {
+    IconChevronDown,
+    IconSparkles,
+    IconBriefcase,
+    IconCalendar,
+    IconClock,
+    IconLocation,
+    IconTrendingUp,
+} from "@/shared/ui/Icons";
 import type { CareerPosition } from "../Timeline.types";
 import { resolvePeriod, resolveDuration } from "../careerDates";
 
@@ -28,13 +36,22 @@ interface PositionEntryProps {
     position: CareerPosition;
     /** índice relativo à animação stagger */
     staggerIndex?: number;
+    /** abre o acordeão por padrão (usado no cargo atual) */
+    defaultOpen?: boolean;
+    /** marca o cargo como efetivação/promoção (estágio → efetivo) */
+    isPromotion?: boolean;
 }
 
-export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerIndex = 0 }) => {
+export const PositionEntry: React.FC<PositionEntryProps> = ({
+    position,
+    staggerIndex = 0,
+    defaultOpen = false,
+    isPromotion = false,
+}) => {
     const { lang, t } = useLang();
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(defaultOpen);
     const bodyRef = useRef<HTMLDivElement>(null);
-    const [bodyHeight, setBodyHeight] = useState<number | "auto">(0);
+    const [bodyHeight, setBodyHeight] = useState<number | "auto">(defaultOpen ? "auto" : 0);
     const panelId = useId();
     const buttonId = useId();
 
@@ -43,21 +60,24 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
     const duration = resolveDuration(position, lang);
     const employment = EMPLOYMENT_LABEL[position.employmentType]?.[lang] ?? position.employmentType;
     const modality = position.modality ? MODALITY_LABEL[position.modality]?.[lang] : null;
+    const statusLabel = position.statusType === "active"
+        ? t("career.status.active")
+        : t("career.status.done");
 
     const highlights = position.bullets.filter(b => b.highlight);
-    const allBullets = position.bullets;
+    const rest = position.bullets.filter(b => !b.highlight);
+    // Quando não há destaques marcados, "Atividades" recebe a lista completa.
+    const activities = highlights.length > 0 ? rest : position.bullets;
 
     // Mede a altura do body para a transição suave
     useEffect(() => {
         if (!bodyRef.current) return;
         const measure = () => {
             if (!bodyRef.current) return;
-            // Mede usando scrollHeight para pegar a altura real do conteúdo
             const h = bodyRef.current.scrollHeight;
             setBodyHeight(isOpen ? h : 0);
         };
         measure();
-        // re-mede em resize (responsivo)
         const ro = new ResizeObserver(measure);
         ro.observe(bodyRef.current);
         return () => ro.disconnect();
@@ -78,38 +98,48 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                 aria-controls={panelId}
                 onClick={toggle}
             >
-                {/* Header row 1: title + status */}
+                {/* Header row: title + status */}
                 <div className="position-entry__title-row">
-                    <h4 className="position-entry__title">{position.title}</h4>
+                    <h4 className="position-entry__title">{position.title[lang]}</h4>
                     <span
                         className={`position-entry__status position-entry__status--${position.statusType}`}
-                        aria-label={position.status}
                     >
                         <span className="position-entry__status-dot" aria-hidden="true" />
-                        {position.status}
+                        {statusLabel}
                     </span>
                 </div>
 
-                {/* Meta row */}
+                {/* Meta row — chips estruturados com ícones */}
                 <div className="position-entry__meta">
-                    <span className="position-entry__meta-item">{employment}</span>
-                    <span className="position-entry__meta-sep" aria-hidden="true">·</span>
-                    <span className="position-entry__meta-item position-entry__meta-period">{period}</span>
-                    <span className="position-entry__meta-sep" aria-hidden="true">·</span>
-                    <span className="position-entry__meta-item position-entry__meta-duration">{duration}</span>
+                    <span className="position-entry__chip">
+                        <IconBriefcase width={12} height={12} aria-hidden="true" />
+                        {employment}
+                    </span>
+                    <span className="position-entry__chip position-entry__chip--period">
+                        <IconCalendar width={12} height={12} aria-hidden="true" />
+                        {period}
+                    </span>
+                    <span className="position-entry__chip">
+                        <IconClock width={12} height={12} aria-hidden="true" />
+                        {duration}
+                    </span>
                     {modality && (
-                        <>
-                            <span className="position-entry__meta-sep" aria-hidden="true">·</span>
-                            <span className="position-entry__meta-item">{modality}</span>
-                        </>
+                        <span className="position-entry__chip">
+                            <IconLocation width={12} height={12} aria-hidden="true" />
+                            {modality}
+                        </span>
+                    )}
+                    {isPromotion && (
+                        <span className="position-entry__chip position-entry__chip--promo">
+                            <IconTrendingUp width={12} height={12} aria-hidden="true" />
+                            {t("career.promoted")}
+                        </span>
                     )}
                 </div>
 
-                {/* Summary preview (closed state) */}
+                {/* Summary (sempre visível como tagline do cargo) */}
                 {position.summary && (
-                    <p className="position-entry__summary" aria-hidden={isOpen}>
-                        {position.summary}
-                    </p>
+                    <p className="position-entry__summary">{position.summary[lang]}</p>
                 )}
 
                 <span className="position-entry__chevron" aria-hidden="true">
@@ -117,7 +147,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                 </span>
             </button>
 
-            {/* Expandable body */}
+            {/* Corpo expansível */}
             <div
                 id={panelId}
                 role="region"
@@ -127,12 +157,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                 aria-hidden={!isOpen}
             >
                 <div ref={bodyRef} className="position-entry__panel-inner">
-                    {/* Full summary (when open) */}
-                    {position.summary && (
-                        <p className="position-entry__about">{position.summary}</p>
-                    )}
-
-                    {/* Highlights */}
+                    {/* Destaques */}
                     {highlights.length > 0 && (
                         <section className="position-entry__section position-entry__section--highlights">
                             <h5 className="position-entry__section-title">
@@ -142,39 +167,39 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({ position, staggerI
                             <ul className="position-entry__highlights">
                                 {highlights.map((h, i) => (
                                     <li key={i} className="position-entry__highlight">
-                                        {h.text}
+                                        {h.text[lang]}
                                     </li>
                                 ))}
                             </ul>
                         </section>
                     )}
 
-                    {/* All activities */}
-                    {allBullets.length > 0 && (
+                    {/* Demais atividades */}
+                    {activities.length > 0 && (
                         <section className="position-entry__section">
                             <h5 className="position-entry__section-title">
                                 {t("career.activities")}
                             </h5>
                             <ul className="position-entry__bullets">
-                                {allBullets.map((b, i) => (
+                                {activities.map((b, i) => (
                                     <li key={i} className="position-entry__bullet">
-                                        {b.text}
+                                        {b.text[lang]}
                                     </li>
                                 ))}
                             </ul>
                         </section>
                     )}
 
-                    {/* Tags */}
+                    {/* Competências */}
                     {position.tags.length > 0 && (
                         <section className="position-entry__section">
                             <h5 className="position-entry__section-title">
                                 {t("career.skills")}
                             </h5>
                             <ul className="position-entry__tags">
-                                {position.tags.map(tag => (
-                                    <li key={tag} className="position-entry__tag">
-                                        {tag}
+                                {position.tags.map((tag, i) => (
+                                    <li key={i} className="position-entry__tag">
+                                        {tag[lang]}
                                     </li>
                                 ))}
                             </ul>

@@ -38,7 +38,7 @@ function calcProgress(startDate: string, endDate?: string): number {
 const SKILLICONS_BASE = "https://skillicons.dev/icons?i=";
 
 export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex = 0 }) => {
-    const { t } = useLang();
+    const { t, lang } = useLang();
 
     const isEdu = item.category === "edu";
     const isActive = item.statusType === "active";
@@ -75,7 +75,7 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
                     {isEdu ? t("education.edu.label") : t("education.cert.label")}
                 </span>
 
-                <span className="formation-card__period">{item.period}</span>
+                <span className="formation-card__period">{item.period[lang]}</span>
             </header>
 
             {/* ─── Status badge / progress ─── */}
@@ -88,13 +88,15 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
                     ) : (
                         <IconCheck width={12} height={12} aria-hidden="true" />
                     )}
-                    {item.status}
+                    {item.statusType === "active"
+                        ? t("education.status.active")
+                        : t("education.status.done")}
                 </span>
 
                 {isActive && item.endDate && (
                     <span
                         className="formation-card__progress-pct"
-                        aria-label={`${progressPct}% concluído`}
+                        aria-label={`${progressPct}% ${t("education.progress")}`}
                     >
                         {progressPct}%
                     </span>
@@ -112,7 +114,7 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
             )}
 
             {/* ─── Title ─── */}
-            <h3 className="formation-card__title">{item.title}</h3>
+            <h3 className="formation-card__title">{item.title[lang]}</h3>
 
             {/* ─── Institution ─── */}
             <p className="formation-card__institution">
@@ -132,11 +134,11 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
             </p>
 
             {/* ─── Description ─── */}
-            <p className="formation-card__desc">{item.description}</p>
+            <p className="formation-card__desc">{item.description[lang]}</p>
 
             {/* ─── Tech icons ─── */}
             {item.techIcons && item.techIcons.length > 0 && (
-                <div className="formation-card__tech" aria-label="Tecnologias">
+                <div className="formation-card__tech" aria-label={t("education.tech.label")}>
                     {item.techIcons.slice(0, 8).map(icon => (
                         <span key={icon} className="formation-card__tech-icon" aria-hidden="true">
                             <img
@@ -154,10 +156,10 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
 
             {/* ─── Tags ─── */}
             {visibleTags.length > 0 && (
-                <ul className="formation-card__tags" aria-label="Competências">
-                    {visibleTags.map(tag => (
-                        <li key={tag} className="formation-card__tag">
-                            {tag}
+                <ul className="formation-card__tags" aria-label={t("education.skills.label")}>
+                    {visibleTags.map((tag, i) => (
+                        <li key={i} className="formation-card__tag">
+                            {tag[lang]}
                         </li>
                     ))}
                     {remainingTags > 0 && (
@@ -183,7 +185,7 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
                         target="_blank"
                         rel="noopener noreferrer"
                         className="formation-card__cert-link"
-                        aria-label={`${t("education.cert.link")}: ${item.title}`}
+                        aria-label={`${t("education.cert.link")}: ${item.title[lang]}`}
                     >
                         {t("education.cert.link")}
                         <IconExternalLink width={12} height={12} aria-hidden="true" />

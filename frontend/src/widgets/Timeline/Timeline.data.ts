@@ -1,115 +1,144 @@
-import type {
-    TimelineRawData,
-    CareerCompany,
-    CareerBullet,
-} from "./Timeline.types";
+import type { TimelineRawData, CareerCompany, CareerBullet } from "./Timeline.types";
 
 /* ─────────────────────────────────────────────────────────
-   WISE_SYSTEM_BULLETS — atividades operacionais
-   compartilhadas entre as duas posições na Wise System
-   (a função manteve o mesmo escopo; o que mudou foi o vínculo).
-
-   Bullets com `highlight: true` aparecem também na seção
-   "Destaques" no topo do modal — pegue 3-4 que melhor
-   resumem a contribuição/responsabilidade.
+   WISE_SYSTEM_BULLETS — atividades operacionais bilíngues
+   compartilhadas entre as duas posições na Wise System.
+   Itens com `highlight: true` aparecem na seção "Destaques".
 ───────────────────────────────────────────────────────── */
 const WISE_SYSTEM_BULLETS: CareerBullet[] = [
     {
-        text: "Suporte técnico e funcional a clientes via telefone, chat, e-mail e acesso remoto, orientando sobre uso do ERP e boas práticas operacionais",
+        text: {
+            pt: "Suporte técnico e funcional a clientes via telefone, chat, e-mail e acesso remoto, orientando sobre uso do ERP e boas práticas operacionais",
+            en: "Technical and functional customer support via phone, chat, email and remote access, guiding ERP usage and operational best practices",
+        },
         highlight: true,
     },
     {
-        text: "Atuação focada nos módulos Financeiro e Faturamento",
+        text: {
+            pt: "Atuação focada nos módulos Financeiro e Faturamento",
+            en: "Focused on the Finance and Billing modules",
+        },
         highlight: true,
     },
     {
-        text: "Acompanhamento de rotinas de Contas a Pagar e Contas a Receber (lançamentos, baixas, cobranças e conciliações)",
+        text: {
+            pt: "Acompanhamento de rotinas de Contas a Pagar e Contas a Receber (lançamentos, baixas, cobranças e conciliações)",
+            en: "Monitoring Accounts Payable and Accounts Receivable routines (entries, settlements, collections and reconciliations)",
+        },
     },
     {
-        text: "Análise e resolução de inconsistências em arquivos bancários CNAB (remessa e retorno) e integrações com instituições financeiras",
+        text: {
+            pt: "Análise e resolução de inconsistências em arquivos bancários CNAB (remessa e retorno) e integrações com instituições financeiras",
+            en: "Analysis and resolution of inconsistencies in CNAB bank files (outbound and return) and integrations with financial institutions",
+        },
         highlight: true,
     },
     {
-        text: "Tratativa de divergências de conciliação bancária e problemas relacionados a títulos financeiros",
+        text: {
+            pt: "Tratativa de divergências de conciliação bancária e problemas relacionados a títulos financeiros",
+            en: "Handling bank reconciliation discrepancies and issues related to financial titles",
+        },
     },
     {
-        text: "Suporte em faturamento e documentos fiscais: emissão, rejeições e homologação de notas fiscais",
+        text: {
+            pt: "Suporte em faturamento e documentos fiscais: emissão, rejeições e homologação de notas fiscais",
+            en: "Support for billing and tax documents: issuance, rejections and approval of invoices",
+        },
     },
     {
-        text: "Investigação e correção de erros tributários e validação de regras de negócio no sistema",
+        text: {
+            pt: "Investigação e correção de erros tributários e validação de regras de negócio no sistema",
+            en: "Investigation and correction of tax errors and validation of business rules in the system",
+        },
     },
     {
-        text: "Identificação de causa raiz de incidentes e aplicação de soluções definitivas",
+        text: {
+            pt: "Identificação de causa raiz de incidentes e aplicação de soluções definitivas",
+            en: "Root-cause identification of incidents and application of definitive solutions",
+        },
         highlight: true,
     },
     {
-        text: "Gerenciamento de chamados em sistema ServiceDesk com documentação detalhada e rastreabilidade",
+        text: {
+            pt: "Gerenciamento de chamados em sistema ServiceDesk com documentação detalhada e rastreabilidade",
+            en: "Ticket management in a ServiceDesk system with detailed documentation and traceability",
+        },
     },
     {
-        text: "Escalonamento técnico e interação com equipes de Desenvolvimento e Implantação para correção de falhas sistêmicas",
+        text: {
+            pt: "Escalonamento técnico e interação com equipes de Desenvolvimento e Implantação para correção de falhas sistêmicas",
+            en: "Technical escalation and collaboration with Development and Deployment teams to fix systemic failures",
+        },
     },
     {
-        text: "Elaboração de materiais explicativos, orientações operacionais e apoio a treinamentos para usuários",
+        text: {
+            pt: "Elaboração de materiais explicativos, orientações operacionais e apoio a treinamentos para usuários",
+            en: "Creation of explanatory materials, operational guidance and support for user training",
+        },
     },
     {
-        text: "Proposição de melhorias em processos internos e redução de recorrência de chamados",
+        text: {
+            pt: "Proposição de melhorias em processos internos e redução de recorrência de chamados",
+            en: "Proposing improvements to internal processes and reducing ticket recurrence",
+        },
     },
 ];
 
 const WISE_SYSTEM_TAGS = [
-    "ERP",
-    "CNAB",
-    "Financeiro",
-    "Faturamento",
-    "Conciliação Bancária",
-    "NFS-e",
-    "ServiceDesk",
-    "Troubleshooting",
-] as const;
+    { pt: "ERP", en: "ERP" },
+    { pt: "CNAB", en: "CNAB" },
+    { pt: "Financeiro", en: "Finance" },
+    { pt: "Faturamento", en: "Billing" },
+    { pt: "Conciliação Bancária", en: "Bank Reconciliation" },
+    { pt: "NFS-e", en: "NFS-e" },
+    { pt: "ServiceDesk", en: "ServiceDesk" },
+    { pt: "Troubleshooting", en: "Troubleshooting" },
+];
 
 /* ─────────────────────────────────────────────────────────
-   CAREER_COMPANIES — experiência profissional agrupada por empresa
-   (layout estilo LinkedIn: 1 header de empresa → N posições).
-
-   period/duration/totalDuration são DERIVADOS de
-   startDate/endDate via `careerDates.ts` no idioma corrente —
-   o display se atualiza sozinho com o tempo (ex.: "4 meses"
-   vira "5 meses" no mês seguinte) e localiza para PT/EN.
-
-   employmentType e modality são TOKENS estáveis — traduzidos
-   no render via `t('career.employment.*')` e `t('career.modality.*')`.
+   CAREER_COMPANIES — experiência profissional por empresa.
+   period/duration/totalDuration são derivados de start/end
+   via `careerDates.ts` no idioma corrente.
 ───────────────────────────────────────────────────────── */
 export const careerCompanies: CareerCompany[] = [
     {
         id: "wise-system",
         name: "Wise System",
         url: "https://wisesystem.com.br",
-        location: "São Paulo, São Paulo, Brasil",
+        location: { pt: "São Paulo, São Paulo, Brasil", en: "São Paulo, Brazil" },
         positions: [
             {
                 id: "wise-n1",
-                title: "Analista de Suporte Técnico (Helpdesk) — N1",
+                title: {
+                    pt: "Analista de Suporte Técnico (Helpdesk) — N1",
+                    en: "Technical Support Analyst (Helpdesk) — Tier 1",
+                },
                 employmentType: "CLT",
                 startDate: "2026-01",
                 modality: "ON_SITE",
-                status: "Atual",
                 statusType: "active",
-                summary:
-                    "Suporte N1 em ERP de saúde com foco em Financeiro/Faturamento, CNAB e conciliação bancária. Responsável por causa raiz de incidentes, escalonamento técnico e proposição de melhorias contínuas.",
+                summary: {
+                    pt: "Suporte N1 em ERP de saúde com foco em Financeiro/Faturamento, CNAB e conciliação bancária. Responsável por causa raiz de incidentes, escalonamento técnico e proposição de melhorias contínuas.",
+                    en: "Tier 1 support for a healthcare ERP focused on Finance/Billing, CNAB and bank reconciliation. Responsible for incident root-cause analysis, technical escalation and proposing continuous improvements.",
+                },
                 bullets: WISE_SYSTEM_BULLETS,
                 tags: [...WISE_SYSTEM_TAGS],
             },
             {
                 id: "wise-estagio",
-                title: "Analista de Suporte Técnico (Helpdesk)",
+                title: {
+                    pt: "Analista de Suporte Técnico (Helpdesk)",
+                    en: "Technical Support Analyst (Helpdesk)",
+                },
                 employmentType: "INTERNSHIP",
                 startDate: "2025-04",
                 endDate: "2025-12",
                 modality: "ON_SITE",
-                status: "Concluído",
                 statusType: "done",
-                summary:
-                    "Primeiro contato profissional com o mercado de tecnologia, prestando suporte técnico e funcional a clientes nos módulos do ERP SIGO.",
+                summary: {
+                    pt: "Primeiro contato profissional com o mercado de tecnologia, prestando suporte técnico e funcional a clientes nos módulos do ERP SIGO.",
+                    en: "First professional experience in the tech industry, providing technical and functional support to clients across the SIGO ERP modules.",
+                },
                 bullets: WISE_SYSTEM_BULLETS,
                 tags: [...WISE_SYSTEM_TAGS],
             },
@@ -118,137 +147,36 @@ export const careerCompanies: CareerCompany[] = [
 ];
 
 /* ─────────────────────────────────────────────────────────
-   CORE_SKILLS — matriz estratégica para ATS
-───────────────────────────────────────────────────────── */
-export const CORE_SKILLS = {
-    cybersecurity: [
-        "Análise de Ameaças",
-        "Gestão de Riscos",
-        "Cibersegurança",
-        "Privacidade e Proteção de Dados",
-        "Enterprise Network Security",
-        "Ética e Conformidade em Segurança",
-    ],
-
-    softwareEngineering: [
-        "Lógica de Programação",
-        "Algoritmos",
-        "Estruturas de Dados",
-        "Análise de Sistemas",
-        "Sistemas Operacionais",
-        "Teoria da Computação",
-        "Resolução de Problemas",
-    ],
-
-    backend: [
-        "Python",
-        "Node.js",
-        "SQL",
-        "MySQL",
-        "Banco de Dados",
-        "Banco de Dados Relacionais e SQL",
-        "Modelagem de Dados",
-        "Flask",
-    ],
-
-    frontend: [
-        "React.js",
-        "HTML",
-        "CSS",
-        "JavaScript",
-        "Front-end Development",
-        "Desenvolvimento Web e Mobile",
-    ],
-
-    quality: [
-        "Teste de Software",
-        "Automação de Testes",
-        "Garantia de Qualidade de Software",
-        "Documentação de Testes",
-        "Padrões de Qualidade e Normas",
-    ],
-
-    softSkills: [
-        "Gestão de Projetos de Software",
-        "Comunicação Técnica",
-        "Pensamento Analítico",
-        "Inglês",
-    ],
-} as const;
-
-export const VERIFIED_SKILLS = [
-    {
-        name: "Algoritmos e Estruturas de Dados",
-        level: "advanced",
-        evidence: ["CC50", "UNICSUL", "ETEC"],
-    },
-    {
-        name: "Banco de Dados",
-        level: "advanced",
-        evidence: ["UNICSUL", "Modelagem de Dados", "Wise System"],
-    },
-    {
-        name: "Cibersegurança",
-        level: "intermediate",
-        evidence: ["Cisco Networking Academy"],
-    },
-    {
-        name: "React.js",
-        level: "intermediate",
-        evidence: ["Rocketseat Discover", "Portfólio"],
-    },
-];
-
-/* ─────────────────────────────────────────────────────────
-   ALL_TIMELINE_ITEMS — fonte única para Formação + Certificações.
-   (A experiência profissional vive em `careerCompanies` acima.)
-
-   `modality` agora usa tokens — ON_SITE em vez de "presencial".
+   ALL_TIMELINE_ITEMS — Formação + Certificações (bilíngue).
 ───────────────────────────────────────────────────────── */
 export const ALL_TIMELINE_ITEMS: TimelineRawData = [
     {
         id: "edu-1",
         category: "edu",
-        title: "Bacharelado em Ciência da Computação",
+        title: {
+            pt: "Bacharelado em Ciência da Computação",
+            en: "Bachelor's Degree in Computer Science",
+        },
         institution: "Universidade Cruzeiro do Sul (UNICSUL)",
         institutionUrl: "https://www.cruzeirodosul.edu.br",
-        period: "2023 — 2026",
+        period: { pt: "2023 — 2026", en: "2023 — 2026" },
         startDate: "2023-01",
         endDate: "2026-12",
         location: "São Paulo, SP",
         modality: "ON_SITE",
-        status: "Em andamento",
         statusType: "active",
-        description:
-            "Formação acadêmica sólida em engenharia de software, fundamentos da computação e desenvolvimento de sistemas, com foco em algoritmos, estruturas de dados, banco de dados, sistemas operacionais e software escalável.",
-        longDescription:
-            "Formação acadêmica com base sólida em Ciência da Computação, consolidando competências em lógica de programação, algoritmos, estruturas de dados, banco de dados, sistemas operacionais e teoria da computação. A graduação fortalece minha capacidade de análise, modelagem de soluções e construção de software escalável.",
-        responsibilities: [
-            {
-                text: "Aplicação de lógica de programação e resolução estruturada de problemas",
-                highlight: true,
-            },
-            {
-                text: "Análise e implementação de algoritmos e estruturas de dados",
-                highlight: true,
-            },
-            { text: "Desenvolvimento web e mobile com foco em escalabilidade" },
-            { text: "Banco de dados, modelagem relacional e SQL" },
-            {
-                text: "Fundamentos de sistemas operacionais, memória e processos",
-            },
-            {
-                text: "Base teórica em computação, complexidade e linguagens formais",
-            },
-        ],
+        description: {
+            pt: "Formação acadêmica sólida em engenharia de software, fundamentos da computação e desenvolvimento de sistemas, com foco em algoritmos, estruturas de dados, banco de dados, sistemas operacionais e software escalável.",
+            en: "Solid academic foundation in software engineering, computing fundamentals and systems development, focused on algorithms, data structures, databases, operating systems and scalable software.",
+        },
         tags: [
-            "Lógica de Programação",
-            "Algoritmos e Estruturas de Dados",
-            "Desenvolvimento Web e Mobile",
-            "Banco de Dados",
-            "Sistemas Operacionais",
-            "Teoria da Computação",
-            "Resolução de Problemas",
+            { pt: "Lógica de Programação", en: "Programming Logic" },
+            { pt: "Algoritmos e Estruturas de Dados", en: "Algorithms & Data Structures" },
+            { pt: "Desenvolvimento Web e Mobile", en: "Web & Mobile Development" },
+            { pt: "Banco de Dados", en: "Databases" },
+            { pt: "Sistemas Operacionais", en: "Operating Systems" },
+            { pt: "Teoria da Computação", en: "Theory of Computation" },
+            { pt: "Resolução de Problemas", en: "Problem Solving" },
         ],
         techIcons: ["java", "python", "mysql", "git"],
         certUrl: null,
@@ -256,45 +184,30 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
     {
         id: "edu-2",
         category: "edu",
-        title: "Técnico em Desenvolvimento de Sistemas",
+        title: {
+            pt: "Técnico em Desenvolvimento de Sistemas",
+            en: "Technical Degree in Systems Development",
+        },
         institution: "ETEC — Escola Técnica Estadual de São Paulo",
         institutionUrl: "https://www.cps.sp.gov.br/etecs/",
-        period: "2020 — 2022",
+        period: { pt: "2020 — 2022", en: "2020 — 2022" },
         startDate: "2020-01",
         endDate: "2022-12",
         location: "São Paulo, SP",
         modality: "ON_SITE",
-        status: "Concluído",
         statusType: "done",
-        description:
-            "Formação técnica sólida em desenvolvimento de software, análise de sistemas, banco de dados, aplicações web/mobile e fundamentos de gestão de projetos.",
-        longDescription:
-            "Base técnica fundamental na minha trajetória, com forte ênfase em lógica de programação, resolução de problemas, modelagem de dados, análise de sistemas e desenvolvimento full stack.",
-        responsibilities: [
-            {
-                text: "Desenvolvimento de software com foco em aplicações práticas",
-                highlight: true,
-            },
-            {
-                text: "Análise de sistemas e levantamento de requisitos",
-                highlight: true,
-            },
-            { text: "Gestão e organização de projetos de software" },
-            { text: "Desenvolvimento web com HTML, CSS e JavaScript" },
-            { text: "Banco de dados relacionais, MySQL e modelagem" },
-            {
-                text: "Lógica de programação e resolução de problemas",
-                highlight: true,
-            },
-        ],
+        description: {
+            pt: "Formação técnica sólida em desenvolvimento de software, análise de sistemas, banco de dados, aplicações web/mobile e fundamentos de gestão de projetos.",
+            en: "Solid technical training in software development, systems analysis, databases, web/mobile applications and project management fundamentals.",
+        },
         tags: [
-            "Desenvolvimento de Software",
-            "Análise de Sistemas",
-            "Gestão de Projetos de Software",
-            "Banco de Dados",
-            "Desenvolvimento Web e Mobile",
-            "Lógica de Programação",
-            "Inglês",
+            { pt: "Desenvolvimento de Software", en: "Software Development" },
+            { pt: "Análise de Sistemas", en: "Systems Analysis" },
+            { pt: "Gestão de Projetos de Software", en: "Software Project Management" },
+            { pt: "Banco de Dados", en: "Databases" },
+            { pt: "Desenvolvimento Web e Mobile", en: "Web & Mobile Development" },
+            { pt: "Lógica de Programação", en: "Programming Logic" },
+            { pt: "Inglês", en: "English" },
         ],
         techIcons: ["html", "css", "js", "php", "mysql", "figma", "vscode"],
         certUrl: null,
@@ -302,208 +215,125 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
     {
         id: "cert-1",
         category: "cert",
-        title: "Introdução à Cibersegurança",
+        title: { pt: "Introdução à Cibersegurança", en: "Introduction to Cybersecurity" },
         institution: "Cisco Networking Academy",
         institutionUrl: "https://www.netacad.com",
-        period: "Abr 2026",
+        period: { pt: "Abr 2026", en: "Apr 2026" },
         startDate: "2026-04",
         endDate: "2026-04",
-        status: "Concluído",
         statusType: "done",
-        description:
-            "Certificação Cisco focada em fundamentos de cibersegurança, análise de ameaças, proteção de dados, segurança de redes corporativas e resposta a incidentes.",
-        longDescription:
-            "Certificação concluída pela Cisco Networking Academy na 12ª Maratona CiberEducação Cisco Brasil, com foco em fundamentos essenciais de cibersegurança aplicados a ambientes corporativos.",
-        responsibilities: [
-            {
-                text: "Análise de ameaças, vulnerabilidades e gestão de riscos",
-                highlight: true,
-            },
-            {
-                text: "Privacidade, proteção de dados e segurança da informação",
-                highlight: true,
-            },
-            { text: "Fundamentos de enterprise network security" },
-            { text: "Resposta a incidentes e boas práticas defensivas" },
-            { text: "Ética e conformidade em segurança" },
-        ],
+        description: {
+            pt: "Certificação Cisco focada em fundamentos de cibersegurança, análise de ameaças, proteção de dados, segurança de redes corporativas e resposta a incidentes.",
+            en: "Cisco certification focused on cybersecurity fundamentals, threat analysis, data protection, enterprise network security and incident response.",
+        },
         tags: [
-            "Cibersegurança",
-            "Análise de Ameaças e Gestão de Riscos",
-            "Enterprise Network Security",
-            "Privacidade e Proteção de Dados",
-            "Ética e Conformidade em Segurança",
+            { pt: "Cibersegurança", en: "Cybersecurity" },
+            { pt: "Análise de Ameaças e Gestão de Riscos", en: "Threat Analysis & Risk Management" },
+            { pt: "Enterprise Network Security", en: "Enterprise Network Security" },
+            { pt: "Privacidade e Proteção de Dados", en: "Privacy & Data Protection" },
+            { pt: "Ética e Conformidade em Segurança", en: "Security Ethics & Compliance" },
         ],
         techIcons: ["linux", "python", "git"],
-        certUrl:
-            "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
+        certUrl: "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
     },
     {
         id: "cert-2",
         category: "cert",
-        title: "CC50 — Ciência da Computação de Harvard",
+        title: { pt: "CC50 — Ciência da Computação de Harvard", en: "CC50 — Harvard Computer Science" },
         institution: "Fundação Estudar",
         institutionUrl: "https://cc50.com.br",
-        period: "Dez 2024",
+        period: { pt: "Dez 2024", en: "Dec 2024" },
         startDate: "2024-06",
         endDate: "2024-12",
-        status: "Concluído",
         statusType: "done",
-        description:
-            "Formação intensiva em ciência da computação com foco em programação, algoritmos, estruturas de dados, SQL, desenvolvimento web e fundamentos de inteligência artificial.",
-        longDescription:
-            "Formação de alta intensidade baseada no CS50 de Harvard, consolidando fundamentos sólidos em ciência da computação, resolução estruturada de problemas e desenvolvimento de software.",
-        responsibilities: [
-            { text: "Programação estruturada com C e Python", highlight: true },
-            {
-                text: "Algoritmos, estruturas de dados e gerenciamento de memória",
-                highlight: true,
-            },
-            { text: "SQL, modelagem de bancos e análise de dados" },
-            { text: "Desenvolvimento web backend" },
-            {
-                text: "Fundamentos de inteligência artificial e machine learning",
-            },
-        ],
+        description: {
+            pt: "Formação intensiva em ciência da computação com foco em programação, algoritmos, estruturas de dados, SQL, desenvolvimento web e fundamentos de inteligência artificial.",
+            en: "Intensive computer science course focused on programming, algorithms, data structures, SQL, web development and artificial-intelligence fundamentals.",
+        },
         tags: [
-            "Programação",
-            "Algoritmos e Estruturas de Dados",
-            "Memória e Gerenciamento de Recursos",
-            "SQL e Modelagem de Bancos de Dados",
-            "Desenvolvimento Web",
-            "Inteligência Artificial",
+            { pt: "Programação", en: "Programming" },
+            { pt: "Algoritmos e Estruturas de Dados", en: "Algorithms & Data Structures" },
+            { pt: "Memória e Gerenciamento de Recursos", en: "Memory & Resource Management" },
+            { pt: "SQL e Modelagem de Bancos de Dados", en: "SQL & Database Modeling" },
+            { pt: "Desenvolvimento Web", en: "Web Development" },
+            { pt: "Inteligência Artificial", en: "Artificial Intelligence" },
         ],
         techIcons: ["python", "mysql", "git"],
-        certUrl:
-            "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
+        certUrl: "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
     },
     {
         id: "cert-3",
         category: "cert",
-        title: "Trilha Discover",
+        title: { pt: "Trilha Discover", en: "Discover Track" },
         institution: "Rocketseat",
         institutionUrl: "https://rocketseat.com.br",
-        period: "Mar 2024",
+        period: { pt: "Mar 2024", en: "Mar 2024" },
         startDate: "2023-10",
         endDate: "2024-03",
-        status: "Concluído",
         statusType: "done",
-        description:
-            "Formação prática em desenvolvimento web e mobile com foco em front-end, back-end, JavaScript moderno e construção de interfaces escaláveis.",
-        longDescription:
-            "Trilha hands-on focada no desenvolvimento de aplicações web e mobile, cobrindo HTML, CSS, JavaScript, React, Node.js e fundamentos modernos de arquitetura frontend e backend.",
-        responsibilities: [
-            {
-                text: "Front-end development com React e componentização",
-                highlight: true,
-            },
-            { text: "Back-end development com Node.js" },
-            {
-                text: "Desenvolvimento web responsivo com HTML, CSS e JavaScript",
-            },
-            { text: "Arquitetura de interfaces e experiência do usuário" },
-            {
-                text: "Resolução de problemas e construção de projetos práticos",
-            },
-        ],
+        description: {
+            pt: "Formação prática em desenvolvimento web e mobile com foco em front-end, back-end, JavaScript moderno e construção de interfaces escaláveis.",
+            en: "Hands-on training in web and mobile development focused on front-end, back-end, modern JavaScript and building scalable interfaces.",
+        },
         tags: [
-            "Front-end Development",
-            "Back-end Development",
-            "Desenvolvimento Web e Mobile",
-            "Resolução de Problemas",
+            { pt: "Front-end Development", en: "Front-end Development" },
+            { pt: "Back-end Development", en: "Back-end Development" },
+            { pt: "Desenvolvimento Web e Mobile", en: "Web & Mobile Development" },
+            { pt: "Resolução de Problemas", en: "Problem Solving" },
         ],
-        techIcons: [
-            "html",
-            "css",
-            "sass",
-            "js",
-            "react",
-            "nodejs",
-            "vite",
-            "git",
-            "figma",
-            "vscode",
-        ],
+        techIcons: ["html", "css", "sass", "js", "react", "nodejs", "vite", "git", "figma", "vscode"],
         certUrl:
             "https://app.rocketseat.com.br/certificates/5e1a87e2-9e71-4dbd-82a1-52f98b99c984",
     },
     {
         id: "cert-4",
         category: "cert",
-        title: "Modelagem de Dados",
+        title: { pt: "Modelagem de Dados", en: "Data Modeling" },
         institution: "Fundação Bradesco",
         institutionUrl: "https://www.ev.org.br",
-        period: "2023",
+        period: { pt: "2023", en: "2023" },
         startDate: "2023-01",
         endDate: "2023-03",
-        status: "Concluído",
         statusType: "done",
-        description:
-            "Fundamentos sólidos em modelagem de dados, bancos relacionais, SQL e estruturação de informações com foco em integridade, consistência e escalabilidade.",
-        longDescription:
-            "Formação voltada à modelagem conceitual, lógica e física de bancos de dados relacionais, com ênfase em diagramas ER, normalização, relacionamentos, integridade referencial e boas práticas de estruturação de dados.",
-        responsibilities: [
-            {
-                text: "Modelagem conceitual, lógica e física de dados",
-                highlight: true,
-            },
-            { text: "Banco de dados relacionais e SQL", highlight: true },
-            { text: "Normalização e integridade referencial" },
-            { text: "Análise de dados e estruturação de informações" },
-        ],
+        description: {
+            pt: "Fundamentos sólidos em modelagem de dados, bancos relacionais, SQL e estruturação de informações com foco em integridade, consistência e escalabilidade.",
+            en: "Solid fundamentals in data modeling, relational databases, SQL and information structuring focused on integrity, consistency and scalability.",
+        },
         tags: [
-            "Modelagem de Dados",
-            "Banco de Dados Relacionais e SQL",
-            "Modelagem Conceitual, Lógica e Física",
-            "Análise de Dados",
+            { pt: "Modelagem de Dados", en: "Data Modeling" },
+            { pt: "Banco de Dados Relacionais e SQL", en: "Relational Databases & SQL" },
+            { pt: "Modelagem Conceitual, Lógica e Física", en: "Conceptual, Logical & Physical Modeling" },
+            { pt: "Análise de Dados", en: "Data Analysis" },
         ],
         techIcons: ["mysql", "oracle"],
-        certUrl:
-            "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
+        certUrl: "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
     },
     {
         id: "cert-5",
         category: "cert",
-        title: "Qualidade de Software",
+        title: { pt: "Qualidade de Software", en: "Software Quality" },
         institution: "IEstudar",
         institutionUrl: "https://iestudar.com",
-        period: "Nov 2022",
+        period: { pt: "Nov 2022", en: "Nov 2022" },
         startDate: "2022-11",
         endDate: "2022-11",
-        status: "Concluído",
         statusType: "done",
-        description:
-            "Fundamentos de QA, testes, automação, documentação e padrões de qualidade para software confiável.",
-        longDescription:
-            "Formação voltada aos fundamentos de garantia de qualidade de software, com ênfase em testes funcionais, validação de requisitos, documentação técnica, automação de testes e aplicação de padrões de qualidade em sistemas.",
-        responsibilities: [
-            {
-                text: "Teste de software e validação funcional",
-                highlight: true,
-            },
-            { text: "Automação e documentação de testes" },
-            { text: "Garantia de qualidade de software", highlight: true },
-            { text: "Padrões de qualidade, normas e boas práticas" },
-        ],
+        description: {
+            pt: "Fundamentos de QA, testes, automação, documentação e padrões de qualidade para software confiável.",
+            en: "QA fundamentals: testing, automation, documentation and quality standards for reliable software.",
+        },
         tags: [
-            "Teste de Software",
-            "Automação de Testes",
-            "Documentação de Testes",
-            "Garantia de Qualidade de Software",
-            "Padrões de Qualidade e Normas",
+            { pt: "Teste de Software", en: "Software Testing" },
+            { pt: "Automação de Testes", en: "Test Automation" },
+            { pt: "Documentação de Testes", en: "Test Documentation" },
+            { pt: "Garantia de Qualidade de Software", en: "Software Quality Assurance" },
+            { pt: "Padrões de Qualidade e Normas", en: "Quality Standards & Norms" },
         ],
         techIcons: ["git", "vscode"],
-        certUrl:
-            "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
+        certUrl: "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
     },
 ];
 
-/* ─────────────────────────────────────────────────────────
-   DERIVED EXPORTS
-───────────────────────────────────────────────────────── */
-export const educationItems = ALL_TIMELINE_ITEMS.filter(
-    (i) => i.category === "edu",
-);
-export const certificationItems = ALL_TIMELINE_ITEMS.filter(
-    (i) => i.category === "cert",
-);
+/* ── Derived exports ───────────────────────────────────── */
+export const educationItems = ALL_TIMELINE_ITEMS.filter((i) => i.category === "edu");
+export const certificationItems = ALL_TIMELINE_ITEMS.filter((i) => i.category === "cert");

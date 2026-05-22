@@ -1,6 +1,7 @@
 /* ════════════════════════════════════════════════════════════════
    Timeline (Carreira) — Container da seção
-   Spine vertical com nós (CareerNode) sequenciais.
+   Visão geral (stats) + card de destaque por empresa (CareerNode),
+   cada um com trilha interna de progressão de cargos.
 ═══════════════════════════════════════════════════════════════ */
 
 .career {
@@ -22,36 +23,38 @@
     transform: translateY(0);
 }
 
-/* ── Timeline list ─────────────────────────────────────────────── */
-.career__timeline {
-    list-style: none;
-    margin: var(--space-10) 0 0;
-    padding: 0;
-    max-width: 880px;
-
-    display: flex;
-    flex-direction: column;
+/* ── Layout: timeline (esquerda) + painel dashboard (direita) ───── */
+.career__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+    margin-top: var(--space-8);
 }
 
-/* Decoração final do spine — pequeno indicador de "fim da trajetória" */
-.career__timeline::after {
-    content: "";
-    display: block;
-    width: 8px;
-    height: 8px;
-    margin-left: 22px;
-    border-radius: 50%;
-    background: var(--color-border-3);
-    margin-top: calc(var(--space-2) * -1);
+.career__companies {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    min-width: 0;
+}
+
+/* Tablet/mobile: empilha — painel acima da timeline (overview primeiro) */
+@media (max-width: 900px) {
+    .career__layout {
+        grid-template-columns: 1fr;
+        gap: var(--space-7);
+        margin-top: var(--space-6);
+    }
+
+    .career-aside {
+        order: -1;
+    }
 }
 
 @media (max-width: 640px) {
-    .career__timeline {
-        margin-top: var(--space-8);
-    }
-
-    .career__timeline::after {
-        margin-left: 16px;
+    .career__companies {
+        gap: var(--space-5);
     }
 }
 

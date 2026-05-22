@@ -2,14 +2,17 @@ import React from "react";
 import "./Work.css";
 import { useLang } from "@/shared/hooks/useLang";
 import { WorkProject } from "./Work.types";
-import { IconGitHub } from "@/shared/ui/Icons";
+import { IconGitHub, IconExternalLink } from "@/shared/ui/Icons";
 
 const PROJECTS: WorkProject[] = [
     {
         id: "webchat",
         emoji: "💬",
-        title: "💬 Web Chat",
-        desc: "Aplicação de chat em tempo real utilizando WebSocket, com suporte a múltiplas salas e interação direta no navegador.",
+        title: { pt: "Web Chat", en: "Web Chat" },
+        desc: {
+            pt: "Aplicação de chat em tempo real utilizando WebSocket, com suporte a múltiplas salas e interação direta no navegador.",
+            en: "Real-time chat application built with WebSocket, supporting multiple rooms and direct in-browser interaction.",
+        },
         imageUrl:
             "https://raw.githubusercontent.com/https-shini/vite-portfolio/refs/heads/main/public/destaque/Icons/projetos/work01.png",
         tech: [
@@ -23,8 +26,11 @@ const PROJECTS: WorkProject[] = [
     {
         id: "auth",
         emoji: "🔐",
-        title: "🔐 Auth Service",
-        desc: "Serviço de autenticação com foco em segurança, gerenciamento de usuários e implementação de fluxo com JWT.",
+        title: { pt: "Auth Service", en: "Auth Service" },
+        desc: {
+            pt: "Serviço de autenticação com foco em segurança, gerenciamento de usuários e implementação de fluxo com JWT.",
+            en: "Authentication service focused on security, user management and a complete JWT-based login flow.",
+        },
         imageUrl:
             "https://raw.githubusercontent.com/https-shini/AuthService/refs/heads/main/read-model/img/Login01.png",
         tech: [
@@ -38,8 +44,11 @@ const PROJECTS: WorkProject[] = [
     {
         id: "financas",
         emoji: "💰",
-        title: "💰 Controle Financeiro",
-        desc: "Aplicação para gestão financeira pessoal com controle de entradas, saídas e visualização de saldo em tempo real.",
+        title: { pt: "Controle Financeiro", en: "Financial Control" },
+        desc: {
+            pt: "Aplicação para gestão financeira pessoal com controle de entradas, saídas e visualização de saldo em tempo real.",
+            en: "Personal finance app for managing income and expenses with real-time balance tracking.",
+        },
         imageUrl:
             "https://raw.githubusercontent.com/https-shini/vite-portfolio/refs/heads/main/public/destaque/Icons/projetos/work02.png",
         tech: [
@@ -53,7 +62,7 @@ const PROJECTS: WorkProject[] = [
 ];
 
 export const Work: React.FC = () => {
-    const { t } = useLang();
+    const { t, lang } = useLang();
 
     return (
         <section
@@ -65,7 +74,7 @@ export const Work: React.FC = () => {
             <div className="container">
                 {/* Header */}
                 <header className="section-header">
-                    <span className="section-eyebrow">Projetos</span>
+                    <span className="section-eyebrow">{t("work.eyebrow")}</span>
 
                     <h2 className="section-title" id="work-title">
                         {t("work.title")}
@@ -76,20 +85,25 @@ export const Work: React.FC = () => {
 
                 {/* Grid */}
                 <div className="work__grid">
-                    {PROJECTS.map((project) => (
+                    {PROJECTS.map((project, i) => (
                         <article
                             className="work-card"
                             key={project.id}
                             aria-labelledby={`project-${project.id}`}
+                            style={{ ["--card-index" as string]: i }}
                         >
                             {/* Thumbnail */}
                             <div className="work-card__thumb">
                                 <img
                                     src={project.imageUrl}
-                                    alt={`Preview do projeto ${project.title}`}
+                                    alt={`${t("work.preview")} — ${project.title[lang]}`}
                                     loading="lazy"
                                     decoding="async"
                                 />
+                                <span className="work-card__thumb-grad" aria-hidden="true" />
+                                <span className="work-card__emoji" aria-hidden="true">
+                                    {project.emoji}
+                                </span>
                             </div>
 
                             {/* Conteúdo */}
@@ -98,15 +112,13 @@ export const Work: React.FC = () => {
                                     className="work-card__title"
                                     id={`project-${project.id}`}
                                 >
-                                    {project.title}
+                                    {project.title[lang]}
                                 </h3>
 
-                                <p className="work-card__desc">
-                                    {project.desc}
-                                </p>
+                                <p className="work-card__desc">{project.desc[lang]}</p>
 
                                 {/* Tecnologias */}
-                                <div className="work-card__tech">
+                                <div className="work-card__tech" aria-label={t("work.block.stack")}>
                                     {project.tech.map((tech) => (
                                         <span
                                             key={tech.label}
@@ -125,8 +137,10 @@ export const Work: React.FC = () => {
                                     className="work-btn work-btn--primary"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    aria-label={`${t("work.btn.demo")} — ${project.title[lang]}`}
                                 >
-                                    Acessar Projeto
+                                    <IconExternalLink width={14} height={14} aria-hidden="true" />
+                                    {t("work.btn.demo")}
                                 </a>
 
                                 <a
@@ -134,8 +148,10 @@ export const Work: React.FC = () => {
                                     className="work-btn work-btn--outline"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    aria-label={`${t("work.btn.repo")} — ${project.title[lang]}`}
                                 >
-                                    Acessar Repositório
+                                    <IconGitHub width={15} height={15} aria-hidden="true" />
+                                    {t("work.btn.repo")}
                                 </a>
                             </div>
                         </article>

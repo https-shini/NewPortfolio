@@ -36,9 +36,12 @@ export const Featured: React.FC = () => {
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const touchX = useRef(0);
     const galleryRef = useRef<HTMLDivElement>(null);
+    const filmstripRef = useRef<HTMLDivElement>(null);
     const noMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const slides = FEATURED_PROJECT.slides;
+    const hasMultiple = slides.length > 1;
+    const isScrollableStrip = slides.length > 4;
 
     const goTo = useCallback(
         (index: number) => {
@@ -47,7 +50,7 @@ export const Featured: React.FC = () => {
             if (next === current) return;
             setAnimating(true);
             setCurrent(next);
-            setTimeout(() => setAnimating(false), 600);
+            setTimeout(() => setAnimating(false), 700);
         },
         [animating, current, slides.length],
     );
@@ -82,6 +85,19 @@ export const Featured: React.FC = () => {
         document.addEventListener("visibilitychange", handler);
         return () => document.removeEventListener("visibilitychange", handler);
     }, [startAuto, stopAuto]);
+
+    // Mantém a miniatura ativa centralizada no strip (carrossel de thumbnails)
+    useEffect(() => {
+        const strip = filmstripRef.current;
+        if (!strip) return;
+        const active = strip.querySelector<HTMLElement>(".featured__thumb.is-active");
+        if (!active) return;
+        const stripRect = strip.getBoundingClientRect();
+        const activeRect = active.getBoundingClientRect();
+        const delta = activeRect.left - stripRect.left - (stripRect.width - activeRect.width) / 2;
+        if (Math.abs(delta) < 1) return;
+        strip.scrollBy({ left: delta, behavior: noMotion ? "auto" : "smooth" });
+    }, [current, noMotion]);
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "ArrowLeft") {
@@ -138,6 +154,12 @@ export const Featured: React.FC = () => {
 
                 {/* ─── Main grid: gallery (browser mockup) + tech profile ─── */}
                 <div className="featured__main">
+                    {/* Left column: browser mockup + thumbnail filmstrip */}
+                    <div
+                        className="featured__media"
+                        onMouseEnter={stopAuto}
+                        onMouseLeave={() => autoPlay && startAuto()}
+                    >
                     {/* Gallery — Browser mockup */}
                     <div
                         ref={galleryRef}
@@ -145,8 +167,6 @@ export const Featured: React.FC = () => {
                         role="region"
                         aria-label={t("featured.gallery.label")}
                         aria-roledescription="carrossel"
-                        onMouseEnter={stopAuto}
-                        onMouseLeave={() => autoPlay && startAuto()}
                         onKeyDown={handleKeyDown}
                         onTouchStart={onTouchStart}
                         onTouchEnd={onTouchEnd}
@@ -191,13 +211,6 @@ export const Featured: React.FC = () => {
                                     className={`featured__slide${i === current ? " is-active" : ""}`}
                                     aria-hidden={i !== current}
                                 >
-                                    {/* Backdrop blur ambient — usa a própria imagem */}
-                                    <div
-                                        className="featured__slide-backdrop"
-                                        style={{ backgroundImage: `url(${slide.src})` }}
-                                        aria-hidden="true"
-                                    />
-
                                     <button
                                         type="button"
                                         className="featured__slide-trigger"
@@ -225,63 +238,104 @@ export const Featured: React.FC = () => {
                             ))}
                         </div>
 
-                        {/* Dots + counter */}
-                        <div className="featured__dots-row">
-                            <span className="featured__counter" aria-hidden="true">
-                                {String(current + 1).padStart(2, "0")}
-                                <span className="featured__counter-sep"> / </span>
-                                <span className="featured__counter-total">
-                                    {String(slides.length).padStart(2, "0")}
+                        {/* Counter + progress (escala para qualquer quantidade) */}
+                        {hasMultiple && (
+                            <div className="featured__dots-row">
+                                <span className="featured__counter" aria-hidden="true">
+                                    {String(current + 1).padStart(2, "0")}
+                                    <span className="featured__counter-sep"> / </span>
+                                    <span className="featured__counter-total">
+                                        {String(slides.length).padStart(2, "0")}
+                                    </span>
                                 </span>
-                            </span>
-                            <div className="featured__dots" role="group" aria-label="Slides">
-                                {slides.map((_, i) => (
-                                    <button
-                                        key={i}
-                                        type="button"
-                                        className={`featured__dot${i === current ? " is-active" : ""}`}
-                                        onClick={() => {
-                                            goTo(i);
-                                            resetAuto();
-                                        }}
-                                        aria-label={`Slide ${i + 1}`}
-                                        aria-current={i === current}
+                                <div
+                                    className="featured__progress"
+                                    role="progressbar"
+                                    aria-valuemin={1}
+                                    aria-valuemax={slides.length}
+                                    aria-valuenow={current + 1}
+                                >
+                                    <span
+                                        className="featured__progress-fill"
+                                        style={{ width: `${((current + 1) / slides.length) * 100}%` }}
                                     />
-                                ))}
+                                </div>
                             </div>
-                        </div>
+                        )}
 
                         {/* Arrows */}
-                        <button
-                            type="button"
-                            className="featured__arrow featured__arrow--prev"
-                            onClick={() => {
-                                prev();
-                                resetAuto();
-                            }}
-                            aria-label={t("featured.arrow.prev")}
-                            tabIndex={-1}
-                        >
-                            <IconChevronLeft width={16} height={16} aria-hidden="true" />
-                        </button>
-                        <button
-                            type="button"
-                            className="featured__arrow featured__arrow--next"
-                            onClick={() => {
-                                next();
-                                resetAuto();
-                            }}
-                            aria-label={t("featured.arrow.next")}
-                            tabIndex={-1}
-                        >
-                            <IconChevronRight width={16} height={16} aria-hidden="true" />
-                        </button>
+                        {hasMultiple && (
+                            <>
+                                <button
+                                    type="button"
+                                    className="featured__arrow featured__arrow--prev"
+                                    onClick={() => {
+                                        prev();
+                                        resetAuto();
+                                    }}
+                                    aria-label={t("featured.arrow.prev")}
+                                    tabIndex={-1}
+                                >
+                                    <IconChevronLeft width={16} height={16} aria-hidden="true" />
+                                </button>
+                                <button
+                                    type="button"
+                                    className="featured__arrow featured__arrow--next"
+                                    onClick={() => {
+                                        next();
+                                        resetAuto();
+                                    }}
+                                    aria-label={t("featured.arrow.next")}
+                                    tabIndex={-1}
+                                >
+                                    <IconChevronRight width={16} height={16} aria-hidden="true" />
+                                </button>
+                            </>
+                        )}
 
                         {/* Slide name caption (bottom-left subtle) */}
                         <div className="featured__slide-name" aria-live="polite">
                             <span className="featured__slide-name-text">{currentSlide.label[lang]}</span>
                         </div>
                     </div>
+
+                    {/* Thumbnail filmstrip — dinâmico (vira carrossel scrollável quando > 4) */}
+                    {hasMultiple && (
+                        <div
+                            ref={filmstripRef}
+                            className={`featured__filmstrip${isScrollableStrip ? " featured__filmstrip--scroll" : ""}`}
+                            role="group"
+                            aria-label={t("featured.thumbs.label")}
+                        >
+                        {slides.map((slide, i) => (
+                            <button
+                                key={slide.src}
+                                type="button"
+                                className={`featured__thumb${i === current ? " is-active" : ""}`}
+                                onClick={() => {
+                                    goTo(i);
+                                    resetAuto();
+                                }}
+                                aria-label={slide.label[lang]}
+                                aria-current={i === current}
+                            >
+                                <img
+                                    src={slide.src}
+                                    alt=""
+                                    loading="lazy"
+                                    decoding="async"
+                                    aria-hidden="true"
+                                    className="featured__thumb-img"
+                                />
+                                <span className="featured__thumb-index" aria-hidden="true">
+                                    {String(i + 1).padStart(2, "0")}
+                                </span>
+                            </button>
+                        ))}
+                        </div>
+                    )}
+                    </div>
+                    {/* /featured__media */}
 
                     {/* ─── Tech Profile ─── */}
                     <aside className="featured__profile" aria-labelledby="featured-profile-title">

@@ -26,8 +26,8 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
         const ref = useRevealOnScroll<HTMLButtonElement>(index, 110);
 
         const summary = useMemo(
-            () => summarize(item.text, PREVIEW_CHARS),
-            [item.text],
+            () => summarize(item.text[lang], PREVIEW_CHARS),
+            [item.text, lang],
         );
 
         const visibleTags = (item.tags ?? []).slice(0, MAX_VISIBLE_TAGS);
@@ -67,10 +67,10 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
 
                 {/* Tags */}
                 {visibleTags.length > 0 && (
-                    <ul className="rec-card__tags" aria-label="Tópicos">
-                        {visibleTags.map(tag => (
-                            <li key={tag} className="rec-card__tag">
-                                {tag}
+                    <ul className="rec-card__tags" aria-label={lang === "pt" ? "Tópicos" : "Topics"}>
+                        {visibleTags.map((tag, i) => (
+                            <li key={i} className="rec-card__tag">
+                                {tag[lang]}
                             </li>
                         ))}
                         {remainingTags > 0 && (
@@ -106,7 +106,7 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
 
                     <div className="rec-card__author">
                         <span className="rec-card__name">{item.authorName}</span>
-                        <span className="rec-card__role">{item.authorRole}</span>
+                        <span className="rec-card__role">{item.authorRole[lang]}</span>
                     </div>
 
                     <span className="rec-card__cta" aria-hidden="true">

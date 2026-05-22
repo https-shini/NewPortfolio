@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import "./CareerNode.css";
 import { useLang } from "@/shared/hooks/useLang";
 import { useRevealOnScroll } from "@/shared/hooks/useRevealOnScroll";
-import { IconLocation, IconExternalLink } from "@/shared/ui/Icons";
+import { IconLocation, IconExternalLink, IconClock, IconBriefcase } from "@/shared/ui/Icons";
 import { PositionEntry } from "./PositionEntry";
 import type { CareerCompany } from "../Timeline.types";
 import { resolveTotalDuration } from "../careerDates";
@@ -10,8 +10,6 @@ import { resolveTotalDuration } from "../careerDates";
 interface CareerNodeProps {
     company: CareerCompany;
     index: number;
-    /** Verdadeiro se for o último nó do timeline (oculta o ramo do spine abaixo) */
-    isLast: boolean;
 }
 
 /** Iniciais a partir do nome — fallback quando não há logo. */
@@ -21,48 +19,68 @@ function getInitials(name: string): string {
     return (words[0]![0]! + words[words.length - 1]![0]!).toUpperCase();
 }
 
-export const CareerNode: React.FC<CareerNodeProps> = ({ company, index, isLast }) => {
-    const { lang } = useLang();
-    const ref = useRevealOnScroll<HTMLLIElement>(index, 140);
+/**
+ * CareerNode — card de destaque de uma empresa.
+ *
+ * Contém uma trilha interna de progressão de cargos (mais recente no
+ * topo). Quando um cargo efetivo sucede um estágio na mesma empresa, ele
+ * é marcado como "promoção", tornando a narrativa de evolução explícita.
+ */
+export const CareerNode: React.FC<CareerNodeProps> = ({ company, index }) => {
+    const { lang, t } = useLang();
+    const ref = useRevealOnScroll<HTMLElement>(index, 120);
 
     const totalDuration = useMemo(
         () => resolveTotalDuration(company, lang),
         [company, lang],
     );
 
-    const hasActivePosition = company.positions.some(p => p.statusType === "active");
+    const positions = company.positions;
+    const hasActivePosition = positions.some(p => p.statusType === "active");
     const initials = getInitials(company.name);
+    const roleCount = positions.length;
+
+    // Detecta promoção: um cargo (mais recente) que sucede um estágio
+    // (mais antigo, logo abaixo na lista) com vínculo diferente de estágio.
+    const promotionFlags = useMemo(
+        () =>
+            positions.map((pos, i) => {
+                const older = positions[i + 1];
+                return (
+                    !!older &&
+                    older.employmentType === "INTERNSHIP" &&
+                    pos.employmentType !== "INTERNSHIP"
+                );
+            }),
+        [positions],
+    );
 
     return (
-        <li
+        <article
             ref={ref}
-            className={`career-node${hasActivePosition ? " career-node--active" : ""}${isLast ? " career-node--last" : ""}`}
+            className={`career-company${hasActivePosition ? " is-active" : ""}`}
             data-reveal
+            style={{ ["--company-index" as string]: index }}
         >
-            {/* Spine vertical (linha) */}
-            <span className="career-node__rail" aria-hidden="true" />
+            {/* Header da empresa */}
+            <header className="career-company__header">
+                <span className="career-company__avatar" aria-hidden="true">
+                    {company.logo ? (
+                        <img src={company.logo} alt="" />
+                    ) : (
+                        <span className="career-company__initials">{initials}</span>
+                    )}
+                </span>
 
-            {/* Marker / nó circular com iniciais ou logo */}
-            <span className="career-node__marker" aria-hidden="true">
-                {company.logo ? (
-                    <img src={company.logo} alt="" />
-                ) : (
-                    <span className="career-node__initials">{initials}</span>
-                )}
-                <span className="career-node__marker-glint" aria-hidden="true" />
-            </span>
-
-            {/* Conteúdo: header da empresa + lista de posições */}
-            <div className="career-node__content">
-                <header className="career-node__header">
-                    <div className="career-node__identity">
-                        <h3 className="career-node__name">
+                <div className="career-company__identity">
+                    <div className="career-company__name-row">
+                        <h3 className="career-company__name">
                             {company.url ? (
                                 <a
                                     href={company.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="career-node__name-link"
+                                    className="career-company__name-link"
                                 >
                                     {company.name}
                                     <IconExternalLink width={14} height={14} aria-hidden="true" />
@@ -71,27 +89,51 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index, isLast }
                                 company.name
                             )}
                         </h3>
-                        <div className="career-node__meta">
-                            <span className="career-node__meta-item career-node__meta-duration">
-                                {totalDuration}
+                        {hasActivePosition && (
+                            <span className="career-company__active" aria-label={t("career.status.active")}>
+                                <span className="career-company__active-dot" aria-hidden="true" />
+                                {t("career.status.active")}
                             </span>
-                            <span className="career-node__meta-sep" aria-hidden="true">·</span>
-                            <span className="career-node__meta-item">
-                                <IconLocation width={12} height={12} aria-hidden="true" />
-                                {company.location}
-                            </span>
-                        </div>
+                        )}
                     </div>
-                </header>
 
-                <ol className="career-node__positions" aria-label={company.name}>
-                    {company.positions.map((pos, i) => (
-                        <li key={pos.id} className="career-node__position-item">
-                            <PositionEntry position={pos} staggerIndex={i} />
-                        </li>
-                    ))}
-                </ol>
-            </div>
-        </li>
+                    <div className="career-company__meta">
+                        <span className="career-company__meta-item">
+                            <IconLocation width={13} height={13} aria-hidden="true" />
+                            {company.location[lang]}
+                        </span>
+                        <span className="career-company__meta-sep" aria-hidden="true">·</span>
+                        <span className="career-company__meta-item">
+                            <IconClock width={13} height={13} aria-hidden="true" />
+                            {totalDuration}
+                        </span>
+                        <span className="career-company__meta-sep" aria-hidden="true">·</span>
+                        <span className="career-company__meta-item">
+                            <IconBriefcase width={13} height={13} aria-hidden="true" />
+                            {roleCount}{" "}
+                            {roleCount === 1 ? t("career.stats.role") : t("career.stats.roles")}
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            {/* Trilha de progressão de cargos */}
+            <ol className="career-company__roles" aria-label={t("career.positions")}>
+                {positions.map((pos, i) => (
+                    <li
+                        key={pos.id}
+                        className={`career-role-row${pos.statusType === "active" ? " is-active" : ""}`}
+                    >
+                        <span className="career-role-row__node" aria-hidden="true" />
+                        <PositionEntry
+                            position={pos}
+                            staggerIndex={i}
+                            defaultOpen={i === 0}
+                            isPromotion={promotionFlags[i]}
+                        />
+                    </li>
+                ))}
+            </ol>
+        </article>
     );
 };
