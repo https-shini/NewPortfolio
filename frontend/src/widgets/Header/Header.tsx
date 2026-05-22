@@ -126,6 +126,17 @@ export const Header: React.FC = () => {
 
     const currentLang = LANG_META[lang as keyof typeof LANG_META];
     const ctaLabel = lang === "pt" ? "Fale comigo" : "Get in touch";
+    const isPt = lang === "pt";
+    const logoLabel = isPt ? "Guilherme Cruz — voltar ao início" : "Guilherme Cruz — back to top";
+    const navMainLabel = isPt ? "Navegação principal" : "Main navigation";
+    const navMenuLabel = isPt ? "Menu de navegação" : "Navigation menu";
+    const menuLabel = isMenuOpen
+        ? isPt ? "Fechar menu" : "Close menu"
+        : isPt ? "Abrir menu" : "Open menu";
+    const themeLabel =
+        theme === "dark"
+            ? isPt ? "Alternar para modo claro" : "Switch to light mode"
+            : isPt ? "Alternar para modo escuro" : "Switch to dark mode";
 
     return (
         <>
@@ -139,7 +150,7 @@ export const Header: React.FC = () => {
                     <a
                         href={`#${SECTION_IDS.HOME}`}
                         className="header__logo"
-                        aria-label="Guilherme Cruz — voltar ao início"
+                        aria-label={logoLabel}
                         onClick={(e) => handleNavClick(e, SECTION_IDS.HOME)}
                     >
                         <span className="header__logo-dot" aria-hidden="true" />
@@ -152,7 +163,7 @@ export const Header: React.FC = () => {
                     {/* ── Nav desktop ───────────────────────────────── */}
                     <nav
                         className="header__nav"
-                        aria-label="Navegação principal"
+                        aria-label={navMainLabel}
                     >
                         {NAV_LINKS.map(({ href, key }) => (
                             <a
@@ -187,11 +198,7 @@ export const Header: React.FC = () => {
                             className="header__ctrl"
                             type="button"
                             onClick={toggleTheme}
-                            aria-label={
-                                theme === "dark"
-                                    ? "Alternar para modo claro"
-                                    : "Alternar para modo escuro"
-                            }
+                            aria-label={themeLabel}
                             aria-pressed={theme === "dark"}
                         >
                             {theme === "dark" ? <IconSun /> : <IconMoon />}
@@ -203,9 +210,7 @@ export const Header: React.FC = () => {
                             id="site-hamburger"
                             className="header__hamburger"
                             type="button"
-                            aria-label={
-                                isMenuOpen ? "Fechar menu" : "Abrir menu"
-                            }
+                            aria-label={menuLabel}
                             aria-expanded={isMenuOpen}
                             aria-controls="mobile-nav"
                             onClick={() => setIsMenuOpen((v) => !v)}
@@ -225,7 +230,7 @@ export const Header: React.FC = () => {
                 className={`mobile-nav${isMenuOpen ? " is-open" : ""}`}
                 role="dialog"
                 aria-modal="true"
-                aria-label="Menu de navegação"
+                aria-label={navMenuLabel}
                 aria-hidden={!isMenuOpen}
                 onClick={(e) => {
                     if (e.target === mobileNavRef.current) closeMenu();
@@ -267,11 +272,7 @@ export const Header: React.FC = () => {
                         className="header__ctrl"
                         type="button"
                         onClick={toggleTheme}
-                        aria-label={
-                            theme === "dark"
-                                ? "Alternar para modo claro"
-                                : "Alternar para modo escuro"
-                        }
+                        aria-label={themeLabel}
                     >
                         {theme === "dark" ? <IconSun /> : <IconMoon />}
                     </button>

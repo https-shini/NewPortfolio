@@ -100,7 +100,7 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index }) => {
                     <div className="career-company__meta">
                         <span className="career-company__meta-item">
                             <IconLocation width={13} height={13} aria-hidden="true" />
-                            {company.location}
+                            {company.location[lang]}
                         </span>
                         <span className="career-company__meta-sep" aria-hidden="true">·</span>
                         <span className="career-company__meta-item">

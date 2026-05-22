@@ -108,15 +108,16 @@ function buildMailtoHref(lang: string): string {
 interface FooterBrandProps {
     tagline: string;
     onLogoClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+    lang: "pt" | "en";
 }
 
-const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick }) => (
+const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
     <div className="footer__brand">
         {/* Logo — mesma identidade visual do Header */}
         <a
             href={`#${SECTION_IDS.HOME}`}
             className="footer__logo"
-            aria-label="Guilherme Cruz — voltar ao início da página"
+            aria-label={lang === "pt" ? "Guilherme Cruz — voltar ao início da página" : "Guilherme Cruz — back to top"}
             onClick={onLogoClick}
         >
             <span className="footer__logo-dot" />
@@ -130,7 +131,7 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick }) => (
         <p className="footer__brand-tagline">{tagline}</p>
 
         {/* Redes sociais */}
-        <nav aria-label="Redes sociais de Guilherme Cruz">
+        <nav aria-label={lang === "pt" ? "Redes sociais de Guilherme Cruz" : "Guilherme Cruz's social media"}>
             <ul className="footer__social" role="list">
                 <li>
                     <a
@@ -138,7 +139,7 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick }) => (
                         className="social-link"
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label="GitHub de Guilherme Cruz (abre em nova aba)"
+                        aria-label={lang === "pt" ? "GitHub de Guilherme Cruz (abre em nova aba)" : "Guilherme Cruz on GitHub (opens in new tab)"}
                     >
                         <IconGitHub width={16} height={16} />
                     </a>
@@ -149,7 +150,7 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick }) => (
                         className="social-link"
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label="LinkedIn de Guilherme Cruz (abre em nova aba)"
+                        aria-label={lang === "pt" ? "LinkedIn de Guilherme Cruz (abre em nova aba)" : "Guilherme Cruz on LinkedIn (opens in new tab)"}
                     >
                         <IconLinkedIn width={16} height={16} />
                     </a>
@@ -206,10 +207,11 @@ interface FooterContactProps {
     mailtoHref: string;
     ctaLabel: string;
     location: string;
+    lang: "pt" | "en";
 }
 
 const FooterContact = memo<FooterContactProps>(
-    ({ colTitle, mailtoHref, ctaLabel, location }) => (
+    ({ colTitle, mailtoHref, ctaLabel, location, lang }) => (
         <div className="footer__col footer__col--contact">
             <h3 className="footer__col-title">{colTitle}</h3>
 
@@ -244,7 +246,7 @@ const FooterContact = memo<FooterContactProps>(
                     className="footer__contact-item"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="LinkedIn de Guilherme Cruz (abre em nova aba)"
+                    aria-label={lang === "pt" ? "LinkedIn de Guilherme Cruz (abre em nova aba)" : "Guilherme Cruz on LinkedIn (opens in new tab)"}
                 >
                     linkedin.com/in/oguilherme-cruz
                 </a>
@@ -271,10 +273,11 @@ interface FooterBottomProps {
     made: string;
     coffee: string;
     cvLabel: string;
+    lang: "pt" | "en";
 }
 
 const FooterBottom = memo<FooterBottomProps>(
-    ({ year, rights, made, coffee, cvLabel }) => (
+    ({ year, rights, made, coffee, cvLabel, lang }) => (
         <div className="footer__bottom">
             {/* Copyright com <time> semântico */}
             <p className="footer__copyright">
@@ -289,7 +292,7 @@ const FooterBottom = memo<FooterBottomProps>(
                     className="footer__cv-link"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="Download do currículo em PDF (abre em nova aba)"
+                    aria-label={lang === "pt" ? "Download do currículo em PDF (abre em nova aba)" : "Download résumé as PDF (opens in new tab)"}
                 >
                     <IconDownload width={12} height={12} />
                     {cvLabel}
@@ -297,7 +300,7 @@ const FooterBottom = memo<FooterBottomProps>(
 
                 <p
                     className="footer__made"
-                    aria-label={`${made} React e muito café`}
+                    aria-label={`${made} React & ${coffee}`}
                 >
                     {made}
                     <IconHeart
@@ -337,7 +340,7 @@ export const Footer: React.FC = () => {
     return (
         <footer
             className="footer"
-            aria-label="Rodapé do portfólio de Guilherme Cruz"
+            aria-label={lang === "pt" ? "Rodapé do portfólio de Guilherme Cruz" : "Guilherme Cruz's portfolio footer"}
         >
             {/* ── 1. Grid principal ────────────────────────────────────────────── */}
             <div className="footer__main">
@@ -347,12 +350,13 @@ export const Footer: React.FC = () => {
                         <FooterBrand
                             tagline={t("footer.tagline")}
                             onLogoClick={(e) => handleInternalNav(e, SECTION_IDS.HOME)}
+                            lang={lang}
                         />
 
                         {/* Coluna 2 — Navegação */}
                         <FooterNavCol
                             title={t("footer.nav")}
-                            navLabel="Links de navegação do rodapé"
+                            navLabel={lang === "pt" ? "Links de navegação do rodapé" : "Footer navigation links"}
                         >
                             {NAV_ITEMS.map(({ id, key }) => (
                                 <li key={id}>
@@ -372,7 +376,7 @@ export const Footer: React.FC = () => {
                         {/* Coluna 3 — Projetos */}
                         <FooterNavCol
                             title={t("footer.projects")}
-                            navLabel="Links de projetos em destaque"
+                            navLabel={lang === "pt" ? "Links de projetos em destaque" : "Featured project links"}
                         >
                             {PROJECT_ITEMS.map((item) => (
                                 <li key={item.href}>
@@ -382,7 +386,7 @@ export const Footer: React.FC = () => {
                                             className="footer__link"
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            aria-label={`${item.label} (abre em nova aba)`}
+                                            aria-label={`${item.label}${lang === "pt" ? " (abre em nova aba)" : " (opens in new tab)"}`}
                                         >
                                             {item.label}
                                         </a>
@@ -407,6 +411,7 @@ export const Footer: React.FC = () => {
                             mailtoHref={mailtoHref}
                             ctaLabel={ctaLabel}
                             location={t("footer.location")}
+                            lang={lang}
                         />
                     </div>
                 </div>
@@ -424,6 +429,7 @@ export const Footer: React.FC = () => {
                         made={t("footer.made")}
                         coffee={t("footer.coffee")}
                         cvLabel={cvLabel}
+                        lang={lang}
                     />
                 </div>
             </div>

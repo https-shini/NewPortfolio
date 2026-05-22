@@ -64,6 +64,17 @@ body {
         color var(--transition-slow);
 }
 
+/* ── Refinamento tipográfico ─────────────────────────────────────────────────
+   text-wrap: pretty evita linhas órfãas/viúvas e "rios" em parágrafos;
+   balance equilibra títulos curtos. Acabamento premium sem justify forçado. */
+p {
+    text-wrap: pretty;
+}
+
+h1, h2, h3, h4 {
+    text-wrap: balance;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════════
    02. ELEMENTOS BASE
 ══════════════════════════════════════════════════════════════════════════════ */

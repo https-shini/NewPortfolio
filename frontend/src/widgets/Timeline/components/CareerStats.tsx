@@ -44,7 +44,7 @@ export const CareerStats: React.FC<CareerStatsProps> = ({ companies }) => {
             ? buildDuration(earliestStart, hasActive ? undefined : latestEnd, lang)
             : "—";
 
-        const comps = [...new Set(allPositions.flatMap(p => p.tags))];
+        const comps = [...new Set(allPositions.flatMap(p => p.tags.map(tg => tg[lang])))];
 
         return {
             experience: exp,

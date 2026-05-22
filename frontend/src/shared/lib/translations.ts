@@ -84,6 +84,16 @@ export type TranslationKey =
     | "education.filter.cert"
     | "education.showMore"
     | "education.showLess"
+    | "education.status.active"
+    | "education.status.done"
+    | "education.tech.label"
+    | "education.skills.label"
+    | "education.progress"
+    | "about.bio"
+    | "about.goal.body"
+    | "about.specs.title"
+    | "contact.cta.heading"
+    | "contact.cta.lead"
 
     /* ── FEATURED ──────────────────────────────────── */
     | "featured.badge"
@@ -117,6 +127,8 @@ export type TranslationKey =
     | "work.eyebrow"
     | "work.btn.demo"
     | "work.btn.repo"
+    | "work.preview"
+    | "work.block.stack"
 
     /* ── CONTACT ───────────────────────────────────── */
     | "contact.title"
@@ -176,7 +188,7 @@ const pt: Translations = {
     "hero.role": "Desenvolvedor Júnior",
     "hero.sub": "Desenvolvimento Web",
     "hero.desc":
-        "Focado em desenvolvimento web moderno com React, APIs e boas práticas de código.",
+        "Estudante de Ciência da Computação em busca da primeira oportunidade como **Desenvolvedor Júnior** ou **Estagiário**. Experiência prática com **React, Node.js e MySQL** no desenvolvimento de aplicações web — busco evoluir tecnicamente e contribuir com soluções eficientes em um ambiente colaborativo.",
     "hero.status": "Disponível para oportunidades",
     "hero.cta.work": "Ver projetos",
     "hero.cta.cv": "Download CV",
@@ -250,6 +262,19 @@ const pt: Translations = {
     "education.filter.cert": "Certificações",
     "education.showMore": "Ver mais",
     "education.showLess": "Ver menos",
+    "education.status.active": "Em andamento",
+    "education.status.done": "Concluído",
+    "education.tech.label": "Tecnologias",
+    "education.skills.label": "Competências",
+    "education.progress": "concluído",
+    "about.bio":
+        "Sou estudante de **Ciência da Computação** na Universidade Cruzeiro do Sul, com formação técnica em **Desenvolvimento de Sistemas** pela **ETEC Vila Formosa**. Ao longo da minha formação, desenvolvi uma base sólida em **lógica de programação**, **estruturas de dados** e **fundamentos de engenharia de software**, aplicando esses conceitos na construção de **projetos práticos** e soluções reais.\n\nTenho experiência no desenvolvimento de **aplicações web modernas**, com foco em **frontend** e integração com **APIs**. Utilizo tecnologias como **React**, **JavaScript/TypeScript**, **Node.js** e **MySQL**, criando **interfaces responsivas**, organizadas e com atenção à **experiência do usuário (UX/UI)** — sempre buscando entregar soluções **funcionais**, **performáticas** e bem estruturadas.\n\nAlém do desenvolvimento web, tenho interesse em áreas como **Java**, **machine learning**, **segurança da informação** e **engenharia de software**, buscando construir soluções **escaláveis** e **robustas**. Em meus projetos, aplico **código limpo**, **boas práticas** e **versionamento com Git**, mantendo foco em **organização**, **manutenibilidade** e **evolução contínua** como desenvolvedor.",
+    "about.goal.body":
+        "Estou em busca da minha primeira oportunidade como **Desenvolvedor Júnior** ou **Estagiário em Desenvolvimento**, com o objetivo de aplicar meus conhecimentos em **projetos reais**, evoluir minhas **habilidades técnicas** e contribuir ativamente com o time. Tenho interesse em **desenvolvimento web** e **Java**, além de explorar áreas como **segurança da informação** e **arquitetura de software**.\n\nMeu foco é desenvolver aplicações com **boa estrutura**, **escalabilidade** e **manutenibilidade**, aplicando **boas práticas** e **organização de código**. Busco um ambiente onde eu possa crescer profissionalmente, contribuir com **resolução de problemas**, manter **aprendizado contínuo** e entregar soluções com **qualidade** e **performance**.",
+    "about.specs.title": "Áreas de especialização",
+    "contact.cta.heading": "Vamos **construir algo** juntos?",
+    "contact.cta.lead":
+        "Estou pronto para iniciar minha trajetória como **Desenvolvedor Júnior** ou **Estagiário**, contribuindo com **aplicações modernas**, **bem estruturadas** e voltadas para **performance** e **experiência do usuário**.\n\nSe você procura alguém **dedicado**, com **vontade de evoluir** e que **contribua de forma prática em projetos reais**, vamos conversar e construir **soluções juntos**!",
 
     /* FEATURED */
     "featured.eyebrow": "Destaque",
@@ -285,6 +310,8 @@ const pt: Translations = {
     "work.eyebrow": "Portfólio",
     "work.btn.demo": "Acessar projeto",
     "work.btn.repo": "Repositório",
+    "work.preview": "Prévia",
+    "work.block.stack": "Stack",
 
     /* CONTACT */
     "contact.title": "Vamos trabalhar juntos",
@@ -346,7 +373,7 @@ const en: Translations = {
     "hero.role": "Junior Developer",
     "hero.sub": "Web Development",
     "hero.desc":
-        "Focused on modern web development with React, APIs and clean code practices.",
+        "Computer Science student seeking a first opportunity as a **Junior Developer** or **Intern**. Hands-on experience with **React, Node.js and MySQL** in web development — looking to grow technically and contribute efficient solutions in a collaborative environment.",
     "hero.status": "Open to opportunities",
     "hero.cta.work": "View projects",
     "hero.cta.cv": "Download CV",
@@ -420,6 +447,19 @@ const en: Translations = {
     "education.filter.cert": "Certifications",
     "education.showMore": "Show more",
     "education.showLess": "Show less",
+    "education.status.active": "In progress",
+    "education.status.done": "Completed",
+    "education.tech.label": "Technologies",
+    "education.skills.label": "Skills",
+    "education.progress": "completed",
+    "about.bio":
+        "I'm a **Computer Science** student at Universidade Cruzeiro do Sul, with a technical background in **Systems Development** from **ETEC Vila Formosa**. Throughout my education I built a solid foundation in **programming logic**, **data structures** and **software engineering fundamentals**, applying these concepts to **hands-on projects** and real-world solutions.\n\nI have experience building **modern web applications**, focused on the **frontend** and **API** integration. I work with technologies such as **React**, **JavaScript/TypeScript**, **Node.js** and **MySQL**, creating **responsive**, well-organized **interfaces** with attention to **user experience (UX/UI)** — always aiming to deliver **functional**, **performant** and well-structured solutions.\n\nBeyond web development, I'm interested in areas like **Java**, **machine learning**, **information security** and **software engineering**, aiming to build **scalable** and **robust** solutions. Across my projects I apply **clean code**, **good practices** and **version control with Git**, keeping a focus on **organization**, **maintainability** and **continuous growth** as a developer.",
+    "about.goal.body":
+        "I'm looking for my first opportunity as a **Junior Developer** or **Development Intern**, aiming to apply my knowledge to **real projects**, sharpen my **technical skills** and actively contribute to the team. I'm interested in **web development** and **Java**, and I also explore areas like **information security** and **software architecture**.\n\nMy focus is building applications with **solid structure**, **scalability** and **maintainability**, applying **best practices** and **clean code organization**. I'm looking for an environment where I can grow professionally, contribute to **problem-solving**, keep up **continuous learning** and deliver solutions with **quality** and **performance**.",
+    "about.specs.title": "Areas of expertise",
+    "contact.cta.heading": "Let's **build something** together?",
+    "contact.cta.lead":
+        "I'm ready to start my journey as a **Junior Developer** or **Intern**, contributing to **modern**, **well-structured** applications focused on **performance** and **user experience**.\n\nIf you're looking for someone **dedicated**, **eager to grow** and ready to **contribute practically to real projects**, let's talk and **build solutions together**!",
 
     /* FEATURED */
     "featured.eyebrow": "Featured",
@@ -454,6 +494,8 @@ const en: Translations = {
     "work.eyebrow": "Portfolio",
     "work.btn.demo": "View project",
     "work.btn.repo": "Repository",
+    "work.preview": "Preview",
+    "work.block.stack": "Stack",
 
     /* CONTACT */
     "contact.title": "Let's work together",
