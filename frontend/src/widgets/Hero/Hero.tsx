@@ -1,6 +1,7 @@
 import React from "react";
 import "./Hero.css";
 import { useLang } from "@/shared/hooks/useLang";
+import { renderRich } from "@/shared/lib/richText";
 import { scrollToSection } from "@/shared/lib/smoothScroll";
 import {
     GITHUB_URL,
@@ -19,7 +20,7 @@ import {
 } from "@/shared/ui/Icons";
 
 export const Hero: React.FC = () => {
-    const { t } = useLang();
+    const { t, lang } = useLang();
 
     const handleScroll = (e: React.MouseEvent, id: string) => {
         e.preventDefault();
@@ -44,23 +45,9 @@ export const Hero: React.FC = () => {
                         <h1 className="hero__name" id="hero-name">
                             Guilherme Cruz
                         </h1>
-                        <p
-                            className="hero__role"
-                            aria-label="Desenvolvedor Junior"
-                        >
-                            {t("hero.role")}
-                        </p>
+                        <p className="hero__role">{t("hero.role")}</p>
                     </div>
-                    <p className="hero__desc">
-                        Estudante de Ciência da Computação em busca da primeira
-                        oportunidade como <strong>Desenvolvedor Júnior</strong>{" "}
-                        ou <strong>Estagiário</strong>.<br></br>
-                        Experiência prática com{" "}
-                        <strong>React, Node.js e MySQL</strong> no
-                        desenvolvimento de aplicações web. Busco evoluir
-                        tecnicamente e contribuir com soluções eficientes em um
-                        ambiente colaborativo.
-                    </p>
+                    <p className="hero__desc">{renderRich(t("hero.desc"))}</p>
 
                     <div className="hero__actions">
                         <button
@@ -98,7 +85,7 @@ export const Hero: React.FC = () => {
                             className="social-link"
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="GitHub de Guilherme Cruz"
+                            aria-label={lang === "pt" ? "GitHub de Guilherme Cruz" : "Guilherme Cruz on GitHub"}
                         >
                             <IconGitHub />
                         </a>
@@ -107,14 +94,14 @@ export const Hero: React.FC = () => {
                             className="social-link"
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label="LinkedIn de Guilherme Cruz"
+                            aria-label={lang === "pt" ? "LinkedIn de Guilherme Cruz" : "Guilherme Cruz on LinkedIn"}
                         >
                             <IconLinkedIn />
                         </a>
                         <a
                             href="mailto:guilherme.cruz@gmail.com"
                             className="social-link"
-                            aria-label="Enviar e-mail para Guilherme Cruz"
+                            aria-label={lang === "pt" ? "Enviar e-mail para Guilherme Cruz" : "Email Guilherme Cruz"}
                         >
                             <IconGmail />
                         </a>
@@ -147,10 +134,10 @@ export const Hero: React.FC = () => {
             <button
                 type="button"
                 className="hero__scroll"
-                aria-label="Rolar para a próxima seção"
+                aria-label={lang === "pt" ? "Rolar para a próxima seção" : "Scroll to the next section"}
                 onClick={(e) => handleScroll(e, SECTION_IDS.ABOUT)}
             >
-                <span className="hero__scroll-text">Explorar</span>
+                <span className="hero__scroll-text">{t("hero.scroll")}</span>
 
                 <div className="hero__scroll-line" aria-hidden="true">
                     <span className="hero__scroll-dot" />

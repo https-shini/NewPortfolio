@@ -100,7 +100,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
             >
                 {/* Header row: title + status */}
                 <div className="position-entry__title-row">
-                    <h4 className="position-entry__title">{position.title}</h4>
+                    <h4 className="position-entry__title">{position.title[lang]}</h4>
                     <span
                         className={`position-entry__status position-entry__status--${position.statusType}`}
                     >
@@ -139,7 +139,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
 
                 {/* Summary (sempre visível como tagline do cargo) */}
                 {position.summary && (
-                    <p className="position-entry__summary">{position.summary}</p>
+                    <p className="position-entry__summary">{position.summary[lang]}</p>
                 )}
 
                 <span className="position-entry__chevron" aria-hidden="true">
@@ -167,7 +167,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
                             <ul className="position-entry__highlights">
                                 {highlights.map((h, i) => (
                                     <li key={i} className="position-entry__highlight">
-                                        {h.text}
+                                        {h.text[lang]}
                                     </li>
                                 ))}
                             </ul>
@@ -183,7 +183,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
                             <ul className="position-entry__bullets">
                                 {activities.map((b, i) => (
                                     <li key={i} className="position-entry__bullet">
-                                        {b.text}
+                                        {b.text[lang]}
                                     </li>
                                 ))}
                             </ul>
@@ -197,9 +197,9 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
                                 {t("career.skills")}
                             </h5>
                             <ul className="position-entry__tags">
-                                {position.tags.map(tag => (
-                                    <li key={tag} className="position-entry__tag">
-                                        {tag}
+                                {position.tags.map((tag, i) => (
+                                    <li key={i} className="position-entry__tag">
+                                        {tag[lang]}
                                     </li>
                                 ))}
                             </ul>

@@ -83,7 +83,7 @@ export const RecommendationModal: React.FC<RecommendationModalProps> = ({
     const dateLabel    = lang === 'pt' ? 'Data'         : 'Date';
     const contextLabel = lang === 'pt' ? 'Contexto'     : 'Context';
 
-    const paragraphs = item.text.split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
+    const paragraphs = item.text[lang].split(/\n{2,}/).map(p => p.trim()).filter(Boolean);
 
     const modal = (
         <div
@@ -157,7 +157,7 @@ export const RecommendationModal: React.FC<RecommendationModalProps> = ({
                         <h3 id="rec-modal-author" className="rec-modal__name">
                             {item.authorName}
                         </h3>
-                        <p className="rec-modal__role">{item.authorRole}</p>
+                        <p className="rec-modal__role">{item.authorRole[lang]}</p>
                     </div>
 
                     <dl className="rec-modal__facts">
@@ -182,8 +182,8 @@ export const RecommendationModal: React.FC<RecommendationModalProps> = ({
                         <div className="rec-modal__tags-block">
                             <span className="rec-modal__tags-label">{tagsLabel}</span>
                             <ul className="rec-modal__tags" aria-label={tagsLabel}>
-                                {item.tags.map(tag => (
-                                    <li key={tag} className="rec-modal__tag">{tag}</li>
+                                {item.tags.map((tag, i) => (
+                                    <li key={i} className="rec-modal__tag">{tag[lang]}</li>
                                 ))}
                             </ul>
                         </div>

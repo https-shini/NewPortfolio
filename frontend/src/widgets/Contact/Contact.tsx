@@ -1,6 +1,7 @@
 import React from "react";
 import "./Contact.css";
 import { useLang } from "@/shared/hooks/useLang";
+import { renderRich, renderRichParagraphs } from "@/shared/lib/richText";
 import {
     IconEmail,
     IconLinkedIn,
@@ -68,7 +69,7 @@ const PROFILE_DATA = [
    COMPONENTE PRINCIPAL
 ═══════════════════════════════════════════════════════════════════════════ */
 export const Contact: React.FC = () => {
-    const { t } = useLang();
+    const { t, lang } = useLang();
 
     /* Subject e body pré-preenchidos no mailto */
     const mailtoHref = [
@@ -136,28 +137,10 @@ export const Contact: React.FC = () => {
 
                         {/* Heading principal */}
                         <h3 className="contact__cta-heading">
-                            Vamos <span>construir algo</span> juntos?
+                            {renderRich(t("contact.cta.heading"))}
                         </h3>
 
-                        <p className="contact__cta-desc">
-                            Estou pronto para iniciar minha trajetória como{" "}
-                            <strong>Desenvolvedor Júnior</strong> ou{" "}
-                            <strong>Estagiário</strong>, contribuindo com{" "}
-                            <strong>aplicações modernas</strong>,{" "}
-                            <strong>bem estruturadas</strong> e voltadas para{" "}
-                            <strong>performance</strong> e{" "}
-                            <strong>experiência do usuário</strong>.
-                        </p>
-
-                        <p className="contact__cta-desc">
-                            Se você procura alguém <strong>dedicado</strong>,
-                            com <strong>vontade de evoluir</strong> e{" "}
-                            <strong>
-                                contribuir de forma prática em projetos reais
-                            </strong>
-                            , vamos conversar e construir{" "}
-                            <strong>soluções juntos</strong>!
-                        </p>
+                        {renderRichParagraphs(t("contact.cta.lead"), "contact__cta-desc")}
 
                         {/* ── Botão principal de email ──────────────── */}
                         <a
@@ -198,14 +181,14 @@ export const Contact: React.FC = () => {
                         <div
                             className="contact__alt-links"
                             role="list"
-                            aria-label="Outras formas de contato"
+                            aria-label={lang === "pt" ? "Outras formas de contato" : "Other ways to get in touch"}
                         >
                             <a
                                 href={LINKEDIN_URL}
                                 className="contact__alt-link"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label="Acessar LinkedIn de Guilherme Cruz (abre em nova aba)"
+                                aria-label={lang === "pt" ? "Acessar LinkedIn de Guilherme Cruz (abre em nova aba)" : "Guilherme Cruz on LinkedIn (opens in new tab)"}
                                 role="listitem"
                             >
                                 <div
@@ -229,7 +212,7 @@ export const Contact: React.FC = () => {
                                 className="contact__alt-link"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label="Acessar GitHub de Guilherme Cruz (abre em nova aba)"
+                                aria-label={lang === "pt" ? "Acessar GitHub de Guilherme Cruz (abre em nova aba)" : "Guilherme Cruz on GitHub (opens in new tab)"}
                                 role="listitem"
                             >
                                 <div
@@ -331,7 +314,7 @@ export const Contact: React.FC = () => {
                         {/* ── Disponibilidade ───────── */}
                         <aside
                             className="contact__response"
-                            aria-label="Disponibilidade para contato"
+                            aria-label={lang === "pt" ? "Disponibilidade para contato" : "Contact availability"}
                         >
                             <div
                                 className="contact__response-icon"
