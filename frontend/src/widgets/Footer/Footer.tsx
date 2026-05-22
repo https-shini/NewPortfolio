@@ -18,6 +18,8 @@ import {
     AUTHOR_EMAIL,
     GITHUB_URL,
     LINKEDIN_URL,
+    CV_URL,
+    SECTION_IDS,
 } from "@/shared/config/constants";
 import {
     IconGitHub,
@@ -50,16 +52,18 @@ interface ProjectItem {
 ───────────────────────────────────────────────────────────────────────────── */
 
 const NAV_ITEMS: NavItem[] = [
-    { id: "hero", key: "nav.home" },
-    { id: "about", key: "nav.about" },
-    { id: "timeline", key: "nav.career" },
-    { id: "featured", key: "nav.featured" },
-    { id: "work", key: "nav.work" },
-    { id: "contact", key: "nav.contact" },
+    { id: SECTION_IDS.HOME,            key: "nav.home" },
+    { id: SECTION_IDS.ABOUT,           key: "nav.about" },
+    { id: SECTION_IDS.CAREER,          key: "nav.career" },
+    { id: SECTION_IDS.EDUCATION,       key: "nav.education" },
+    { id: SECTION_IDS.FEATURED,        key: "nav.featured" },
+    { id: SECTION_IDS.WORK,            key: "nav.work" },
+    { id: SECTION_IDS.RECOMMENDATIONS, key: "nav.recommendations" },
+    { id: SECTION_IDS.CONTACT,         key: "nav.contact" },
 ];
 
 const PROJECT_ITEMS: ProjectItem[] = [
-    { label: "HomeMade Gourmet", href: "#featured", external: false },
+    { label: "HomeMade Gourmet", href: `#${SECTION_IDS.FEATURED}`, external: false },
     {
         label: "Web Chat",
         href: "https://chat-frontend-g42t.onrender.com",
@@ -110,7 +114,7 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick }) => (
     <div className="footer__brand">
         {/* Logo — mesma identidade visual do Header */}
         <a
-            href="#hero"
+            href={`#${SECTION_IDS.HOME}`}
             className="footer__logo"
             aria-label="Guilherme Cruz — voltar ao início da página"
             onClick={onLogoClick}
@@ -281,7 +285,7 @@ const FooterBottom = memo<FooterBottomProps>(
             {/* Ações secundárias: CV + made with */}
             <div className="footer__bottom-end">
                 <a
-                    href="/curriculo.pdf"
+                    href={CV_URL}
                     className="footer__cv-link"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -342,7 +346,7 @@ export const Footer: React.FC = () => {
                         {/* Coluna 1 — Brand */}
                         <FooterBrand
                             tagline={t("footer.tagline")}
-                            onLogoClick={(e) => handleInternalNav(e, "hero")}
+                            onLogoClick={(e) => handleInternalNav(e, SECTION_IDS.HOME)}
                         />
 
                         {/* Coluna 2 — Navegação */}
@@ -387,7 +391,7 @@ export const Footer: React.FC = () => {
                                             href={item.href}
                                             className="footer__link"
                                             onClick={(e) =>
-                                                handleInternalNav(e, "featured")
+                                                handleInternalNav(e, SECTION_IDS.FEATURED)
                                             }
                                         >
                                             {item.label}

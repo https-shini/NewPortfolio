@@ -2,13 +2,13 @@ import React from "react";
 import "./Work.css";
 import { useLang } from "@/shared/hooks/useLang";
 import { WorkProject } from "./Work.types";
-import { IconGitHub } from "@/shared/ui/Icons";
+import { IconGitHub, IconExternalLink } from "@/shared/ui/Icons";
 
 const PROJECTS: WorkProject[] = [
     {
         id: "webchat",
         emoji: "💬",
-        title: "💬 Web Chat",
+        title: "Web Chat",
         desc: "Aplicação de chat em tempo real utilizando WebSocket, com suporte a múltiplas salas e interação direta no navegador.",
         imageUrl:
             "https://raw.githubusercontent.com/https-shini/vite-portfolio/refs/heads/main/public/destaque/Icons/projetos/work01.png",
@@ -23,7 +23,7 @@ const PROJECTS: WorkProject[] = [
     {
         id: "auth",
         emoji: "🔐",
-        title: "🔐 Auth Service",
+        title: "Auth Service",
         desc: "Serviço de autenticação com foco em segurança, gerenciamento de usuários e implementação de fluxo com JWT.",
         imageUrl:
             "https://raw.githubusercontent.com/https-shini/AuthService/refs/heads/main/read-model/img/Login01.png",
@@ -38,7 +38,7 @@ const PROJECTS: WorkProject[] = [
     {
         id: "financas",
         emoji: "💰",
-        title: "💰 Controle Financeiro",
+        title: "Controle Financeiro",
         desc: "Aplicação para gestão financeira pessoal com controle de entradas, saídas e visualização de saldo em tempo real.",
         imageUrl:
             "https://raw.githubusercontent.com/https-shini/vite-portfolio/refs/heads/main/public/destaque/Icons/projetos/work02.png",
@@ -57,7 +57,7 @@ export const Work: React.FC = () => {
 
     return (
         <section
-            id="work"
+            id="projetos"
             className="work section"
             aria-labelledby="work-title"
             data-reveal
@@ -65,7 +65,7 @@ export const Work: React.FC = () => {
             <div className="container">
                 {/* Header */}
                 <header className="section-header">
-                    <span className="section-eyebrow">Projetos</span>
+                    <span className="section-eyebrow">{t("work.eyebrow")}</span>
 
                     <h2 className="section-title" id="work-title">
                         {t("work.title")}
@@ -76,19 +76,25 @@ export const Work: React.FC = () => {
 
                 {/* Grid */}
                 <div className="work__grid">
-                    {PROJECTS.map((project) => (
+                    {PROJECTS.map((project, i) => (
                         <article
                             className="work-card"
                             key={project.id}
                             aria-labelledby={`project-${project.id}`}
+                            style={{ ["--card-index" as string]: i }}
                         >
                             {/* Thumbnail */}
                             <div className="work-card__thumb">
                                 <img
                                     src={project.imageUrl}
-                                    alt={`Preview do projeto ${project.title}`}
+                                    alt={`Preview — ${project.title}`}
                                     loading="lazy"
+                                    decoding="async"
                                 />
+                                <span className="work-card__thumb-grad" aria-hidden="true" />
+                                <span className="work-card__emoji" aria-hidden="true">
+                                    {project.emoji}
+                                </span>
                             </div>
 
                             {/* Conteúdo */}
@@ -100,12 +106,10 @@ export const Work: React.FC = () => {
                                     {project.title}
                                 </h3>
 
-                                <p className="work-card__desc">
-                                    {project.desc}
-                                </p>
+                                <p className="work-card__desc">{project.desc}</p>
 
                                 {/* Tecnologias */}
-                                <div className="work-card__tech">
+                                <div className="work-card__tech" aria-label="Stack">
                                     {project.tech.map((tech) => (
                                         <span
                                             key={tech.label}
@@ -124,8 +128,10 @@ export const Work: React.FC = () => {
                                     className="work-btn work-btn--primary"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    aria-label={`${t("work.btn.demo")} — ${project.title}`}
                                 >
-                                    Acessar Projeto
+                                    <IconExternalLink width={14} height={14} aria-hidden="true" />
+                                    {t("work.btn.demo")}
                                 </a>
 
                                 <a
@@ -133,8 +139,10 @@ export const Work: React.FC = () => {
                                     className="work-btn work-btn--outline"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    aria-label={`${t("work.btn.repo")} — ${project.title}`}
                                 >
-                                    Acessar Repositório
+                                    <IconGitHub width={15} height={15} aria-hidden="true" />
+                                    {t("work.btn.repo")}
                                 </a>
                             </div>
                         </article>

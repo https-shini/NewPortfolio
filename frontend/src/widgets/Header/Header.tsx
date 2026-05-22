@@ -4,14 +4,17 @@ import { useTheme } from "@/shared/hooks/useTheme";
 import { useLang } from "@/shared/hooks/useLang";
 import { scrollToSection } from "@/shared/lib/smoothScroll";
 import { IconSun, IconMoon, IconTranslate } from "@/shared/ui/Icons";
+import { SECTION_IDS } from "@/shared/config/constants";
 
 const NAV_LINKS = [
-    { href: "hero", key: "nav.home" as const },
-    { href: "about", key: "nav.about" as const },
-    { href: "timeline", key: "nav.career" as const },
-    { href: "featured", key: "nav.featured" as const },
-    { href: "work", key: "nav.work" as const },
-    { href: "contact", key: "nav.contact" as const },
+    { href: SECTION_IDS.HOME,            key: "nav.home" as const },
+    { href: SECTION_IDS.ABOUT,           key: "nav.about" as const },
+    { href: SECTION_IDS.CAREER,          key: "nav.career" as const },
+    { href: SECTION_IDS.EDUCATION,       key: "nav.education" as const },
+    { href: SECTION_IDS.FEATURED,        key: "nav.featured" as const },
+    { href: SECTION_IDS.WORK,            key: "nav.work" as const },
+    { href: SECTION_IDS.RECOMMENDATIONS, key: "nav.recommendations" as const },
+    { href: SECTION_IDS.CONTACT,         key: "nav.contact" as const },
 ];
 
 const LANG_META = {
@@ -25,7 +28,7 @@ export const Header: React.FC = () => {
 
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState("hero");
+    const [activeSection, setActiveSection] = useState<string>(SECTION_IDS.HOME);
     const [langSwitching, setLangSwitching] = useState(false);
 
     const mobileNavRef = useRef<HTMLElement>(null);
@@ -134,10 +137,10 @@ export const Header: React.FC = () => {
                 <div className="header__inner">
                     {/* ── Logo tipográfico ──────────────────────────── */}
                     <a
-                        href="#hero"
+                        href={`#${SECTION_IDS.HOME}`}
                         className="header__logo"
                         aria-label="Guilherme Cruz — voltar ao início"
-                        onClick={(e) => handleNavClick(e, "hero")}
+                        onClick={(e) => handleNavClick(e, SECTION_IDS.HOME)}
                     >
                         <span className="header__logo-dot" aria-hidden="true" />
                         <span className="header__logo-name">
@@ -275,9 +278,9 @@ export const Header: React.FC = () => {
                 </div>
 
                 <a
-                    href="#contact"
+                    href={`#${SECTION_IDS.CONTACT}`}
                     className="mobile-nav__cta"
-                    onClick={(e) => handleNavClick(e, "contact")}
+                    onClick={(e) => handleNavClick(e, SECTION_IDS.CONTACT)}
                 >
                     <span>{ctaLabel}</span>
                     <span aria-hidden="true">↗</span>

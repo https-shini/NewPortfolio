@@ -585,3 +585,16 @@
     color: #fff;
     transform: translateY(-1px);
 }
+
+/* ── prefers-reduced-motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .header,
+    .header *,
+    .mobile-nav,
+    .mobile-nav *,
+    .hamburger,
+    .hamburger * {
+        animation: none !important;
+        transition: none !important;
+    }
+}

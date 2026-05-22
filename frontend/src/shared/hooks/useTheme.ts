@@ -39,6 +39,12 @@ function getInitialTheme(): Theme {
  * Centralizado aqui para garantir que as duas fontes de verdade
  * (data-theme no <html> e classes no <body>) sejam sempre sincronizadas.
  */
+/* Cor do meta theme-color por tema — afeta a barra de navegador mobile */
+const THEME_COLOR: Record<Theme, string> = {
+    dark:  "#040710",
+    light: "#f2f4f8",
+};
+
 function applyTheme(theme: Theme): void {
     const isDark = theme === "dark";
     const root = document.documentElement;
@@ -53,6 +59,14 @@ function applyTheme(theme: Theme): void {
     /* Classes no body — usadas pelos seletores body.light-mode / body.dark-mode */
     body.classList.toggle("dark-mode", isDark);
     body.classList.toggle("light-mode", !isDark);
+
+    /* meta[name="theme-color"] dinâmico — barra de browser mobile alinhada ao tema */
+    const themeColorMeta = document.querySelector<HTMLMetaElement>(
+        'meta[name="theme-color"]',
+    );
+    if (themeColorMeta) {
+        themeColorMeta.setAttribute("content", THEME_COLOR[theme]);
+    }
 
     /* Persiste preferência */
     try {

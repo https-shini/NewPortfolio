@@ -1,0 +1,553 @@
+/* ════════════════════════════════════════════════════════════════
+   PositionEntry — Card de cargo com expansão inline (acordeão)
+   Vive dentro da trilha de progressão do card de empresa (CareerNode).
+═══════════════════════════════════════════════════════════════ */
+
+.position-entry {
+    --stagger-delay: calc(var(--stagger-index, 0) * 90ms);
+
+    position: relative;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    isolation: isolate;
+
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+        opacity 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1),
+        border-color 0.3s ease-out,
+        box-shadow 0.35s ease-out;
+
+    transition-delay: var(--stagger-delay);
+}
+
+.career-company.is-visible .position-entry {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.position-entry:hover {
+    border-color: var(--color-border-brand);
+    transform: translateY(-2px);
+    box-shadow:
+        0 1px 0 color-mix(in srgb, var(--color-text-1) 4%, transparent) inset,
+        0 4px 12px color-mix(in srgb, black 22%, transparent),
+        0 12px 28px color-mix(in srgb, var(--color-brand) 10%, transparent);
+}
+
+/* Card aberto não levanta (evita "pulo" durante a expansão) */
+.position-entry.is-open {
+    transform: translateY(0);
+    border-color: color-mix(in srgb, var(--color-brand) 38%, transparent);
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--color-brand) 18%, transparent),
+        0 8px 28px color-mix(in srgb, black 28%, transparent),
+        0 0 40px color-mix(in srgb, var(--color-brand) 8%, transparent);
+}
+
+/* Accent strip lateral (esquerda) — aparece em active e is-open */
+.position-entry::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 14%;
+    bottom: 14%;
+    width: 3px;
+    background: linear-gradient(
+        to bottom,
+        var(--color-brand) 0%,
+        var(--color-brand-light) 50%,
+        var(--color-brand) 100%
+    );
+    border-radius: 0 var(--radius-full) var(--radius-full) 0;
+    opacity: 0;
+    transform: translateX(-3px);
+    transition:
+        opacity 0.35s ease-out,
+        transform 0.35s ease-out;
+    pointer-events: none;
+}
+
+.position-entry--active::after,
+.position-entry.is-open::after {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Estado "Atual" — accent brand subtle no fundo */
+.position-entry--active {
+    background:
+        linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-brand) 6%, transparent) 0%,
+            transparent 55%
+        ),
+        var(--color-surface-2);
+}
+
+/* ── Trigger (header clicável) ─────────────────────────────────── */
+.position-entry__trigger {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: var(--space-5) var(--space-6);
+    padding-right: 60px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    transition: background 0.3s ease-out;
+}
+
+.position-entry__trigger:hover {
+    background: color-mix(in srgb, var(--color-text-1) 2%, transparent);
+}
+
+.position-entry__trigger:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: -2px;
+    border-radius: var(--radius-lg);
+}
+
+/* ── Title row ─────────────────────────────────────────────────── */
+.position-entry__title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.position-entry__title {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--color-text-1);
+    letter-spacing: var(--ls-snug);
+    margin: 0;
+}
+
+/* ── Status pill ───────────────────────────────────────────────── */
+.position-entry__status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+    padding: 5px 11px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    line-height: 1;
+    transition: transform 0.3s ease-out;
+}
+
+.position-entry:hover .position-entry__status--active {
+    transform: scale(1.04);
+}
+
+.position-entry__status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.position-entry__status--active {
+    color: var(--color-brand-light);
+    background: var(--color-brand-subtle);
+    border: 1px solid color-mix(in srgb, var(--color-brand) 32%, transparent);
+}
+
+.position-entry__status--active .position-entry__status-dot {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-brand) 25%, transparent);
+    animation: position-entry-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes position-entry-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.55; transform: scale(0.82); }
+}
+
+.position-entry__status--done {
+    color: var(--color-text-3);
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border-2);
+}
+
+.position-entry__status--planned {
+    color: var(--color-accent-light);
+    background: var(--color-accent-subtle);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
+}
+
+/* ── Meta row — chips estruturados ─────────────────────────────── */
+.position-entry__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: var(--space-3);
+}
+
+.position-entry__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--color-text-3);
+    white-space: nowrap;
+    transition:
+        background 0.25s ease-out,
+        border-color 0.25s ease-out,
+        color 0.25s ease-out;
+}
+
+.position-entry__chip svg {
+    color: var(--color-text-4);
+    flex-shrink: 0;
+    transition: color 0.25s ease-out;
+}
+
+/* Período é o dado mais relevante — destaque sutil */
+.position-entry__chip--period {
+    color: var(--color-text-2);
+    font-weight: 600;
+}
+
+.position-entry:hover .position-entry__chip--period {
+    border-color: color-mix(in srgb, var(--color-brand) 25%, transparent);
+}
+
+.position-entry:hover .position-entry__chip--period svg {
+    color: var(--color-brand-light);
+}
+
+/* Card "Atual": chip de período herda tom brand */
+.position-entry--active .position-entry__chip--period {
+    background: var(--color-brand-subtle);
+    border-color: color-mix(in srgb, var(--color-brand) 28%, transparent);
+    color: var(--color-brand-light);
+}
+
+.position-entry--active .position-entry__chip--period svg {
+    color: var(--color-brand-light);
+}
+
+/* Chip de promoção / efetivação — narrativa de evolução */
+.position-entry__chip--promo {
+    color: var(--color-accent-light);
+    background: var(--color-accent-subtle);
+    border-color: color-mix(in srgb, var(--color-accent) 35%, transparent);
+    font-weight: 600;
+}
+
+.position-entry__chip--promo svg {
+    color: var(--color-accent-light);
+}
+
+/* ── Summary (sempre visível como tagline do cargo) ────────────── */
+.position-entry__summary {
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--color-text-2);
+    margin: 0;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.position-entry.is-open .position-entry__summary {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    transform: translateY(-4px);
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* ── Chevron ───────────────────────────────────────────────────── */
+.position-entry__chevron {
+    position: absolute;
+    top: 22px;
+    right: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border-2);
+    color: var(--color-text-2);
+    transition:
+        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        background 0.3s ease-out,
+        border-color 0.3s ease-out,
+        color 0.3s ease-out,
+        box-shadow 0.3s ease-out;
+}
+
+.position-entry:hover .position-entry__chevron {
+    background: var(--color-surface-3);
+    color: var(--color-text-1);
+    transform: translateY(1px);
+}
+
+.position-entry.is-open .position-entry__chevron {
+    transform: rotate(180deg);
+    background: var(--color-brand-subtle);
+    border-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+    color: var(--color-brand-light);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-brand) 22%, transparent);
+}
+
+/* ── Painel expansível ─────────────────────────────────────────── */
+.position-entry__panel {
+    height: 0;
+    overflow: hidden;
+    transition: height 380ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.position-entry__panel-inner {
+    padding: 0 var(--space-6) var(--space-6);
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.3s ease-out 0.05s, transform 0.3s ease-out 0.05s;
+}
+
+.position-entry.is-open .position-entry__panel-inner {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ── Seções dentro do painel ───────────────────────────────────── */
+.position-entry__section {
+    margin-top: var(--space-5);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border-1);
+}
+
+.position-entry__section:first-of-type {
+    margin-top: 0;
+    padding-top: var(--space-4);
+}
+
+.position-entry__section--highlights {
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid color-mix(in srgb, var(--color-brand) 22%, transparent);
+    border-radius: var(--radius-md);
+    background:
+        linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--color-brand) 7%, transparent) 0%,
+            color-mix(in srgb, var(--color-accent) 4%, transparent) 100%
+        );
+    position: relative;
+    overflow: hidden;
+}
+
+.position-entry__section--highlights::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        circle at 100% 0%,
+        color-mix(in srgb, var(--color-brand) 8%, transparent) 0%,
+        transparent 50%
+    );
+    pointer-events: none;
+}
+
+.position-entry__section-title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--ls-wider);
+    color: var(--color-text-3);
+    margin: 0 0 var(--space-3);
+}
+
+.position-entry__section--highlights .position-entry__section-title {
+    color: var(--color-brand-light);
+}
+
+.position-entry__section--highlights .position-entry__section-title svg {
+    color: var(--color-brand-light);
+}
+
+/* ── Bullets / Highlights ──────────────────────────────────────── */
+.position-entry__highlights,
+.position-entry__bullets {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.position-entry__highlight,
+.position-entry__bullet {
+    position: relative;
+    padding-left: var(--space-5);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--color-text-2);
+}
+
+.position-entry__highlight::before,
+.position-entry__bullet::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-text-4);
+    transition: transform 0.3s ease-out;
+}
+
+.position-entry__highlight {
+    color: var(--color-text-1);
+    font-weight: 500;
+}
+
+.position-entry__highlight::before {
+    background: var(--color-brand);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand) 18%, transparent);
+}
+
+.position-entry__bullet:hover::before {
+    transform: scale(1.3);
+}
+
+/* ── Tags ──────────────────────────────────────────────────────── */
+.position-entry__tags {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.position-entry__tag {
+    padding: 4px 11px;
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--color-text-2);
+    transition:
+        background 0.25s ease-out,
+        border-color 0.25s ease-out,
+        color 0.25s ease-out,
+        transform 0.25s ease-out;
+}
+
+.position-entry__tag:hover {
+    background: var(--color-brand-subtle);
+    border-color: color-mix(in srgb, var(--color-brand) 38%, transparent);
+    color: var(--color-brand-light);
+    transform: translateY(-1px);
+}
+
+/* ── Responsivo ────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .position-entry__trigger {
+        padding: var(--space-5);
+        padding-right: 58px;
+    }
+
+    .position-entry__chevron {
+        top: 18px;
+        right: 16px;
+    }
+
+    .position-entry__panel-inner {
+        padding: 0 var(--space-5) var(--space-5);
+    }
+}
+
+@media (max-width: 480px) {
+    .position-entry__trigger {
+        padding: var(--space-4);
+        padding-right: 50px;
+    }
+
+    .position-entry__chevron {
+        top: 14px;
+        right: 14px;
+        width: 30px;
+        height: 30px;
+    }
+
+    .position-entry__title {
+        font-size: var(--text-md);
+        line-height: 1.3;
+    }
+
+    .position-entry__panel-inner {
+        padding: 0 var(--space-4) var(--space-4);
+    }
+
+    .position-entry__section--highlights {
+        padding: var(--space-3) var(--space-4);
+    }
+
+    .position-entry__meta {
+        gap: 6px;
+        font-size: 11px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .position-entry,
+    .position-entry__chevron,
+    .position-entry__panel,
+    .position-entry__panel-inner,
+    .position-entry__summary,
+    .position-entry__tag,
+    .position-entry__status,
+    .position-entry__trigger,
+    .position-entry::after {
+        transition: none;
+    }
+    .position-entry__status--active .position-entry__status-dot {
+        animation: none;
+    }
+}
