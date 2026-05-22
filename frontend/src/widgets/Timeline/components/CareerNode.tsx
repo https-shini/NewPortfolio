@@ -62,8 +62,6 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index }) => {
             data-reveal
             style={{ ["--company-index" as string]: index }}
         >
-            <span className="career-company__glow" aria-hidden="true" />
-
             {/* Header da empresa */}
             <header className="career-company__header">
                 <span className="career-company__avatar" aria-hidden="true">
