@@ -1,0 +1,183 @@
+/* ════════════════════════════════════════════════════════════════
+   RECOMMENDATIONS — Premium grid (desktop) + carousel (mobile)
+═══════════════════════════════════════════════════════════════ */
+
+.rec {
+    background: var(--color-bg);
+    position: relative;
+}
+
+.rec[data-reveal] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+        opacity 0.6s ease-out,
+        transform 0.6s ease-out;
+}
+
+.rec[data-reveal].is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ── Stats bar ─────────────────────────────────────────────────── */
+.rec__stats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin: var(--space-10) 0 var(--space-7);
+    padding: var(--space-4) var(--space-5);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-xl);
+}
+
+.rec__stats-counter {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-3);
+}
+
+.rec__stats-num {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: var(--ls-tight);
+    background: linear-gradient(
+        135deg,
+        var(--color-brand-light) 0%,
+        var(--color-accent-light) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-variant-numeric: tabular-nums;
+}
+
+.rec__stats-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.rec__source-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 7px 14px;
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    color: var(--color-text-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition:
+        background 0.25s,
+        border-color 0.25s,
+        color 0.25s,
+        transform 0.25s;
+}
+
+.rec__source-link:hover {
+    background: color-mix(in srgb, #0a66c2 10%, var(--color-surface-1));
+    border-color: color-mix(in srgb, #0a66c2 40%, var(--color-border-2));
+    color: var(--color-text-1);
+    transform: translateY(-1px);
+}
+
+.rec__source-link svg {
+    color: #0a66c2;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   DESKTOP — Grid layout
+═══════════════════════════════════════════════════════════════ */
+.rec__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: var(--space-5);
+    align-items: stretch;
+}
+
+.rec__grid-item {
+    list-style: none;
+    display: flex;
+    /* stretch card to full cell height */
+}
+
+.rec__grid-item > .rec-card {
+    width: 100%;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE — Carousel layout
+═══════════════════════════════════════════════════════════════ */
+.rec__carousel {
+    position: relative;
+    width: 100%;
+    isolation: isolate;
+}
+
+.rec__carousel:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 4px;
+    border-radius: var(--radius-md);
+}
+
+.rec__viewport {
+    width: 100%;
+    overflow: hidden;
+}
+
+.rec__track {
+    display: flex;
+    will-change: transform;
+    transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.rec__slide {
+    flex: 0 0 100%;
+    min-width: 0;
+    display: flex;
+    padding: 0 2px;
+}
+
+.rec__slide > .rec-card {
+    width: 100%;
+}
+
+/* ── Responsivo ────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .rec__stats {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-3);
+        padding: var(--space-4);
+    }
+
+    .rec__stats-counter {
+        justify-content: space-between;
+    }
+
+    .rec__source-link {
+        justify-content: center;
+        padding: 8px 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rec[data-reveal],
+    .rec__track {
+        transition: none;
+    }
+}

@@ -1,0 +1,393 @@
+/* ════════════════════════════════════════════════════════════════
+   CareerNode — Card de destaque de empresa (spotlight)
+   Header (avatar + identidade) + trilha interna de progressão de cargos.
+═══════════════════════════════════════════════════════════════ */
+
+.career-company {
+    position: relative;
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6) var(--space-6) var(--space-7);
+    overflow: hidden;
+    isolation: isolate;
+
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+        opacity 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+        transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1),
+        border-color 0.35s ease-out,
+        box-shadow 0.35s ease-out;
+}
+
+.career-company.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.career-company.is-active {
+    border-color: color-mix(in srgb, var(--color-brand) 28%, var(--color-border-2));
+    box-shadow:
+        0 1px 0 color-mix(in srgb, var(--color-text-1) 4%, transparent) inset,
+        0 18px 44px color-mix(in srgb, black 28%, transparent);
+}
+
+/* Barra de accent superior (empresa ativa) */
+.career-company::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--color-brand), var(--color-accent));
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.career-company.is-active::before {
+    opacity: 1;
+}
+
+/* Glow decorativo de fundo */
+.career-company__glow {
+    position: absolute;
+    top: -45%;
+    right: -20%;
+    width: 65%;
+    height: 90%;
+    background: radial-gradient(
+        circle,
+        color-mix(in srgb, var(--color-brand) 9%, transparent) 0%,
+        transparent 70%
+    );
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.6s ease-out;
+}
+
+.career-company.is-active .career-company__glow {
+    opacity: 1;
+}
+
+/* ── Header da empresa ─────────────────────────────────────────── */
+.career-company__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding-bottom: var(--space-5);
+    margin-bottom: var(--space-5);
+    border-bottom: 1px solid var(--color-border-1);
+}
+
+.career-company__avatar {
+    position: relative;
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-lg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: radial-gradient(
+        circle at 30% 25%,
+        color-mix(in srgb, var(--color-surface-3) 60%, var(--color-surface-2)),
+        var(--color-surface-2) 60%
+    );
+    border: 1.5px solid var(--color-border-3);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--color-text-1) 8%, transparent),
+        0 2px 6px color-mix(in srgb, black 25%, transparent);
+    transition:
+        border-color 0.4s ease-out,
+        box-shadow 0.4s ease-out;
+}
+
+.career-company__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.career-company__initials {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    letter-spacing: var(--ls-tight);
+    line-height: 1;
+    background: linear-gradient(135deg, var(--color-brand-light) 0%, var(--color-accent-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.career-company.is-active .career-company__avatar {
+    border-color: var(--color-brand);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--color-brand-light) 25%, transparent),
+        0 0 0 4px color-mix(in srgb, var(--color-brand) 12%, transparent),
+        0 0 26px color-mix(in srgb, var(--color-brand) 26%, transparent);
+}
+
+.career-company__identity {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.career-company__name-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.career-company__name {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: var(--ls-snug);
+    color: var(--color-text-1);
+    margin: 0;
+}
+
+.career-company__name-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.3s ease-out;
+}
+
+.career-company__name-link svg {
+    opacity: 0.4;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.career-company__name-link:hover {
+    color: var(--color-brand-light);
+}
+
+.career-company__name-link:hover svg {
+    opacity: 1;
+    transform: translate(2px, -2px);
+}
+
+.career-company__name-link:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 4px;
+    border-radius: var(--radius-sm);
+}
+
+/* Pill "Atual" */
+.career-company__active {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 11px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    line-height: 1;
+    color: var(--color-brand-light);
+    background: var(--color-brand-subtle);
+    border: 1px solid color-mix(in srgb, var(--color-brand) 32%, transparent);
+}
+
+.career-company__active-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-brand) 22%, transparent);
+    animation: career-active-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes career-active-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.55; transform: scale(0.8); }
+}
+
+.career-company__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+    letter-spacing: 0.02em;
+}
+
+.career-company__meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    line-height: 1.2;
+}
+
+.career-company__meta-item svg {
+    color: var(--color-text-4);
+    flex-shrink: 0;
+}
+
+.career-company__meta-sep {
+    color: var(--color-text-4);
+    opacity: 0.4;
+}
+
+/* ── Trilha de progressão de cargos ────────────────────────────── */
+.career-company__roles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    position: relative;
+}
+
+.career-role-row {
+    position: relative;
+    padding-left: 38px;
+}
+
+/* Rail vertical — segmentos por linha (robusto à expansão do acordeão) */
+.career-role-row::before {
+    content: "";
+    position: absolute;
+    left: 14px;
+    top: 0;
+    bottom: calc(-1 * var(--space-4));
+    width: 2px;
+    background: var(--color-border-2);
+    pointer-events: none;
+}
+
+.career-role-row:first-child::before {
+    top: 29px;
+}
+
+.career-role-row:last-child::before {
+    bottom: auto;
+    height: 29px;
+}
+
+.career-role-row:only-child::before {
+    display: none;
+}
+
+/* Nó (dot) sobre a trilha */
+.career-role-row__node {
+    position: absolute;
+    left: 8px;
+    top: 22px;
+    z-index: 1;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-surface-3);
+    border: 2px solid var(--color-border-3);
+    transition: background 0.3s ease-out, border-color 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+/* Conector horizontal nó → card */
+.career-role-row__node::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 2px;
+    background: var(--color-border-2);
+    pointer-events: none;
+}
+
+.career-role-row.is-active .career-role-row__node {
+    background: var(--color-brand);
+    border-color: var(--color-brand);
+    box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--color-brand) 16%, transparent),
+        0 0 14px color-mix(in srgb, var(--color-brand) 45%, transparent);
+}
+
+/* ── Responsivo ────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .career-company {
+        padding: var(--space-5) var(--space-5) var(--space-6);
+    }
+
+    .career-company__avatar {
+        width: 50px;
+        height: 50px;
+    }
+
+    .career-company__name {
+        font-size: var(--text-xl);
+    }
+}
+
+@media (max-width: 480px) {
+    .career-company__header {
+        gap: var(--space-3);
+    }
+
+    .career-company__avatar {
+        width: 44px;
+        height: 44px;
+    }
+
+    .career-company__initials {
+        font-size: var(--text-md);
+    }
+
+    .career-company__name {
+        font-size: var(--text-lg);
+    }
+
+    .career-company__meta {
+        font-size: 11px;
+    }
+
+    .career-role-row {
+        padding-left: 30px;
+    }
+
+    .career-role-row::before {
+        left: 11px;
+    }
+
+    .career-role-row__node {
+        left: 5px;
+    }
+
+    .career-role-row__node::after {
+        width: 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .career-company,
+    .career-company__avatar,
+    .career-company__glow,
+    .career-company__roles,
+    .career-role-row__node {
+        transition: none;
+    }
+    .career-company__active-dot {
+        animation: none;
+    }
+}

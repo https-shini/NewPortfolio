@@ -8,7 +8,8 @@ export interface IconProps {
     className?: string;
     width?: number;
     height?: number;
-    "aria-hidden"?: boolean;
+    /** Aceita boolean ou string "true"/"false" — compatível com uso JSX literal */
+    "aria-hidden"?: boolean | "true" | "false";
     "aria-label"?: string;
 }
 
@@ -343,6 +344,47 @@ export const IconPackage: React.FC<IconProps> = (props) => (
         <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
         <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
         <line x1="12" y1="22.08" x2="12" y2="12" />
+    </S>
+);
+
+/** Shield (segurança / auth) */
+export const IconShield: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </S>
+);
+
+/** Lock (endpoint protegido / auth required) */
+export const IconLock: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0110 0v4" />
+    </S>
+);
+
+/** Calendar (período) */
+export const IconCalendar: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+    </S>
+);
+
+/** Clock (duração) */
+export const IconClock: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+    </S>
+);
+
+/** Trending up (crescimento / progressão de carreira) */
+export const IconTrendingUp: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+        <polyline points="17 6 23 6 23 12" />
     </S>
 );
 

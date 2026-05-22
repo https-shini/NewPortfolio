@@ -43,6 +43,8 @@ html {
     text-rendering: optimizeLegibility;
     color-scheme: dark;
     tab-size: 2;
+    /* Safety-net contra overflow horizontal — não quebra sticky nem scroll vertical */
+    overflow-x: clip;
 }
 
 body.light-mode {
@@ -55,7 +57,8 @@ body {
     line-height: var(--lh-base);
     color: var(--color-text-2);
     background-color: var(--color-bg);
-    overflow-x: hidden;
+    /* overflow-x fica por conta do `html { overflow-x: clip }` — manter `hidden`
+       aqui transformaria o body em scroll container e quebraria position: sticky */
     transition:
         background-color var(--transition-slow),
         color var(--transition-slow);
@@ -223,30 +226,14 @@ body.light-mode ::-webkit-scrollbar-thumb:hover {
     width: 100%;
     max-width: var(--layout-max);
     margin-inline: auto;
+    /* Gutter fluido (--gutter já escala 16→32px via clamp) */
     padding-inline: var(--gutter);
 }
 
 .section {
+    /* Padding vertical fluido (--section-pad-y escala 48→80px via clamp) */
     padding-block: var(--section-pad-y);
     scroll-margin-top: var(--header-height);
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding-inline: var(--gutter-sm);
-    }
-    .section {
-        padding-block: var(--space-16);
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding-inline: var(--gutter-xs);
-    }
-    .section {
-        padding-block: var(--space-12);
-    }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
@@ -275,13 +262,14 @@ body.light-mode ::-webkit-scrollbar-thumb:hover {
     border-radius: var(--radius-full);
 }
 
-/* ── Título ── */
+/* ── Título — usa o token fluido --text-5xl (34→48px) ── */
 .section-title {
-    font-size: clamp(var(--text-3xl), 4vw, var(--text-5xl));
+    font-size: var(--text-5xl);
     font-weight: 700;
     letter-spacing: var(--ls-tight);
     color: var(--color-text-1);
     line-height: var(--lh-tight);
+    text-wrap: balance;
 }
 
 /* ── Subtítulo ── */

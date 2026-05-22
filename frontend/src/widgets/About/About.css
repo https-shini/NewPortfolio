@@ -644,3 +644,18 @@
         grid-template-columns: repeat(4, 1fr);
     }
 }
+
+/* ── prefers-reduced-motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .about,
+    .about[data-reveal],
+    .spec-card,
+    .stat-card,
+    .about__tech-item,
+    .about__photo,
+    .about__photo-wrap,
+    .about__goal {
+        animation: none !important;
+        transition: none !important;
+    }
+}

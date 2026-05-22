@@ -81,7 +81,7 @@ export const Contact: React.FC = () => {
 
     return (
         <section
-            id="contact"
+            id="contato"
             className="contact section"
             aria-labelledby="contact-title"
             data-reveal

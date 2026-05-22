@@ -343,19 +343,22 @@ body.light-mode {
     --font-body: "Satoshi", "Plus Jakarta Sans", system-ui, sans-serif;
     --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
-    /* ── Escala tipográfica — Minor Third (1.25) ── */
+    /* ── Escala tipográfica — fluida (clamp) ──────────────────────────
+       Corpo pequeno (2xs–md) fixo para legibilidade consistente.
+       Display (lg–7xl) escala suavemente entre ~360px e ~1280px,
+       eliminando saltos bruscos entre breakpoints. */
     --text-2xs: 0.625rem; /* 10px */
     --text-xs: 0.75rem; /* 12px */
     --text-sm: 0.875rem; /* 14px */
     --text-md: 1rem; /* 16px — base */
-    --text-lg: 1.125rem; /* 18px */
-    --text-xl: 1.25rem; /* 20px */
-    --text-2xl: 1.5rem; /* 24px */
-    --text-3xl: 1.875rem; /* 30px */
-    --text-4xl: 2.25rem; /* 36px */
-    --text-5xl: 3rem; /* 48px */
-    --text-6xl: 3.75rem; /* 60px */
-    --text-7xl: 4.5rem; /* 72px */
+    --text-lg: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);        /* 16 → 18px */
+    --text-xl: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem);     /* 18 → 20px */
+    --text-2xl: clamp(1.25rem, 1.1rem + 0.7vw, 1.5rem);        /* 20 → 24px */
+    --text-3xl: clamp(1.5rem, 1.28rem + 1.05vw, 1.875rem);     /* 24 → 30px */
+    --text-4xl: clamp(1.75rem, 1.45rem + 1.45vw, 2.25rem);     /* 28 → 36px */
+    --text-5xl: clamp(2.125rem, 1.6rem + 2.6vw, 3rem);         /* 34 → 48px */
+    --text-6xl: clamp(2.5rem, 1.7rem + 3.9vw, 3.75rem);        /* 40 → 60px */
+    --text-7xl: clamp(2.75rem, 1.7rem + 5.2vw, 4.5rem);        /* 44 → 72px */
 
     /* ── Line heights ── */
     --lh-tight: 1.15;
@@ -442,8 +445,12 @@ body.light-mode {
     --layout-narrow: 768px;
     --layout-wide: 1440px;
     --header-height: 68px;
-    --section-pad-y: var(--space-20);
-    --gutter: var(--space-8);
+
+    /* Espaçamento vertical de seção — fluido (48px → 80px) */
+    --section-pad-y: clamp(3rem, 1.6rem + 6vw, 5rem);
+
+    /* Gutter horizontal — fluido (16px → 32px), substitui os degraus por media query */
+    --gutter: clamp(1rem, 0.3rem + 3vw, 2rem);
     --gutter-sm: var(--space-6);
     --gutter-xs: var(--space-4);
 }

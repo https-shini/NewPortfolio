@@ -5,8 +5,10 @@ export type TranslationKey =
     | "nav.home"
     | "nav.about"
     | "nav.career"
+    | "nav.education"
     | "nav.featured"
     | "nav.work"
+    | "nav.recommendations"
     | "nav.contact"
 
     /* ── HERO ──────────────────────────────────────── */
@@ -29,18 +31,79 @@ export type TranslationKey =
     | "about.goal.title"
     | "about.goal.text"
 
-    /* ── TIMELINE ──────────────────────────────────── */
+    /* ── TIMELINE (Carreira) ───────────────────────── */
     | "timeline.title"
     | "timeline.sub"
-    | "timeline.tab.edu"
-    | "timeline.tab.cert"
-    | "timeline.tab.exp"
+    | "timeline.eyebrow"
+    | "timeline.exp.title"
+
+    /* ── CAREER (cards e modal de posição) ─────────── */
+    | "career.visit"
+    | "career.positions"
+    | "career.openDetails"
+    | "career.activities"
+    | "career.skills"
+    | "career.company"
+    | "career.modalOpened"
+    | "career.fact.employment"
+    | "career.fact.duration"
+    | "career.fact.modality"
+    | "career.fact.location"
+    | "career.fact.period"
+    | "career.summary"
+    | "career.close"
+    | "career.present"
+    | "career.highlights"
+    | "career.about"
+    | "career.stats.experience"
+    | "career.stats.company"
+    | "career.stats.companies"
+    | "career.stats.role"
+    | "career.stats.roles"
+    | "career.promoted"
+    | "career.status.active"
+    | "career.status.done"
+    | "career.aside.label"
+    | "career.aside.overview"
+    | "career.aside.level"
+    | "career.aside.seniority"
+
+    /* ── EDUCATION (Formações) ─────────────────────── */
+    | "education.title"
+    | "education.sub"
+    | "education.eyebrow"
+    | "education.edu.title"
+    | "education.cert.title"
+    | "education.cert.link"
+    | "education.edu.label"
+    | "education.cert.label"
+    | "education.achievements"
+    | "education.filterLabel"
+    | "education.filter.all"
+    | "education.filter.edu"
+    | "education.filter.cert"
+    | "education.showMore"
+    | "education.showLess"
 
     /* ── FEATURED ──────────────────────────────────── */
     | "featured.badge"
+    | "featured.eyebrow"
     | "featured.desc"
     | "featured.btn.live"
     | "featured.btn.repo"
+    | "featured.btn.docs"
+    | "featured.gallery.label"
+    | "featured.autoplay.play"
+    | "featured.autoplay.pause"
+    | "featured.arrow.prev"
+    | "featured.arrow.next"
+    | "featured.block.tech"
+    | "featured.block.endpoints"
+    | "featured.endpoint.protected"
+    | "featured.lightbox.open"
+    | "featured.lightbox.close"
+    | "featured.lightbox.thumbnails"
+    | "featured.thumbs.label"
 
     /* ── DETAILS ───────────────────────────────────── */
     | "detail.challenge"
@@ -51,15 +114,18 @@ export type TranslationKey =
     | "work.title"
     | "work.sub"
     | "work.more"
+    | "work.eyebrow"
+    | "work.btn.demo"
+    | "work.btn.repo"
 
     /* ── CONTACT ───────────────────────────────────── */
     | "contact.title"
     | "contact.sub"
     | "contact.hook"
     | "contact.share"
-    | "contact.send" // botão de envio — estado padrão
-    | "contact.sending" // botão de envio — durante requisição
-    | "contact.sent" // botão de envio — após sucesso
+    | "contact.send"
+    | "contact.sending"
+    | "contact.sent"
     | "contact.cta.primary"
     | "contact.cta.sending"
     | "contact.cta.success"
@@ -68,6 +134,15 @@ export type TranslationKey =
     | "contact.meta.linkedin"
     | "contact.meta.github"
     | "contact.meta.location"
+
+    /* ── RECOMMENDATIONS ───────────────────────────── */
+    | "rec.title"
+    | "rec.sub"
+    | "rec.eyebrow"
+    | "rec.count.one"
+    | "rec.count.many"
+    | "rec.source.text"
+    | "rec.source.label"
 
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
@@ -90,8 +165,10 @@ const pt: Translations = {
     "nav.home": "Início",
     "nav.about": "Sobre",
     "nav.career": "Carreira",
+    "nav.education": "Formações",
     "nav.featured": "Destaque",
     "nav.work": "Projetos",
+    "nav.recommendations": "Recomendações",
     "nav.contact": "Contato",
 
     /* HERO */
@@ -120,20 +197,80 @@ const pt: Translations = {
     "about.goal.text":
         "Atuar como desenvolvedor júnior ou estagiário, contribuindo com projetos reais, evoluindo minhas habilidades técnicas e adquirindo experiência prática no mercado.",
 
-    /* TIMELINE */
-    "timeline.title": "Minha Trajetória",
-    "timeline.sub":
-        "Formação acadêmica, certificações e evolução profissional.",
-    "timeline.tab.edu": "Formação",
-    "timeline.tab.cert": "Certificações",
-    "timeline.tab.exp": "Experiência",
+    /* TIMELINE (Carreira) */
+    "timeline.title": "Carreira",
+    "timeline.sub": "Trajetória profissional e evolução na área de tecnologia.",
+    "timeline.eyebrow": "Profissional",
+    "timeline.exp.title": "Experiência Profissional",
+
+    /* CAREER — cards e modal */
+    "career.visit": "Visitar empresa",
+    "career.positions": "Posições na empresa",
+    "career.openDetails": "Ver detalhes da posição",
+    "career.activities": "Atividades",
+    "career.skills": "Competências",
+    "career.company": "Empresa",
+    "career.modalOpened": "Modal aberto: descrição completa da posição",
+    "career.fact.employment": "Vínculo",
+    "career.fact.duration": "Duração",
+    "career.fact.modality": "Modalidade",
+    "career.fact.location": "Localização",
+    "career.fact.period": "Período",
+    "career.summary": "Resumo",
+    "career.close": "Fechar modal",
+    "career.present": "o momento",
+    "career.highlights": "Destaques",
+    "career.about": "Sobre a posição",
+    "career.stats.experience": "Experiência",
+    "career.stats.company": "Empresa",
+    "career.stats.companies": "Empresas",
+    "career.stats.role": "Cargo",
+    "career.stats.roles": "Cargos",
+    "career.promoted": "Efetivado",
+    "career.status.active": "Atual",
+    "career.status.done": "Concluído",
+    "career.aside.label": "Painel profissional",
+    "career.aside.overview": "Visão geral",
+    "career.aside.level": "Nível",
+    "career.aside.seniority": "Júnior",
+
+    /* EDUCATION (Formações) */
+    "education.title": "Formações",
+    "education.sub": "Trajetória acadêmica e certificações que sustentam minha base técnica.",
+    "education.eyebrow": "Acadêmico",
+    "education.edu.title": "Formação Acadêmica",
+    "education.cert.title": "Certificações",
+    "education.cert.link": "Ver certificado",
+    "education.edu.label": "Graduação",
+    "education.cert.label": "Certificação",
+    "education.achievements": "conquistas",
+    "education.filterLabel": "Filtrar formações",
+    "education.filter.all": "Tudo",
+    "education.filter.edu": "Acadêmico",
+    "education.filter.cert": "Certificações",
+    "education.showMore": "Ver mais",
+    "education.showLess": "Ver menos",
 
     /* FEATURED */
+    "featured.eyebrow": "Destaque",
     "featured.badge": "Projeto em Destaque",
     "featured.desc":
         "Projeto web com foco em usabilidade, performance e boas práticas de desenvolvimento.",
-    "featured.btn.live": "Ver projeto",
+    "featured.btn.live": "Ver demo",
     "featured.btn.repo": "Repositório",
+    "featured.btn.docs": "Swagger Docs",
+    "featured.gallery.label": "Capturas do projeto",
+    "featured.autoplay.play": "Iniciar autoplay",
+    "featured.autoplay.pause": "Pausar autoplay",
+    "featured.arrow.prev": "Slide anterior",
+    "featured.arrow.next": "Próximo slide",
+    "featured.block.tech": "Stack",
+    "featured.block.endpoints": "Endpoints da API",
+    "featured.endpoint.protected": "Rota protegida (requer Bearer Token)",
+    "featured.lightbox.open": "Ampliar",
+    "featured.lightbox.close": "Fechar visualização",
+    "featured.lightbox.thumbnails": "Miniaturas dos slides",
+    "featured.thumbs.label": "Navegação por miniaturas",
 
     /* DETAILS */
     "detail.challenge": "Desafio",
@@ -145,6 +282,9 @@ const pt: Translations = {
     "work.sub":
         "Seleção de projetos que demonstram minha experiência prática no desenvolvimento de aplicações, com foco em boas práticas, performance e qualidade de código.",
     "work.more": "Ver todos no GitHub",
+    "work.eyebrow": "Portfólio",
+    "work.btn.demo": "Acessar projeto",
+    "work.btn.repo": "Repositório",
 
     /* CONTACT */
     "contact.title": "Vamos trabalhar juntos",
@@ -163,6 +303,16 @@ const pt: Translations = {
     "contact.meta.linkedin": "Aberto a networking e novas oportunidades",
     "contact.meta.github": "Projetos reais com código limpo e organizado",
     "contact.meta.location": "Disponível para trabalho remoto ou presencial",
+
+    /* RECOMMENDATIONS */
+    "rec.title": "Recomendações",
+    "rec.sub":
+        "O que pessoas que trabalharam comigo dizem sobre minha atuação profissional.",
+    "rec.eyebrow": "Depoimentos",
+    "rec.count.one": "recomendação",
+    "rec.count.many": "recomendações",
+    "rec.source.text": "Via LinkedIn",
+    "rec.source.label": "Ver recomendações no LinkedIn",
 
     /* FOOTER */
     "footer.tagline":
@@ -185,8 +335,10 @@ const en: Translations = {
     "nav.home": "Home",
     "nav.about": "About",
     "nav.career": "Career",
+    "nav.education": "Education",
     "nav.featured": "Featured",
     "nav.work": "Projects",
+    "nav.recommendations": "Recommendations",
     "nav.contact": "Contact",
 
     /* HERO */
@@ -215,19 +367,80 @@ const en: Translations = {
     "about.goal.text":
         "To work as a junior developer or intern, contributing to real projects, improving my technical skills and gaining industry experience.",
 
-    /* TIMELINE */
-    "timeline.title": "My Journey",
-    "timeline.sub": "Education, certifications and professional growth.",
-    "timeline.tab.edu": "Education",
-    "timeline.tab.cert": "Certifications",
-    "timeline.tab.exp": "Experience",
+    /* TIMELINE (Career) */
+    "timeline.title": "Career",
+    "timeline.sub": "Professional journey and growth in the tech industry.",
+    "timeline.eyebrow": "Career",
+    "timeline.exp.title": "Professional Experience",
+
+    /* CAREER — cards and modal */
+    "career.visit": "Visit company",
+    "career.positions": "Positions at company",
+    "career.openDetails": "View position details",
+    "career.activities": "Responsibilities",
+    "career.skills": "Skills",
+    "career.company": "Company",
+    "career.modalOpened": "Modal opened: full position description",
+    "career.fact.employment": "Employment",
+    "career.fact.duration": "Duration",
+    "career.fact.modality": "Mode",
+    "career.fact.location": "Location",
+    "career.fact.period": "Period",
+    "career.summary": "Overview",
+    "career.close": "Close modal",
+    "career.present": "Present",
+    "career.highlights": "Highlights",
+    "career.about": "About this role",
+    "career.stats.experience": "Experience",
+    "career.stats.company": "Company",
+    "career.stats.companies": "Companies",
+    "career.stats.role": "Role",
+    "career.stats.roles": "Roles",
+    "career.promoted": "Promoted",
+    "career.status.active": "Current",
+    "career.status.done": "Completed",
+    "career.aside.label": "Professional panel",
+    "career.aside.overview": "Overview",
+    "career.aside.level": "Level",
+    "career.aside.seniority": "Junior",
+
+    /* EDUCATION */
+    "education.title": "Education",
+    "education.sub": "Academic path and certifications that build my technical foundation.",
+    "education.eyebrow": "Academic",
+    "education.edu.title": "Academic Education",
+    "education.cert.title": "Certifications",
+    "education.cert.link": "View certificate",
+    "education.edu.label": "Degree",
+    "education.cert.label": "Certification",
+    "education.achievements": "achievements",
+    "education.filterLabel": "Filter formations",
+    "education.filter.all": "All",
+    "education.filter.edu": "Academic",
+    "education.filter.cert": "Certifications",
+    "education.showMore": "Show more",
+    "education.showLess": "Show less",
 
     /* FEATURED */
+    "featured.eyebrow": "Featured",
     "featured.badge": "Featured Project",
     "featured.desc":
         "Web project focused on usability, performance and development best practices.",
-    "featured.btn.live": "View project",
+    "featured.btn.live": "View demo",
     "featured.btn.repo": "Repository",
+    "featured.btn.docs": "Swagger Docs",
+    "featured.gallery.label": "Project screenshots",
+    "featured.autoplay.play": "Start autoplay",
+    "featured.autoplay.pause": "Pause autoplay",
+    "featured.arrow.prev": "Previous slide",
+    "featured.arrow.next": "Next slide",
+    "featured.block.tech": "Stack",
+    "featured.block.endpoints": "API Endpoints",
+    "featured.endpoint.protected": "Protected route (requires Bearer Token)",
+    "featured.lightbox.open": "Expand",
+    "featured.lightbox.close": "Close viewer",
+    "featured.lightbox.thumbnails": "Slide thumbnails",
+    "featured.thumbs.label": "Thumbnail navigation",
 
     /* DETAILS */
     "detail.challenge": "Challenge",
@@ -238,6 +451,9 @@ const en: Translations = {
     "work.title": "Projects",
     "work.sub": "Projects built to practice and improve technical skills.",
     "work.more": "View all on GitHub",
+    "work.eyebrow": "Portfolio",
+    "work.btn.demo": "View project",
+    "work.btn.repo": "Repository",
 
     /* CONTACT */
     "contact.title": "Let's work together",
@@ -257,6 +473,16 @@ const en: Translations = {
     "contact.meta.linkedin": "Open to networking and opportunities",
     "contact.meta.github": "Real projects and clean code",
     "contact.meta.location": "Available remotely and on-site",
+
+    /* RECOMMENDATIONS */
+    "rec.title": "Recommendations",
+    "rec.sub":
+        "What people who worked with me say about my professional performance.",
+    "rec.eyebrow": "Testimonials",
+    "rec.count.one": "recommendation",
+    "rec.count.many": "recommendations",
+    "rec.source.text": "Via LinkedIn",
+    "rec.source.label": "View recommendations on LinkedIn",
 
     /* FOOTER */
     "footer.tagline":
