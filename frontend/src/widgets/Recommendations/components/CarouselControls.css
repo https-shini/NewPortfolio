@@ -58,15 +58,18 @@
     border: none;
     padding: 0;
     cursor: pointer;
-    background: var(--color-border-3, color-mix(in srgb, var(--color-brand) 25%, transparent));
+    background: var(
+        --color-border-3,
+        color-mix(in srgb, var(--color-brand) 25%, transparent)
+    );
 
     width: 8px;
     height: 8px;
     border-radius: 50%;
     transition:
-        width       0.25s var(--ease-out),
-        background  var(--transition-fast),
-        transform   var(--transition-fast);
+        width 0.25s var(--ease-out),
+        background var(--transition-fast),
+        transform var(--transition-fast);
 }
 
 .rec-controls__dot:hover {
@@ -99,11 +102,11 @@
     color: var(--color-text-3);
     cursor: pointer;
     transition:
-        background   var(--transition-fast),
-        color        var(--transition-fast),
+        background var(--transition-fast),
+        color var(--transition-fast),
         border-color var(--transition-fast),
-        transform    var(--transition-fast),
-        box-shadow   var(--transition-fast);
+        transform var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
 .rec-controls__btn:hover:not(:disabled) {
@@ -188,7 +191,9 @@ body.light-mode .rec-controls__btn:hover:not(:disabled) {
 
     .rec-controls__btn,
     .rec-controls__btn:hover:not(:disabled) {
-        transition: background var(--transition-fast), color var(--transition-fast);
+        transition:
+            background var(--transition-fast),
+            color var(--transition-fast);
         transform: none;
     }
 }

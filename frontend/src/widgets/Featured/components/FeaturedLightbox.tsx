@@ -87,7 +87,9 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
         const original = document.body.style.overflow;
         document.body.style.overflow = "hidden";
         // foco no botão fechar (sem capturar scroll para baixo)
-        requestAnimationFrame(() => closeBtnRef.current?.focus({ preventScroll: true }));
+        requestAnimationFrame(() =>
+            closeBtnRef.current?.focus({ preventScroll: true }),
+        );
         return () => {
             document.body.style.overflow = original;
         };
@@ -97,7 +99,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
     useEffect(() => {
         const prev = slides[(index - 1 + total) % total];
         const next = slides[(index + 1) % total];
-        [prev, next].forEach(s => {
+        [prev, next].forEach((s) => {
             if (!s) return;
             const img = new Image();
             img.src = s.src;
@@ -114,7 +116,8 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
         const dy = touchY.current - e.changedTouches[0]!.clientY;
         // Swipe horizontal — ignorar se for predominantemente vertical (scroll)
         if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-            dx > 0 ? goNext() : goPrev();
+            if (dx > 0) goNext();
+            else goPrev();
         }
     };
 
@@ -142,13 +145,17 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
         }
     };
 
-    const directionClass = direction === "next"
-        ? " is-from-right"
-        : direction === "prev"
-            ? " is-from-left"
-            : "";
+    const directionClass =
+        direction === "next"
+            ? " is-from-right"
+            : direction === "prev"
+              ? " is-from-left"
+              : "";
 
     const lightbox = (
+        /* Clique no backdrop é afordância redundante de dismiss —
+           Escape e o botão fechar cobrem teclado (focus trap ativo). */
+        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */
         <div
             className="fl-backdrop"
             role="dialog"
@@ -158,17 +165,20 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
         >
+            {/* onBackdropClick já filtra por e.target === e.currentTarget,
+                então cliques internos não fecham o lightbox. */}
             <div
                 ref={dialogRef}
                 className="fl-dialog"
                 onKeyDown={onDialogKeyDown}
-                onClick={e => e.stopPropagation()}
             >
                 {/* Top bar — counter + close */}
                 <header className="fl-topbar">
                     <div className="fl-meta">
                         <span className="fl-project">{projectName}</span>
-                        <span className="fl-meta-sep" aria-hidden="true">·</span>
+                        <span className="fl-meta-sep" aria-hidden="true">
+                            ·
+                        </span>
                         <span className="fl-counter" aria-live="polite">
                             <span className="fl-counter-current">
                                 {String(index + 1).padStart(2, "0")}
@@ -224,7 +234,11 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                                     onClick={goPrev}
                                     aria-label={t("featured.arrow.prev")}
                                 >
-                                    <IconChevronLeft width={20} height={20} aria-hidden="true" />
+                                    <IconChevronLeft
+                                        width={20}
+                                        height={20}
+                                        aria-hidden="true"
+                                    />
                                 </button>
                                 <button
                                     type="button"
@@ -232,7 +246,11 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                                     onClick={goNext}
                                     aria-label={t("featured.arrow.next")}
                                 >
-                                    <IconChevronRight width={20} height={20} aria-hidden="true" />
+                                    <IconChevronRight
+                                        width={20}
+                                        height={20}
+                                        aria-hidden="true"
+                                    />
                                 </button>
                             </>
                         )}
@@ -265,7 +283,11 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                                         className="btn btn--primary btn--sm fl-cta"
                                     >
                                         {t("featured.btn.live")}
-                                        <IconExternalLink width={13} height={13} aria-hidden="true" />
+                                        <IconExternalLink
+                                            width={13}
+                                            height={13}
+                                            aria-hidden="true"
+                                        />
                                     </a>
                                 )}
                                 {repoUrl && (
@@ -275,7 +297,11 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                                         rel="noopener noreferrer"
                                         className="btn btn--outline btn--sm fl-cta"
                                     >
-                                        <IconGitHub width={14} height={14} aria-hidden="true" />
+                                        <IconGitHub
+                                            width={14}
+                                            height={14}
+                                            aria-hidden="true"
+                                        />
                                         {t("featured.btn.repo")}
                                     </a>
                                 )}
@@ -286,18 +312,33 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
 
                 {/* Bottom bar — thumbnails */}
                 {total > 1 && (
-                    <nav className="fl-thumbs" aria-label={t("featured.lightbox.thumbnails")}>
+                    <nav
+                        className="fl-thumbs"
+                        aria-label={t("featured.lightbox.thumbnails")}
+                    >
                         {slides.map((s, i) => (
                             <button
                                 key={s.src}
                                 type="button"
                                 className={`fl-thumb${i === index ? " is-active" : ""}`}
-                                onClick={() => goTo(i, i > index ? "next" : "prev")}
+                                onClick={() =>
+                                    goTo(i, i > index ? "next" : "prev")
+                                }
                                 aria-label={`${i + 1} — ${s.label[lang]}`}
                                 aria-current={i === index}
                             >
-                                <img src={s.src} alt="" loading="lazy" decoding="async" width={96} height={60} />
-                                <span className="fl-thumb-overlay" aria-hidden="true" />
+                                <img
+                                    src={s.src}
+                                    alt=""
+                                    loading="lazy"
+                                    decoding="async"
+                                    width={96}
+                                    height={60}
+                                />
+                                <span
+                                    className="fl-thumb-overlay"
+                                    aria-hidden="true"
+                                />
                             </button>
                         ))}
                     </nav>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import "./Formacoes.css";
 import { useLang } from "@/shared/hooks/useLang";
 import { SECTION_IDS } from "@/shared/config/constants";
@@ -25,34 +25,42 @@ export const Formacoes: React.FC = () => {
     const [showAll, setShowAll] = useState(false);
     const sectionRef = useRef<HTMLElement>(null);
 
-    // Quando trocar de filtro, reset do estado expandido
-    useEffect(() => {
-        setShowAll(false);
-    }, [filter]);
-
     const sourceItems = useMemo(() => {
         if (filter === "all") return ALL_ITEMS;
-        return ALL_ITEMS.filter(item => item.category === filter);
+        return ALL_ITEMS.filter((item) => item.category === filter);
     }, [filter]);
 
     // Limite só se aplica ao filtro "Todos"
-    const shouldLimit = filter === "all" && !showAll && sourceItems.length > INITIAL_LIMIT;
-    const visibleItems = shouldLimit ? sourceItems.slice(0, INITIAL_LIMIT) : sourceItems;
+    const shouldLimit =
+        filter === "all" && !showAll && sourceItems.length > INITIAL_LIMIT;
+    const visibleItems = shouldLimit
+        ? sourceItems.slice(0, INITIAL_LIMIT)
+        : sourceItems;
     const hiddenCount = sourceItems.length - INITIAL_LIMIT;
     const canExpand = filter === "all" && sourceItems.length > INITIAL_LIMIT;
 
     const handleFilter = useCallback((key: FilterKey) => {
         setFilter(key);
+        // Trocar de filtro recolhe a lista expandida
+        setShowAll(false);
     }, []);
 
     const toggleShowAll = useCallback(() => {
-        setShowAll(v => {
+        setShowAll((v) => {
             const next = !v;
             // Ao recolher, suavemente reposiciona o usuário no início da seção
             if (v && sectionRef.current) {
-                const noMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-                const top = sectionRef.current.getBoundingClientRect().top + window.scrollY - 80;
-                window.scrollTo({ top, behavior: noMotion ? "auto" : "smooth" });
+                const noMotion = window.matchMedia(
+                    "(prefers-reduced-motion: reduce)",
+                ).matches;
+                const top =
+                    sectionRef.current.getBoundingClientRect().top +
+                    window.scrollY -
+                    80;
+                window.scrollTo({
+                    top,
+                    behavior: noMotion ? "auto" : "smooth",
+                });
             }
             return next;
         });
@@ -72,18 +80,30 @@ export const Formacoes: React.FC = () => {
         >
             <div className="container">
                 <header className="section-header">
-                    <span className="section-eyebrow">{t("education.eyebrow")}</span>
+                    <span className="section-eyebrow">
+                        {t("education.eyebrow")}
+                    </span>
                     <h2 className="section-title" id="formations-title">
                         {t("education.title")}
                     </h2>
                     <p className="section-subtitle">{t("education.sub")}</p>
                 </header>
 
-                <div className="formations__stats" role="status" aria-live="polite">
+                <div
+                    className="formations__stats"
+                    role="status"
+                    aria-live="polite"
+                >
                     <div className="formations__stats-counter">
-                        <span className="formations__stats-num">{String(totalCount).padStart(2, "0")}</span>
+                        <span className="formations__stats-num">
+                            {String(totalCount).padStart(2, "0")}
+                        </span>
                         <span className="formations__stats-label">
-                            <IconSparkles width={12} height={12} aria-hidden="true" />
+                            <IconSparkles
+                                width={12}
+                                height={12}
+                                aria-hidden="true"
+                            />
                             {t("education.achievements")}
                         </span>
                     </div>
@@ -142,14 +162,22 @@ export const Formacoes: React.FC = () => {
                             aria-controls="formations-grid"
                         >
                             <span className="formations__expand-label">
-                                {showAll ? t("education.showLess") : t("education.showMore")}
+                                {showAll
+                                    ? t("education.showLess")
+                                    : t("education.showMore")}
                             </span>
                             {!showAll && (
-                                <span className="formations__expand-count" aria-hidden="true">
+                                <span
+                                    className="formations__expand-count"
+                                    aria-hidden="true"
+                                >
                                     +{hiddenCount}
                                 </span>
                             )}
-                            <span className="formations__expand-icon" aria-hidden="true">
+                            <span
+                                className="formations__expand-icon"
+                                aria-hidden="true"
+                            >
                                 <IconChevronDown width={16} height={16} />
                             </span>
                         </button>
@@ -169,7 +197,13 @@ interface FilterPillProps {
     onClick: () => void;
 }
 
-const FilterPill: React.FC<FilterPillProps> = ({ icon, label, count, active, onClick }) => (
+const FilterPill: React.FC<FilterPillProps> = ({
+    icon,
+    label,
+    count,
+    active,
+    onClick,
+}) => (
     <button
         type="button"
         role="tab"

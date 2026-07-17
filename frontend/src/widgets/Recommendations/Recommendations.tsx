@@ -22,7 +22,9 @@ export const Recommendations: React.FC = () => {
     const [openItem, setOpenItem] = useState<RecommendationItem | null>(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const [isMobile, setIsMobile] = useState<boolean>(
-        typeof window !== "undefined" ? window.innerWidth < MOBILE_BREAKPOINT : false,
+        typeof window !== "undefined"
+            ? window.innerWidth < MOBILE_BREAKPOINT
+            : false,
     );
     const lastTrigger = useRef<HTMLElement | null>(null);
     const carouselRef = useRef<HTMLDivElement>(null);
@@ -31,7 +33,9 @@ export const Recommendations: React.FC = () => {
 
     /* Responsive switch */
     useEffect(() => {
-        const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 0.1}px)`);
+        const mq = window.matchMedia(
+            `(max-width: ${MOBILE_BREAKPOINT - 0.1}px)`,
+        );
         const update = () => setIsMobile(mq.matches);
         update();
         mq.addEventListener("change", update);
@@ -39,11 +43,11 @@ export const Recommendations: React.FC = () => {
     }, []);
 
     const goPrev = useCallback(() => {
-        setActiveIndex(i => (i === 0 ? maxIndex : i - 1));
+        setActiveIndex((i) => (i === 0 ? maxIndex : i - 1));
     }, [maxIndex]);
 
     const goNext = useCallback(() => {
-        setActiveIndex(i => (i === maxIndex ? 0 : i + 1));
+        setActiveIndex((i) => (i === maxIndex ? 0 : i + 1));
     }, [maxIndex]);
 
     const goTo = useCallback(
@@ -62,10 +66,19 @@ export const Recommendations: React.FC = () => {
 
     const onKeyDown = (e: React.KeyboardEvent) => {
         if (!isMobile) return;
-        if (e.key === "ArrowLeft")       { e.preventDefault(); goPrev(); }
-        else if (e.key === "ArrowRight") { e.preventDefault(); goNext(); }
-        else if (e.key === "Home")       { e.preventDefault(); goTo(0); }
-        else if (e.key === "End")        { e.preventDefault(); goTo(maxIndex); }
+        if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            goPrev();
+        } else if (e.key === "ArrowRight") {
+            e.preventDefault();
+            goNext();
+        } else if (e.key === "Home") {
+            e.preventDefault();
+            goTo(0);
+        } else if (e.key === "End") {
+            e.preventDefault();
+            goTo(maxIndex);
+        }
     };
 
     const openModal = useCallback(
@@ -109,7 +122,9 @@ export const Recommendations: React.FC = () => {
                             {String(total).padStart(2, "0")}
                         </span>
                         <span className="rec__stats-label">
-                            {total === 1 ? t("rec.count.one") : t("rec.count.many")}
+                            {total === 1
+                                ? t("rec.count.one")
+                                : t("rec.count.many")}
                         </span>
                     </div>
 
@@ -120,7 +135,11 @@ export const Recommendations: React.FC = () => {
                         className="rec__source-link"
                         aria-label={t("rec.source.label")}
                     >
-                        <IconLinkedIn width={14} height={14} aria-hidden="true" />
+                        <IconLinkedIn
+                            width={14}
+                            height={14}
+                            aria-hidden="true"
+                        />
                         <span>{t("rec.source.text")}</span>
                     </a>
                 </div>
@@ -175,7 +194,11 @@ export const Recommendations: React.FC = () => {
                 ) : (
                     <div className="rec__grid" role="list">
                         {recommendations.map((item, idx) => (
-                            <div key={item.id} role="listitem" className="rec__grid-item">
+                            <div
+                                key={item.id}
+                                role="listitem"
+                                className="rec__grid-item"
+                            >
                                 <RecommendationCard
                                     item={item}
                                     index={idx}
