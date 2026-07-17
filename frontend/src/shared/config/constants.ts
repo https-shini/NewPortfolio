@@ -1,16 +1,29 @@
-export const AUTHOR_EMAIL = 'contato.guilhermescruz@gmail.com';
-export const GITHUB_URL    = 'https://github.com/https-shini';
-export const LINKEDIN_URL  = 'https://linkedin.com/in/oguilherme-cruz';
-export const FORM_ENDPOINT = 'https://formspree.io/f/CONFIGURE';
-export const THEME_KEY     = 'portfolio-theme';
-export const LANG_KEY      = 'portfolio-lang';
+import { PROFILE } from "@/shared/config/profile";
+
+/* ─────────────────────────────────────────────────────────
+   constants.ts — configuração da aplicação
+   ─────────────────────────────────────────────────────────
+   Dados pessoais vivem em profile.ts (fonte única). Os aliases
+   abaixo existem por ergonomia dos consumidores existentes.
+───────────────────────────────────────────────────────── */
+
+export const AUTHOR_EMAIL = PROFILE.email;
+export const GITHUB_URL = PROFILE.social.github.url;
+export const LINKEDIN_URL = PROFILE.social.linkedin.url;
+export const CV_URL = PROFILE.cvPath;
+export const SITE_URL = PROFILE.siteUrl;
+
+/* Chaves de persistência (localStorage) */
+export const THEME_KEY = "portfolio-theme";
+export const LANG_KEY = "portfolio-lang";
 
 /**
- * URL do currículo em PDF.
- * Centralizado aqui para facilitar manutenção (usado em Hero, Footer, etc.)
+ * Endpoint do formulário de contato (Formspree ou similar).
+ * Configurado via variável de ambiente — ver .env.example.
+ * Quando ausente, a UI degrada para o fluxo de mailto.
  */
-export const CV_URL =
-    'https://https-shini.github.io/portfolio/docs/curriculo.pdf';
+export const FORM_ENDPOINT: string | undefined =
+    import.meta.env.VITE_FORM_ENDPOINT || undefined;
 
 /**
  * SECTION_IDS — identificadores semânticos das seções do site em português.
@@ -18,14 +31,14 @@ export const CV_URL =
  * Footer (links) e scrollToSection().
  */
 export const SECTION_IDS = {
-    HOME:            'inicio',
-    ABOUT:           'sobre',
-    CAREER:          'carreira',
-    EDUCATION:       'formacoes',
-    FEATURED:        'destaque',
-    WORK:            'projetos',
-    RECOMMENDATIONS: 'recomendacoes',
-    CONTACT:         'contato',
+    HOME: "inicio",
+    ABOUT: "sobre",
+    CAREER: "carreira",
+    EDUCATION: "formacoes",
+    FEATURED: "destaque",
+    WORK: "projetos",
+    RECOMMENDATIONS: "recomendacoes",
+    CONTACT: "contato",
 } as const;
 
 export type SectionId = (typeof SECTION_IDS)[keyof typeof SECTION_IDS];

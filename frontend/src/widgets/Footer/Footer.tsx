@@ -14,6 +14,7 @@ import "./Footer.css";
 
 import { useLang } from "@/shared/hooks/useLang";
 import { scrollToSection } from "@/shared/lib/smoothScroll";
+import { buildMailtoHref } from "@/shared/lib/mailto";
 import {
     AUTHOR_EMAIL,
     GITHUB_URL,
@@ -52,18 +53,19 @@ interface ProjectItem {
 ───────────────────────────────────────────────────────────────────────────── */
 
 const NAV_ITEMS: NavItem[] = [
-    { id: SECTION_IDS.HOME,            key: "nav.home" },
-    { id: SECTION_IDS.ABOUT,           key: "nav.about" },
-    { id: SECTION_IDS.CAREER,          key: "nav.career" },
-    { id: SECTION_IDS.EDUCATION,       key: "nav.education" },
-    { id: SECTION_IDS.FEATURED,        key: "nav.featured" },
-    { id: SECTION_IDS.WORK,            key: "nav.work" },
+    { id: SECTION_IDS.HOME, key: "nav.home" },
+    { id: SECTION_IDS.ABOUT, key: "nav.about" },
+    { id: SECTION_IDS.CAREER, key: "nav.career" },
+    { id: SECTION_IDS.EDUCATION, key: "nav.education" },
+    { id: SECTION_IDS.FEATURED, key: "nav.featured" },
+    { id: SECTION_IDS.WORK, key: "nav.work" },
     { id: SECTION_IDS.RECOMMENDATIONS, key: "nav.recommendations" },
-    { id: SECTION_IDS.CONTACT,         key: "nav.contact" },
+    { id: SECTION_IDS.CONTACT, key: "nav.contact" },
 ];
 
 const PROJECT_ITEMS: ProjectItem[] = [
-    { label: "HomeMade Gourmet", href: `#${SECTION_IDS.FEATURED}`, external: false },
+    /* AuthService é o projeto da seção Destaque — link interno */
+    { label: "AuthService", href: `#${SECTION_IDS.FEATURED}`, external: false },
     {
         label: "Web Chat",
         href: "https://chat-frontend-g42t.onrender.com",
@@ -75,30 +77,11 @@ const PROJECT_ITEMS: ProjectItem[] = [
         external: true,
     },
     {
-        label: "Auth Service",
-        href: "https://github.com/https-shini/AuthService",
+        label: "HomeMade Gourmet",
+        href: "https://https-shini.github.io/homemade-gourmet/",
         external: true,
     },
 ];
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   Utilitário — mailto: com assunto e corpo pré-preenchidos adaptados ao idioma
-───────────────────────────────────────────────────────────────────────────── */
-
-function buildMailtoHref(lang: string): string {
-    const isPt = lang === "pt";
-    const subject = encodeURIComponent(
-        isPt
-            ? "Contato via Portfólio — Guilherme Cruz"
-            : "Contact via Portfolio — Guilherme Cruz",
-    );
-    const body = encodeURIComponent(
-        isPt
-            ? "Olá, Guilherme!\n\nEntrei em contato pelo seu portfólio e gostaria de conversar sobre..."
-            : "Hi, Guilherme!\n\nI found you through your portfolio and would love to chat about...",
-    );
-    return `mailto:${AUTHOR_EMAIL}?subject=${subject}&body=${body}`;
-}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SUB-COMPONENTE — FooterBrand
@@ -117,7 +100,11 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
         <a
             href={`#${SECTION_IDS.HOME}`}
             className="footer__logo"
-            aria-label={lang === "pt" ? "Guilherme Cruz — voltar ao início da página" : "Guilherme Cruz — back to top"}
+            aria-label={
+                lang === "pt"
+                    ? "Guilherme Cruz — voltar ao início da página"
+                    : "Guilherme Cruz — back to top"
+            }
             onClick={onLogoClick}
         >
             <span className="footer__logo-dot" />
@@ -131,15 +118,25 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
         <p className="footer__brand-tagline">{tagline}</p>
 
         {/* Redes sociais */}
-        <nav aria-label={lang === "pt" ? "Redes sociais de Guilherme Cruz" : "Guilherme Cruz's social media"}>
-            <ul className="footer__social" role="list">
+        <nav
+            aria-label={
+                lang === "pt"
+                    ? "Redes sociais de Guilherme Cruz"
+                    : "Guilherme Cruz's social media"
+            }
+        >
+            <ul className="footer__social">
                 <li>
                     <a
                         href={GITHUB_URL}
                         className="social-link"
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={lang === "pt" ? "GitHub de Guilherme Cruz (abre em nova aba)" : "Guilherme Cruz on GitHub (opens in new tab)"}
+                        aria-label={
+                            lang === "pt"
+                                ? "GitHub de Guilherme Cruz (abre em nova aba)"
+                                : "Guilherme Cruz on GitHub (opens in new tab)"
+                        }
                     >
                         <IconGitHub width={16} height={16} />
                     </a>
@@ -150,7 +147,11 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
                         className="social-link"
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={lang === "pt" ? "LinkedIn de Guilherme Cruz (abre em nova aba)" : "Guilherme Cruz on LinkedIn (opens in new tab)"}
+                        aria-label={
+                            lang === "pt"
+                                ? "LinkedIn de Guilherme Cruz (abre em nova aba)"
+                                : "Guilherme Cruz on LinkedIn (opens in new tab)"
+                        }
                     >
                         <IconLinkedIn width={16} height={16} />
                     </a>
@@ -187,9 +188,7 @@ const FooterNavCol = memo<FooterNavColProps>(
         <div className="footer__col">
             <h3 className="footer__col-title">{title}</h3>
             <nav aria-label={navLabel}>
-                <ul className="footer__links" role="list">
-                    {children}
-                </ul>
+                <ul className="footer__links">{children}</ul>
             </nav>
         </div>
     ),
@@ -246,7 +245,11 @@ const FooterContact = memo<FooterContactProps>(
                     className="footer__contact-item"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={lang === "pt" ? "LinkedIn de Guilherme Cruz (abre em nova aba)" : "Guilherme Cruz on LinkedIn (opens in new tab)"}
+                    aria-label={
+                        lang === "pt"
+                            ? "LinkedIn de Guilherme Cruz (abre em nova aba)"
+                            : "Guilherme Cruz on LinkedIn (opens in new tab)"
+                    }
                 >
                     linkedin.com/in/oguilherme-cruz
                 </a>
@@ -292,7 +295,11 @@ const FooterBottom = memo<FooterBottomProps>(
                     className="footer__cv-link"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={lang === "pt" ? "Download do currículo em PDF (abre em nova aba)" : "Download résumé as PDF (opens in new tab)"}
+                    aria-label={
+                        lang === "pt"
+                            ? "Download do currículo em PDF (abre em nova aba)"
+                            : "Download résumé as PDF (opens in new tab)"
+                    }
                 >
                     <IconDownload width={12} height={12} />
                     {cvLabel}
@@ -340,7 +347,11 @@ export const Footer: React.FC = () => {
     return (
         <footer
             className="footer"
-            aria-label={lang === "pt" ? "Rodapé do portfólio de Guilherme Cruz" : "Guilherme Cruz's portfolio footer"}
+            aria-label={
+                lang === "pt"
+                    ? "Rodapé do portfólio de Guilherme Cruz"
+                    : "Guilherme Cruz's portfolio footer"
+            }
         >
             {/* ── 1. Grid principal ────────────────────────────────────────────── */}
             <div className="footer__main">
@@ -349,14 +360,20 @@ export const Footer: React.FC = () => {
                         {/* Coluna 1 — Brand */}
                         <FooterBrand
                             tagline={t("footer.tagline")}
-                            onLogoClick={(e) => handleInternalNav(e, SECTION_IDS.HOME)}
+                            onLogoClick={(e) =>
+                                handleInternalNav(e, SECTION_IDS.HOME)
+                            }
                             lang={lang}
                         />
 
                         {/* Coluna 2 — Navegação */}
                         <FooterNavCol
                             title={t("footer.nav")}
-                            navLabel={lang === "pt" ? "Links de navegação do rodapé" : "Footer navigation links"}
+                            navLabel={
+                                lang === "pt"
+                                    ? "Links de navegação do rodapé"
+                                    : "Footer navigation links"
+                            }
                         >
                             {NAV_ITEMS.map(({ id, key }) => (
                                 <li key={id}>
@@ -376,7 +393,11 @@ export const Footer: React.FC = () => {
                         {/* Coluna 3 — Projetos */}
                         <FooterNavCol
                             title={t("footer.projects")}
-                            navLabel={lang === "pt" ? "Links de projetos em destaque" : "Featured project links"}
+                            navLabel={
+                                lang === "pt"
+                                    ? "Links de projetos em destaque"
+                                    : "Featured project links"
+                            }
                         >
                             {PROJECT_ITEMS.map((item) => (
                                 <li key={item.href}>
@@ -395,7 +416,10 @@ export const Footer: React.FC = () => {
                                             href={item.href}
                                             className="footer__link"
                                             onClick={(e) =>
-                                                handleInternalNav(e, SECTION_IDS.FEATURED)
+                                                handleInternalNav(
+                                                    e,
+                                                    SECTION_IDS.FEATURED,
+                                                )
                                             }
                                         >
                                             {item.label}
