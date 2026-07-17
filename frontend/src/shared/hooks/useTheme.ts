@@ -41,7 +41,7 @@ function getInitialTheme(): Theme {
  */
 /* Cor do meta theme-color por tema — afeta a barra de navegador mobile */
 const THEME_COLOR: Record<Theme, string> = {
-    dark:  "#040710",
+    dark: "#040710",
     light: "#f2f4f8",
 };
 

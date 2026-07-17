@@ -138,11 +138,7 @@ export const IconDevTo: React.FC<IconProps> = (props) => (
 );
 
 export const IconTranslate: React.FC<IconProps> = (props) => (
-    <F
-        {...props}
-        aria-hidden={true}
-        viewBox="0 0 24 24"
-    >
+    <F {...props} aria-hidden={true} viewBox="0 0 24 24">
         <path d="M12.87 15.07l-2.54-2.54.02-.02A7.49 7.49 0 0013.5 6h2V4h-5V2h-2v2H3v2h7.17a5.48 5.48 0 01-1.64 3.54c-.63-.63-1.17-1.33-1.62-2.08H5.1c.57 1.22 1.37 2.33 2.34 3.25L3 17h2l3.66-3.66 2.28 2.28.93-.55zM18.5 10h-2l-4 10h2l1-2.5h4l1 2.5h2l-4-10zm-2.5 5.5l1.5-4 1.5 4h-3z" />
     </F>
 );

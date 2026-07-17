@@ -36,7 +36,9 @@ export const Timeline: React.FC = () => {
         >
             <div className="container">
                 <header className="section-header">
-                    <span className="section-eyebrow">{t("timeline.eyebrow")}</span>
+                    <span className="section-eyebrow">
+                        {t("timeline.eyebrow")}
+                    </span>
                     <h2 className="section-title" id="career-title">
                         {t("timeline.title")}
                     </h2>
@@ -46,7 +48,11 @@ export const Timeline: React.FC = () => {
                 <div className="career__layout">
                     <div className="career__companies">
                         {careerCompanies.map((company, idx) => (
-                            <CareerNode key={company.id} company={company} index={idx} />
+                            <CareerNode
+                                key={company.id}
+                                company={company}
+                                index={idx}
+                            />
                         ))}
                     </div>
 

@@ -37,7 +37,10 @@ function calcProgress(startDate: string, endDate?: string): number {
 
 const SKILLICONS_BASE = "https://skillicons.dev/icons?i=";
 
-export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex = 0 }) => {
+export const FormationCard: React.FC<FormationCardProps> = ({
+    item,
+    staggerIndex = 0,
+}) => {
     const { t, lang } = useLang();
 
     const isEdu = item.category === "edu";
@@ -59,7 +62,9 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
             style={{ ["--stagger-index" as string]: staggerIndex }}
         >
             {/* ─── Glow decorativo (apenas active) ─── */}
-            {isActive && <span className="formation-card__glow" aria-hidden="true" />}
+            {isActive && (
+                <span className="formation-card__glow" aria-hidden="true" />
+            )}
 
             {/* ─── Header ─── */}
             <header className="formation-card__head">
@@ -71,11 +76,18 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
                     )}
                 </span>
 
-                <span className="formation-card__category-label" aria-hidden="true">
-                    {isEdu ? t("education.edu.label") : t("education.cert.label")}
+                <span
+                    className="formation-card__category-label"
+                    aria-hidden="true"
+                >
+                    {isEdu
+                        ? t("education.edu.label")
+                        : t("education.cert.label")}
                 </span>
 
-                <span className="formation-card__period">{item.period[lang]}</span>
+                <span className="formation-card__period">
+                    {item.period[lang]}
+                </span>
             </header>
 
             {/* ─── Status badge / progress ─── */}
@@ -84,7 +96,10 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
                     className={`formation-card__status formation-card__status--${item.statusType}`}
                 >
                     {item.statusType === "active" ? (
-                        <span className="formation-card__status-dot" aria-hidden="true" />
+                        <span
+                            className="formation-card__status-dot"
+                            aria-hidden="true"
+                        />
                     ) : (
                         <IconCheck width={12} height={12} aria-hidden="true" />
                     )}
@@ -126,7 +141,11 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
                         className="formation-card__inst-link"
                     >
                         {item.institution}
-                        <IconExternalLink width={11} height={11} aria-hidden="true" />
+                        <IconExternalLink
+                            width={11}
+                            height={11}
+                            aria-hidden="true"
+                        />
                     </a>
                 ) : (
                     item.institution
@@ -138,9 +157,16 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
 
             {/* ─── Tech icons ─── */}
             {item.techIcons && item.techIcons.length > 0 && (
-                <div className="formation-card__tech" aria-label={t("education.tech.label")}>
-                    {item.techIcons.slice(0, 8).map(icon => (
-                        <span key={icon} className="formation-card__tech-icon" aria-hidden="true">
+                <div
+                    className="formation-card__tech"
+                    aria-label={t("education.tech.label")}
+                >
+                    {item.techIcons.slice(0, 8).map((icon) => (
+                        <span
+                            key={icon}
+                            className="formation-card__tech-icon"
+                            aria-hidden="true"
+                        >
                             <img
                                 src={`${SKILLICONS_BASE}${icon}`}
                                 alt=""
@@ -156,7 +182,10 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
 
             {/* ─── Tags ─── */}
             {visibleTags.length > 0 && (
-                <ul className="formation-card__tags" aria-label={t("education.skills.label")}>
+                <ul
+                    className="formation-card__tags"
+                    aria-label={t("education.skills.label")}
+                >
                     {visibleTags.map((tag, i) => (
                         <li key={i} className="formation-card__tag">
                             {tag[lang]}
@@ -174,7 +203,11 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
             <footer className="formation-card__footer">
                 {item.location && (
                     <span className="formation-card__location">
-                        <IconLocation width={12} height={12} aria-hidden="true" />
+                        <IconLocation
+                            width={12}
+                            height={12}
+                            aria-hidden="true"
+                        />
                         {item.location}
                     </span>
                 )}
@@ -188,7 +221,11 @@ export const FormationCard: React.FC<FormationCardProps> = ({ item, staggerIndex
                         aria-label={`${t("education.cert.link")}: ${item.title[lang]}`}
                     >
                         {t("education.cert.link")}
-                        <IconExternalLink width={12} height={12} aria-hidden="true" />
+                        <IconExternalLink
+                            width={12}
+                            height={12}
+                            aria-hidden="true"
+                        />
                     </a>
                 )}
             </footer>

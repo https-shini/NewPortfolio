@@ -1,4 +1,8 @@
-import type { TimelineRawData, CareerCompany, CareerBullet } from "./Timeline.types";
+import type {
+    TimelineRawData,
+    CareerCompany,
+    CareerBullet,
+} from "./Timeline.types";
 
 /* ─────────────────────────────────────────────────────────
    WISE_SYSTEM_BULLETS — atividades operacionais bilíngues
@@ -105,7 +109,10 @@ export const careerCompanies: CareerCompany[] = [
         id: "wise-system",
         name: "Wise System",
         url: "https://wisesystem.com.br",
-        location: { pt: "São Paulo, São Paulo, Brasil", en: "São Paulo, Brazil" },
+        location: {
+            pt: "São Paulo, São Paulo, Brasil",
+            en: "São Paulo, Brazil",
+        },
         positions: [
             {
                 id: "wise-n1",
@@ -171,8 +178,14 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
         },
         tags: [
             { pt: "Lógica de Programação", en: "Programming Logic" },
-            { pt: "Algoritmos e Estruturas de Dados", en: "Algorithms & Data Structures" },
-            { pt: "Desenvolvimento Web e Mobile", en: "Web & Mobile Development" },
+            {
+                pt: "Algoritmos e Estruturas de Dados",
+                en: "Algorithms & Data Structures",
+            },
+            {
+                pt: "Desenvolvimento Web e Mobile",
+                en: "Web & Mobile Development",
+            },
             { pt: "Banco de Dados", en: "Databases" },
             { pt: "Sistemas Operacionais", en: "Operating Systems" },
             { pt: "Teoria da Computação", en: "Theory of Computation" },
@@ -203,9 +216,15 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
         tags: [
             { pt: "Desenvolvimento de Software", en: "Software Development" },
             { pt: "Análise de Sistemas", en: "Systems Analysis" },
-            { pt: "Gestão de Projetos de Software", en: "Software Project Management" },
+            {
+                pt: "Gestão de Projetos de Software",
+                en: "Software Project Management",
+            },
             { pt: "Banco de Dados", en: "Databases" },
-            { pt: "Desenvolvimento Web e Mobile", en: "Web & Mobile Development" },
+            {
+                pt: "Desenvolvimento Web e Mobile",
+                en: "Web & Mobile Development",
+            },
             { pt: "Lógica de Programação", en: "Programming Logic" },
             { pt: "Inglês", en: "English" },
         ],
@@ -215,7 +234,10 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
     {
         id: "cert-1",
         category: "cert",
-        title: { pt: "Introdução à Cibersegurança", en: "Introduction to Cybersecurity" },
+        title: {
+            pt: "Introdução à Cibersegurança",
+            en: "Introduction to Cybersecurity",
+        },
         institution: "Cisco Networking Academy",
         institutionUrl: "https://www.netacad.com",
         period: { pt: "Abr 2026", en: "Apr 2026" },
@@ -228,18 +250,34 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
         },
         tags: [
             { pt: "Cibersegurança", en: "Cybersecurity" },
-            { pt: "Análise de Ameaças e Gestão de Riscos", en: "Threat Analysis & Risk Management" },
-            { pt: "Enterprise Network Security", en: "Enterprise Network Security" },
-            { pt: "Privacidade e Proteção de Dados", en: "Privacy & Data Protection" },
-            { pt: "Ética e Conformidade em Segurança", en: "Security Ethics & Compliance" },
+            {
+                pt: "Análise de Ameaças e Gestão de Riscos",
+                en: "Threat Analysis & Risk Management",
+            },
+            {
+                pt: "Enterprise Network Security",
+                en: "Enterprise Network Security",
+            },
+            {
+                pt: "Privacidade e Proteção de Dados",
+                en: "Privacy & Data Protection",
+            },
+            {
+                pt: "Ética e Conformidade em Segurança",
+                en: "Security Ethics & Compliance",
+            },
         ],
         techIcons: ["linux", "python", "git"],
-        certUrl: "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
+        certUrl:
+            "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
     },
     {
         id: "cert-2",
         category: "cert",
-        title: { pt: "CC50 — Ciência da Computação de Harvard", en: "CC50 — Harvard Computer Science" },
+        title: {
+            pt: "CC50 — Ciência da Computação de Harvard",
+            en: "CC50 — Harvard Computer Science",
+        },
         institution: "Fundação Estudar",
         institutionUrl: "https://cc50.com.br",
         period: { pt: "Dez 2024", en: "Dec 2024" },
@@ -252,14 +290,24 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
         },
         tags: [
             { pt: "Programação", en: "Programming" },
-            { pt: "Algoritmos e Estruturas de Dados", en: "Algorithms & Data Structures" },
-            { pt: "Memória e Gerenciamento de Recursos", en: "Memory & Resource Management" },
-            { pt: "SQL e Modelagem de Bancos de Dados", en: "SQL & Database Modeling" },
+            {
+                pt: "Algoritmos e Estruturas de Dados",
+                en: "Algorithms & Data Structures",
+            },
+            {
+                pt: "Memória e Gerenciamento de Recursos",
+                en: "Memory & Resource Management",
+            },
+            {
+                pt: "SQL e Modelagem de Bancos de Dados",
+                en: "SQL & Database Modeling",
+            },
             { pt: "Desenvolvimento Web", en: "Web Development" },
             { pt: "Inteligência Artificial", en: "Artificial Intelligence" },
         ],
         techIcons: ["python", "mysql", "git"],
-        certUrl: "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
+        certUrl:
+            "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
     },
     {
         id: "cert-3",
@@ -278,10 +326,24 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
         tags: [
             { pt: "Front-end Development", en: "Front-end Development" },
             { pt: "Back-end Development", en: "Back-end Development" },
-            { pt: "Desenvolvimento Web e Mobile", en: "Web & Mobile Development" },
+            {
+                pt: "Desenvolvimento Web e Mobile",
+                en: "Web & Mobile Development",
+            },
             { pt: "Resolução de Problemas", en: "Problem Solving" },
         ],
-        techIcons: ["html", "css", "sass", "js", "react", "nodejs", "vite", "git", "figma", "vscode"],
+        techIcons: [
+            "html",
+            "css",
+            "sass",
+            "js",
+            "react",
+            "nodejs",
+            "vite",
+            "git",
+            "figma",
+            "vscode",
+        ],
         certUrl:
             "https://app.rocketseat.com.br/certificates/5e1a87e2-9e71-4dbd-82a1-52f98b99c984",
     },
@@ -301,12 +363,19 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
         },
         tags: [
             { pt: "Modelagem de Dados", en: "Data Modeling" },
-            { pt: "Banco de Dados Relacionais e SQL", en: "Relational Databases & SQL" },
-            { pt: "Modelagem Conceitual, Lógica e Física", en: "Conceptual, Logical & Physical Modeling" },
+            {
+                pt: "Banco de Dados Relacionais e SQL",
+                en: "Relational Databases & SQL",
+            },
+            {
+                pt: "Modelagem Conceitual, Lógica e Física",
+                en: "Conceptual, Logical & Physical Modeling",
+            },
             { pt: "Análise de Dados", en: "Data Analysis" },
         ],
         techIcons: ["mysql", "oracle"],
-        certUrl: "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
+        certUrl:
+            "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
     },
     {
         id: "cert-5",
@@ -326,14 +395,25 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
             { pt: "Teste de Software", en: "Software Testing" },
             { pt: "Automação de Testes", en: "Test Automation" },
             { pt: "Documentação de Testes", en: "Test Documentation" },
-            { pt: "Garantia de Qualidade de Software", en: "Software Quality Assurance" },
-            { pt: "Padrões de Qualidade e Normas", en: "Quality Standards & Norms" },
+            {
+                pt: "Garantia de Qualidade de Software",
+                en: "Software Quality Assurance",
+            },
+            {
+                pt: "Padrões de Qualidade e Normas",
+                en: "Quality Standards & Norms",
+            },
         ],
         techIcons: ["git", "vscode"],
-        certUrl: "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
+        certUrl:
+            "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
     },
 ];
 
 /* ── Derived exports ───────────────────────────────────── */
-export const educationItems = ALL_TIMELINE_ITEMS.filter((i) => i.category === "edu");
-export const certificationItems = ALL_TIMELINE_ITEMS.filter((i) => i.category === "cert");
+export const educationItems = ALL_TIMELINE_ITEMS.filter(
+    (i) => i.category === "edu",
+);
+export const certificationItems = ALL_TIMELINE_ITEMS.filter(
+    (i) => i.category === "cert",
+);

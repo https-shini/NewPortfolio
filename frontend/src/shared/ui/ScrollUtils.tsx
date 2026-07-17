@@ -20,8 +20,10 @@ export const ScrollUtils: React.FC<{ label?: string }> = ({
 
     const update = useCallback(() => {
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
-        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = scrollHeight > 0 ? Math.min(1, scrollTop / scrollHeight) : 0;
+        const scrollHeight =
+            document.documentElement.scrollHeight - window.innerHeight;
+        const progress =
+            scrollHeight > 0 ? Math.min(1, scrollTop / scrollHeight) : 0;
 
         if (progressRef.current) {
             progressRef.current.style.transform = `scaleX(${progress})`;
@@ -54,7 +56,9 @@ export const ScrollUtils: React.FC<{ label?: string }> = ({
     }, [update]);
 
     const handleClick = useCallback(() => {
-        const noMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const noMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
         window.scrollTo({ top: 0, behavior: noMotion ? "auto" : "smooth" });
     }, []);
 
