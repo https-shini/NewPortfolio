@@ -6,21 +6,19 @@ import {
     IconGraduationCap,
     IconGitCommit,
     IconCode,
-    IconBriefcase,
     IconBolt,
-    IconTranslate,
     IconFrontend,
     IconBackend,
     IconDatabaseStack,
     IconQuality,
-} from "../../shared/ui/Icons.tsx";
+} from "@/shared/ui/Icons";
 
 /* ── Hook de i18n ────────────────────────────────────────────────────────── */
 import { useLang } from "@/shared/hooks/useLang";
 import { renderRichParagraphs } from "@/shared/lib/richText";
 
 /* ── Foto (import estático resolvido pelo Vite — sem path relativo frágil) ── */
-import heroImg from "@/public/hero.png";
+import heroImg from "@/assets/hero.webp";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DADOS ESTÁTICOS
@@ -296,7 +294,10 @@ export const About: React.FC = () => {
                     <div className="about__body">
                         {/* 1. Biografia ─────────────────────────────────────── */}
                         <div className="about__bio">
-                            {renderRichParagraphs(t("about.bio"), "about__text")}
+                            {renderRichParagraphs(
+                                t("about.bio"),
+                                "about__text",
+                            )}
                         </div>
 
                         {/* 2. Cards de especialização ───────────────────────── */}
@@ -317,7 +318,6 @@ export const About: React.FC = () => {
                                     <article
                                         className="spec-card"
                                         key={i}
-                                        tabIndex={0}
                                         aria-label={`${lang === "pt" ? "Área de especialização" : "Area of expertise"}: ${spec.title[lang]}`}
                                     >
                                         {/* HEADER (ícone + título lado a lado) */}
@@ -358,7 +358,10 @@ export const About: React.FC = () => {
                             </header>
 
                             <div className="about__objective-content">
-                                {renderRichParagraphs(t("about.goal.body"), "about__objective-text")}
+                                {renderRichParagraphs(
+                                    t("about.goal.body"),
+                                    "about__objective-text",
+                                )}
                             </div>
                         </section>
                     </div>
@@ -372,12 +375,16 @@ export const About: React.FC = () => {
                     ════════════════════════════════════════════════════════ */}
                     <aside
                         className="about__sidebar"
-                        aria-label={lang === "pt" ? "Foto, estatísticas e stack tecnológico" : "Photo, stats and tech stack"}
+                        aria-label={
+                            lang === "pt"
+                                ? "Foto, estatísticas e stack tecnológico"
+                                : "Photo, stats and tech stack"
+                        }
                     >
                         {/* 1. Foto ──────────────────────────────────────────── */}
                         <div className="about__photo-wrap">
                             <img
-                                src="https://raw.githubusercontent.com/https-shini/vite-portfolio/refs/heads/main/public/destaque/Icons/hero.png"
+                                src={heroImg}
                                 alt="Guilherme Cruz em ambiente de trabalho"
                                 className="about__photo"
                                 loading="lazy"

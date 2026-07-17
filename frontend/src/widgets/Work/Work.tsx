@@ -1,8 +1,11 @@
 import React from "react";
 import "./Work.css";
 import { useLang } from "@/shared/hooks/useLang";
-import { WorkProject } from "./Work.types";
+import { type WorkProject } from "./Work.types";
 import { IconGitHub, IconExternalLink } from "@/shared/ui/Icons";
+import webchatImg from "@/assets/projects/webchat.webp";
+import financasImg from "@/assets/projects/financas.webp";
+import authLoginImg from "@/assets/authservice/login.webp";
 
 const PROJECTS: WorkProject[] = [
     {
@@ -13,8 +16,7 @@ const PROJECTS: WorkProject[] = [
             pt: "Aplicação de chat em tempo real utilizando WebSocket, com suporte a múltiplas salas e interação direta no navegador.",
             en: "Real-time chat application built with WebSocket, supporting multiple rooms and direct in-browser interaction.",
         },
-        imageUrl:
-            "https://raw.githubusercontent.com/https-shini/vite-portfolio/refs/heads/main/public/destaque/Icons/projetos/work01.png",
+        imageUrl: webchatImg,
         tech: [
             { label: "Node.js", variant: "accent" },
             { label: "JavaScript", variant: "brand" },
@@ -31,8 +33,7 @@ const PROJECTS: WorkProject[] = [
             pt: "Serviço de autenticação com foco em segurança, gerenciamento de usuários e implementação de fluxo com JWT.",
             en: "Authentication service focused on security, user management and a complete JWT-based login flow.",
         },
-        imageUrl:
-            "https://raw.githubusercontent.com/https-shini/AuthService/refs/heads/main/read-model/img/Login01.png",
+        imageUrl: authLoginImg,
         tech: [
             { label: "Node.js", variant: "accent" },
             { label: "TypeScript", variant: "brand" },
@@ -49,8 +50,7 @@ const PROJECTS: WorkProject[] = [
             pt: "Aplicação para gestão financeira pessoal com controle de entradas, saídas e visualização de saldo em tempo real.",
             en: "Personal finance app for managing income and expenses with real-time balance tracking.",
         },
-        imageUrl:
-            "https://raw.githubusercontent.com/https-shini/vite-portfolio/refs/heads/main/public/destaque/Icons/projetos/work02.png",
+        imageUrl: financasImg,
         tech: [
             { label: "React", variant: "brand" },
             { label: "JavaScript", variant: "brand" },
@@ -100,8 +100,14 @@ export const Work: React.FC = () => {
                                     loading="lazy"
                                     decoding="async"
                                 />
-                                <span className="work-card__thumb-grad" aria-hidden="true" />
-                                <span className="work-card__emoji" aria-hidden="true">
+                                <span
+                                    className="work-card__thumb-grad"
+                                    aria-hidden="true"
+                                />
+                                <span
+                                    className="work-card__emoji"
+                                    aria-hidden="true"
+                                >
                                     {project.emoji}
                                 </span>
                             </div>
@@ -115,10 +121,15 @@ export const Work: React.FC = () => {
                                     {project.title[lang]}
                                 </h3>
 
-                                <p className="work-card__desc">{project.desc[lang]}</p>
+                                <p className="work-card__desc">
+                                    {project.desc[lang]}
+                                </p>
 
                                 {/* Tecnologias */}
-                                <div className="work-card__tech" aria-label={t("work.block.stack")}>
+                                <div
+                                    className="work-card__tech"
+                                    aria-label={t("work.block.stack")}
+                                >
                                     {project.tech.map((tech) => (
                                         <span
                                             key={tech.label}
@@ -139,7 +150,11 @@ export const Work: React.FC = () => {
                                     rel="noopener noreferrer"
                                     aria-label={`${t("work.btn.demo")} — ${project.title[lang]}`}
                                 >
-                                    <IconExternalLink width={14} height={14} aria-hidden="true" />
+                                    <IconExternalLink
+                                        width={14}
+                                        height={14}
+                                        aria-hidden="true"
+                                    />
                                     {t("work.btn.demo")}
                                 </a>
 
@@ -150,7 +165,11 @@ export const Work: React.FC = () => {
                                     rel="noopener noreferrer"
                                     aria-label={`${t("work.btn.repo")} — ${project.title[lang]}`}
                                 >
-                                    <IconGitHub width={15} height={15} aria-hidden="true" />
+                                    <IconGitHub
+                                        width={15}
+                                        height={15}
+                                        aria-hidden="true"
+                                    />
                                     {t("work.btn.repo")}
                                 </a>
                             </div>

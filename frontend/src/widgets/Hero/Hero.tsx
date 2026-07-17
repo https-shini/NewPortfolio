@@ -16,8 +16,8 @@ import {
     IconGitHub,
     IconLinkedIn,
     IconGmail,
-    IconSocial,
 } from "@/shared/ui/Icons";
+import avatarImg from "@/assets/avatar.webp";
 
 export const Hero: React.FC = () => {
     const { t, lang } = useLang();
@@ -28,7 +28,11 @@ export const Hero: React.FC = () => {
     };
 
     return (
-        <section id={SECTION_IDS.HOME} className="hero" aria-labelledby="hero-name">
+        <section
+            id={SECTION_IDS.HOME}
+            className="hero"
+            aria-labelledby="hero-name"
+        >
             <div className="hero__grid-bg" aria-hidden="true" />
             <div className="hero__glow" aria-hidden="true" />
 
@@ -81,27 +85,39 @@ export const Hero: React.FC = () => {
                             aria-hidden="true"
                         />
                         <a
-                            href="https://github.com/https-shini"
+                            href={GITHUB_URL}
                             className="social-link"
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label={lang === "pt" ? "GitHub de Guilherme Cruz" : "Guilherme Cruz on GitHub"}
+                            aria-label={
+                                lang === "pt"
+                                    ? "GitHub de Guilherme Cruz"
+                                    : "Guilherme Cruz on GitHub"
+                            }
                         >
                             <IconGitHub />
                         </a>
                         <a
-                            href="https://www.linkedin.com/in/oguilherme-cruz/"
+                            href={LINKEDIN_URL}
                             className="social-link"
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label={lang === "pt" ? "LinkedIn de Guilherme Cruz" : "Guilherme Cruz on LinkedIn"}
+                            aria-label={
+                                lang === "pt"
+                                    ? "LinkedIn de Guilherme Cruz"
+                                    : "Guilherme Cruz on LinkedIn"
+                            }
                         >
                             <IconLinkedIn />
                         </a>
                         <a
-                            href="mailto:guilherme.cruz@gmail.com"
+                            href={`mailto:${AUTHOR_EMAIL}`}
                             className="social-link"
-                            aria-label={lang === "pt" ? "Enviar e-mail para Guilherme Cruz" : "Email Guilherme Cruz"}
+                            aria-label={
+                                lang === "pt"
+                                    ? "Enviar e-mail para Guilherme Cruz"
+                                    : "Email Guilherme Cruz"
+                            }
                         >
                             <IconGmail />
                         </a>
@@ -115,12 +131,13 @@ export const Hero: React.FC = () => {
                         <div className="hero__avatar-frame" />
 
                         <img
-                            src="https://raw.githubusercontent.com/https-shini/vite-portfolio/refs/heads/main/public/destaque/Icons/avatar.png"
+                            src={avatarImg}
                             alt="Guilherme Cruz"
                             className="hero__avatar"
                             width={380}
                             height={420}
                             loading="eager"
+                            fetchPriority="high"
                             decoding="async"
                         />
 
@@ -134,7 +151,11 @@ export const Hero: React.FC = () => {
             <button
                 type="button"
                 className="hero__scroll"
-                aria-label={lang === "pt" ? "Rolar para a próxima seção" : "Scroll to the next section"}
+                aria-label={
+                    lang === "pt"
+                        ? "Rolar para a próxima seção"
+                        : "Scroll to the next section"
+                }
                 onClick={(e) => handleScroll(e, SECTION_IDS.ABOUT)}
             >
                 <span className="hero__scroll-text">{t("hero.scroll")}</span>
