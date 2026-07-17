@@ -185,6 +185,15 @@
         padding: var(--space-4);
     }
 
+    /* min-width: 0 anula o min-content dos flex items — sem ele, as pills
+       com flex-shrink: 0 forçam a largura além do viewport (overflow-x
+       da página em telas estreitas). */
+    .formations__stats-counter,
+    .formations__filters {
+        min-width: 0;
+        max-width: 100%;
+    }
+
     .formations__stats-counter {
         justify-content: space-between;
     }
