@@ -7,10 +7,11 @@ export const LANG_KEY      = 'portfolio-lang';
 
 /**
  * URL do currículo em PDF.
+ * Servido a partir de src/public/docs (ver publicDir em vite.config.ts),
+ * então em runtime fica disponível na raiz do site.
  * Centralizado aqui para facilitar manutenção (usado em Hero, Footer, etc.)
  */
-export const CV_URL =
-    'https://https-shini.github.io/portfolio/docs/curriculo.pdf';
+export const CV_URL = '/docs/Curriculo_PTBR.pdf';
 
 /**
  * SECTION_IDS — identificadores semânticos das seções do site em português.
