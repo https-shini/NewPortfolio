@@ -210,7 +210,7 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
             { pt: "Inglês", en: "English" },
         ],
         techIcons: ["html", "css", "js", "php", "mysql", "figma", "vscode"],
-        certUrl: null,
+        certUrl: "/docs/etec.pdf",
     },
     {
         id: "cert-1",
@@ -259,7 +259,7 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
             { pt: "Inteligência Artificial", en: "Artificial Intelligence" },
         ],
         techIcons: ["python", "mysql", "git"],
-        certUrl: "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
+        certUrl: "/docs/CC50.pdf",
     },
     {
         id: "cert-3",
@@ -282,8 +282,7 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
             { pt: "Resolução de Problemas", en: "Problem Solving" },
         ],
         techIcons: ["html", "css", "sass", "js", "react", "nodejs", "vite", "git", "figma", "vscode"],
-        certUrl:
-            "https://app.rocketseat.com.br/certificates/5e1a87e2-9e71-4dbd-82a1-52f98b99c984",
+        certUrl: "/docs/certificate.pdf",
     },
     {
         id: "cert-4",
@@ -306,7 +305,7 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
             { pt: "Análise de Dados", en: "Data Analysis" },
         ],
         techIcons: ["mysql", "oracle"],
-        certUrl: "https://www.linkedin.com/in/oguilherme-cruz/details/certifications/",
+        certUrl: "/docs/modelagem-de-dados.pdf",
     },
     {
         id: "cert-5",
