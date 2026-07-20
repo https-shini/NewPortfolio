@@ -18,7 +18,7 @@ import {
     AUTHOR_EMAIL,
     GITHUB_URL,
     LINKEDIN_URL,
-    CV_URL,
+    getCvUrl,
     SECTION_IDS,
 } from "@/shared/config/constants";
 import {
@@ -114,7 +114,7 @@ interface FooterBrandProps {
 const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
     <div className="footer__brand">
         {/* Logo — mesma identidade visual do Header */}
-        <a
+        
             href={`#${SECTION_IDS.HOME}`}
             className="footer__logo"
             aria-label={lang === "pt" ? "Guilherme Cruz — voltar ao início da página" : "Guilherme Cruz — back to top"}
@@ -134,7 +134,7 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
         <nav aria-label={lang === "pt" ? "Redes sociais de Guilherme Cruz" : "Guilherme Cruz's social media"}>
             <ul className="footer__social" role="list">
                 <li>
-                    <a
+                    
                         href={GITHUB_URL}
                         className="social-link"
                         target="_blank"
@@ -145,7 +145,7 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
                     </a>
                 </li>
                 <li>
-                    <a
+                    
                         href={LINKEDIN_URL}
                         className="social-link"
                         target="_blank"
@@ -156,7 +156,7 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
                     </a>
                 </li>
                 <li>
-                    <a
+                    
                         href={`mailto:${AUTHOR_EMAIL}`}
                         className="social-link"
                         aria-label={`Enviar e-mail para ${AUTHOR_EMAIL}`}
@@ -222,7 +222,7 @@ const FooterContact = memo<FooterContactProps>(
             */}
             <address className="footer__address">
                 {/* CTA compacto de e-mail */}
-                <a
+                
                     href={mailtoHref}
                     className="footer__contact-cta btn btn--primary btn--sm"
                     aria-label={`${ctaLabel} — ${AUTHOR_EMAIL}`}
@@ -232,7 +232,7 @@ const FooterContact = memo<FooterContactProps>(
                 </a>
 
                 {/* E-mail visível em texto — ATS indexa o endereço */}
-                <a
+                
                     href={`mailto:${AUTHOR_EMAIL}`}
                     className="footer__contact-item"
                     aria-label={`Enviar e-mail para ${AUTHOR_EMAIL}`}
@@ -241,7 +241,7 @@ const FooterContact = memo<FooterContactProps>(
                 </a>
 
                 {/* LinkedIn */}
-                <a
+                
                     href={LINKEDIN_URL}
                     className="footer__contact-item"
                     target="_blank"
@@ -273,11 +273,12 @@ interface FooterBottomProps {
     made: string;
     coffee: string;
     cvLabel: string;
+    cvUrl: string;
     lang: "pt" | "en";
 }
 
 const FooterBottom = memo<FooterBottomProps>(
-    ({ year, rights, made, coffee, cvLabel, lang }) => (
+    ({ year, rights, made, coffee, cvLabel, cvUrl, lang }) => (
         <div className="footer__bottom">
             {/* Copyright com <time> semântico */}
             <p className="footer__copyright">
@@ -287,8 +288,8 @@ const FooterBottom = memo<FooterBottomProps>(
 
             {/* Ações secundárias: CV + made with */}
             <div className="footer__bottom-end">
-                <a
-                    href={CV_URL}
+                
+                    href={cvUrl}
                     className="footer__cv-link"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -336,6 +337,7 @@ export const Footer: React.FC = () => {
 
     const ctaLabel = lang === "pt" ? "Fale comigo" : "Get in touch";
     const cvLabel = lang === "pt" ? "Download CV" : "Download CV";
+    const cvUrl = getCvUrl(lang);
 
     return (
         <footer
@@ -360,7 +362,7 @@ export const Footer: React.FC = () => {
                         >
                             {NAV_ITEMS.map(({ id, key }) => (
                                 <li key={id}>
-                                    <a
+                                    
                                         href={`#${id}`}
                                         className="footer__link"
                                         onClick={(e) =>
@@ -381,7 +383,7 @@ export const Footer: React.FC = () => {
                             {PROJECT_ITEMS.map((item) => (
                                 <li key={item.href}>
                                     {item.external ? (
-                                        <a
+                                        
                                             href={item.href}
                                             className="footer__link"
                                             target="_blank"
@@ -391,7 +393,7 @@ export const Footer: React.FC = () => {
                                             {item.label}
                                         </a>
                                     ) : (
-                                        <a
+                                        
                                             href={item.href}
                                             className="footer__link"
                                             onClick={(e) =>
@@ -429,6 +431,7 @@ export const Footer: React.FC = () => {
                         made={t("footer.made")}
                         coffee={t("footer.coffee")}
                         cvLabel={cvLabel}
+                        cvUrl={cvUrl}
                         lang={lang}
                     />
                 </div>
