@@ -43,7 +43,7 @@ Cada seção foi construída como um módulo independente, com seus próprios ar
 
 > Acesse o portfólio em produção:
 
-**[→ bl4ck404.dev.br](https://bl4ck404.dev.br)**
+**[→ gcruz.dev.br](https://gcruz.dev.br/)**
 
 ---
 
