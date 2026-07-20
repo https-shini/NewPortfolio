@@ -11,7 +11,14 @@ export const LANG_KEY      = 'portfolio-lang';
  * então em runtime fica disponível na raiz do site.
  * Centralizado aqui para facilitar manutenção (usado em Hero, Footer, etc.)
  */
-export const CV_URL = '/docs/Curriculo_PTBR.pdf';
+export const CV_URLS = {
+    pt: '/docs/Curriculo_PTBR.pdf',
+    en: '/docs/Curriculo_EN.pdf',
+} as const;
+
+export function getCvUrl(lang: keyof typeof CV_URLS): string {
+    return CV_URLS[lang];
+}
 
 /**
  * SECTION_IDS — identificadores semânticos das seções do site em português.
