@@ -25,6 +25,8 @@ function getInitials(name: string): string {
  * Contém uma trilha interna de progressão de cargos (mais recente no
  * topo). Quando um cargo efetivo sucede um estágio na mesma empresa, ele
  * é marcado como "promoção", tornando a narrativa de evolução explícita.
+ * Todas as posições iniciam recolhidas — o usuário expande individualmente
+ * cada cargo para ver os detalhes completos.
  */
 export const CareerNode: React.FC<CareerNodeProps> = ({ company, index }) => {
     const { lang, t } = useLang();
@@ -76,7 +78,7 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index }) => {
                     <div className="career-company__name-row">
                         <h3 className="career-company__name">
                             {company.url ? (
-                                <a
+                                
                                     href={company.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -128,7 +130,7 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index }) => {
                         <PositionEntry
                             position={pos}
                             staggerIndex={i}
-                            defaultOpen={i === 0}
+                            defaultOpen={false}
                             isPromotion={promotionFlags[i]}
                         />
                     </li>
