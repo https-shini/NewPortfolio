@@ -181,10 +181,16 @@
 }
 
 .hero__desc {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 52ch;
+}
+
+.hero__desc-text {
     font-size: var(--text-lg);
     line-height: var(--lh-relaxed);
     color: var(--color-text-3);
-    max-width: 52ch;
     text-align: justify;
     text-wrap: balance;
 }
