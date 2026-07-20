@@ -188,11 +188,11 @@ const pt: Translations = {
     "hero.role": "Desenvolvedor Júnior",
     "hero.sub": "Desenvolvimento Web",
     "hero.desc":
-        "Estudante de Ciência da Computação em busca da primeira oportunidade como **Desenvolvedor Júnior** ou **Estagiário**. Experiência prática com **React, Node.js e MySQL** no desenvolvimento de aplicações web — busco evoluir tecnicamente e contribuir com soluções eficientes em um ambiente colaborativo.",
+        "**Desenvolvedor Júnior** com experiência prática em **React, TypeScript, Node.js e APIs REST**, hoje atuando como **Analista de Suporte Técnico** na Wise System, efetivado de estágio a CLT em menos de um ano. Construo aplicações com **JavaScript**, **Python** e **JWT**, aplico **Clean Code** e **Git**, e busco uma vaga onde eu escreva o sistema em vez de só dar suporte a ele.",
     "hero.status": "Disponível para oportunidades",
     "hero.cta.work": "Ver projetos",
     "hero.cta.cv": "Download CV",
-    "hero.badge": "Em busca da primeira oportunidade",
+    "hero.badge": "Em transição para desenvolvimento",
     "hero.scroll": "Explorar",
 
     /* ABOUT */
@@ -211,7 +211,8 @@ const pt: Translations = {
 
     /* TIMELINE (Carreira) */
     "timeline.title": "Carreira",
-    "timeline.sub": "Trajetória profissional e evolução na área de tecnologia.",
+    "timeline.sub":
+        "De estagiário a efetivado CLT em menos de um ano na Wise System. Experiência prática com ERP financeiro, CNAB, conciliação bancária e homologação fiscal, com foco em resolução de problemas e causa raiz de incidentes.",
     "timeline.eyebrow": "Profissional",
     "timeline.exp.title": "Experiência Profissional",
 
@@ -248,7 +249,8 @@ const pt: Translations = {
 
     /* EDUCATION (Formações) */
     "education.title": "Formações",
-    "education.sub": "Trajetória acadêmica e certificações que sustentam minha base técnica.",
+    "education.sub":
+        "Cursando Ciência da Computação na UNICSUL, com técnico em Desenvolvimento de Sistemas pela ETEC. Certificações em cibersegurança, CS50 (Harvard), modelagem de dados e qualidade de software complementam a formação.",
     "education.eyebrow": "Acadêmico",
     "education.edu.title": "Formação Acadêmica",
     "education.cert.title": "Certificações",
@@ -268,13 +270,13 @@ const pt: Translations = {
     "education.skills.label": "Competências",
     "education.progress": "concluído",
     "about.bio":
-        "Sou estudante de **Ciência da Computação** na Universidade Cruzeiro do Sul, com formação técnica em **Desenvolvimento de Sistemas** pela **ETEC Vila Formosa**. Ao longo da minha formação, desenvolvi uma base sólida em **lógica de programação**, **estruturas de dados** e **fundamentos de engenharia de software**, aplicando esses conceitos na construção de **projetos práticos** e soluções reais.\n\nTenho experiência no desenvolvimento de **aplicações web modernas**, com foco em **frontend** e integração com **APIs**. Utilizo tecnologias como **React**, **JavaScript/TypeScript**, **Node.js** e **MySQL**, criando **interfaces responsivas**, organizadas e com atenção à **experiência do usuário (UX/UI)** — sempre buscando entregar soluções **funcionais**, **performáticas** e bem estruturadas.\n\nAlém do desenvolvimento web, tenho interesse em áreas como **Java**, **machine learning**, **segurança da informação** e **engenharia de software**, buscando construir soluções **escaláveis** e **robustas**. Em meus projetos, aplico **código limpo**, **boas práticas** e **versionamento com Git**, mantendo foco em **organização**, **manutenibilidade** e **evolução contínua** como desenvolvedor.",
+        "Sou Guilherme Cruz, **Desenvolvedor Júnior** em transição de carreira, hoje atuando como **Analista de Suporte Técnico (Helpdesk)** na Wise System. Fui efetivado de estágio a CLT em menos de um ano, dando suporte a um **ERP financeiro** em produção: análise de causa raiz de incidentes, arquivos bancários **CNAB**, conciliação bancária e homologação de notas fiscais. É vivência real de sistema em produção, não só teoria de sala de aula.\n\nDo lado do desenvolvimento, domino **JavaScript**, **TypeScript**, **Java**, **Python** e **PHP**, com foco em **front-end** (**React**, **React Router**, **Vite**, **HTML5**, **CSS3**, SPA e design responsivo) e **back-end** (**Node.js**, **APIs REST/RESTful**, **WebSocket**, **autenticação JWT**, **POO**). Trabalho com **MySQL** e **Oracle**, modelagem de banco de dados relacional, e uso **Git**, **GitHub** e **CI/CD** com deploy contínuo em **Vercel** e **Render**.\n\nAplico **metodologias ágeis (Scrum/Kanban)**, **Clean Code**, testes de software e boas práticas de **qualidade de software**. Tenho perfil **analítico** e **investigativo**, aprendo rápido, colaboro bem em equipe e busco minha próxima oportunidade como **Desenvolvedor** para aplicar essa base técnica em projetos reais, com autonomia crescente.",
     "about.goal.body":
-        "Estou em busca da minha primeira oportunidade como **Desenvolvedor Júnior** ou **Estagiário em Desenvolvimento**, com o objetivo de aplicar meus conhecimentos em **projetos reais**, evoluir minhas **habilidades técnicas** e contribuir ativamente com o time. Tenho interesse em **desenvolvimento web** e **Java**, além de explorar áreas como **segurança da informação** e **arquitetura de software**.\n\nMeu foco é desenvolver aplicações com **boa estrutura**, **escalabilidade** e **manutenibilidade**, aplicando **boas práticas** e **organização de código**. Busco um ambiente onde eu possa crescer profissionalmente, contribuir com **resolução de problemas**, manter **aprendizado contínuo** e entregar soluções com **qualidade** e **performance**.",
+        "Busco oportunidade como **Desenvolvedor** para atuar no desenvolvimento web e contribuir com soluções reais. Trago prática com **React**, **Node.js**, **TypeScript**, **APIs REST** e **autenticação JWT**, somada à vivência de sistemas em produção adquirida no suporte a **ERP**. Quero aplicar essa base em um time colaborativo, contribuindo com **código de qualidade** e evoluindo continuamente.\n\nTenho interesse em **arquitetura de software**, **segurança da informação** e **testes de software**, e busco crescer usando **metodologias ágeis (Scrum/Kanban)**, **CI/CD** e boas práticas de **Clean Code** em um ambiente que valorize aprendizado contínuo e entrega de qualidade.",
     "about.specs.title": "Áreas de especialização",
     "contact.cta.heading": "Vamos **construir algo** juntos?",
     "contact.cta.lead":
-        "Estou pronto para iniciar minha trajetória como **Desenvolvedor Júnior** ou **Estagiário**, contribuindo com **aplicações modernas**, **bem estruturadas** e voltadas para **performance** e **experiência do usuário**.\n\nSe você procura alguém **dedicado**, com **vontade de evoluir** e que **contribua de forma prática em projetos reais**, vamos conversar e construir **soluções juntos**!",
+        "Estou pronto para contribuir como **Desenvolvedor Júnior**, com prática real em **React**, **TypeScript**, **Node.js**, **APIs REST** e **autenticação JWT**, somada à experiência de sistemas em produção que trago do suporte técnico a um **ERP**. Aplico **Clean Code**, **Git** e **metodologias ágeis** no meu dia a dia.\n\nSe você procura alguém com **perfil analítico**, **resolução de problemas** na veia e prontidão para **contribuir em projetos reais**, me chama, vamos conversar sobre a vaga.",
 
     /* FEATURED */
     "featured.eyebrow": "Destaque",
@@ -305,7 +307,7 @@ const pt: Translations = {
     /* WORK */
     "work.title": "Projetos",
     "work.sub":
-        "Seleção de projetos que demonstram minha experiência prática no desenvolvimento de aplicações, com foco em boas práticas, performance e qualidade de código.",
+        "Projetos construídos do zero com React, TypeScript, Node.js e Python/FastAPI, incluindo APIs REST, autenticação JWT e aplicações em tempo real com WebSocket, todos com deploy contínuo em produção.",
     "work.more": "Ver todos no GitHub",
     "work.eyebrow": "Portfólio",
     "work.btn.demo": "Acessar projeto",
@@ -316,8 +318,8 @@ const pt: Translations = {
     /* CONTACT */
     "contact.title": "Vamos trabalhar juntos",
     "contact.sub":
-        "Desenvolvedor em início de carreira, com base sólida em programação e engenharia de software. Busco minha primeira oportunidade para contribuir com projetos reais e evoluir continuamente como profissional de tecnologia.",
-    "contact.hook": "Tem uma ideia ou oportunidade? Vamos conversar!",
+        "Desenvolvedor Júnior com experiência prática em React, Node.js, TypeScript e APIs REST, e vivência real de sistemas em produção como Analista de Suporte Técnico em ERP financeiro. Disponível para posições de Desenvolvedor Frontend, Full Stack ou Estágio em Desenvolvimento, remoto ou presencial.",
+    "contact.hook": "Tem uma vaga de Desenvolvedor? Vamos conversar.",
     "contact.share": "Conecte-se comigo através das plataformas abaixo:",
     "contact.send": "Enviar mensagem",
     "contact.sending": "Enviando...",
@@ -334,7 +336,7 @@ const pt: Translations = {
     /* RECOMMENDATIONS */
     "rec.title": "Recomendações",
     "rec.sub":
-        "O que pessoas que trabalharam comigo dizem sobre minha atuação profissional.",
+        "Depoimentos de colegas e gestores da Wise System sobre minha atuação como Analista de Suporte Técnico: postura investigativa, resolução de problemas e confiabilidade no dia a dia com sistemas em produção. Recomendações reais, publicadas no LinkedIn.",
     "rec.eyebrow": "Depoimentos",
     "rec.count.one": "recomendação",
     "rec.count.many": "recomendações",
@@ -343,7 +345,7 @@ const pt: Translations = {
 
     /* FOOTER */
     "footer.tagline":
-        "Desenvolvedor focado em evolução constante e criação de soluções modernas.",
+        "Desenvolvedor Júnior em transição, com prática real em React, Node.js e sistemas em produção.",
     "footer.nav": "Navegação",
     "footer.projects": "Projetos",
     "footer.contact": "Contato",
@@ -373,11 +375,11 @@ const en: Translations = {
     "hero.role": "Junior Developer",
     "hero.sub": "Web Development",
     "hero.desc":
-        "Computer Science student seeking a first opportunity as a **Junior Developer** or **Intern**. Hands-on experience with **React, Node.js and MySQL** in web development — looking to grow technically and contribute efficient solutions in a collaborative environment.",
+        "**Junior Developer** with hands-on experience in **React, TypeScript, Node.js and REST APIs**, currently working as a **Technical Support Analyst** at Wise System, promoted from intern to full-time employee in under a year. I build applications with **JavaScript**, **Python** and **JWT**, apply **Clean Code** and **Git**, and I'm looking for a role where I write the system instead of just supporting it.",
     "hero.status": "Open to opportunities",
     "hero.cta.work": "View projects",
     "hero.cta.cv": "Download CV",
-    "hero.badge": "Seeking first opportunity",
+    "hero.badge": "Transitioning into development",
     "hero.scroll": "Explore",
 
     /* ABOUT */
@@ -396,7 +398,8 @@ const en: Translations = {
 
     /* TIMELINE (Career) */
     "timeline.title": "Career",
-    "timeline.sub": "Professional journey and growth in the tech industry.",
+    "timeline.sub":
+        "From intern to full-time employee in under a year at Wise System. Hands-on experience with financial ERP, CNAB, bank reconciliation and tax compliance, focused on problem-solving and root-cause analysis.",
     "timeline.eyebrow": "Career",
     "timeline.exp.title": "Professional Experience",
 
@@ -433,7 +436,8 @@ const en: Translations = {
 
     /* EDUCATION */
     "education.title": "Education",
-    "education.sub": "Academic path and certifications that build my technical foundation.",
+    "education.sub":
+        "Currently pursuing a Computer Science degree at UNICSUL, with a technical degree in Systems Development from ETEC. Certifications in cybersecurity, CS50 (Harvard), data modeling and software quality round out the education.",
     "education.eyebrow": "Academic",
     "education.edu.title": "Academic Education",
     "education.cert.title": "Certifications",
@@ -453,13 +457,13 @@ const en: Translations = {
     "education.skills.label": "Skills",
     "education.progress": "completed",
     "about.bio":
-        "I'm a **Computer Science** student at Universidade Cruzeiro do Sul, with a technical background in **Systems Development** from **ETEC Vila Formosa**. Throughout my education I built a solid foundation in **programming logic**, **data structures** and **software engineering fundamentals**, applying these concepts to **hands-on projects** and real-world solutions.\n\nI have experience building **modern web applications**, focused on the **frontend** and **API** integration. I work with technologies such as **React**, **JavaScript/TypeScript**, **Node.js** and **MySQL**, creating **responsive**, well-organized **interfaces** with attention to **user experience (UX/UI)** — always aiming to deliver **functional**, **performant** and well-structured solutions.\n\nBeyond web development, I'm interested in areas like **Java**, **machine learning**, **information security** and **software engineering**, aiming to build **scalable** and **robust** solutions. Across my projects I apply **clean code**, **good practices** and **version control with Git**, keeping a focus on **organization**, **maintainability** and **continuous growth** as a developer.",
+        "I'm Guilherme Cruz, a **Junior Developer** transitioning careers, currently working as a **Technical Support Analyst (Helpdesk)** at Wise System. I was promoted from intern to full-time employee in under a year, supporting a **financial ERP** in production: root-cause analysis of incidents, **CNAB** banking files, bank reconciliation, and tax document validation. That's real production-system experience, not just classroom theory.\n\nOn the development side, I work with **JavaScript**, **TypeScript**, **Java**, **Python** and **PHP**, focused on **front-end** (**React**, **React Router**, **Vite**, **HTML5**, **CSS3**, SPA and responsive design) and **back-end** (**Node.js**, **REST/RESTful APIs**, **WebSocket**, **JWT authentication**, **OOP**). I work with **MySQL** and **Oracle**, relational database modeling, and use **Git**, **GitHub** and **CI/CD** with continuous deployment on **Vercel** and **Render**.\n\nI apply **agile methodologies (Scrum/Kanban)**, **Clean Code**, software testing and solid **software quality** practices. I have an **analytical**, **investigative** mindset, learn fast, collaborate well on teams, and I'm looking for my next opportunity as a **Developer** to apply this technical foundation to real projects, with growing autonomy.",
     "about.goal.body":
-        "I'm looking for my first opportunity as a **Junior Developer** or **Development Intern**, aiming to apply my knowledge to **real projects**, sharpen my **technical skills** and actively contribute to the team. I'm interested in **web development** and **Java**, and I also explore areas like **information security** and **software architecture**.\n\nMy focus is building applications with **solid structure**, **scalability** and **maintainability**, applying **best practices** and **clean code organization**. I'm looking for an environment where I can grow professionally, contribute to **problem-solving**, keep up **continuous learning** and deliver solutions with **quality** and **performance**.",
+        "I'm looking for a **Developer** opportunity to work in web development and contribute to real solutions. I bring practical experience with **React**, **Node.js**, **TypeScript**, **REST APIs** and **JWT authentication**, combined with production-systems experience gained supporting an **ERP**. I want to apply that foundation on a collaborative team, contributing **quality code** and growing continuously.\n\nI'm interested in **software architecture**, **information security** and **software testing**, and I want to grow using **agile methodologies (Scrum/Kanban)**, **CI/CD** and solid **Clean Code** practices in an environment that values continuous learning and quality delivery.",
     "about.specs.title": "Areas of expertise",
     "contact.cta.heading": "Let's **build something** together?",
     "contact.cta.lead":
-        "I'm ready to start my journey as a **Junior Developer** or **Intern**, contributing to **modern**, **well-structured** applications focused on **performance** and **user experience**.\n\nIf you're looking for someone **dedicated**, **eager to grow** and ready to **contribute practically to real projects**, let's talk and **build solutions together**!",
+        "I'm ready to contribute as a **Junior Developer**, with real practice in **React**, **TypeScript**, **Node.js**, **REST APIs** and **JWT authentication**, combined with production-systems experience from technical support on an **ERP**. I apply **Clean Code**, **Git** and **agile methodologies** in my day to day.\n\nIf you're looking for someone with an **analytical mindset**, a knack for **problem-solving**, and readiness to **contribute to real projects**, reach out, let's talk about the role.",
 
     /* FEATURED */
     "featured.eyebrow": "Featured",
@@ -489,7 +493,8 @@ const en: Translations = {
 
     /* WORK */
     "work.title": "Projects",
-    "work.sub": "Projects built to practice and improve technical skills.",
+    "work.sub":
+        "Projects built from scratch with React, TypeScript, Node.js and Python/FastAPI, including REST APIs, JWT authentication and real-time applications with WebSocket, all with continuous deployment to production.",
     "work.more": "View all on GitHub",
     "work.eyebrow": "Portfolio",
     "work.btn.demo": "View project",
@@ -500,8 +505,8 @@ const en: Translations = {
     /* CONTACT */
     "contact.title": "Let's work together",
     "contact.sub":
-        "Frontend developer focused on React, TypeScript and performant experiences. Seeking first professional opportunity to contribute to real projects.",
-    "contact.hook": "Have an idea or opportunity? Let's talk.",
+        "Junior Developer with hands-on experience in React, Node.js, TypeScript and REST APIs, plus real production-systems experience as a Technical Support Analyst for a financial ERP. Available for Frontend Developer, Full Stack or Development Internship positions, remote or on-site.",
+    "contact.hook": "Have a Developer opening? Let's talk.",
     "contact.share":
         "Connect with me or reach out directly through the platforms below.",
     "contact.send": "Send message",
@@ -519,7 +524,7 @@ const en: Translations = {
     /* RECOMMENDATIONS */
     "rec.title": "Recommendations",
     "rec.sub":
-        "What people who worked with me say about my professional performance.",
+        "Testimonials from Wise System colleagues and managers about my work as a Technical Support Analyst: investigative mindset, problem-solving and reliability in day-to-day work with production systems. Real recommendations, published on LinkedIn.",
     "rec.eyebrow": "Testimonials",
     "rec.count.one": "recommendation",
     "rec.count.many": "recommendations",
@@ -528,7 +533,7 @@ const en: Translations = {
 
     /* FOOTER */
     "footer.tagline":
-        "Developer focused on continuous learning and building modern solutions.",
+        "Junior Developer in transition, with real-world practice in React, Node.js and production systems.",
     "footer.nav": "Navigation",
     "footer.projects": "Projects",
     "footer.contact": "Contact",
