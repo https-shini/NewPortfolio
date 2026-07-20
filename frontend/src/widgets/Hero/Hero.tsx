@@ -7,7 +7,7 @@ import {
     GITHUB_URL,
     LINKEDIN_URL,
     AUTHOR_EMAIL,
-    CV_URL,
+    getCvUrl,
     SECTION_IDS,
 } from "@/shared/config/constants";
 import {
@@ -21,6 +21,7 @@ import {
 
 export const Hero: React.FC = () => {
     const { t, lang } = useLang();
+    const cvUrl = getCvUrl(lang);
 
     const handleScroll = (e: React.MouseEvent, id: string) => {
         e.preventDefault();
@@ -63,8 +64,8 @@ export const Hero: React.FC = () => {
                             <IconCode />
                             <span>{t("hero.cta.work")}</span>
                         </button>
-                        <a
-                            href={CV_URL}
+                        
+                            href={cvUrl}
                             className="btn btn--outline btn--lg"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -80,7 +81,7 @@ export const Hero: React.FC = () => {
                             className="hero__social-divider"
                             aria-hidden="true"
                         />
-                        <a
+                        
                             href="https://github.com/https-shini"
                             className="social-link"
                             target="_blank"
@@ -89,7 +90,7 @@ export const Hero: React.FC = () => {
                         >
                             <IconGitHub />
                         </a>
-                        <a
+                        
                             href="https://www.linkedin.com/in/oguilherme-cruz/"
                             className="social-link"
                             target="_blank"
@@ -98,7 +99,7 @@ export const Hero: React.FC = () => {
                         >
                             <IconLinkedIn />
                         </a>
-                        <a
+                        
                             href="mailto:guilherme.cruz@gmail.com"
                             className="social-link"
                             aria-label={lang === "pt" ? "Enviar e-mail para Guilherme Cruz" : "Email Guilherme Cruz"}
