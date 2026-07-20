@@ -36,7 +36,7 @@
     display: grid;
     grid-template-columns: 1fr 360px;
     gap: var(--space-16);
-    margin-top: var(--space-14);
+    margin-top: var(--space-5);
     align-items: start;
 }
 

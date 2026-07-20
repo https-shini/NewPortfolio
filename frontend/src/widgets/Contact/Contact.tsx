@@ -109,7 +109,9 @@ export const Contact: React.FC = () => {
                         {t("contact.title")}
                     </h2>
 
-                    <p className="section-subtitle">{t("contact.sub")}</p>
+                    <p className="section-subtitle" id="subtitle-contact">
+                        {t("contact.sub")}
+                    </p>
                 </header>
 
                 {/* ── Layout ─────────────────────────────────────────── */}
@@ -140,7 +142,10 @@ export const Contact: React.FC = () => {
                             {renderRich(t("contact.cta.heading"))}
                         </h3>
 
-                        {renderRichParagraphs(t("contact.cta.lead"), "contact__cta-desc")}
+                        {renderRichParagraphs(
+                            t("contact.cta.lead"),
+                            "contact__cta-desc",
+                        )}
 
                         {/* ── Botão principal de email ──────────────── */}
                         <a
@@ -181,14 +186,22 @@ export const Contact: React.FC = () => {
                         <div
                             className="contact__alt-links"
                             role="list"
-                            aria-label={lang === "pt" ? "Outras formas de contato" : "Other ways to get in touch"}
+                            aria-label={
+                                lang === "pt"
+                                    ? "Outras formas de contato"
+                                    : "Other ways to get in touch"
+                            }
                         >
                             <a
                                 href={LINKEDIN_URL}
                                 className="contact__alt-link"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label={lang === "pt" ? "Acessar LinkedIn de Guilherme Cruz (abre em nova aba)" : "Guilherme Cruz on LinkedIn (opens in new tab)"}
+                                aria-label={
+                                    lang === "pt"
+                                        ? "Acessar LinkedIn de Guilherme Cruz (abre em nova aba)"
+                                        : "Guilherme Cruz on LinkedIn (opens in new tab)"
+                                }
                                 role="listitem"
                             >
                                 <div
@@ -212,7 +225,11 @@ export const Contact: React.FC = () => {
                                 className="contact__alt-link"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                aria-label={lang === "pt" ? "Acessar GitHub de Guilherme Cruz (abre em nova aba)" : "Guilherme Cruz on GitHub (opens in new tab)"}
+                                aria-label={
+                                    lang === "pt"
+                                        ? "Acessar GitHub de Guilherme Cruz (abre em nova aba)"
+                                        : "Guilherme Cruz on GitHub (opens in new tab)"
+                                }
                                 role="listitem"
                             >
                                 <div
@@ -314,7 +331,11 @@ export const Contact: React.FC = () => {
                         {/* ── Disponibilidade ───────── */}
                         <aside
                             className="contact__response"
-                            aria-label={lang === "pt" ? "Disponibilidade para contato" : "Contact availability"}
+                            aria-label={
+                                lang === "pt"
+                                    ? "Disponibilidade para contato"
+                                    : "Contact availability"
+                            }
                         >
                             <div
                                 className="contact__response-icon"

@@ -71,7 +71,10 @@ p {
     text-wrap: pretty;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
     text-wrap: balance;
 }
 
@@ -288,7 +291,12 @@ body.light-mode ::-webkit-scrollbar-thumb:hover {
     font-size: var(--text-lg);
     line-height: var(--lh-relaxed);
     color: var(--color-text-3);
-    max-width: 54ch;
+    max-width: 100%;
+    text-align: justify;
+}
+
+#subtitle-contact {
+    text-align: center;
 }
 
 /* ── Wrapper ── */

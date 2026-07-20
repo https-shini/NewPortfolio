@@ -51,32 +51,33 @@ const SPECS = [
     {
         title: { pt: "Front-end", en: "Front-end" },
         desc: {
-            pt: "Desenvolvimento de interfaces modernas com React, foco em componentização, performance e experiência do usuário (UX/UI), utilizando JavaScript/TypeScript e CSS avançado.",
-            en: "Building modern interfaces with React, focused on componentization, performance and user experience (UX/UI), using JavaScript/TypeScript and advanced CSS.",
+            pt: "Desenvolvo interfaces modernas e performáticas com React, criando aplicações SPA com foco em experiência do usuário, design responsivo e código escalável. Utilizo JavaScript/TypeScript, HTML5, CSS3 e Vite como parte do meu fluxo de desenvolvimento diário.",
+            en: "I develop modern, high-performance interfaces with React and React Router, building SPAs focused on user experience, responsive design, and scalable code. I use JavaScript/TypeScript, HTML5, CSS3, and Vite as part of my daily development workflow.",
         },
+
         icon: <IconFrontend />,
     },
     {
         title: { pt: "Back-end", en: "Back-end" },
         desc: {
-            pt: "Criação de APIs e serviços com Node.js e PHP, aplicando arquitetura organizada, integração com banco de dados e construção de aplicações escaláveis.",
-            en: "Creating APIs and services with Node.js and PHP, applying organized architecture, database integration and building scalable applications.",
+            pt: "Desenvolvo APIs REST e serviços em tempo real com Node.js e WebSocket, aplicando POO, autenticação JWT e arquitetura organizada. Também com experiência em Java, Python e PHP.",
+            en: "I develop REST APIs and real-time services with Node.js and WebSocket, applying OOP, JWT authentication and organized architecture. Also experienced with Java, Python and PHP.",
         },
         icon: <IconBackend />,
     },
     {
         title: { pt: "Banco de Dados", en: "Databases" },
         desc: {
-            pt: "Modelagem e gerenciamento de dados com MySQL e Firebase, focando em estrutura eficiente, integridade dos dados e otimização de consultas.",
-            en: "Data modeling and management with MySQL and Firebase, focusing on efficient structure, data integrity and query optimization.",
+            pt: "Modelo e gerencio bancos de dados relacionais com MySQL e Oracle, projetando estruturas eficientes, garantindo a integridade dos dados e otimizando consultas para melhor desempenho.",
+            en: "I design and manage relational databases with MySQL and Oracle, building efficient schemas, ensuring data integrity, and optimizing queries for better performance.",
         },
         icon: <IconDatabaseStack />,
     },
     {
         title: { pt: "Qualidade de Software", en: "Software Quality" },
         desc: {
-            pt: "Aplicação de boas práticas como Clean Code, versionamento com Git e organização de projetos, garantindo legibilidade, manutenção e evolução do código.",
-            en: "Applying best practices like Clean Code, version control with Git and project organization, ensuring readability, maintainability and code evolution.",
+            pt: "Aplico Clean Code, metodologias ágeis (Scrum/Kanban) e testes de software, com versionamento no Git, mantendo o código legível, sustentável e fácil de evoluir.",
+            en: "I apply Clean Code, agile methodologies (Scrum/Kanban) and software testing, with Git versioning, keeping code readable, maintainable and easy to evolve.",
         },
         icon: <IconQuality />,
     },
@@ -110,8 +111,8 @@ const STATS: Stat[] = [
     },
     {
         icon: <IconCode />,
-        value: "7",
-        numericTarget: 7,
+        value: "8",
+        numericTarget: 8,
         suffix: "º semestre",
         label: "Graduação",
         sublabel: "Ciência da Computação",
@@ -119,8 +120,8 @@ const STATS: Stat[] = [
     },
     {
         icon: <IconGitCommit />,
-        value: "100",
-        numericTarget: 100,
+        value: "1000",
+        numericTarget: 1000,
         suffix: "+",
         label: "Commits",
         sublabel: "Versionamento Git",
@@ -128,8 +129,8 @@ const STATS: Stat[] = [
     },
     {
         icon: <IconBolt />,
-        value: "5",
-        numericTarget: 5,
+        value: "6",
+        numericTarget: 6,
         suffix: "+",
         label: "Anos Estudando",
         sublabel: "Dev & Computação",
@@ -296,7 +297,10 @@ export const About: React.FC = () => {
                     <div className="about__body">
                         {/* 1. Biografia ─────────────────────────────────────── */}
                         <div className="about__bio">
-                            {renderRichParagraphs(t("about.bio"), "about__text")}
+                            {renderRichParagraphs(
+                                t("about.bio"),
+                                "about__text",
+                            )}
                         </div>
 
                         {/* 2. Cards de especialização ───────────────────────── */}
@@ -358,7 +362,10 @@ export const About: React.FC = () => {
                             </header>
 
                             <div className="about__objective-content">
-                                {renderRichParagraphs(t("about.goal.body"), "about__objective-text")}
+                                {renderRichParagraphs(
+                                    t("about.goal.body"),
+                                    "about__objective-text",
+                                )}
                             </div>
                         </section>
                     </div>
@@ -372,7 +379,11 @@ export const About: React.FC = () => {
                     ════════════════════════════════════════════════════════ */}
                     <aside
                         className="about__sidebar"
-                        aria-label={lang === "pt" ? "Foto, estatísticas e stack tecnológico" : "Photo, stats and tech stack"}
+                        aria-label={
+                            lang === "pt"
+                                ? "Foto, estatísticas e stack tecnológico"
+                                : "Photo, stats and tech stack"
+                        }
                     >
                         {/* 1. Foto ──────────────────────────────────────────── */}
                         <div className="about__photo-wrap">
