@@ -21,7 +21,9 @@ const INITIAL_LIMIT = 4;
 
 export const Formacoes: React.FC = () => {
     const { t } = useLang();
-    const [filter, setFilter] = useState<FilterKey>("all");
+    // Prioriza a formação acadêmica ao carregar a seção — o usuário
+    // pode alternar livremente para Certificações ou Todos.
+    const [filter, setFilter] = useState<FilterKey>("edu");
     const [showAll, setShowAll] = useState(false);
     const sectionRef = useRef<HTMLElement>(null);
 
