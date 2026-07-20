@@ -64,7 +64,7 @@ export const Hero: React.FC = () => {
                             <IconCode />
                             <span>{t("hero.cta.work")}</span>
                         </button>
-                        
+                        <a
                             href={cvUrl}
                             className="btn btn--outline btn--lg"
                             target="_blank"
@@ -81,7 +81,7 @@ export const Hero: React.FC = () => {
                             className="hero__social-divider"
                             aria-hidden="true"
                         />
-                        
+                        <a
                             href="https://github.com/https-shini"
                             className="social-link"
                             target="_blank"
@@ -90,7 +90,7 @@ export const Hero: React.FC = () => {
                         >
                             <IconGitHub />
                         </a>
-                        
+                        <a
                             href="https://www.linkedin.com/in/oguilherme-cruz/"
                             className="social-link"
                             target="_blank"
@@ -99,7 +99,7 @@ export const Hero: React.FC = () => {
                         >
                             <IconLinkedIn />
                         </a>
-                        
+                        <a
                             href="mailto:guilherme.cruz@gmail.com"
                             className="social-link"
                             aria-label={lang === "pt" ? "Enviar e-mail para Guilherme Cruz" : "Email Guilherme Cruz"}
