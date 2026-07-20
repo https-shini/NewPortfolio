@@ -188,7 +188,7 @@ const pt: Translations = {
     "hero.role": "Desenvolvedor Júnior",
     "hero.sub": "Desenvolvimento Web",
     "hero.desc":
-        "Estudante de Ciência da Computação em transição para o desenvolvimento, hoje atuando como **Analista de Suporte Técnico** na **Wise System**, efetivado de estágio a CLT em menos de um ano. Transito bem entre **frontend** e **backend**, com experiência prática em **React**, **TypeScript**, **Node.js** e **APIs REST**, além de **Java**, **Python** e **PHP**.\n\nAplico **Clean Code**, **Git** e um inglês intermediário no dia a dia, sempre buscando resolver o problema pela raiz, não só contorná-lo. Meu próximo passo é migrar do suporte para a construção do sistema.",
+        "Cursando Ciência da Computação, com experiência prática em **frontend**, **backend** e **deploy contínuo**. Atuo principalmente com **React**, **TypeScript**, **Node.js** e **APIs REST**, além de bancos de dados como **MySQL** e **Oracle**, e linguagens como **Java**, **Python** e **PHP**.\n\nAplico boas práticas como **Clean Code** e **Git** para desenvolver soluções eficientes, organizadas e de fácil manutenção. Busco uma oportunidade para contribuir com projetos reais, evoluir tecnicamente e gerar valor para o time.",
     "hero.status": "Disponível para oportunidades",
     "hero.cta.work": "Ver projetos",
     "hero.cta.cv": "Download CV",
@@ -276,7 +276,7 @@ const pt: Translations = {
     "about.specs.title": "Áreas de especialização",
     "contact.cta.heading": "Vamos **construir algo** juntos?",
     "contact.cta.lead":
-        "Estou pronto para contribuir como **Desenvolvedor Júnior**, com prática real em **React**, **TypeScript**, **Node.js**, **APIs REST** e **autenticação JWT**, somada à experiência de sistemas em produção que trago do suporte técnico a um **ERP**. Aplico **Clean Code**, **Git** e **metodologias ágeis** no meu dia a dia.\n\nSe você procura alguém com **perfil analítico**, **resolução de problemas** na veia e prontidão para **contribuir em projetos reais**, me chama, vamos conversar sobre a vaga.",
+        "Estou pronto para iniciar minha trajetória como **Desenvolvedor Júnior** ou **Estagiário**, contribuindo com **aplicações modernas**, **bem estruturadas** e voltadas para **performance** e **experiência do usuário**. Também estou disponível para **projetos avulsos** e **freelances**.\n\nSe você procura alguém **dedicado**, com **vontade de evoluir** e prontidão para **contribuir de forma prática em projetos reais**, me chama, vamos conversar e construir **soluções juntos**!",
 
     /* FEATURED */
     "featured.eyebrow": "Destaque",
