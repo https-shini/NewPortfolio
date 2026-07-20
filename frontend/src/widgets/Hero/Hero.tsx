@@ -1,7 +1,7 @@
 import React from "react";
 import "./Hero.css";
 import { useLang } from "@/shared/hooks/useLang";
-import { renderRich } from "@/shared/lib/richText";
+import { renderRichParagraphs } from "@/shared/lib/richText";
 import { scrollToSection } from "@/shared/lib/smoothScroll";
 import {
     GITHUB_URL,
@@ -48,7 +48,9 @@ export const Hero: React.FC = () => {
                         </h1>
                         <p className="hero__role">{t("hero.role")}</p>
                     </div>
-                    <p className="hero__desc">{renderRich(t("hero.desc"))}</p>
+                    <div className="hero__desc">
+                        {renderRichParagraphs(t("hero.desc"), "hero__desc-text")}
+                    </div>
 
                     <div className="hero__actions">
                         <button
