@@ -2,7 +2,12 @@ import React, { useMemo } from "react";
 import "./CareerNode.css";
 import { useLang } from "@/shared/hooks/useLang";
 import { useRevealOnScroll } from "@/shared/hooks/useRevealOnScroll";
-import { IconLocation, IconExternalLink, IconClock, IconBriefcase } from "@/shared/ui/Icons";
+import {
+    IconLocation,
+    IconExternalLink,
+    IconClock,
+    IconBriefcase,
+} from "@/shared/ui/Icons";
 import { PositionEntry } from "./PositionEntry";
 import type { CareerCompany } from "../Timeline.types";
 import { resolveTotalDuration } from "../careerDates";
@@ -36,7 +41,7 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index }) => {
     );
 
     const positions = company.positions;
-    const hasActivePosition = positions.some(p => p.statusType === "active");
+    const hasActivePosition = positions.some((p) => p.statusType === "active");
     const initials = getInitials(company.name);
     const roleCount = positions.length;
 
@@ -68,7 +73,9 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index }) => {
                     {company.logo ? (
                         <img src={company.logo} alt="" />
                     ) : (
-                        <span className="career-company__initials">{initials}</span>
+                        <span className="career-company__initials">
+                            {initials}
+                        </span>
                     )}
                 </span>
 
@@ -83,15 +90,25 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index }) => {
                                     className="career-company__name-link"
                                 >
                                     {company.name}
-                                    <IconExternalLink width={14} height={14} aria-hidden="true" />
+                                    <IconExternalLink
+                                        width={14}
+                                        height={14}
+                                        aria-hidden="true"
+                                    />
                                 </a>
                             ) : (
                                 company.name
                             )}
                         </h3>
                         {hasActivePosition && (
-                            <span className="career-company__active" aria-label={t("career.status.active")}>
-                                <span className="career-company__active-dot" aria-hidden="true" />
+                            <span
+                                className="career-company__active"
+                                aria-label={t("career.status.active")}
+                            >
+                                <span
+                                    className="career-company__active-dot"
+                                    aria-hidden="true"
+                                />
                                 {t("career.status.active")}
                             </span>
                         )}
@@ -99,32 +116,62 @@ export const CareerNode: React.FC<CareerNodeProps> = ({ company, index }) => {
 
                     <div className="career-company__meta">
                         <span className="career-company__meta-item">
-                            <IconLocation width={13} height={13} aria-hidden="true" />
+                            <IconLocation
+                                width={13}
+                                height={13}
+                                aria-hidden="true"
+                            />
                             {company.location[lang]}
                         </span>
-                        <span className="career-company__meta-sep" aria-hidden="true">·</span>
+                        <span
+                            className="career-company__meta-sep"
+                            aria-hidden="true"
+                        >
+                            ·
+                        </span>
                         <span className="career-company__meta-item">
-                            <IconClock width={13} height={13} aria-hidden="true" />
+                            <IconClock
+                                width={13}
+                                height={13}
+                                aria-hidden="true"
+                            />
                             {totalDuration}
                         </span>
-                        <span className="career-company__meta-sep" aria-hidden="true">·</span>
+                        <span
+                            className="career-company__meta-sep"
+                            aria-hidden="true"
+                        >
+                            ·
+                        </span>
                         <span className="career-company__meta-item">
-                            <IconBriefcase width={13} height={13} aria-hidden="true" />
+                            <IconBriefcase
+                                width={13}
+                                height={13}
+                                aria-hidden="true"
+                            />
                             {roleCount}{" "}
-                            {roleCount === 1 ? t("career.stats.role") : t("career.stats.roles")}
+                            {roleCount === 1
+                                ? t("career.stats.role")
+                                : t("career.stats.roles")}
                         </span>
                     </div>
                 </div>
             </header>
 
             {/* Trilha de progressão de cargos */}
-            <ol className="career-company__roles" aria-label={t("career.positions")}>
+            <ol
+                className="career-company__roles"
+                aria-label={t("career.positions")}
+            >
                 {positions.map((pos, i) => (
                     <li
                         key={pos.id}
                         className={`career-role-row${pos.statusType === "active" ? " is-active" : ""}`}
                     >
-                        <span className="career-role-row__node" aria-hidden="true" />
+                        <span
+                            className="career-role-row__node"
+                            aria-hidden="true"
+                        />
                         <PositionEntry
                             position={pos}
                             staggerIndex={i}

@@ -1,1 +1,1 @@
-export { useLangContext as useLang } from '@/app/LangContext';
+export { useLangContext as useLang } from "@/app/LangContext";

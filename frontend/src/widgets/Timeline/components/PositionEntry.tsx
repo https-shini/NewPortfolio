@@ -16,20 +16,20 @@ import { resolvePeriod, resolveDuration } from "../careerDates";
 type Lang = "pt" | "en";
 
 const EMPLOYMENT_LABEL: Record<string, Record<Lang, string>> = {
-    CLT:         { pt: "CLT",                  en: "Full-time" },
-    FULL_TIME:   { pt: "Tempo integral",       en: "Full-time" },
-    PART_TIME:   { pt: "Meio período",         en: "Part-time" },
-    INTERNSHIP:  { pt: "Estágio",              en: "Internship" },
-    FREELANCER:  { pt: "Freelancer",           en: "Freelancer" },
-    CONTRACTOR:  { pt: "Prestador de serviços", en: "Contractor" },
-    TEMPORARY:   { pt: "Temporário",           en: "Temporary" },
+    CLT: { pt: "CLT", en: "Full-time" },
+    FULL_TIME: { pt: "Tempo integral", en: "Full-time" },
+    PART_TIME: { pt: "Meio período", en: "Part-time" },
+    INTERNSHIP: { pt: "Estágio", en: "Internship" },
+    FREELANCER: { pt: "Freelancer", en: "Freelancer" },
+    CONTRACTOR: { pt: "Prestador de serviços", en: "Contractor" },
+    TEMPORARY: { pt: "Temporário", en: "Temporary" },
 };
 
 const MODALITY_LABEL: Record<string, Record<Lang, string>> = {
     ON_SITE: { pt: "Presencial", en: "On-site" },
-    REMOTE:  { pt: "Remoto",     en: "Remote" },
-    HYBRID:  { pt: "Híbrido",    en: "Hybrid" },
-    EAD:     { pt: "EAD",        en: "Distance" },
+    REMOTE: { pt: "Remoto", en: "Remote" },
+    HYBRID: { pt: "Híbrido", en: "Hybrid" },
+    EAD: { pt: "EAD", en: "Distance" },
 };
 
 interface PositionEntryProps {
@@ -51,21 +51,28 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
     const { lang, t } = useLang();
     const [isOpen, setIsOpen] = useState(defaultOpen);
     const bodyRef = useRef<HTMLDivElement>(null);
-    const [bodyHeight, setBodyHeight] = useState<number | "auto">(defaultOpen ? "auto" : 0);
+    const [bodyHeight, setBodyHeight] = useState<number | "auto">(
+        defaultOpen ? "auto" : 0,
+    );
     const panelId = useId();
     const buttonId = useId();
 
     const present = t("career.present");
     const period = resolvePeriod(position, lang, present);
     const duration = resolveDuration(position, lang);
-    const employment = EMPLOYMENT_LABEL[position.employmentType]?.[lang] ?? position.employmentType;
-    const modality = position.modality ? MODALITY_LABEL[position.modality]?.[lang] : null;
-    const statusLabel = position.statusType === "active"
-        ? t("career.status.active")
-        : t("career.status.done");
+    const employment =
+        EMPLOYMENT_LABEL[position.employmentType]?.[lang] ??
+        position.employmentType;
+    const modality = position.modality
+        ? MODALITY_LABEL[position.modality]?.[lang]
+        : null;
+    const statusLabel =
+        position.statusType === "active"
+            ? t("career.status.active")
+            : t("career.status.done");
 
-    const highlights = position.bullets.filter(b => b.highlight);
-    const rest = position.bullets.filter(b => !b.highlight);
+    const highlights = position.bullets.filter((b) => b.highlight);
+    const rest = position.bullets.filter((b) => !b.highlight);
     // Quando não há destaques marcados, "Atividades" recebe a lista completa.
     const activities = highlights.length > 0 ? rest : position.bullets;
 
@@ -83,7 +90,7 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
         return () => ro.disconnect();
     }, [isOpen, lang]);
 
-    const toggle = useCallback(() => setIsOpen(v => !v), []);
+    const toggle = useCallback(() => setIsOpen((v) => !v), []);
 
     return (
         <article
@@ -100,11 +107,16 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
             >
                 {/* Header row: title + status */}
                 <div className="position-entry__title-row">
-                    <h4 className="position-entry__title">{position.title[lang]}</h4>
+                    <h4 className="position-entry__title">
+                        {position.title[lang]}
+                    </h4>
                     <span
                         className={`position-entry__status position-entry__status--${position.statusType}`}
                     >
-                        <span className="position-entry__status-dot" aria-hidden="true" />
+                        <span
+                            className="position-entry__status-dot"
+                            aria-hidden="true"
+                        />
                         {statusLabel}
                     </span>
                 </div>
@@ -112,11 +124,19 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
                 {/* Meta row — chips estruturados com ícones */}
                 <div className="position-entry__meta">
                     <span className="position-entry__chip">
-                        <IconBriefcase width={12} height={12} aria-hidden="true" />
+                        <IconBriefcase
+                            width={12}
+                            height={12}
+                            aria-hidden="true"
+                        />
                         {employment}
                     </span>
                     <span className="position-entry__chip position-entry__chip--period">
-                        <IconCalendar width={12} height={12} aria-hidden="true" />
+                        <IconCalendar
+                            width={12}
+                            height={12}
+                            aria-hidden="true"
+                        />
                         {period}
                     </span>
                     <span className="position-entry__chip">
@@ -125,13 +145,21 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
                     </span>
                     {modality && (
                         <span className="position-entry__chip">
-                            <IconLocation width={12} height={12} aria-hidden="true" />
+                            <IconLocation
+                                width={12}
+                                height={12}
+                                aria-hidden="true"
+                            />
                             {modality}
                         </span>
                     )}
                     {isPromotion && (
                         <span className="position-entry__chip position-entry__chip--promo">
-                            <IconTrendingUp width={12} height={12} aria-hidden="true" />
+                            <IconTrendingUp
+                                width={12}
+                                height={12}
+                                aria-hidden="true"
+                            />
                             {t("career.promoted")}
                         </span>
                     )}
@@ -139,7 +167,9 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
 
                 {/* Summary (sempre visível como tagline do cargo) */}
                 {position.summary && (
-                    <p className="position-entry__summary">{position.summary[lang]}</p>
+                    <p className="position-entry__summary">
+                        {position.summary[lang]}
+                    </p>
                 )}
 
                 <span className="position-entry__chevron" aria-hidden="true">
@@ -153,7 +183,9 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
                 role="region"
                 aria-labelledby={buttonId}
                 className="position-entry__panel"
-                style={{ height: bodyHeight === "auto" ? "auto" : `${bodyHeight}px` }}
+                style={{
+                    height: bodyHeight === "auto" ? "auto" : `${bodyHeight}px`,
+                }}
                 aria-hidden={!isOpen}
             >
                 <div ref={bodyRef} className="position-entry__panel-inner">
@@ -161,12 +193,19 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
                     {highlights.length > 0 && (
                         <section className="position-entry__section position-entry__section--highlights">
                             <h5 className="position-entry__section-title">
-                                <IconSparkles width={14} height={14} aria-hidden="true" />
+                                <IconSparkles
+                                    width={14}
+                                    height={14}
+                                    aria-hidden="true"
+                                />
                                 {t("career.highlights")}
                             </h5>
                             <ul className="position-entry__highlights">
                                 {highlights.map((h, i) => (
-                                    <li key={i} className="position-entry__highlight">
+                                    <li
+                                        key={i}
+                                        className="position-entry__highlight"
+                                    >
                                         {h.text[lang]}
                                     </li>
                                 ))}
@@ -182,7 +221,10 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
                             </h5>
                             <ul className="position-entry__bullets">
                                 {activities.map((b, i) => (
-                                    <li key={i} className="position-entry__bullet">
+                                    <li
+                                        key={i}
+                                        className="position-entry__bullet"
+                                    >
                                         {b.text[lang]}
                                     </li>
                                 ))}

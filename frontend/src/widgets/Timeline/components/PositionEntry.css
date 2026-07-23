@@ -170,13 +170,21 @@
 }
 
 .position-entry__status--active .position-entry__status-dot {
-    box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-brand) 25%, transparent);
+    box-shadow: 0 0 0 4px
+        color-mix(in srgb, var(--color-brand) 25%, transparent);
     animation: position-entry-pulse 2.4s ease-in-out infinite;
 }
 
 @keyframes position-entry-pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%      { opacity: 0.55; transform: scale(0.82); }
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.55;
+        transform: scale(0.82);
+    }
 }
 
 .position-entry__status--done {
@@ -276,7 +284,9 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 
-    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    transition:
+        opacity 0.3s ease-out,
+        transform 0.3s ease-out;
 }
 
 .position-entry.is-open .position-entry__summary {
@@ -321,7 +331,8 @@
     background: var(--color-brand-subtle);
     border-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
     color: var(--color-brand-light);
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-brand) 22%, transparent);
+    box-shadow: 0 4px 12px
+        color-mix(in srgb, var(--color-brand) 22%, transparent);
 }
 
 /* ── Painel expansível ─────────────────────────────────────────── */
@@ -335,7 +346,9 @@
     padding: 0 var(--space-6) var(--space-6);
     opacity: 0;
     transform: translateY(-4px);
-    transition: opacity 0.3s ease-out 0.05s, transform 0.3s ease-out 0.05s;
+    transition:
+        opacity 0.3s ease-out 0.05s,
+        transform 0.3s ease-out 0.05s;
 }
 
 .position-entry.is-open .position-entry__panel-inner {
@@ -359,12 +372,11 @@
     padding: var(--space-4) var(--space-5);
     border: 1px solid color-mix(in srgb, var(--color-brand) 22%, transparent);
     border-radius: var(--radius-md);
-    background:
-        linear-gradient(
-            135deg,
-            color-mix(in srgb, var(--color-brand) 7%, transparent) 0%,
-            color-mix(in srgb, var(--color-accent) 4%, transparent) 100%
-        );
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-brand) 7%, transparent) 0%,
+        color-mix(in srgb, var(--color-accent) 4%, transparent) 100%
+    );
     position: relative;
     overflow: hidden;
 }
@@ -445,7 +457,8 @@
 
 .position-entry__highlight::before {
     background: var(--color-brand);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand) 18%, transparent);
+    box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--color-brand) 18%, transparent);
 }
 
 .position-entry__bullet:hover::before {

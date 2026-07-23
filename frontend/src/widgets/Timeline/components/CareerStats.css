@@ -56,13 +56,18 @@
 
 /* ── Status profissional ───────────────────────────────────────── */
 .career-aside__status {
-    background: linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--_green-500) 7%, transparent) 0%,
-        transparent 60%
-    ),
-    var(--color-surface-1);
-    border-color: color-mix(in srgb, var(--_green-500) 28%, var(--color-border-2));
+    background:
+        linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--_green-500) 7%, transparent) 0%,
+            transparent 60%
+        ),
+        var(--color-surface-1);
+    border-color: color-mix(
+        in srgb,
+        var(--_green-500) 28%,
+        var(--color-border-2)
+    );
 }
 
 .career-aside__available {
@@ -88,8 +93,15 @@
 }
 
 @keyframes career-aside-pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%      { opacity: 0.5; transform: scale(0.82); }
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.82);
+    }
 }
 
 .career-aside__level {

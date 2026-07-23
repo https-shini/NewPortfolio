@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 /**
  * Attaches an IntersectionObserver to the returned ref and adds
@@ -18,11 +18,11 @@ export function useRevealOnScroll<T extends HTMLElement = HTMLElement>(
         if (!el) return;
 
         const noMotion = window.matchMedia(
-            '(prefers-reduced-motion: reduce)',
+            "(prefers-reduced-motion: reduce)",
         ).matches;
 
         if (noMotion) {
-            el.classList.add('is-visible');
+            el.classList.add("is-visible");
             return;
         }
 
@@ -36,14 +36,14 @@ export function useRevealOnScroll<T extends HTMLElement = HTMLElement>(
                 const delay = index * staggerMs;
                 if (delay > 0) {
                     timerId = setTimeout(
-                        () => el.classList.add('is-visible'),
+                        () => el.classList.add("is-visible"),
                         delay,
                     );
                 } else {
-                    el.classList.add('is-visible');
+                    el.classList.add("is-visible");
                 }
             },
-            { threshold: 0.08, rootMargin: '0px 0px -48px 0px' },
+            { threshold: 0.08, rootMargin: "0px 0px -48px 0px" },
         );
 
         observer.observe(el);

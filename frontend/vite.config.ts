@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
@@ -18,8 +19,10 @@ export default defineConfig({
             "@": path.resolve(__dirname, "./src"),
         },
     },
-    
-    publicDir: path.resolve(__dirname, "./src/public"),
+
+    /* Assets estáticos servidos na raiz do site (favicons, manifest,
+       robots, sitemap, og-preview, docs/*.pdf). */
+    publicDir: path.resolve(__dirname, "./public"),
 
     server: {
         port: 5173,
@@ -71,5 +74,13 @@ export default defineConfig({
 
     optimizeDeps: {
         include: ["react", "react-dom"],
+    },
+
+    test: {
+        environment: "jsdom",
+        globals: true,
+        setupFiles: "./src/test/setup.ts",
+        css: false,
+        include: ["src/**/*.test.{ts,tsx}"],
     },
 });

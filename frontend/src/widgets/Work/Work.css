@@ -54,7 +54,11 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(to right, var(--color-brand), var(--color-accent));
+    background: linear-gradient(
+        to right,
+        var(--color-brand),
+        var(--color-accent)
+    );
     opacity: 0;
     transform: scaleX(0);
     transform-origin: left center;
@@ -221,7 +225,8 @@
 .work-btn--primary:hover {
     background: var(--color-brand-light);
     border-color: var(--color-brand-light);
-    box-shadow: 0 6px 18px color-mix(in srgb, var(--color-brand) 35%, transparent);
+    box-shadow: 0 6px 18px
+        color-mix(in srgb, var(--color-brand) 35%, transparent);
     transform: translateY(-1px);
 }
 

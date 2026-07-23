@@ -4,36 +4,68 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <title>Portfolio Website</title>
+        <!-- ── SEO primário ─────────────────────────────────────────── -->
+        <title>
+            Guilherme Cruz — Desenvolvedor de Software | React, TypeScript &
+            Node.js
+        </title>
         <meta
             name="description"
-            content="Portfólio profissional de Guilherme Cruz — Desenvolvedor Full Stack especializado em React, Node.js e Python."
+            content="Portfólio profissional de Guilherme Cruz — Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e Python. Projetos reais, experiência e formação."
         />
         <meta name="author" content="Guilherme Cruz" />
         <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://bl4ck404.dev.br/" />
 
+        <!-- ── Open Graph ───────────────────────────────────────────── -->
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://bl4ck404.dev.br/" />
+        <meta property="og:site_name" content="Guilherme Cruz — Portfolio" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta property="og:locale:alternate" content="en_US" />
         <meta
             property="og:title"
-            content="Guilherme Cruz — Desenvolvedor Junior"
+            content="Guilherme Cruz — Desenvolvedor de Software"
         />
         <meta
             property="og:description"
-            content="Especialista em React, Node.js e interfaces de alta performance."
+            content="Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e interfaces de alta performance."
         />
         <meta
             property="og:image"
             content="https://bl4ck404.dev.br/og-preview.jpg"
         />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta
+            property="og:image:alt"
+            content="Guilherme Cruz — Desenvolvedor de Software"
+        />
+
+        <!-- ── Twitter Cards ────────────────────────────────────────── -->
         <meta name="twitter:card" content="summary_large_image" />
+        <meta
+            name="twitter:title"
+            content="Guilherme Cruz — Desenvolvedor de Software"
+        />
+        <meta
+            name="twitter:description"
+            content="Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e interfaces de alta performance."
+        />
+        <meta
+            name="twitter:image"
+            content="https://bl4ck404.dev.br/og-preview.jpg"
+        />
+
         <meta name="theme-color" content="#040710" />
 
+        <!-- ── Favicons / PWA ───────────────────────────────────────── -->
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.ico" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" />
 
-        <!-- Fontes -->
+        <!-- ── Fontes ───────────────────────────────────────────────── -->
         <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
         <link
@@ -47,17 +79,45 @@
             rel="stylesheet"
         />
 
-        <!-- CDNs externos usados em imagens -->
+        <!-- ── CDN externo usado nos ícones de tecnologia ───────────── -->
         <link rel="preconnect" href="https://skillicons.dev" crossorigin />
-        <link rel="dns-prefetch" href="https://raw.githubusercontent.com" />
 
-        <link
-            rel="shortcut icon"
-            href="./src/public/vite.svg"
-            type="image/x-icon"
-        />
+        <!-- ── Structured Data (JSON-LD) ────────────────────────────── -->
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "Person",
+                "name": "Guilherme de Souza Cruz",
+                "alternateName": "Guilherme Cruz",
+                "url": "https://bl4ck404.dev.br/",
+                "image": "https://bl4ck404.dev.br/og-preview.jpg",
+                "jobTitle": "Desenvolvedor de Software",
+                "worksFor": {
+                    "@type": "Organization",
+                    "name": "Wise System"
+                },
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "São Paulo",
+                    "addressRegion": "SP",
+                    "addressCountry": "BR"
+                },
+                "sameAs": [
+                    "https://github.com/https-shini",
+                    "https://linkedin.com/in/oguilherme-cruz"
+                ],
+                "knowsAbout": [
+                    "React",
+                    "TypeScript",
+                    "JavaScript",
+                    "Node.js",
+                    "Python",
+                    "MySQL"
+                ]
+            }
+        </script>
 
-        <!-- Tema inline — evita flash -->
+        <!-- Tema inline — evita flash (FOUC) antes do React montar -->
         <script>
             (function () {
                 var saved = localStorage.getItem("portfolio-theme");
@@ -66,13 +126,13 @@
                     (!saved &&
                         window.matchMedia("(prefers-color-scheme: dark)")
                             .matches);
-                document.documentElement.setAttribute(
-                    "data-theme",
-                    dark ? "dark" : "light",
-                );
-                document.documentElement.style.colorScheme = dark
-                    ? "dark"
-                    : "light";
+                var theme = dark ? "dark" : "light";
+                document.documentElement.setAttribute("data-theme", theme);
+                document.documentElement.style.colorScheme = theme;
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.body.classList.toggle("dark-mode", dark);
+                    document.body.classList.toggle("light-mode", !dark);
+                });
             })();
         </script>
     </head>

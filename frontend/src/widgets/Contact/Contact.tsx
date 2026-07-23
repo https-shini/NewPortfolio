@@ -11,59 +11,68 @@ import {
     IconDev,
     IconShare,
 } from "@/shared/ui/Icons";
-import {
-    AUTHOR_EMAIL,
-    GITHUB_URL,
-    LINKEDIN_URL,
-} from "@/shared/config/constants";
+import { PROFILE } from "@/shared/config/profile";
+import { buildMailtoHref } from "@/shared/lib/mailto";
+import { ContactForm } from "./components/ContactForm";
+import type { Localized } from "@/shared/lib/localized";
+import type { TranslationKey } from "@/shared/lib/translations";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DADOS ESTÁTICOS
 ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Skills ATS-friendly — keywords relevantes para recrutadores */
-const SKILLS_BRAND = ["React", "TypeScript", "JavaScript", "HTML5", "CSS3"];
-const SKILLS_ACCENT = ["Node.js", "MySQL", "REST APIs", "Git", "Python"];
-const SKILLS_NEUTRAL = ["Clean Code", "Responsive Design", "Figma", "Vite"];
+/* Dados de perfil estruturados (ATS-friendly).
+   Identidade vem de PROFILE (fonte única); textos via chaves i18n. */
+interface ProfileRow {
+    icon: React.ReactNode;
+    /** Rótulo — nome próprio (string) ou traduzível (Localized). */
+    label: string | Localized;
+    value: string | Localized;
+    href: string | null;
+    noteKey: TranslationKey;
+}
 
-/* Dados de perfil estruturados (ATS-friendly) */
-const PROFILE_DATA = [
+const PROFILE_DATA: ProfileRow[] = [
     {
         icon: <IconEmail />,
         label: "E-mail",
-        value: AUTHOR_EMAIL,
-        href: `mailto:${AUTHOR_EMAIL}`,
-        note: "Respondo em até 24h",
+        value: PROFILE.email,
+        href: `mailto:${PROFILE.email}`,
+        noteKey: "contact.meta.response",
     },
     {
         icon: <IconLinkedIn />,
-        label: "LinkedIn",
-        value: "/in/oguilherme-cruz",
-        href: LINKEDIN_URL,
-        note: "Aberto a networking e oportunidades",
+        label: PROFILE.social.linkedin.label,
+        value: PROFILE.social.linkedin.handle,
+        href: PROFILE.social.linkedin.url,
+        noteKey: "contact.meta.linkedin",
     },
     {
         icon: <IconGitHub />,
-        label: "GitHub",
-        value: "/https-shini",
-        href: GITHUB_URL,
-        note: "Projetos reais e código limpo",
+        label: PROFILE.social.github.label,
+        value: PROFILE.social.github.handle,
+        href: PROFILE.social.github.url,
+        noteKey: "contact.meta.github",
     },
     {
         icon: <IconDev />,
         label: "Social Links",
-        value: "DevLinks",
-        href: "https://devlinks-rocketseat-five.vercel.app/",
-        note: "Confira meus links sociais e projetos",
+        value: PROFILE.social.devlinks.handle,
+        href: PROFILE.social.devlinks.url,
+        noteKey: "contact.meta.devlinks",
     },
     {
         icon: <IconLocation />,
-        label: "Localização",
-        value: "São Paulo, Brasil",
+        label: { pt: "Localização", en: "Location" },
+        value: PROFILE.location,
         href: null,
-        note: "Disponível presencial e remoto",
+        noteKey: "contact.meta.location",
     },
 ];
+
+/** Resolve string | Localized no idioma corrente. */
+const resolve = (v: string | Localized, lang: "pt" | "en"): string =>
+    typeof v === "string" ? v : v[lang];
 
 /* ═══════════════════════════════════════════════════════════════════════════
    COMPONENTE PRINCIPAL
@@ -71,14 +80,8 @@ const PROFILE_DATA = [
 export const Contact: React.FC = () => {
     const { t, lang } = useLang();
 
-    /* Subject e body pré-preenchidos no mailto */
-    const mailtoHref = [
-        `mailto:${AUTHOR_EMAIL}`,
-        `?subject=${encodeURIComponent("Oportunidade — Desenvolvedor Júnior")}`,
-        `&body=${encodeURIComponent(
-            "Olá, Guilherme!\n\nVi seu portfólio e gostaria de conversar sobre uma oportunidade.\n\n",
-        )}`,
-    ].join("");
+    /* Subject e body pré-preenchidos no mailto, adaptados ao idioma */
+    const mailtoHref = buildMailtoHref(lang);
 
     return (
         <section
@@ -90,7 +93,7 @@ export const Contact: React.FC = () => {
             <div className="container">
                 {/* ── Header ─────────────────────────────────────────── */}
                 <header className="contact__header section-header">
-                    <span className="section-eyebrow">Contato</span>
+                    <span className="section-eyebrow">{t("nav.contact")}</span>
 
                     {/* Badge de disponibilidade */}
                     <div
@@ -151,7 +154,11 @@ export const Contact: React.FC = () => {
                         <a
                             href={mailtoHref}
                             className="contact__email-btn"
-                            aria-label={`Enviar e-mail para ${AUTHOR_EMAIL} (abre cliente de e-mail)`}
+                            aria-label={
+                                lang === "pt"
+                                    ? `Enviar e-mail para ${PROFILE.email} (abre cliente de e-mail)`
+                                    : `Email ${PROFILE.email} (opens email client)`
+                            }
                         >
                             <div
                                 className="contact__email-btn-icon"
@@ -162,10 +169,10 @@ export const Contact: React.FC = () => {
 
                             <div className="contact__email-btn-body">
                                 <span className="contact__email-btn-label">
-                                    Enviar e-mail agora
+                                    {t("contact.email.now")}
                                 </span>
                                 <span className="contact__email-btn-value">
-                                    {AUTHOR_EMAIL}
+                                    {PROFILE.email}
                                 </span>
                             </div>
 
@@ -179,21 +186,13 @@ export const Contact: React.FC = () => {
 
                         {/* ── Separador ────────────────────────────── */}
                         <div className="contact__or" aria-hidden="true">
-                            ou
+                            {lang === "pt" ? "ou" : "or"}
                         </div>
 
                         {/* ── Links alternativos ────────────────────── */}
-                        <div
-                            className="contact__alt-links"
-                            role="list"
-                            aria-label={
-                                lang === "pt"
-                                    ? "Outras formas de contato"
-                                    : "Other ways to get in touch"
-                            }
-                        >
+                        <div className="contact__alt-links">
                             <a
-                                href={LINKEDIN_URL}
+                                href={PROFILE.social.linkedin.url}
                                 className="contact__alt-link"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -202,7 +201,6 @@ export const Contact: React.FC = () => {
                                         ? "Acessar LinkedIn de Guilherme Cruz (abre em nova aba)"
                                         : "Guilherme Cruz on LinkedIn (opens in new tab)"
                                 }
-                                role="listitem"
                             >
                                 <div
                                     className="contact__alt-link-icon"
@@ -215,13 +213,13 @@ export const Contact: React.FC = () => {
                                         LinkedIn
                                     </span>
                                     <span className="contact__alt-link-handle">
-                                        /in/oguilherme-cruz
+                                        {PROFILE.social.linkedin.handle}
                                     </span>
                                 </div>
                             </a>
 
                             <a
-                                href={GITHUB_URL}
+                                href={PROFILE.social.github.url}
                                 className="contact__alt-link"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -230,7 +228,6 @@ export const Contact: React.FC = () => {
                                         ? "Acessar GitHub de Guilherme Cruz (abre em nova aba)"
                                         : "Guilherme Cruz on GitHub (opens in new tab)"
                                 }
-                                role="listitem"
                             >
                                 <div
                                     className="contact__alt-link-icon"
@@ -243,11 +240,15 @@ export const Contact: React.FC = () => {
                                         GitHub
                                     </span>
                                     <span className="contact__alt-link-handle">
-                                        /https-shini
+                                        {PROFILE.social.github.handle}
                                     </span>
                                 </div>
                             </a>
                         </div>
+
+                        {/* ── Formulário direto (renderiza somente com
+                               VITE_FORM_ENDPOINT configurado) ────────── */}
+                        <ContactForm />
                     </div>
 
                     {/* ════════════════════════════════════════════════
@@ -283,7 +284,7 @@ export const Contact: React.FC = () => {
                                 {PROFILE_DATA.map((item) => (
                                     <div
                                         className="contact__data-row"
-                                        key={item.label}
+                                        key={resolve(item.label, "pt")}
                                     >
                                         <div
                                             className="contact__data-icon"
@@ -294,7 +295,7 @@ export const Contact: React.FC = () => {
 
                                         <div className="contact__data-content">
                                             <dt className="contact__data-label">
-                                                {item.label}
+                                                {resolve(item.label, lang)}
                                             </dt>
 
                                             <dd className="contact__data-value">
@@ -310,18 +311,19 @@ export const Contact: React.FC = () => {
                                                         }
                                                         rel="noopener noreferrer"
                                                     >
-                                                        {item.value}
+                                                        {resolve(
+                                                            item.value,
+                                                            lang,
+                                                        )}
                                                     </a>
                                                 ) : (
-                                                    item.value
+                                                    resolve(item.value, lang)
                                                 )}
                                             </dd>
 
-                                            {item.note && (
-                                                <small className="contact__data-note">
-                                                    {item.note}
-                                                </small>
-                                            )}
+                                            <small className="contact__data-note">
+                                                {t(item.noteKey)}
+                                            </small>
                                         </div>
                                     </div>
                                 ))}

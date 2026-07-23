@@ -153,7 +153,10 @@
     font-weight: 500;
     letter-spacing: 0.04em;
     color: var(--color-text-3);
-    transition: background 0.25s, border-color 0.25s, color 0.25s;
+    transition:
+        background 0.25s,
+        border-color 0.25s,
+        color 0.25s;
     white-space: nowrap;
 }
 
@@ -200,7 +203,9 @@
     background: var(--color-brand-subtle);
     border: 1.5px solid color-mix(in srgb, var(--color-brand) 22%, transparent);
     flex-shrink: 0;
-    transition: border-color 0.3s ease-out, transform 0.3s ease-out;
+    transition:
+        border-color 0.3s ease-out,
+        transform 0.3s ease-out;
 }
 
 .rec-card:hover .rec-card__avatar {

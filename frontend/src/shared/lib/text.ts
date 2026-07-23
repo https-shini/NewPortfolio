@@ -14,7 +14,7 @@
  */
 export function getInitials(name: string): string {
     const parts = name.trim().split(/\s+/).filter(Boolean);
-    if (parts.length === 0) return '';
+    if (parts.length === 0) return "";
     if (parts.length === 1) return parts[0][0]!.toUpperCase();
     return (parts[0][0]! + parts[parts.length - 1]![0]!).toUpperCase();
 }
@@ -34,6 +34,6 @@ export function getInitials(name: string): string {
 export function clampText(text: string, limit: number): string {
     if (text.length <= limit) return text;
     const slice = text.slice(0, limit);
-    const lastSpace = slice.lastIndexOf(' ');
-    return (lastSpace > 0 ? slice.slice(0, lastSpace) : slice).trimEnd() + '…';
+    const lastSpace = slice.lastIndexOf(" ");
+    return (lastSpace > 0 ? slice.slice(0, lastSpace) : slice).trimEnd() + "…";
 }

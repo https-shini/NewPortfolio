@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import "./RecommendationCard.css";
 import {
-    RecommendationItem,
+    type RecommendationItem,
     summarize,
     formatRecommendationDate,
 } from "../Recommendations.types";
@@ -11,9 +11,9 @@ import { getInitials } from "@/shared/lib/text";
 import { IconArrowRight } from "@/shared/ui/Icons";
 
 interface RecommendationCardProps {
-    item:      RecommendationItem;
-    index:     number;
-    onOpen:    (item: RecommendationItem, trigger: HTMLElement) => void;
+    item: RecommendationItem;
+    index: number;
+    onOpen: (item: RecommendationItem, trigger: HTMLElement) => void;
     tabbable?: boolean;
 }
 
@@ -33,9 +33,10 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
         const visibleTags = (item.tags ?? []).slice(0, MAX_VISIBLE_TAGS);
         const remainingTags = (item.tags?.length ?? 0) - visibleTags.length;
 
-        const readMore = lang === "pt"
-            ? "Ler recomendação completa"
-            : "Read full recommendation";
+        const readMore =
+            lang === "pt"
+                ? "Ler recomendação completa"
+                : "Read full recommendation";
         const readMoreShort = lang === "pt" ? "Ler completo" : "Read full";
 
         const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -55,7 +56,9 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
                 <span className="rec-card__glow" aria-hidden="true" />
 
                 {/* Decorative opening quote */}
-                <span className="rec-card__quote" aria-hidden="true">"</span>
+                <span className="rec-card__quote" aria-hidden="true">
+                    "
+                </span>
 
                 {/* Date pill */}
                 <time className="rec-card__date" dateTime={item.date}>
@@ -67,7 +70,10 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
 
                 {/* Tags */}
                 {visibleTags.length > 0 && (
-                    <ul className="rec-card__tags" aria-label={lang === "pt" ? "Tópicos" : "Topics"}>
+                    <ul
+                        className="rec-card__tags"
+                        aria-label={lang === "pt" ? "Tópicos" : "Topics"}
+                    >
                         {visibleTags.map((tag, i) => (
                             <li key={i} className="rec-card__tag">
                                 {tag[lang]}
@@ -105,13 +111,21 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
                     </div>
 
                     <div className="rec-card__author">
-                        <span className="rec-card__name">{item.authorName}</span>
-                        <span className="rec-card__role">{item.authorRole[lang]}</span>
+                        <span className="rec-card__name">
+                            {item.authorName}
+                        </span>
+                        <span className="rec-card__role">
+                            {item.authorRole[lang]}
+                        </span>
                     </div>
 
                     <span className="rec-card__cta" aria-hidden="true">
                         {readMoreShort}
-                        <IconArrowRight width={12} height={12} aria-hidden="true" />
+                        <IconArrowRight
+                            width={12}
+                            height={12}
+                            aria-hidden="true"
+                        />
                     </span>
                 </div>
             </button>

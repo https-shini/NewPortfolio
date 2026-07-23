@@ -1,0 +1,23 @@
+{
+  "name": "Guilherme Cruz — Desenvolvedor de Software",
+  "short_name": "GCruz.dev",
+  "description": "Portfólio profissional de Guilherme Cruz — Desenvolvedor Full Stack especializado em React, Node.js e Python.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#070d19",
+  "theme_color": "#040710",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

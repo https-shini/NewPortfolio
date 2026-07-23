@@ -145,7 +145,20 @@ export type TranslationKey =
     | "contact.meta.response"
     | "contact.meta.linkedin"
     | "contact.meta.github"
+    | "contact.meta.devlinks"
     | "contact.meta.location"
+    | "contact.label.location"
+    | "contact.email.now"
+    | "contact.form.title"
+    | "contact.form.name"
+    | "contact.form.email"
+    | "contact.form.message"
+    | "contact.form.name.placeholder"
+    | "contact.form.email.placeholder"
+    | "contact.form.message.placeholder"
+    | "contact.form.error.name"
+    | "contact.form.error.email"
+    | "contact.form.error.message"
 
     /* ── RECOMMENDATIONS ───────────────────────────── */
     | "rec.title"
@@ -331,7 +344,22 @@ const pt: Translations = {
     "contact.meta.response": "Respondo em até 24h",
     "contact.meta.linkedin": "Aberto a networking e novas oportunidades",
     "contact.meta.github": "Projetos reais com código limpo e organizado",
+    "contact.meta.devlinks": "Confira meus links sociais e projetos",
     "contact.meta.location": "Disponível para trabalho remoto ou presencial",
+    "contact.label.location": "Localização",
+    "contact.email.now": "Enviar e-mail agora",
+    "contact.form.title": "Ou envie uma mensagem direta",
+    "contact.form.name": "Nome",
+    "contact.form.email": "E-mail",
+    "contact.form.message": "Mensagem",
+    "contact.form.name.placeholder": "Seu nome",
+    "contact.form.email.placeholder": "voce@exemplo.com",
+    "contact.form.message.placeholder":
+        "Conte-me sobre sua ideia, projeto ou oportunidade…",
+    "contact.form.error.name": "Informe seu nome.",
+    "contact.form.error.email": "Informe um e-mail válido.",
+    "contact.form.error.message":
+        "Escreva uma mensagem com pelo menos 10 caracteres.",
 
     /* RECOMMENDATIONS */
     "rec.title": "Recomendações",
@@ -519,7 +547,22 @@ const en: Translations = {
     "contact.meta.response": "I reply within 24h",
     "contact.meta.linkedin": "Open to networking and opportunities",
     "contact.meta.github": "Real projects and clean code",
+    "contact.meta.devlinks": "Check out my social links and projects",
     "contact.meta.location": "Available remotely and on-site",
+    "contact.label.location": "Location",
+    "contact.email.now": "Send an email now",
+    "contact.form.title": "Or send a direct message",
+    "contact.form.name": "Name",
+    "contact.form.email": "Email",
+    "contact.form.message": "Message",
+    "contact.form.name.placeholder": "Your name",
+    "contact.form.email.placeholder": "you@example.com",
+    "contact.form.message.placeholder":
+        "Tell me about your idea, project or opportunity…",
+    "contact.form.error.name": "Please enter your name.",
+    "contact.form.error.email": "Please enter a valid email.",
+    "contact.form.error.message":
+        "Please write a message with at least 10 characters.",
 
     /* RECOMMENDATIONS */
     "rec.title": "Recommendations",

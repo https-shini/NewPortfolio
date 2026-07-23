@@ -8,10 +8,10 @@
    se atualiza sozinho (ex.: "4 meses" → "5 meses" no mês seguinte)
    e respeita o idioma corrente.
 ───────────────────────────────────────────────────────── */
-import { calculateDuration, formatMonthYear } from '@/shared/lib/dateUtils';
-import type { CareerCompany, CareerPosition } from './Timeline.types';
+import { calculateDuration, formatMonthYear } from "@/shared/lib/dateUtils";
+import type { CareerCompany, CareerPosition } from "./Timeline.types";
 
-type Lang = 'pt' | 'en';
+type Lang = "pt" | "en";
 
 /**
  * Constrói o display de período de uma posição.
@@ -22,12 +22,12 @@ type Lang = 'pt' | 'en';
  */
 export function buildPeriod(
     startDate: string,
-    endDate:   string | undefined,
-    lang:      Lang,
+    endDate: string | undefined,
+    lang: Lang,
     presentLabel: string,
 ): string {
     const start = formatMonthYear(startDate, lang);
-    const end   = endDate ? formatMonthYear(endDate, lang) : presentLabel;
+    const end = endDate ? formatMonthYear(endDate, lang) : presentLabel;
     return `${start} — ${end}`;
 }
 
@@ -38,13 +38,13 @@ export function buildPeriod(
  */
 export function buildDuration(
     startDate: string,
-    endDate:   string | undefined,
-    lang:      Lang,
+    endDate: string | undefined,
+    lang: Lang,
 ): string {
     // calculateDuration adiciona "Em andamento · " quando endDate é undefined.
     // Aqui queremos apenas a duração — strip do prefixo se presente.
     const raw = calculateDuration(startDate, endDate, lang);
-    const sep = ' · ';
+    const sep = " · ";
     const idx = raw.indexOf(sep);
     return idx >= 0 ? raw.slice(idx + sep.length) : raw;
 }
@@ -58,9 +58,9 @@ export function buildDuration(
  */
 export function buildTotalDuration(
     positions: CareerPosition[],
-    lang:      Lang,
+    lang: Lang,
 ): string {
-    if (positions.length === 0) return '';
+    if (positions.length === 0) return "";
 
     // mais antiga = última do array (mais recente está no topo)
     const oldest = positions[positions.length - 1]!;
@@ -74,11 +74,14 @@ export function buildTotalDuration(
  * senão deriva de `startDate`/`endDate`.
  */
 export function resolvePeriod(
-    pos:           CareerPosition,
-    lang:          Lang,
-    presentLabel:  string,
+    pos: CareerPosition,
+    lang: Lang,
+    presentLabel: string,
 ): string {
-    return pos.period ?? buildPeriod(pos.startDate, pos.endDate, lang, presentLabel);
+    return (
+        pos.period ??
+        buildPeriod(pos.startDate, pos.endDate, lang, presentLabel)
+    );
 }
 
 /**
@@ -95,7 +98,7 @@ export function resolveDuration(pos: CareerPosition, lang: Lang): string {
  */
 export function resolveTotalDuration(
     company: CareerCompany,
-    lang:    Lang,
+    lang: Lang,
 ): string {
     return company.totalDuration ?? buildTotalDuration(company.positions, lang);
 }

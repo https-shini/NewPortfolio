@@ -85,8 +85,8 @@
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
     scroll-behavior: smooth;
-    scrollbar-width: none;            /* Firefox */
-    -ms-overflow-style: none;         /* Edge/IE legacy */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Edge/IE legacy */
     padding-bottom: 4px;
     /* fade nas bordas indicando que há mais conteúdo a navegar */
     -webkit-mask-image: linear-gradient(
@@ -106,7 +106,7 @@
 }
 
 .featured__filmstrip--scroll::-webkit-scrollbar {
-    display: none;                    /* Chrome/Safari */
+    display: none; /* Chrome/Safari */
 }
 
 .featured__thumb {
@@ -203,14 +203,25 @@
     box-shadow:
         0 2px 6px color-mix(in srgb, black 22%, transparent),
         0 18px 40px color-mix(in srgb, black 28%, transparent);
-    transition: border-color 0.3s ease-out, box-shadow 0.3s ease-out;
+    transition:
+        border-color 0.3s ease-out,
+        box-shadow 0.3s ease-out;
 }
 
 .featured__gallery:hover {
-    border-color: color-mix(in srgb, var(--color-brand) 25%, var(--color-border-2));
+    border-color: color-mix(
+        in srgb,
+        var(--color-brand) 25%,
+        var(--color-border-2)
+    );
     box-shadow:
         0 2px 6px color-mix(in srgb, black 28%, transparent),
-        0 22px 50px color-mix(in srgb, var(--color-brand) 12%, color-mix(in srgb, black 30%, transparent));
+        0 22px 50px
+            color-mix(
+                in srgb,
+                var(--color-brand) 12%,
+                color-mix(in srgb, black 30%, transparent)
+            );
 }
 
 .featured__gallery:focus-visible {
@@ -224,7 +235,11 @@
     align-items: center;
     gap: var(--space-3);
     padding: 10px 14px;
-    background: color-mix(in srgb, var(--color-surface-2) 70%, var(--color-surface-3));
+    background: color-mix(
+        in srgb,
+        var(--color-surface-2) 70%,
+        var(--color-surface-3)
+    );
     border-bottom: 1px solid var(--color-border-2);
     flex-shrink: 0;
 }
@@ -242,9 +257,15 @@
     border: 0.5px solid color-mix(in srgb, black 35%, transparent);
 }
 
-.featured__browser-dot--red   { background: #ff5f57; }
-.featured__browser-dot--amber { background: #febc2e; }
-.featured__browser-dot--green { background: #28c840; }
+.featured__browser-dot--red {
+    background: #ff5f57;
+}
+.featured__browser-dot--amber {
+    background: #febc2e;
+}
+.featured__browser-dot--green {
+    background: #28c840;
+}
 
 .featured__browser-url {
     flex: 1;
@@ -281,7 +302,10 @@
     color: var(--color-text-3);
     cursor: pointer;
     flex-shrink: 0;
-    transition: background 0.25s, border-color 0.25s, color 0.25s;
+    transition:
+        background 0.25s,
+        border-color 0.25s,
+        color 0.25s;
 }
 
 .featured__autoplay:hover {
@@ -471,8 +495,12 @@
         transform 0.25s;
 }
 
-.featured__arrow--prev { left: 14px; }
-.featured__arrow--next { right: 14px; }
+.featured__arrow--prev {
+    left: 14px;
+}
+.featured__arrow--next {
+    right: 14px;
+}
 
 .featured__gallery:hover .featured__arrow,
 .featured__gallery:focus-within .featured__arrow {
@@ -485,8 +513,12 @@
     border-color: var(--color-brand);
 }
 
-.featured__arrow--prev:hover { transform: translateY(-50%) translateX(-2px); }
-.featured__arrow--next:hover { transform: translateY(-50%) translateX(2px); }
+.featured__arrow--prev:hover {
+    transform: translateY(-50%) translateX(-2px);
+}
+.featured__arrow--next:hover {
+    transform: translateY(-50%) translateX(2px);
+}
 
 /* ── Dots row (counter + dots) ─────────────────────────────────── */
 .featured__dots-row {
@@ -495,7 +527,11 @@
     justify-content: space-between;
     gap: var(--space-3);
     padding: 10px 14px;
-    background: color-mix(in srgb, var(--color-surface-2) 70%, var(--color-surface-3));
+    background: color-mix(
+        in srgb,
+        var(--color-surface-2) 70%,
+        var(--color-surface-3)
+    );
     border-top: 1px solid var(--color-border-2);
 }
 
@@ -528,7 +564,11 @@
     height: 100%;
     min-width: 8px;
     border-radius: inherit;
-    background: linear-gradient(to right, var(--color-brand), var(--color-accent));
+    background: linear-gradient(
+        to right,
+        var(--color-brand),
+        var(--color-accent)
+    );
     transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -628,8 +668,15 @@
 }
 
 @keyframes featured-pulse {
-    0%, 100% { opacity: 1;   transform: scale(1); }
-    50%      { opacity: 0.5; transform: scale(0.82); }
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.82);
+    }
 }
 
 .featured__pill--license {
@@ -697,7 +744,10 @@
     font-weight: 600;
     letter-spacing: 0.04em;
     color: var(--color-text-1);
-    transition: background 0.25s, border-color 0.25s, transform 0.25s;
+    transition:
+        background 0.25s,
+        border-color 0.25s,
+        transform 0.25s;
 }
 
 .featured__tech-chip img {
@@ -970,8 +1020,12 @@
         opacity: 1;
     }
 
-    .featured__arrow--prev { left: 8px; }
-    .featured__arrow--next { right: 8px; }
+    .featured__arrow--prev {
+        left: 8px;
+    }
+    .featured__arrow--next {
+        right: 8px;
+    }
 
     .featured__profile {
         padding: var(--space-4);

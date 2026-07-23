@@ -2,15 +2,12 @@
 
 <div align="center">
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Orbitron&weight=700&size=26&duration=2500&pause=800&color=FF6B6B&center=true&vCenter=true&width=900&lines=⚛️+Portfólio+construído+com+React+%2B+TypeScript;🎨+Design+System+v2.0+com+tokens+CSS;🌐+Suporte+a+PT+e+EN+(i18n+completo);♿+Acessível+—+ARIA%2C+teclado+e+reduced+motion;🚀+Deploy+live+em+bl4ck404.dev.br" alt="Typing SVG" />
-
-<br/>
-
 [![Deploy](https://img.shields.io/badge/Deploy-Live-46e8b0?style=for-the-badge&logo=vercel&logoColor=white)](https://bl4ck404.dev.br)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
-[![Licença](https://img.shields.io/badge/Licença-MIT-ff6b6b?style=for-the-badge)](#licença)
+[![Vitest](https://img.shields.io/badge/Vitest-4-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev)
+[![Licença](https://img.shields.io/badge/Licença-MIT-ff6b6b?style=for-the-badge)](#-licença)
 
 </div>
 
@@ -26,16 +23,23 @@
 - [Design System](#-design-system)
 - [Funcionalidades](#-funcionalidades)
 - [Como executar](#-como-executar)
+- [Scripts](#-scripts)
+- [Variáveis de ambiente](#-variáveis-de-ambiente)
+- [Testes](#-testes)
+- [Qualidade e CI](#-qualidade-e-ci)
 - [Acessibilidade](#-acessibilidade)
+- [Roadmap](#-roadmap)
+- [Contribuição](#-contribuição)
 - [Autor](#-autor)
+- [Licença](#-licença)
 
 ---
 
 ## 💡 Sobre o projeto
 
-Portfólio pessoal de **segunda geração** — reescrito do zero em **React + TypeScript + Vite**, evoluindo a versão anterior em HTML/CSS/JS puro. O projeto é uma SPA com arquitetura por features, design system próprio com tokens CSS, internacionalização completa (PT/EN) e sub-componentes memoizados para performance.
+Portfólio pessoal de **segunda geração** — SPA construída em **React 18 + TypeScript 5 + Vite 5**, evoluindo a versão anterior em HTML/CSS/JS puro. O projeto tem arquitetura por camadas (app → pages → widgets → shared), design system próprio com tokens CSS, internacionalização completa (PT-BR/EN), tema dark/light persistente e **zero dependências de UI externas** — todos os componentes e os 60+ ícones SVG são do próprio design system.
 
-Cada seção foi construída como um módulo independente, com seus próprios arquivos `.tsx` e `.css`, facilitando manutenção e escalabilidade. O sistema de i18n via `useLang` adapta todos os textos ao idioma selecionado sem recarregar a página, e o sistema de tema persiste a preferência do usuário via `localStorage`.
+O repositório é um monorepo simples: a raiz orquestra os scripts, `frontend/` contém toda a aplicação e `backend/` está reservado para evolução futura.
 
 ---
 
@@ -49,102 +53,105 @@ Cada seção foi construída como um módulo independente, com seus próprios ar
 
 ## 📄 Seções
 
-| #   | Seção        | Descrição                                                                            |
-| --- | ------------ | ------------------------------------------------------------------------------------ |
-| 01  | **Hero**     | Apresentação com foto, status de disponibilidade, CTA e links sociais                |
-| 02  | **About**    | Bio, 4 áreas de especialização, stats com count-up e tech stack de 16 ícones         |
-| 03  | **Timeline** | Trajetória em tabs (Educação · Certificações · Experiência) com IntersectionObserver |
-| 04  | **Featured** | Projeto em destaque (HomeMade Gourmet) com carrossel de slides e detail cards        |
-| 05  | **Work**     | Grid de projetos com thumbnail, overlay de ações e badges de tecnologia              |
-| 06  | **Contact**  | CTA de e-mail, links alternativos, perfil de contato e dados de disponibilidade      |
-| —   | **Header**   | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile             |
-| —   | **Footer**   | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV          |
+| #   | Seção               | Descrição                                                                              |
+| --- | ------------------- | -------------------------------------------------------------------------------------- |
+| 01  | **Hero**            | Apresentação com foto, status de disponibilidade, CTAs (projetos + CV) e links sociais |
+| 02  | **About**           | Bio, 4 áreas de especialização, stats com count-up e tech stack de 16 ícones           |
+| 03  | **Timeline**        | Carreira por empresa com trilha de posições, acordeão de detalhes e stats gerais       |
+| 04  | **Formações**       | Educação + certificações com filtros (tabs), limite expansível e cards com stagger     |
+| 05  | **Featured**        | Projeto em destaque (AuthService) com carrossel, lightbox, endpoints e arquitetura     |
+| 06  | **Work**            | Grid de projetos com thumbnail local (WebP), badges de tecnologia e ações              |
+| 07  | **Recommendations** | Depoimentos profissionais em grid/carrossel com modal de leitura completa              |
+| 08  | **Contact**         | CTA de e-mail, formulário com validação (via env), links e perfil ATS-friendly         |
+| —   | **Header**          | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile               |
+| —   | **Footer**          | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV            |
 
 ---
 
 ## 🛠 Tecnologias
 
-| Tecnologia         | Versão | Uso                                                   |
-| ------------------ | ------ | ----------------------------------------------------- |
-| **React**          | 18     | Renderização de UI com hooks e memo                   |
-| **TypeScript**     | 5      | Tipagem estrita em todos os componentes               |
-| **Vite**           | 5      | Bundler, dev server e path aliases (`@/`)             |
-| **CSS Modules**    | —      | Escopo de estilos por componente (`.css` por feature) |
-| **skillicons.dev** | —      | Ícones de tecnologias na seção About                  |
-
-> Zero dependências de UI externas — todos os componentes e ícones são do próprio design system.
+| Tecnologia                | Versão | Uso                                                    |
+| ------------------------- | ------ | ------------------------------------------------------ |
+| **React**                 | 18     | Renderização de UI com hooks e memo                    |
+| **TypeScript**            | 5      | Tipagem estrita em todos os componentes                |
+| **Vite**                  | 5      | Bundler, dev server e path aliases (`@/`)              |
+| **Vitest + RTL**          | 4 / 16 | Testes unitários e de componentes (jsdom)              |
+| **ESLint 9 (flat)**       | 9      | Lint com typescript-eslint, react-hooks e jsx-a11y     |
+| **Prettier**              | 3      | Formatação padronizada                                 |
+| **Husky + lint-staged**   | 9 / 16 | Hooks de pre-commit (lint + format)                    |
+| **Commitlint**            | 20+    | Conventional Commits obrigatórios                      |
+| **CSS puro (tokens)**     | —      | Design system próprio, um `.css` por widget            |
+| **skillicons.dev**        | —      | Ícones de tecnologias na seção About                   |
 
 ---
 
 ## 🏗 Arquitetura
 
 ```
-src/
+frontend/
 │
-├── features/                    # Módulos por feature (seção)
-│   ├── hero/ui/Hero.tsx
-│   ├── about/ui/About.tsx
-│   ├── timeline/
-│   │   ├── ui/Timeline.tsx
-│   │   ├── Timeline.data.ts     # Dados estáticos centralizados
-│   │   └── Timeline.types.ts    # Tipos: TimelineItem, TimelineCategory
-│   ├── featured/ui/Featured.tsx
-│   ├── work/
-│   │   ├── ui/Work.tsx
-│   │   └── Work.types.ts        # Tipos: WorkProject
-│   ├── contact/ui/Contact.tsx
-│   ├── header/ui/Header.tsx
-│   └── footer/ui/Footer.tsx
+├── public/                      # Assets estáticos publicados na raiz do site
+│   ├── favicon.svg · favicon.ico · apple-touch-icon.png
+│   ├── icon-192.png · icon-512.png · manifest.webmanifest
+│   ├── robots.txt · sitemap.xml · og-preview.jpg
+│   └── docs/                    # Currículo e certificados (PDF)
 │
-└── shared/
-    ├── hooks/
-    │   ├── useLang.ts           # i18n: lang, t(), toggleLang()
-    │   └── useTheme.ts          # Tema: theme, toggleTheme()
-    ├── lib/
-    │   ├── translations.ts      # Objeto Translations com todas as chaves i18n
-    │   └── smoothScroll.ts      # scrollToSection() com suporte a reduced-motion
-    ├── config/
-    │   └── constants.ts         # AUTHOR_EMAIL, GITHUB_URL, LINKEDIN_URL
-    └── ui/
-        └── Icons.tsx            # Design system de ícones (SVG inline, sem lib externa)
+└── src/
+    ├── app/                     # Camada de aplicação
+    │   ├── App.tsx              # Composição raiz (Providers + Routes)
+    │   ├── providers.tsx        # LangProvider (i18n)
+    │   ├── routes.tsx           # SPA de página única (sem router)
+    │   └── LangContext.tsx      # Contexto de idioma: lang, t(), toggleLang()
+    │
+    ├── pages/Home/              # Composição da página única
+    │
+    ├── widgets/                 # Um módulo por seção (tsx + css co-locados)
+    │   ├── Header/  Hero/  About/  Timeline/  Formacoes/
+    │   ├── Featured/  Work/  Recommendations/  Contact/  Footer/
+    │   └── <Widget>/
+    │       ├── <Widget>.tsx · <Widget>.css
+    │       ├── <Widget>.data.ts     # Dados estáticos bilíngues
+    │       ├── <Widget>.types.ts    # Tipos do domínio
+    │       └── components/          # Sub-componentes do widget
+    │
+    ├── shared/
+    │   ├── config/
+    │   │   ├── profile.ts       # ✨ Fonte única de identidade (nome, e-mail, redes)
+    │   │   └── constants.ts     # SECTION_IDS, chaves de storage, aliases do perfil
+    │   ├── hooks/               # useLang, useTheme, useScrollReveal, useReducedMotion…
+    │   ├── lib/                 # translations, localized, richText, dateUtils, mailto…
+    │   ├── styles/              # tokens.css → globals.css → theme-patches.css
+    │   └── ui/                  # Icons.tsx (design system de ícones) + ScrollUtils
+    │
+    ├── assets/                  # Imagens otimizadas (WebP) importadas pelo bundle
+    └── test/setup.ts            # Setup do Vitest (jsdom + stubs)
 ```
 
 **Padrões aplicados:**
 
-- `React.memo` em todos os sub-componentes do Footer — evita re-renders desnecessários
-- `useCallback` para handlers estáveis entre renders
+- **Fonte única de verdade** — identidade em `profile.ts`, seções em `SECTION_IDS`, textos em `translations.ts`
+- `React.memo` + `useCallback` nos sub-componentes com props estáveis
 - `IntersectionObserver` para reveal e scroll spy — sem listeners de scroll
-- `TranslationKey` inferido via `Parameters<ReturnType<typeof useLang>["t"]>[0]` — tipagem automática das chaves i18n
+- i18n em duas camadas: chaves tipadas (`TranslationKey`) para UI e `Localized {pt, en}` para dados
+- Datas de carreira em ISO `YYYY-MM` — período/duração derivados e auto-atualizáveis
 
 ---
 
 ## 🎨 Design System
 
-O sistema de design é baseado em **tokens CSS** definidos no arquivo global. Suporta dois temas (dark padrão / light) com persistência via `localStorage`.
-
-### Tokens principais
+Tokens CSS em três níveis — primitivos (`--_*`), semânticos dark (`:root`) e overrides light (`body.light-mode`) — com persistência do tema via `localStorage` e sincronização com o SO.
 
 | Categoria           | Exemplos de variáveis                                                    |
 | ------------------- | ------------------------------------------------------------------------ |
 | **Cores**           | `--color-brand`, `--color-accent`, `--color-bg`, `--color-surface-1/2/3` |
-| **Tipografia**      | `--font-display` (Syne), `--font-mono` (JetBrains Mono), `--font-body`   |
+| **Tipografia**      | `--font-display` (Clash Display), `--font-mono` (JetBrains Mono)         |
 | **Escala de texto** | `--text-2xs` → `--text-7xl`                                              |
 | **Espaçamento**     | `--space-1` → `--space-16`                                               |
 | **Bordas**          | `--radius-sm` → `--radius-2xl`, `--radius-full`                          |
 | **Sombras**         | `--shadow-md`, `--shadow-xl`, `--shadow-card-hover`                      |
 | **Transições**      | `--transition-fast`, `--transition-base`, `--transition-slow`            |
-| **Z-index**         | `--z-header`, `--z-drawer`                                               |
 
-### Componentes utilitários globais
-
-| Classe                                                                                   | Descrição                                              |
-| ---------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `.btn`, `.btn--primary`, `.btn--outline`, `.btn--sm`, `.btn--lg`                         | Sistema de botões                                      |
-| `.badge`, `.badge--brand`, `.badge--accent`, `.badge--neutral`                           | Tags de tecnologia                                     |
-| `.section`, `.section-header`, `.section-title`, `.section-eyebrow`, `.section-subtitle` | Layout padrão de seção                                 |
-| `.container`                                                                             | Wrapper com max-width e gutter responsivo              |
-| `.social-link`                                                                           | Links de redes sociais com ícone                       |
-| `[data-reveal]`                                                                          | Animação de entrada ao scroll via IntersectionObserver |
+Utilitários globais: `.btn`, `.badge`, `.section*`, `.container`, `.social-link`, `[data-reveal]`.
 
 ---
 
@@ -152,37 +159,28 @@ O sistema de design é baseado em **tokens CSS** definidos no arquivo global. Su
 
 **Navegação e UX**
 
-- Header fixo com blur + `backdrop-filter` ao rolar
-- Scroll spy com `IntersectionObserver` — link ativo atualiza automaticamente
-- Smooth scroll para seções via `scrollToSection()` com `requestAnimationFrame`
-- Menu mobile com focus trap, fechamento por `Escape` e scroll lock no body
+- Header fixo com blur ao rolar e scroll spy via `IntersectionObserver`
+- Menu mobile com focus trap, `Escape` e scroll lock
+- Smooth scroll com foco programático na seção de destino
 
 **Tema e Idioma**
 
-- Toggle dark/light com persistência via `localStorage`
-- Alternância PT/EN com animação na language pill (`is-switching`)
-- Todos os textos via `t()` do `useLang` — zero strings hardcoded nos componentes
+- Dark/light com persistência, sync com o SO e `theme-color` dinâmico
+- PT-BR/EN sem recarregar a página — zero strings hardcoded
 
-**Animações**
+**Contato**
 
-- Count-up animado nos stat cards do About (ease-out cúbico, 1200ms)
-- Carrossel automático no Featured com pause ao hover/foco, swipe touch e teclado
-- Timeline cards revelados com stagger por `IntersectionObserver`
-- Ponto pulsante no logo (footer e header) com `@keyframes`
-- Coração pulsante no footer com duplo batimento orgânico
-- Respeito total a `prefers-reduced-motion`
+- Formulário com validação completa, estados de loading/sucesso/erro, honeypot anti-spam e endpoint configurável por env
+- Fallback automático para mailto quando o endpoint não está configurado
 
-**SEO / ATS-friendly**
+**SEO**
 
-- `<address>` semântico no footer e no contact para indexação de recrutadores
-- E-mail e LinkedIn visíveis como texto puro (não apenas em ícones)
-- `mailto:` com `subject` e `body` pré-preenchidos e adaptados ao idioma
+- Meta tags completas (canonical, Open Graph, Twitter Cards), JSON-LD (`Person`), sitemap, robots.txt, favicons e manifest PWA
 
 **Performance**
 
-- Imagens com `loading="lazy"` (exceto avatar do hero: `fetchpriority="high"`)
-- Sub-componentes memoizados com `React.memo` onde há props estáveis
-- Dados estáticos (nav, projetos, timeline) fora dos componentes — sem recriação a cada render
+- Todas as imagens locais em **WebP** (hero: 8,3 MB → 89 KB) com `loading="lazy"` e `fetchpriority="high"` no avatar
+- Carrossel pausa em `visibilitychange`; dados estáticos fora dos componentes
 
 ---
 
@@ -190,94 +188,116 @@ O sistema de design é baseado em **tokens CSS** definidos no arquivo global. Su
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/https-shini/portfolio.git
-cd portfolio
+git clone https://github.com/https-shini/NewPortfolio.git
+cd NewPortfolio
 
-# 2. Instale as dependências
-npm install
+# 2. Instale as dependências (raiz + frontend)
+npm run install:all
 
-# 3. Inicie o servidor de desenvolvimento
-npm run dev
+# 3. (Opcional) Configure as variáveis de ambiente
+cp frontend/.env.example frontend/.env.local
 
-# 4. Acesse no navegador
-# http://localhost:5173
+# 4. Inicie o servidor de desenvolvimento
+npm run dev            # http://localhost:5173
 ```
 
 **Build para produção:**
 
 ```bash
-npm run build
-npm run preview   # prévia local do build
+npm run build          # type-check + build otimizado em frontend/dist
+npm run preview        # prévia local do build (porta 4173)
 ```
 
-**Path aliases configurados no Vite:**
+---
 
-```ts
-// vite.config.ts
-resolve: {
-  alias: { "@": "/src" }
-}
+## 📜 Scripts
+
+Todos os scripts funcionam na raiz (delegam ao frontend):
+
+| Script                 | Descrição                                        |
+| ---------------------- | ------------------------------------------------ |
+| `npm run dev`          | Dev server com HMR (porta 5173)                  |
+| `npm run build`        | `tsc --noEmit` + build de produção               |
+| `npm run preview`      | Prévia do build (porta 4173)                     |
+| `npm run type-check`   | Verificação de tipos sem emitir                  |
+| `npm run lint`         | ESLint em `src/`                                 |
+| `npm run lint:fix`     | ESLint com auto-fix                              |
+| `npm run format`       | Prettier (write)                                 |
+| `npm run format:check` | Prettier (check — usado no CI)                   |
+| `npm run test`         | Vitest (run único)                               |
+| `npm run test:watch`   | Vitest em watch mode                             |
+
+---
+
+## 🔐 Variáveis de ambiente
+
+Definidas em `frontend/.env.local` (ver `frontend/.env.example`):
+
+| Variável             | Obrigatória | Descrição                                                              |
+| -------------------- | ----------- | ---------------------------------------------------------------------- |
+| `VITE_FORM_ENDPOINT` | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail. |
+
+> Variáveis com prefixo `VITE_` são expostas ao browser — nunca coloque segredos.
+
+---
+
+## 🧪 Testes
+
+Suíte com **Vitest + React Testing Library** (ambiente jsdom):
+
+- **Utils** — `dateUtils`, `text`, `richText`, `mailto`, `careerDates`
+- **Contexto** — `LangContext` (idioma inicial, toggle, persistência)
+- **Componentes** — `Hero` (links do perfil central), `ContactForm` (validação, envio, erros)
+
+```bash
+npm run test          # run único (CI)
+npm run test:watch    # watch mode
 ```
+
+---
+
+## ✅ Qualidade e CI
+
+- **ESLint 9** (flat config) com `typescript-eslint`, `react-hooks`, `react-refresh` e `jsx-a11y`
+- **Prettier** + **EditorConfig** para estilo consistente
+- **Husky + lint-staged** — formatação automática no pre-commit
+- **Commitlint** — Conventional Commits obrigatórios (`feat:`, `fix:`, `docs:`…)
+- **GitHub Actions** (`.github/workflows/ci.yml`) — lint → type-check → format check → testes → build a cada push/PR; o pipeline falha se qualquer etapa falhar
 
 ---
 
 ## ♿ Acessibilidade
 
-| Recurso               | Implementação                                                                                                                                             |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Semântica HTML        | `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<address>`, `<footer>`, `<time>`                                                                |
-| ARIA                  | `aria-label`, `aria-labelledby`, `aria-hidden`, `aria-expanded`, `aria-selected`, `aria-controls`, `aria-modal`, `role` em todos os elementos interativos |
-| Navegação por teclado | Tab, Shift+Tab, Escape (fecha menu mobile), Arrow keys (tabs da timeline), Home/End                                                                       |
-| Focus trap            | Menu mobile captura o foco e impede navegação fora do drawer                                                                                              |
-| Focus visível         | `:focus-visible` com outline brand em todos os elementos interativos                                                                                      |
-| Carrossel acessível   | `role="region"`, `aria-roledescription="carrossel"`, dots com `aria-selected`                                                                             |
-| Movimento reduzido    | `@media (prefers-reduced-motion: reduce)` remove todas as animações e transições                                                                          |
-| Contraste             | Tokens de cor calibrados para contraste adequado em ambos os temas                                                                                        |
+| Recurso               | Implementação                                                                              |
+| --------------------- | ------------------------------------------------------------------------------------------ |
+| Semântica HTML        | `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<address>`, `<footer>`, `<time>` |
+| ARIA                  | `aria-label`, `aria-labelledby`, `aria-expanded`, `aria-modal`, `aria-live` e afins        |
+| Navegação por teclado | Tab/Shift+Tab, Escape, setas nos carrosséis, foco visível em tudo                          |
+| Focus trap            | Menu mobile e modais capturam o foco                                                       |
+| Formulário            | Labels reais, `aria-invalid`, `aria-describedby` por erro, status com `role="status"`      |
+| Movimento reduzido    | `prefers-reduced-motion` remove animações e autoplay                                       |
+| Lint de a11y          | `eslint-plugin-jsx-a11y` no CI                                                             |
 
 ---
 
-## 📁 Projetos em destaque
+## 🗺 Roadmap
 
-### ⭐ HomeMade Gourmet _(Featured)_
-
-TCC desenvolvido na ETEC Vila Formosa (2022). Sistema de receitas com recomendação personalizada, cálculo automático de calorias e painel administrativo completo. Aprovado com louvor.
-
-`HTML5` `CSS3` `JavaScript` `PHP` `MySQL` `Figma`
-
-[![Demo](https://img.shields.io/badge/Demo-Live-46e8b0?style=flat-square)](https://https-shini.github.io/homemade-gourmet/)
-[![Repo](https://img.shields.io/badge/Repositório-GitHub-181717?style=flat-square&logo=github)](https://github.com/https-shini/homemade-gourmet)
+- [ ] Backend próprio para o formulário de contato (`backend/`)
+- [ ] Testes E2E com Playwright
+- [ ] Página de estudo de caso por projeto
+- [ ] Blog técnico integrado
+- [ ] Deploy preview automático por PR
 
 ---
 
-### 💬 Web Chat
+## 🤝 Contribuição
 
-Chat em tempo real com WebSocket e suporte a múltiplas salas.
+Este é um projeto pessoal, mas sugestões são bem-vindas:
 
-`Node.js` `JavaScript` `WebSocket`
-
-[![Demo](https://img.shields.io/badge/Demo-Live-46e8b0?style=flat-square)](https://chat-frontend-g42t.onrender.com)
-[![Repo](https://img.shields.io/badge/Repositório-GitHub-181717?style=flat-square&logo=github)](https://github.com/https-shini/web-chat)
-
----
-
-### 🔐 Auth Service
-
-Serviço de autenticação com JWT, gerenciamento de usuários e rotas protegidas.
-
-`Node.js` `TypeScript` `JWT`
-
-[![Repo](https://img.shields.io/badge/Repositório-GitHub-181717?style=flat-square&logo=github)](https://github.com/https-shini/AuthService)
-
----
-
-### 💰 Controle Financeiro
-
-Dashboard para gestão financeira pessoal com controle de entradas, saídas e saldo em tempo real.
-
-`React` `JavaScript` `CSS3`
-
-[![Demo](https://img.shields.io/badge/Demo-Live-46e8b0?style=flat-square)](https://financas-reactjs.vercel.app)
-[![Repo](https://img.shields.io/badge/Repositório-GitHub-181717?style=flat-square&logo=github)](https://github.com/https-shini/financas-reactjs)
+1. Abra uma issue descrevendo a melhoria
+2. Fork + branch a partir de `main`
+3. Commits no padrão Conventional Commits (validados pelo commitlint)
+4. Abra um PR — o CI precisa passar (lint, tipos, testes, build)
 
 ---
 
@@ -291,7 +311,7 @@ São Paulo, SP — Brasil
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-311DB4?style=for-the-badge)](https://bl4ck404.dev.br)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-3E79E0?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/oguilherme-cruz)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:contact@bl4ck404.dev.br)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:contato.guilhermescruz@gmail.com)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/https-shini)
 
 </div>

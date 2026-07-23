@@ -45,6 +45,7 @@ export function summarize(text: string, maxChars = 800): string {
 
     const sliced = clean.slice(0, maxChars);
     const lastSpace = sliced.lastIndexOf(" ");
-    const cut = lastSpace > maxChars * 0.6 ? sliced.slice(0, lastSpace) : sliced;
+    const cut =
+        lastSpace > maxChars * 0.6 ? sliced.slice(0, lastSpace) : sliced;
     return cut.replace(/[.,;:!?–—]+$/, "").trim() + "…";
 }

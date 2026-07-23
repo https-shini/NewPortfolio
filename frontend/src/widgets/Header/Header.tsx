@@ -7,14 +7,14 @@ import { IconSun, IconMoon, IconTranslate } from "@/shared/ui/Icons";
 import { SECTION_IDS } from "@/shared/config/constants";
 
 const NAV_LINKS = [
-    { href: SECTION_IDS.HOME,            key: "nav.home" as const },
-    { href: SECTION_IDS.ABOUT,           key: "nav.about" as const },
-    { href: SECTION_IDS.CAREER,          key: "nav.career" as const },
-    { href: SECTION_IDS.EDUCATION,       key: "nav.education" as const },
-    { href: SECTION_IDS.FEATURED,        key: "nav.featured" as const },
-    { href: SECTION_IDS.WORK,            key: "nav.work" as const },
+    { href: SECTION_IDS.HOME, key: "nav.home" as const },
+    { href: SECTION_IDS.ABOUT, key: "nav.about" as const },
+    { href: SECTION_IDS.CAREER, key: "nav.career" as const },
+    { href: SECTION_IDS.EDUCATION, key: "nav.education" as const },
+    { href: SECTION_IDS.FEATURED, key: "nav.featured" as const },
+    { href: SECTION_IDS.WORK, key: "nav.work" as const },
     { href: SECTION_IDS.RECOMMENDATIONS, key: "nav.recommendations" as const },
-    { href: SECTION_IDS.CONTACT,         key: "nav.contact" as const },
+    { href: SECTION_IDS.CONTACT, key: "nav.contact" as const },
 ];
 
 const LANG_META = {
@@ -28,7 +28,9 @@ export const Header: React.FC = () => {
 
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState<string>(SECTION_IDS.HOME);
+    const [activeSection, setActiveSection] = useState<string>(
+        SECTION_IDS.HOME,
+    );
     const [langSwitching, setLangSwitching] = useState(false);
 
     const mobileNavRef = useRef<HTMLElement>(null);
@@ -75,6 +77,11 @@ export const Header: React.FC = () => {
         };
     }, [isMenuOpen]);
 
+    const closeMenu = useCallback(() => {
+        setIsMenuOpen(false);
+        hamburgerRef.current?.focus();
+    }, []);
+
     /* ── Focus trap ────────────────────────────────────────────────── */
     useEffect(() => {
         if (!isMenuOpen || !mobileNavRef.current) return;
@@ -103,12 +110,7 @@ export const Header: React.FC = () => {
         };
         document.addEventListener("keydown", onKeydown);
         return () => document.removeEventListener("keydown", onKeydown);
-    }, [isMenuOpen]);
-
-    const closeMenu = useCallback(() => {
-        setIsMenuOpen(false);
-        hamburgerRef.current?.focus();
-    }, []);
+    }, [isMenuOpen, closeMenu]);
 
     const handleNavClick = (e: React.MouseEvent, id: string) => {
         e.preventDefault();
@@ -127,16 +129,26 @@ export const Header: React.FC = () => {
     const currentLang = LANG_META[lang as keyof typeof LANG_META];
     const ctaLabel = lang === "pt" ? "Fale comigo" : "Get in touch";
     const isPt = lang === "pt";
-    const logoLabel = isPt ? "Guilherme Cruz — voltar ao início" : "Guilherme Cruz — back to top";
+    const logoLabel = isPt
+        ? "Guilherme Cruz — voltar ao início"
+        : "Guilherme Cruz — back to top";
     const navMainLabel = isPt ? "Navegação principal" : "Main navigation";
     const navMenuLabel = isPt ? "Menu de navegação" : "Navigation menu";
     const menuLabel = isMenuOpen
-        ? isPt ? "Fechar menu" : "Close menu"
-        : isPt ? "Abrir menu" : "Open menu";
+        ? isPt
+            ? "Fechar menu"
+            : "Close menu"
+        : isPt
+          ? "Abrir menu"
+          : "Open menu";
     const themeLabel =
         theme === "dark"
-            ? isPt ? "Alternar para modo claro" : "Switch to light mode"
-            : isPt ? "Alternar para modo escuro" : "Switch to dark mode";
+            ? isPt
+                ? "Alternar para modo claro"
+                : "Switch to light mode"
+            : isPt
+              ? "Alternar para modo escuro"
+              : "Switch to dark mode";
 
     return (
         <>
@@ -161,10 +173,7 @@ export const Header: React.FC = () => {
                     </a>
 
                     {/* ── Nav desktop ───────────────────────────────── */}
-                    <nav
-                        className="header__nav"
-                        aria-label={navMainLabel}
-                    >
+                    <nav className="header__nav" aria-label={navMainLabel}>
                         {NAV_LINKS.map(({ href, key }) => (
                             <a
                                 key={href}
@@ -224,6 +233,9 @@ export const Header: React.FC = () => {
             </header>
 
             {/* ── Mobile nav ──────────────────────────────────────── */}
+            {/* Clique no backdrop é afordância redundante de dismiss —
+                Escape e o botão hamburger cobrem teclado (focus trap ativo). */}
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
             <nav
                 ref={mobileNavRef}
                 id="mobile-nav"
