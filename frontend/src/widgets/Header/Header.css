@@ -598,3 +598,25 @@
         transition: none !important;
     }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Alvos de toque ≥ 44px em dispositivos touch e telas estreitas
+   (WCAG 2.5.5 Target Size / Apple HIG 44pt / Material 48dp).
+   Escopado a pointer: coarse ou ≤900px — o desktop com mouse
+   mantém os controles compactos.
+───────────────────────────────────────────────────────────── */
+@media (pointer: coarse), (max-width: 900px) {
+    .header__ctrl,
+    .header__hamburger {
+        width: 44px;
+        height: 44px;
+    }
+
+    .header__lang {
+        min-height: 44px;
+    }
+
+    .header__logo {
+        min-height: 44px;
+    }
+}

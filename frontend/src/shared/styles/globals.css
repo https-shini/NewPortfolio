@@ -571,6 +571,14 @@ body.light-mode .social-link:hover {
     box-shadow: var(--shadow-sm);
 }
 
+/* Alvo de toque ≥ 44px em dispositivos touch e telas estreitas (WCAG 2.5.5) */
+@media (pointer: coarse), (max-width: 640px) {
+    .social-link {
+        width: 44px;
+        height: 44px;
+    }
+}
+
 /* ══════════════════════════════════════════════════════════════════════════════
    13. REVEAL ANIMATION — [data-reveal]
 ══════════════════════════════════════════════════════════════════════════════ */
