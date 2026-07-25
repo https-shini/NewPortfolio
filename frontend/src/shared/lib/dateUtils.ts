@@ -1,5 +1,19 @@
 type Lang = "pt" | "en";
 
+/**
+ * monthsSince — meses inteiros decorridos entre `startDate` ("YYYY-MM") e `now`.
+ * Base numérica reutilizável para durações (evita parsear strings localizadas).
+ */
+export function monthsSince(startDate: string, now: Date = new Date()): number {
+    const [sy, sm] = startDate.split("-").map(Number);
+    return (now.getFullYear() - sy) * 12 + (now.getMonth() + 1 - sm);
+}
+
+/** yearsSince — anos inteiros decorridos desde `startDate` ("YYYY-MM"). */
+export function yearsSince(startDate: string, now: Date = new Date()): number {
+    return Math.floor(monthsSince(startDate, now) / 12);
+}
+
 export function calculateDuration(
     startDate: string,
     endDate: string | undefined,

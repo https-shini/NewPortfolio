@@ -92,6 +92,17 @@ export type TranslationKey =
     | "about.bio"
     | "about.goal.body"
     | "about.specs.title"
+    | "about.stats.techEdu.label"
+    | "about.stats.techEdu.sublabel"
+    | "about.stats.grad.label"
+    | "about.stats.grad.sublabel"
+    | "about.stats.commits.label"
+    | "about.stats.commits.sublabel"
+    | "about.stats.years.label"
+    | "about.stats.years.sublabel"
+    | "about.stats.yearsSuffix"
+    | "about.stats.semesterSuffix"
+    | "about.stats.gradDone"
     | "contact.cta.heading"
     | "contact.cta.lead"
 
@@ -287,6 +298,17 @@ const pt: Translations = {
     "about.goal.body":
         "Busco minha primeira oportunidade como **Desenvolvedor Júnior** ou **Estagiário em Desenvolvimento**, para aplicar na prática o que venho construindo com **React**, **Node.js**, **TypeScript**, **APIs REST** e **autenticação JWT**, além da experiência com **Java**, **Python** e **PHP**. Um inglês intermediário me ajuda a acompanhar documentação técnica e times internacionais, e trago também a vivência real de sistemas em produção do suporte a um **ERP financeiro**. Quero evoluir tecnicamente, atuar em projetos reais e contribuir ativamente com o time.\n\nTenho interesse em **arquitetura de software**, **segurança da informação** e **testes de software**, e busco crescer usando **metodologias ágeis (Scrum/Kanban)**, **CI/CD** e boas práticas de **Clean Code**, em um ambiente que valorize aprendizado contínuo, resolução de problemas e entrega de qualidade.",
     "about.specs.title": "Áreas de especialização",
+    "about.stats.techEdu.label": "Formação Técnica",
+    "about.stats.techEdu.sublabel": "ETEC Vila Formosa",
+    "about.stats.grad.label": "Graduação",
+    "about.stats.grad.sublabel": "Ciência da Computação",
+    "about.stats.commits.label": "Commits",
+    "about.stats.commits.sublabel": "Versionamento Git",
+    "about.stats.years.label": "Anos Estudando",
+    "about.stats.years.sublabel": "Dev & Computação",
+    "about.stats.yearsSuffix": " anos",
+    "about.stats.semesterSuffix": "º semestre",
+    "about.stats.gradDone": "Concluído",
     "contact.cta.heading": "Vamos **construir algo** juntos?",
     "contact.cta.lead":
         "Estou pronto para iniciar minha trajetória como **Desenvolvedor Júnior** ou **Estagiário**, contribuindo com **aplicações modernas**, **bem estruturadas** e voltadas para **performance** e **experiência do usuário**. Também estou disponível para **projetos avulsos** e **freelances**.\n\nSe você procura alguém **dedicado**, com **vontade de evoluir** e prontidão para **contribuir de forma prática em projetos reais**, me chama, vamos conversar e construir **soluções juntos**!",
@@ -490,6 +512,17 @@ const en: Translations = {
     "about.goal.body":
         "I'm looking for my first opportunity as a **Junior Developer** or **Development Intern**, to put into practice what I've been building with **React**, **Node.js**, **TypeScript**, **REST APIs** and **JWT authentication**, along with experience in **Java**, **Python** and **PHP**. Intermediate English helps me follow technical documentation and work with international teams, and I also bring real production-systems experience from supporting a **financial ERP**. I want to grow technically, work on real projects and actively contribute to the team.\n\nI'm interested in **software architecture**, **information security** and **software testing**, and I want to grow using **agile methodologies (Scrum/Kanban)**, **CI/CD** and solid **Clean Code** practices, in an environment that values continuous learning, problem-solving and quality delivery.",
     "about.specs.title": "Areas of expertise",
+    "about.stats.techEdu.label": "Technical Education",
+    "about.stats.techEdu.sublabel": "ETEC Vila Formosa",
+    "about.stats.grad.label": "Undergraduate",
+    "about.stats.grad.sublabel": "Computer Science",
+    "about.stats.commits.label": "Commits",
+    "about.stats.commits.sublabel": "Git version control",
+    "about.stats.years.label": "Years Studying",
+    "about.stats.years.sublabel": "Dev & Computing",
+    "about.stats.yearsSuffix": " yrs",
+    "about.stats.semesterSuffix": "th semester",
+    "about.stats.gradDone": "Completed",
     "contact.cta.heading": "Let's **build something** together?",
     "contact.cta.lead":
         "I'm ready to contribute as a **Junior Developer**, with real practice in **React**, **TypeScript**, **Node.js**, **REST APIs** and **JWT authentication**, combined with production-systems experience from technical support on an **ERP**. I apply **Clean Code**, **Git** and **agile methodologies** in my day to day.\n\nIf you're looking for someone with an **analytical mindset**, a knack for **problem-solving**, and readiness to **contribute to real projects**, reach out, let's talk about the role.",

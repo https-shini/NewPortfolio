@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://bl4ck404.dev.br/sitemap.xml
+Sitemap: https://gcruz.dev.br/sitemap.xml

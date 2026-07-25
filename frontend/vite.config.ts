@@ -7,11 +7,30 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/* Domínio canônico — fonte única para o index.html (SEO/OG/JSON-LD).
+   Sobrescrevível por VITE_SITE_URL em previews; mesmo default de profile.ts. */
+const SITE_URL = process.env.VITE_SITE_URL || "https://gcruz.dev.br";
+
+/** Injeta __SITE_URL__ no index.html no build (canonical, Open Graph, JSON-LD).
+    order: "pre" garante a substituição antes do parser de HTML/URL do Vite. */
+function siteUrlHtmlPlugin() {
+    return {
+        name: "inject-site-url",
+        transformIndexHtml: {
+            order: "pre" as const,
+            handler(html: string) {
+                return html.replaceAll("__SITE_URL__", SITE_URL);
+            },
+        },
+    };
+}
+
 export default defineConfig({
     plugins: [
         react({
             jsxRuntime: "automatic",
         }),
+        siteUrlHtmlPlugin(),
     ],
 
     resolve: {

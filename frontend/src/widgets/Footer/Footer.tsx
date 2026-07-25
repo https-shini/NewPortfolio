@@ -1,5 +1,5 @@
 /**
- * Footer.tsx — bl4ck404.dev.br · Design System v2.0
+ * Footer.tsx — gcruz.dev.br · Design System v4.0
  *
  * Arquitetura:
  * ① Sub-componentes memoizados — evita re-renders quando lang/theme mudam.

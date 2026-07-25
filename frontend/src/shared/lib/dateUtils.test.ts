@@ -1,5 +1,30 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { calculateDuration, formatMonthYear } from "./dateUtils";
+import {
+    calculateDuration,
+    formatMonthYear,
+    monthsSince,
+    yearsSince,
+} from "./dateUtils";
+
+const at = (y: number, m: number) => new Date(y, m - 1, 15);
+
+describe("monthsSince", () => {
+    it("conta meses inteiros desde a data", () => {
+        expect(monthsSince("2020-01", at(2026, 7))).toBe(78);
+    });
+    it("zero no mesmo mês", () => {
+        expect(monthsSince("2026-07", at(2026, 7))).toBe(0);
+    });
+});
+
+describe("yearsSince", () => {
+    it("deriva anos inteiros (marco de jornada dev)", () => {
+        expect(yearsSince("2020-01", at(2026, 7))).toBe(6);
+    });
+    it("arredonda para baixo (11 meses = 0 ano)", () => {
+        expect(yearsSince("2025-09", at(2026, 7))).toBe(0);
+    });
+});
 
 describe("calculateDuration", () => {
     it("calcula anos e meses com datas fechadas (pt)", () => {

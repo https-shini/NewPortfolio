@@ -1,5 +1,5 @@
 /**
- * useTheme.ts — Design System v4.0 · bl4ck404.dev.br
+ * useTheme.ts — Design System v4.0 · gcruz.dev.br
  *
  * Responsabilidades:
  * · Lê preferência salva do localStorage (persistência entre sessões)

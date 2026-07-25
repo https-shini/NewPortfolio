@@ -32,12 +32,20 @@ export const PROFILE = {
         en: "São Paulo, Brazil",
     } satisfies Localized,
 
-    siteUrl: "https://bl4ck404.dev.br",
+    /**
+     * Domínio canônico do site. Fonte única — usado em runtime (SEO/OG via
+     * profile) e injetado no index.html no build (ver vite.config.ts).
+     * Sobrescrevível por VITE_SITE_URL para ambientes de preview.
+     */
+    siteUrl: import.meta.env.VITE_SITE_URL || "https://gcruz.dev.br",
     /** Currículo em PDF bilíngue servido pelo próprio site (frontend/public/docs). */
     cv: {
         pt: "/docs/Curriculo_PTBR.pdf",
         en: "/docs/Curriculo_EN.pdf",
     } satisfies Localized,
+
+    /** Usuário do GitHub — usado pela serverless /api/github-stats. */
+    githubUsername: "https-shini",
 
     social: {
         github: {
@@ -56,4 +64,20 @@ export const PROFILE = {
             url: "https://devlinks-rocketseat-five.vercel.app/",
         },
     } satisfies Record<string, SocialProfile>,
+} as const;
+
+/* ─────────────────────────────────────────────────────────
+   TIMELINE_ANCHORS — marcos temporais (fonte única de datas)
+   ─────────────────────────────────────────────────────────
+   Formato "YYYY-MM", consistente com o Timeline e dateUtils.ts.
+   Toda derivação de data (semestre, anos estudando) parte daqui —
+   nenhuma data de referência deve viver dentro de componentes.
+───────────────────────────────────────────────────────── */
+export const TIMELINE_ANCHORS = {
+    /** Início do Bacharelado em Ciência da Computação. */
+    graduationStart: "2023-01",
+    /** Duração total do curso, em semestres. */
+    graduationTotalSemesters: 8,
+    /** Marco de "anos estudando" — início da formação em computação (ETEC). */
+    devJourneyStart: "2020-01",
 } as const;

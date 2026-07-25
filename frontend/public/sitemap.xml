@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Sitemap do portfólio bl4ck404.dev.br
+    Sitemap do portfólio gcruz.dev.br
     Este arquivo lista as URLs do site para ajudar os motores de busca a indexar o conteúdo.
     Para Single Page Applications (SPAs) com navegação por âncoras, é comum listar a URL base
     e as URLs com as âncoras para as seções principais.
@@ -9,55 +9,55 @@
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://bl4ck404.dev.br/</loc>
+        <loc>https://gcruz.dev.br/</loc>
         <lastmod>2026-07-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>https://bl4ck404.dev.br/#inicio</loc>
+        <loc>https://gcruz.dev.br/#inicio</loc>
         <lastmod>2026-07-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://bl4ck404.dev.br/#sobre</loc>
+        <loc>https://gcruz.dev.br/#sobre</loc>
         <lastmod>2026-07-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://bl4ck404.dev.br/#carreira</loc>
+        <loc>https://gcruz.dev.br/#carreira</loc>
         <lastmod>2026-07-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://bl4ck404.dev.br/#formacoes</loc>
+        <loc>https://gcruz.dev.br/#formacoes</loc>
         <lastmod>2026-07-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://bl4ck404.dev.br/#destaque</loc>
+        <loc>https://gcruz.dev.br/#destaque</loc>
         <lastmod>2026-07-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://bl4ck404.dev.br/#projetos</loc>
+        <loc>https://gcruz.dev.br/#projetos</loc>
         <lastmod>2026-07-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://bl4ck404.dev.br/#recomendacoes</loc>
+        <loc>https://gcruz.dev.br/#recomendacoes</loc>
         <lastmod>2026-07-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>https://bl4ck404.dev.br/#contato</loc>
+        <loc>https://gcruz.dev.br/#contato</loc>
         <lastmod>2026-07-17</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>

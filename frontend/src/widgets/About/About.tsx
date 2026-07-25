@@ -16,6 +16,16 @@ import {
 /* ── Hook de i18n ────────────────────────────────────────────────────────── */
 import { useLang } from "@/shared/hooks/useLang";
 import { renderRichParagraphs } from "@/shared/lib/richText";
+import { type TranslationKey } from "@/shared/lib/translations";
+
+/* ── Automação temporal e métricas (fonte única de datas) ────────────────── */
+import { TIMELINE_ANCHORS } from "@/shared/config/profile";
+import { yearsSince } from "@/shared/lib/dateUtils";
+import {
+    currentSemester,
+    isGraduationComplete,
+} from "@/shared/lib/academicDates";
+import { useGithubStats } from "@/shared/hooks/useGithubStats";
 
 /* ── Foto (import estático resolvido pelo Vite — sem path relativo frágil) ── */
 import heroImg from "@/assets/hero.webp";
@@ -85,10 +95,10 @@ const SPECS = [
    STATS — tipagem, dados, hook e sub-componentes (todos inline)
 ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Interface de um stat ────────────────────────────────────────────────── */
+/* ── Interface de um stat (resolvido, pronto para render) ─────────────────── */
 interface Stat {
     icon: React.ReactNode;
-    value: string; // valor base (numérico como string, ou textual ex: "B2")
+    value: string; // valor base (numérico como string, ou textual ex: "Concluído")
     numericTarget?: number; // se presente → dispara animação count-up
     suffix?: string; // sufixo após o valor (ex: "+", " anos", "º sem")
     label: string; // título principal do card
@@ -96,45 +106,115 @@ interface Stat {
     accent: "brand" | "accent"; // variante de cor: crimson (brand) | indigo (accent)
 }
 
-/* ── 4 stat-cards ────────────────────────────────────────────────────────── */
-const STATS: Stat[] = [
+/* ── Fallback do contador de commits quando a API está indisponível ──────── */
+const COMMITS_FALLBACK = 1000;
+
+/* Discriminador de como o valor de cada card é obtido. */
+type StatKind = "static" | "semester" | "years" | "commits";
+
+/* ── Definições dos stats — labels via i18n, valores derivados ────────────── */
+interface StatDef {
+    icon: React.ReactNode;
+    kind: StatKind;
+    staticValue?: number; // usado apenas quando kind === "static"
+    labelKey: TranslationKey;
+    sublabelKey: TranslationKey;
+    accent: "brand" | "accent";
+}
+
+const STAT_DEFS: StatDef[] = [
     {
         icon: <IconGraduationCap />,
-        value: "3",
-        numericTarget: 3,
-        suffix: " anos",
-        label: "Formação Técnica",
-        sublabel: "ETEC Vila Formosa",
+        kind: "static", // Formação técnica concluída — não decai
+        staticValue: 3,
+        labelKey: "about.stats.techEdu.label",
+        sublabelKey: "about.stats.techEdu.sublabel",
         accent: "brand",
     },
     {
         icon: <IconCode />,
-        value: "8",
-        numericTarget: 8,
-        suffix: "º semestre",
-        label: "Graduação",
-        sublabel: "Ciência da Computação",
+        kind: "semester", // derivado das âncoras de graduação
+        labelKey: "about.stats.grad.label",
+        sublabelKey: "about.stats.grad.sublabel",
         accent: "accent",
     },
     {
         icon: <IconGitCommit />,
-        value: "1000",
-        numericTarget: 1000,
-        suffix: "+",
-        label: "Commits",
-        sublabel: "Versionamento Git",
+        kind: "commits", // derivado de /api/github-stats
+        labelKey: "about.stats.commits.label",
+        sublabelKey: "about.stats.commits.sublabel",
         accent: "accent",
     },
     {
         icon: <IconBolt />,
-        value: "6",
-        numericTarget: 6,
-        suffix: "+",
-        label: "Anos Estudando",
-        sublabel: "Dev & Computação",
+        kind: "years", // derivado do marco de jornada dev
+        labelKey: "about.stats.years.label",
+        sublabelKey: "about.stats.years.sublabel",
         accent: "brand",
     },
 ];
+
+/**
+ * resolveStat — transforma uma definição em um Stat pronto para render,
+ * derivando o valor conforme o `kind` e traduzindo os textos via `t`.
+ */
+function resolveStat(
+    def: StatDef,
+    t: (key: TranslationKey) => string,
+    commits: number,
+): Stat {
+    const base = {
+        icon: def.icon,
+        label: t(def.labelKey),
+        sublabel: t(def.sublabelKey),
+        accent: def.accent,
+    };
+
+    switch (def.kind) {
+        case "semester": {
+            const { graduationStart, graduationTotalSemesters } =
+                TIMELINE_ANCHORS;
+            if (isGraduationComplete(graduationStart, graduationTotalSemesters))
+                return { ...base, value: t("about.stats.gradDone") };
+            const sem = currentSemester(
+                graduationStart,
+                graduationTotalSemesters,
+            );
+            return {
+                ...base,
+                value: String(sem),
+                numericTarget: sem,
+                suffix: t("about.stats.semesterSuffix"),
+            };
+        }
+        case "years": {
+            const yrs = yearsSince(TIMELINE_ANCHORS.devJourneyStart);
+            return {
+                ...base,
+                value: String(yrs),
+                numericTarget: yrs,
+                suffix: "+",
+            };
+        }
+        case "commits":
+            return {
+                ...base,
+                value: String(commits),
+                numericTarget: commits,
+                suffix: "+",
+            };
+        case "static":
+        default: {
+            const v = def.staticValue ?? 0;
+            return {
+                ...base,
+                value: String(v),
+                numericTarget: v,
+                suffix: t("about.stats.yearsSuffix"),
+            };
+        }
+    }
+}
 
 /* ── useCountUp ──────────────────────────────────────────────────────────────
    Anima de 0 até `target` em ~1200ms com easing ease-out cúbico.
@@ -228,6 +308,8 @@ const StatCard: React.FC<StatCardProps> = ({ stat, active, index }) => {
    evitando que a animação ocorra antes do usuário ver o componente.
 ─────────────────────────────────────────────────────────────────────────── */
 const AboutStats: React.FC = () => {
+    const { t } = useLang();
+    const { commits } = useGithubStats();
     const ref = useRef<HTMLDivElement>(null);
     const [active, setActive] = useState(false);
 
@@ -251,8 +333,13 @@ const AboutStats: React.FC = () => {
 
     return (
         <div ref={ref} className="about__stats">
-            {STATS.map((s, i) => (
-                <StatCard key={s.label} stat={s} active={active} index={i} />
+            {STAT_DEFS.map((def, i) => (
+                <StatCard
+                    key={def.labelKey}
+                    stat={resolveStat(def, t, commits ?? COMMITS_FALLBACK)}
+                    active={active}
+                    index={i}
+                />
             ))}
         </div>
     );
