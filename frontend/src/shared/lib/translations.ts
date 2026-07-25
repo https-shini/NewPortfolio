@@ -212,7 +212,7 @@ const pt: Translations = {
     "hero.role": "Desenvolvedor Full Stack",
     "hero.sub": "Desenvolvimento Web",
     "hero.desc":
-        "Desenvolvo **aplicações e sistemas completos**, atuando de ponta a ponta — da **modelagem de dados** e da lógica de **backend** à construção de **interfaces** modernas e responsivas, incluindo **APIs**, **integrações** e **automações**.\n\nUtilizo tecnologias como **React**, **Node.js**, **Python** e **SQL** para criar soluções **escaláveis**, **seguras** e orientadas às necessidades do negócio, sempre priorizando desempenho, manutenibilidade e boas práticas de desenvolvimento.",
+        "Desenvolvo **aplicações e sistemas completos**, atuando em todas as etapas do desenvolvimento, desde a **documentação**, **modelagem de dados** e implementação da **lógica de negócio** até a criação de **interfaces**, **APIs**, **integrações** e **automações**.\n\nTrabalho principalmente com **React**, **Node.js**, **Python** e **SQL** para desenvolver soluções **escaláveis**, **seguras** e alinhadas às necessidades do negócio, sempre priorizando desempenho, **qualidade de código**, boas práticas e facilidade de manutenção.",
     "hero.status": "Disponível para oportunidades",
     "hero.cta.work": "Ver projetos",
     "hero.cta.cv": "Baixar CV",
@@ -426,7 +426,7 @@ const en: Translations = {
     "hero.role": "Full Stack Developer",
     "hero.sub": "Web Development",
     "hero.desc":
-        "I build **complete applications and systems**, working end to end — from **data modeling** and **backend** logic to crafting modern, responsive **interfaces**, including **APIs**, **integrations** and **automations**.\n\nI use technologies like **React**, **Node.js**, **Python** and **SQL** to create **scalable**, **secure** and business-driven solutions, always prioritizing performance, maintainability and development best practices.",
+        "I build **complete applications and systems**, taking part in every stage of development, from **documentation**, **data modeling** and **business logic** implementation to building **interfaces**, **APIs**, **integrations** and **automations**.\n\nI work mainly with **React**, **Node.js**, **Python** and **SQL** to develop **scalable**, **secure** solutions aligned with business needs, always prioritizing performance, **code quality**, best practices and maintainability.",
     "hero.status": "Open to opportunities",
     "hero.cta.work": "View projects",
     "hero.cta.cv": "Download CV",
