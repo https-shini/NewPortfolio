@@ -19,6 +19,9 @@ import {
 } from "@/shared/ui/Icons";
 import avatarImg from "@/assets/avatar.webp";
 
+/* Stack em destaque no hero — nomes próprios, não traduzidos. */
+const HERO_STACK = ["React", "Node.js", "Python", "SQL", "Docker", "Git"];
+
 export const Hero: React.FC = () => {
     const { t, lang } = useLang();
     const cvUrl = getCvUrl(lang);
@@ -58,6 +61,21 @@ export const Hero: React.FC = () => {
                             "hero__desc-text",
                         )}
                     </div>
+
+                    <ul
+                        className="hero__stack"
+                        aria-label={
+                            lang === "pt"
+                                ? "Principais tecnologias"
+                                : "Core technologies"
+                        }
+                    >
+                        {HERO_STACK.map((tech) => (
+                            <li key={tech} className="hero__stack-item">
+                                {tech}
+                            </li>
+                        ))}
+                    </ul>
 
                     <div className="hero__actions">
                         <button

@@ -198,13 +198,13 @@ const pt: Translations = {
 
     /* HERO */
     "hero.greeting": "Olá, eu sou",
-    "hero.role": "Desenvolvedor Júnior",
+    "hero.role": "Desenvolvedor Full Stack",
     "hero.sub": "Desenvolvimento Web",
     "hero.desc":
-        "Cursando Ciência da Computação, com experiência prática em **frontend**, **backend** e **deploy contínuo**. Atuo principalmente com **React**, **TypeScript**, **Node.js** e **APIs REST**, além de bancos de dados como **MySQL** e **Oracle**, e linguagens como **Java**, **Python** e **PHP**.\n\nAplico boas práticas como **Clean Code** e **Git** para desenvolver soluções eficientes, organizadas e de fácil manutenção. Busco uma oportunidade para contribuir com projetos reais, evoluir tecnicamente e gerar valor para o time.",
+        "Desenvolvo **aplicações e sistemas completos**, atuando de ponta a ponta — da **modelagem de dados** e da lógica de **backend** à construção de **interfaces** modernas e responsivas, incluindo **APIs**, **integrações** e **automações**.\n\nUtilizo tecnologias como **React**, **Node.js**, **Python** e **SQL** para criar soluções **escaláveis**, **seguras** e orientadas às necessidades do negócio, sempre priorizando desempenho, manutenibilidade e boas práticas de desenvolvimento.",
     "hero.status": "Disponível para oportunidades",
     "hero.cta.work": "Ver projetos",
-    "hero.cta.cv": "Download CV",
+    "hero.cta.cv": "Baixar CV",
     "hero.badge": "Em transição para desenvolvimento",
     "hero.scroll": "Explorar",
 
@@ -401,10 +401,10 @@ const en: Translations = {
 
     /* HERO */
     "hero.greeting": "Hi, I'm",
-    "hero.role": "Junior Developer",
+    "hero.role": "Full Stack Developer",
     "hero.sub": "Web Development",
     "hero.desc":
-        "Computer Science student transitioning into development, currently working as a **Technical Support Analyst** at **Wise System**, promoted from intern to full-time employee in under a year. I move comfortably between **frontend** and **backend**, with hands-on experience in **React**, **TypeScript**, **Node.js** and **REST APIs**, plus **Java**, **Python** and **PHP**.\n\nI apply **Clean Code**, **Git** and intermediate English in my day to day, always aiming to solve problems at the root instead of just working around them. My next step is moving from supporting the system to building it.",
+        "I build **complete applications and systems**, working end to end — from **data modeling** and **backend** logic to crafting modern, responsive **interfaces**, including **APIs**, **integrations** and **automations**.\n\nI use technologies like **React**, **Node.js**, **Python** and **SQL** to create **scalable**, **secure** and business-driven solutions, always prioritizing performance, maintainability and development best practices.",
     "hero.status": "Open to opportunities",
     "hero.cta.work": "View projects",
     "hero.cta.cv": "Download CV",
