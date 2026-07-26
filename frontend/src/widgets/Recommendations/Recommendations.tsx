@@ -4,16 +4,25 @@ import React, {
     useEffect,
     useCallback,
     useMemo,
+    lazy,
+    Suspense,
 } from "react";
 import "./Recommendations.css";
 import { useLang } from "@/shared/hooks/useLang";
 import { SECTION_IDS, LINKEDIN_URL } from "@/shared/config/constants";
 import { recommendations } from "./Recommendations.data";
 import { RecommendationCard } from "./components/RecommendationCard";
-import { RecommendationModal } from "./components/RecommendationModal";
 import { CarouselControls } from "./components/CarouselControls";
 import { IconLinkedIn } from "@/shared/ui/Icons";
 import type { RecommendationItem } from "./Recommendations.types";
+
+/* Modal só aparece sob clique — carregado sob demanda para ficar
+   fora do bundle inicial (JS + CSS). */
+const RecommendationModal = lazy(() =>
+    import("./components/RecommendationModal").then((m) => ({
+        default: m.RecommendationModal,
+    })),
+);
 
 /* Nº de cards por página: 2 no desktop, 1 no mobile. */
 const MOBILE_BREAKPOINT = 880;
@@ -29,7 +38,6 @@ export const Recommendations: React.FC = () => {
     const [openItem, setOpenItem] = useState<RecommendationItem | null>(null);
     const [activePage, setActivePage] = useState(0);
     const [perPage, setPerPage] = useState<number>(getPerPage);
-    const lastTrigger = useRef<HTMLElement | null>(null);
     const carouselRef = useRef<HTMLDivElement>(null);
     const total = recommendations.length;
 
@@ -102,18 +110,12 @@ export const Recommendations: React.FC = () => {
         }
     };
 
-    const openModal = useCallback(
-        (item: RecommendationItem, trigger?: HTMLElement) => {
-            lastTrigger.current = trigger ?? null;
-            setOpenItem(item);
-        },
-        [],
-    );
-
-    const closeModal = useCallback(() => {
-        setOpenItem(null);
-        requestAnimationFrame(() => lastTrigger.current?.focus());
+    /* A restauração do foco ao card de origem é feita pelo Modal base. */
+    const openModal = useCallback((item: RecommendationItem) => {
+        setOpenItem(item);
     }, []);
+
+    const closeModal = useCallback(() => setOpenItem(null), []);
 
     const trackStyle = useMemo(
         () => ({ transform: `translateX(-${currentPage * 100}%)` }),
@@ -217,7 +219,9 @@ export const Recommendations: React.FC = () => {
             </div>
 
             {openItem && (
-                <RecommendationModal item={openItem} onClose={closeModal} />
+                <Suspense fallback={null}>
+                    <RecommendationModal item={openItem} onClose={closeModal} />
+                </Suspense>
             )}
         </section>
     );

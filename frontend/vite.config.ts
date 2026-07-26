@@ -65,6 +65,12 @@ export default defineConfig({
 
         rollupOptions: {
             output: {
+                /* React/ReactDOM raramente mudam — isolá-los preserva o
+                   cache do usuário entre deploys do código da aplicação. */
+                manualChunks: {
+                    vendor: ["react", "react-dom", "react-dom/client"],
+                },
+
                 entryFileNames: "assets/js/[name]-[hash].js",
                 chunkFileNames: "assets/js/[name]-[hash].js",
 

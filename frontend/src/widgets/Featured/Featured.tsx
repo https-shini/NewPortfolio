@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+    useState,
+    useEffect,
+    useRef,
+    useCallback,
+    lazy,
+    Suspense,
+} from "react";
 import "./Featured.css";
 import { useLang } from "@/shared/hooks/useLang";
 import {
@@ -19,7 +26,13 @@ import {
     METHOD_COLOR,
     type HttpMethod,
 } from "./Featured.data";
-import { FeaturedLightbox } from "./components/FeaturedLightbox";
+/* Lightbox só abre sob clique — carregado sob demanda para ficar
+   fora do bundle inicial (JS + CSS). */
+const FeaturedLightbox = lazy(() =>
+    import("./components/FeaturedLightbox").then((m) => ({
+        default: m.FeaturedLightbox,
+    })),
+);
 
 const INTERVAL = 7000;
 
@@ -641,14 +654,16 @@ export const Featured: React.FC = () => {
             </div>
 
             {lightboxIndex !== null && (
-                <FeaturedLightbox
-                    slides={slides}
-                    initialIndex={lightboxIndex}
-                    projectName={project.name}
-                    liveUrl={project.liveUrl}
-                    repoUrl={project.repoUrl}
-                    onClose={() => setLightboxIndex(null)}
-                />
+                <Suspense fallback={null}>
+                    <FeaturedLightbox
+                        slides={slides}
+                        initialIndex={lightboxIndex}
+                        projectName={project.name}
+                        liveUrl={project.liveUrl}
+                        repoUrl={project.repoUrl}
+                        onClose={() => setLightboxIndex(null)}
+                    />
+                </Suspense>
             )}
         </section>
     );
