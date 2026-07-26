@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Deploy](https://img.shields.io/badge/Deploy-Live-46e8b0?style=for-the-badge&logo=vercel&logoColor=white)](https://bl4ck404.dev.br)
+[![Deploy](https://img.shields.io/badge/Deploy-Live-46e8b0?style=for-the-badge&logo=vercel&logoColor=white)](https://gcruz.dev.br)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
@@ -39,7 +39,7 @@
 
 Portfólio pessoal de **segunda geração** — SPA construída em **React 18 + TypeScript 5 + Vite 5**, evoluindo a versão anterior em HTML/CSS/JS puro. O projeto tem arquitetura por camadas (app → pages → widgets → shared), design system próprio com tokens CSS, internacionalização completa (PT-BR/EN), tema dark/light persistente e **zero dependências de UI externas** — todos os componentes e os 60+ ícones SVG são do próprio design system.
 
-O repositório é um monorepo simples: a raiz orquestra os scripts, `frontend/` contém toda a aplicação e `backend/` está reservado para evolução futura.
+O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/` contém toda a aplicação — incluindo `frontend/api/`, uma **Vercel Serverless Function** que alimenta as métricas do GitHub sem expor token ao browser. A pasta `backend/` segue reservada para uma API própria no futuro.
 
 ---
 
@@ -61,7 +61,7 @@ O repositório é um monorepo simples: a raiz orquestra os scripts, `frontend/` 
 | 04  | **Formações**       | Educação + certificações com filtros (tabs), limite expansível e cards com stagger     |
 | 05  | **Featured**        | Projeto em destaque (AuthService) com carrossel, lightbox, endpoints e arquitetura     |
 | 06  | **Work**            | Grid de projetos com thumbnail local (WebP), badges de tecnologia e ações              |
-| 07  | **Recommendations** | Depoimentos profissionais em grid/carrossel com modal de leitura completa              |
+| 07  | **Recommendations** | Depoimentos em carrossel paginado (2 por página · 1 no mobile) com modal de leitura    |
 | 08  | **Contact**         | CTA de e-mail, formulário com validação (via env), links e perfil ATS-friendly         |
 | —   | **Header**          | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile               |
 | —   | **Footer**          | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV            |
@@ -70,18 +70,18 @@ O repositório é um monorepo simples: a raiz orquestra os scripts, `frontend/` 
 
 ## 🛠 Tecnologias
 
-| Tecnologia                | Versão | Uso                                                    |
-| ------------------------- | ------ | ------------------------------------------------------ |
-| **React**                 | 18     | Renderização de UI com hooks e memo                    |
-| **TypeScript**            | 5      | Tipagem estrita em todos os componentes                |
-| **Vite**                  | 5      | Bundler, dev server e path aliases (`@/`)              |
-| **Vitest + RTL**          | 4 / 16 | Testes unitários e de componentes (jsdom)              |
-| **ESLint 9 (flat)**       | 9      | Lint com typescript-eslint, react-hooks e jsx-a11y     |
-| **Prettier**              | 3      | Formatação padronizada                                 |
-| **Husky + lint-staged**   | 9 / 16 | Hooks de pre-commit (lint + format)                    |
-| **Commitlint**            | 20+    | Conventional Commits obrigatórios                      |
-| **CSS puro (tokens)**     | —      | Design system próprio, um `.css` por widget            |
-| **skillicons.dev**        | —      | Ícones de tecnologias na seção About                   |
+| Tecnologia              | Versão | Uso                                                |
+| ----------------------- | ------ | -------------------------------------------------- |
+| **React**               | 18     | Renderização de UI com hooks e memo                |
+| **TypeScript**          | 5      | Tipagem estrita em todos os componentes            |
+| **Vite**                | 5      | Bundler, dev server e path aliases (`@/`)          |
+| **Vitest + RTL**        | 4 / 16 | Testes unitários e de componentes (jsdom)          |
+| **ESLint 9 (flat)**     | 9      | Lint com typescript-eslint, react-hooks e jsx-a11y |
+| **Prettier**            | 3      | Formatação padronizada                             |
+| **Husky + lint-staged** | 9 / 16 | Hooks de pre-commit (lint + format)                |
+| **Commitlint**          | 20+    | Conventional Commits obrigatórios                  |
+| **CSS puro (tokens)**   | —      | Design system próprio, um `.css` por widget        |
+| **skillicons.dev**      | —      | Ícones de tecnologias na seção About               |
 
 ---
 
@@ -121,7 +121,7 @@ frontend/
     │   ├── hooks/               # useLang, useTheme, useScrollReveal, useReducedMotion…
     │   ├── lib/                 # translations, localized, richText, dateUtils, mailto…
     │   ├── styles/              # tokens.css → globals.css → theme-patches.css
-    │   └── ui/                  # Icons.tsx (design system de ícones) + ScrollUtils
+    │   └── ui/                  # Modal/ (base reutilizável), Icons.tsx, ScrollUtils
     │
     ├── assets/                  # Imagens otimizadas (WebP) importadas pelo bundle
     └── test/setup.ts            # Setup do Vitest (jsdom + stubs)
@@ -180,6 +180,7 @@ Utilitários globais: `.btn`, `.badge`, `.section*`, `.container`, `.social-link
 **Performance**
 
 - Todas as imagens locais em **WebP** (hero: 8,3 MB → 89 KB) com `loading="lazy"` e `fetchpriority="high"` no avatar
+- **Code splitting**: `vendor` (React) em chunk próprio — cache preservado entre deploys — e modais (`FeaturedLightbox`, `RecommendationModal`) carregados sob demanda via `React.lazy`, tirando ~14 KB de CSS do caminho crítico
 - Carrossel pausa em `visibilitychange`; dados estáticos fora dos componentes
 
 ---
@@ -214,18 +215,18 @@ npm run preview        # prévia local do build (porta 4173)
 
 Todos os scripts funcionam na raiz (delegam ao frontend):
 
-| Script                 | Descrição                                        |
-| ---------------------- | ------------------------------------------------ |
-| `npm run dev`          | Dev server com HMR (porta 5173)                  |
-| `npm run build`        | `tsc --noEmit` + build de produção               |
-| `npm run preview`      | Prévia do build (porta 4173)                     |
-| `npm run type-check`   | Verificação de tipos sem emitir                  |
-| `npm run lint`         | ESLint em `src/`                                 |
-| `npm run lint:fix`     | ESLint com auto-fix                              |
-| `npm run format`       | Prettier (write)                                 |
-| `npm run format:check` | Prettier (check — usado no CI)                   |
-| `npm run test`         | Vitest (run único)                               |
-| `npm run test:watch`   | Vitest em watch mode                             |
+| Script                 | Descrição                          |
+| ---------------------- | ---------------------------------- |
+| `npm run dev`          | Dev server com HMR (porta 5173)    |
+| `npm run build`        | `tsc --noEmit` + build de produção |
+| `npm run preview`      | Prévia do build (porta 4173)       |
+| `npm run type-check`   | Verificação de tipos sem emitir    |
+| `npm run lint`         | ESLint em `src/`                   |
+| `npm run lint:fix`     | ESLint com auto-fix                |
+| `npm run format`       | Prettier (write)                   |
+| `npm run format:check` | Prettier (check — usado no CI)     |
+| `npm run test`         | Vitest (run único)                 |
+| `npm run test:watch`   | Vitest em watch mode               |
 
 ---
 
@@ -233,9 +234,11 @@ Todos os scripts funcionam na raiz (delegam ao frontend):
 
 Definidas em `frontend/.env.local` (ver `frontend/.env.example`):
 
-| Variável             | Obrigatória | Descrição                                                              |
-| -------------------- | ----------- | ---------------------------------------------------------------------- |
-| `VITE_FORM_ENDPOINT` | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail. |
+| Variável             | Obrigatória | Descrição                                                                                                                                                                   |
+| -------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_FORM_ENDPOINT` | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail.                                                         |
+| `VITE_SITE_URL`      | Não         | Domínio canônico injetado no `index.html` no build (canonical, Open Graph, JSON-LD). Default: `https://gcruz.dev.br`.                                                       |
+| `GITHUB_TOKEN`       | Não         | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Usado por `/api/github-stats` para as métricas do GitHub; sem ela, o card de commits usa o valor de fallback. |
 
 > Variáveis com prefixo `VITE_` são expostas ao browser — nunca coloque segredos.
 
@@ -243,11 +246,13 @@ Definidas em `frontend/.env.local` (ver `frontend/.env.example`):
 
 ## 🧪 Testes
 
-Suíte com **Vitest + React Testing Library** (ambiente jsdom):
+Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **74 testes em 13 arquivos**:
 
-- **Utils** — `dateUtils`, `text`, `richText`, `mailto`, `careerDates`
+- **Utils** — `dateUtils`, `academicDates`, `text`, `richText`, `mailto`, `careerDates`
+- **Hooks** — `useTheme` (persistência, `prefers-color-scheme`, DOM), `useGithubStats` (cache e fallback)
 - **Contexto** — `LangContext` (idioma inicial, toggle, persistência)
-- **Componentes** — `Hero` (links do perfil central), `ContactForm` (validação, envio, erros)
+- **UI base** — `Modal` (Esc, overlay, focus-trap, restauração de foco, scroll-lock)
+- **Componentes** — `Hero`, `ContactForm` (validação, envio, erros), `Recommendations` (paginação do carrossel)
 
 ```bash
 npm run test          # run único (CI)
@@ -309,7 +314,7 @@ Este é um projeto pessoal, mas sugestões são bem-vindas:
 Desenvolvedor de Software · Estudante de Ciência da Computação
 São Paulo, SP — Brasil
 
-[![Portfolio](https://img.shields.io/badge/Portfolio-311DB4?style=for-the-badge)](https://bl4ck404.dev.br)
+[![Portfolio](https://img.shields.io/badge/Portfolio-311DB4?style=for-the-badge)](https://gcruz.dev.br)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-3E79E0?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/oguilherme-cruz)
 [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:contato.guilhermescruz@gmail.com)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/https-shini)
