@@ -100,27 +100,7 @@
 }
 
 /* ════════════════════════════════════════════════════════════════
-   DESKTOP — Grid layout
-═══════════════════════════════════════════════════════════════ */
-.rec__grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-    gap: var(--space-5);
-    align-items: stretch;
-}
-
-.rec__grid-item {
-    list-style: none;
-    display: flex;
-    /* stretch card to full cell height */
-}
-
-.rec__grid-item > .rec-card {
-    width: 100%;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   MOBILE — Carousel layout
+   CARROSSEL PAGINADO — 2 cards por página (1 no mobile)
 ═══════════════════════════════════════════════════════════════ */
 .rec__carousel {
     position: relative;
@@ -145,15 +125,26 @@
     transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.rec__slide {
+/* Cada página ocupa 100% da viewport e distribui os cards em 2 colunas. */
+.rec__page {
     flex: 0 0 100%;
     min-width: 0;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+    align-items: stretch;
     padding: 0 2px;
 }
 
-.rec__slide > .rec-card {
+.rec__page > .rec-card {
     width: 100%;
+}
+
+/* Mobile: 1 card por página */
+@media (max-width: 880px) {
+    .rec__page {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ── Responsivo ────────────────────────────────────────────────── */

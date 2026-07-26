@@ -67,4 +67,28 @@ export const recommendations: RecommendationItem[] = [
             { pt: "Excelência", en: "Excellence" },
         ],
     },
+    {
+        id: "rec-rebeka-alencar",
+        authorName: "Rebeka Alencar",
+        authorRole: {
+            pt: "Data Science · Data Analytics · BI · Python · SQL · Power BI · Estudante",
+            en: "Data Science · Data Analytics · BI · Python · SQL · Power BI · Student",
+        },
+        date: "2026-07-25",
+        relationship: {
+            pt: "Trabalhou na mesma equipe que Guilherme",
+            en: "Worked on the same team as Guilherme",
+        },
+        text: {
+            pt: "Tive a oportunidade de trabalhar com o Guilherme e posso afirmar que ele é um profissional extremamente dedicado e comprometido. Está sempre em busca de aprender, compreender os desafios e aprimorar seus conhecimentos, o que demonstra sua vontade constante de evoluir.\n\nAlém disso, é uma pessoa muito proativa, sempre disposta a ajudar quem está ao seu redor. Seu respeito, responsabilidade e espírito colaborativo fazem toda a diferença no ambiente de trabalho.\n\nMesmo em situações de alta pressão e prazos apertados, o Guilherme sempre manteve a calma e se dedicou para entregar resultados com qualidade e eficiência. Sua agilidade, inteligência e capacidade de resolver problemas eram reconhecidas por toda a equipe.\n\nSem dúvidas, recomendo o Guilherme para qualquer empresa ou oportunidade. Tenho certeza de que ele agregará muito valor por onde passar, sendo um profissional de excelência e confiança.",
+            en: "I had the opportunity to work with Guilherme and I can say he is an extremely dedicated and committed professional. He is always seeking to learn, understand challenges and improve his knowledge, which shows his constant drive to grow.\n\nBeyond that, he is a very proactive person, always willing to help those around him. His respect, responsibility and collaborative spirit make all the difference in the work environment.\n\nEven under high pressure and tight deadlines, Guilherme always stayed calm and dedicated himself to delivering quality, efficient results. His agility, intelligence and problem-solving ability were recognized by the entire team.\n\nWithout a doubt, I recommend Guilherme for any company or opportunity. I'm certain he will add great value wherever he goes, being a professional of excellence and trust.",
+        },
+        tags: [
+            { pt: "Dedicação", en: "Dedication" },
+            { pt: "Proatividade", en: "Proactivity" },
+            { pt: "Resolução de problemas", en: "Problem-solving" },
+            { pt: "Trabalho sob pressão", en: "Grace under pressure" },
+            { pt: "Colaboração", en: "Collaboration" },
+        ],
+    },
 ];

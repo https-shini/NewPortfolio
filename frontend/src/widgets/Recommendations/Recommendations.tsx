@@ -15,44 +15,66 @@ import { CarouselControls } from "./components/CarouselControls";
 import { IconLinkedIn } from "@/shared/ui/Icons";
 import type { RecommendationItem } from "./Recommendations.types";
 
+/* Nº de cards por página: 2 no desktop, 1 no mobile. */
 const MOBILE_BREAKPOINT = 880;
+const DESKTOP_PER_PAGE = 2;
+
+function getPerPage(): number {
+    if (typeof window === "undefined") return DESKTOP_PER_PAGE;
+    return window.innerWidth < MOBILE_BREAKPOINT ? 1 : DESKTOP_PER_PAGE;
+}
 
 export const Recommendations: React.FC = () => {
     const { t, lang } = useLang();
     const [openItem, setOpenItem] = useState<RecommendationItem | null>(null);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [isMobile, setIsMobile] = useState<boolean>(
-        typeof window !== "undefined"
-            ? window.innerWidth < MOBILE_BREAKPOINT
-            : false,
-    );
+    const [activePage, setActivePage] = useState(0);
+    const [perPage, setPerPage] = useState<number>(getPerPage);
     const lastTrigger = useRef<HTMLElement | null>(null);
     const carouselRef = useRef<HTMLDivElement>(null);
     const total = recommendations.length;
-    const maxIndex = Math.max(0, total - 1);
 
-    /* Responsive switch */
+    /* Páginas de `perPage` cards cada. */
+    const pages = useMemo(() => {
+        const out: RecommendationItem[][] = [];
+        for (let i = 0; i < recommendations.length; i += perPage) {
+            out.push(recommendations.slice(i, i + perPage));
+        }
+        return out;
+    }, [perPage]);
+
+    const pageCount = Math.max(1, pages.length);
+    const maxPage = pageCount - 1;
+    /* Derivado (clamp) — evita setState em efeito ao mudar perPage. */
+    const currentPage = Math.min(activePage, maxPage);
+
+    /* Ajusta cards por página conforme o viewport. */
     useEffect(() => {
         const mq = window.matchMedia(
             `(max-width: ${MOBILE_BREAKPOINT - 0.1}px)`,
         );
-        const update = () => setIsMobile(mq.matches);
+        const update = () => setPerPage(mq.matches ? 1 : DESKTOP_PER_PAGE);
         update();
         mq.addEventListener("change", update);
         return () => mq.removeEventListener("change", update);
     }, []);
 
     const goPrev = useCallback(() => {
-        setActiveIndex((i) => (i === 0 ? maxIndex : i - 1));
-    }, [maxIndex]);
+        setActivePage((i) => {
+            const cur = Math.min(i, maxPage);
+            return cur === 0 ? maxPage : cur - 1;
+        });
+    }, [maxPage]);
 
     const goNext = useCallback(() => {
-        setActiveIndex((i) => (i === maxIndex ? 0 : i + 1));
-    }, [maxIndex]);
+        setActivePage((i) => {
+            const cur = Math.min(i, maxPage);
+            return cur === maxPage ? 0 : cur + 1;
+        });
+    }, [maxPage]);
 
     const goTo = useCallback(
-        (idx: number) => setActiveIndex(Math.max(0, Math.min(maxIndex, idx))),
-        [maxIndex],
+        (idx: number) => setActivePage(Math.max(0, Math.min(maxPage, idx))),
+        [maxPage],
     );
 
     const touchX = useRef(0);
@@ -65,7 +87,6 @@ export const Recommendations: React.FC = () => {
     };
 
     const onKeyDown = (e: React.KeyboardEvent) => {
-        if (!isMobile) return;
         if (e.key === "ArrowLeft") {
             e.preventDefault();
             goPrev();
@@ -77,7 +98,7 @@ export const Recommendations: React.FC = () => {
             goTo(0);
         } else if (e.key === "End") {
             e.preventDefault();
-            goTo(maxIndex);
+            goTo(maxPage);
         }
     };
 
@@ -95,8 +116,8 @@ export const Recommendations: React.FC = () => {
     }, []);
 
     const trackStyle = useMemo(
-        () => ({ transform: `translateX(-${activeIndex * 100}%)` }),
-        [activeIndex],
+        () => ({ transform: `translateX(-${currentPage * 100}%)` }),
+        [currentPage],
     );
 
     return (
@@ -144,70 +165,54 @@ export const Recommendations: React.FC = () => {
                     </a>
                 </div>
 
-                {/* Desktop: Grid · Mobile: Carousel */}
-                {isMobile ? (
-                    <>
-                        <div
-                            ref={carouselRef}
-                            className="rec__carousel"
-                            role="region"
-                            aria-roledescription="carrossel"
-                            aria-label={t("rec.title")}
-                            onTouchStart={onTouchStart}
-                            onTouchEnd={onTouchEnd}
-                            onKeyDown={onKeyDown}
-                            tabIndex={0}
-                        >
-                            <div className="rec__viewport">
-                                <div className="rec__track" style={trackStyle}>
-                                    {recommendations.map((item, idx) => (
-                                        <div
+                {/* Carrossel paginado — 2 cards por página (1 no mobile) */}
+                <div
+                    ref={carouselRef}
+                    className="rec__carousel"
+                    role="region"
+                    aria-roledescription="carrossel"
+                    aria-label={t("rec.title")}
+                    onTouchStart={onTouchStart}
+                    onTouchEnd={onTouchEnd}
+                    onKeyDown={onKeyDown}
+                    tabIndex={0}
+                >
+                    <div className="rec__viewport">
+                        <div className="rec__track" style={trackStyle}>
+                            {pages.map((page, pageIdx) => (
+                                <div
+                                    key={pageIdx}
+                                    className="rec__page"
+                                    role="group"
+                                    aria-roledescription="slide"
+                                    aria-label={`${pageIdx + 1} / ${pageCount}`}
+                                    aria-hidden={pageIdx !== currentPage}
+                                >
+                                    {page.map((item, itemIdx) => (
+                                        <RecommendationCard
                                             key={item.id}
-                                            className="rec__slide"
-                                            role="group"
-                                            aria-roledescription="slide"
-                                            aria-label={`${idx + 1} / ${total}`}
-                                            aria-hidden={idx !== activeIndex}
-                                        >
-                                            <RecommendationCard
-                                                item={item}
-                                                index={idx}
-                                                onOpen={openModal}
-                                                tabbable={idx === activeIndex}
-                                            />
-                                        </div>
+                                            item={item}
+                                            index={pageIdx * perPage + itemIdx}
+                                            onOpen={openModal}
+                                            tabbable={pageIdx === currentPage}
+                                        />
                                     ))}
                                 </div>
-                            </div>
+                            ))}
                         </div>
-
-                        <CarouselControls
-                            currentIndex={activeIndex}
-                            total={total}
-                            visibleCount={1}
-                            onPrev={goPrev}
-                            onNext={goNext}
-                            onGoTo={goTo}
-                            lang={lang}
-                        />
-                    </>
-                ) : (
-                    <div className="rec__grid" role="list">
-                        {recommendations.map((item, idx) => (
-                            <div
-                                key={item.id}
-                                role="listitem"
-                                className="rec__grid-item"
-                            >
-                                <RecommendationCard
-                                    item={item}
-                                    index={idx}
-                                    onOpen={openModal}
-                                    tabbable
-                                />
-                            </div>
-                        ))}
                     </div>
+                </div>
+
+                {pageCount > 1 && (
+                    <CarouselControls
+                        currentIndex={currentPage}
+                        total={pageCount}
+                        visibleCount={1}
+                        onPrev={goPrev}
+                        onNext={goNext}
+                        onGoTo={goTo}
+                        lang={lang}
+                    />
                 )}
             </div>
 
