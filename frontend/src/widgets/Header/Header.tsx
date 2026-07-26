@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import "./Header.css";
 import { useTheme } from "@/shared/hooks/useTheme";
 import { useLang } from "@/shared/hooks/useLang";
+import { useScrollLock } from "@/shared/hooks/useScrollLock";
+import { useFocusTrap } from "@/shared/hooks/useFocusTrap";
 import { scrollToSection } from "@/shared/lib/smoothScroll";
 import { IconSun, IconMoon, IconTranslate } from "@/shared/ui/Icons";
 import { SECTION_IDS } from "@/shared/config/constants";
@@ -69,48 +71,19 @@ export const Header: React.FC = () => {
         return () => obs.disconnect();
     }, []);
 
-    /* ── Body scroll lock ──────────────────────────────────────────── */
-    useEffect(() => {
-        document.body.style.overflow = isMenuOpen ? "hidden" : "";
-        return () => {
-            document.body.style.overflow = "";
-        };
-    }, [isMenuOpen]);
-
     const closeMenu = useCallback(() => {
         setIsMenuOpen(false);
         hamburgerRef.current?.focus();
     }, []);
 
-    /* ── Focus trap ────────────────────────────────────────────────── */
-    useEffect(() => {
-        if (!isMenuOpen || !mobileNavRef.current) return;
-        const FOCUSABLE =
-            'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])';
-        const els = [
-            ...mobileNavRef.current.querySelectorAll<HTMLElement>(FOCUSABLE),
-        ];
-        const first = els[0];
-        const last = els[els.length - 1];
-        setTimeout(() => first?.focus(), 80);
-
-        const onKeydown = (e: KeyboardEvent) => {
-            if (e.key === "Escape") {
-                closeMenu();
-                return;
-            }
-            if (e.key !== "Tab") return;
-            if (e.shiftKey && document.activeElement === first) {
-                e.preventDefault();
-                last?.focus();
-            } else if (!e.shiftKey && document.activeElement === last) {
-                e.preventDefault();
-                first?.focus();
-            }
-        };
-        document.addEventListener("keydown", onKeydown);
-        return () => document.removeEventListener("keydown", onKeydown);
-    }, [isMenuOpen, closeMenu]);
+    /* ── Drawer mobile — mesma mecânica do Modal base ──────────────── */
+    useScrollLock(isMenuOpen);
+    useFocusTrap(mobileNavRef, {
+        active: isMenuOpen,
+        onEscape: closeMenu,
+        /* closeMenu já devolve o foco ao hambúrguer. */
+        restoreFocus: false,
+    });
 
     const handleNavClick = (e: React.MouseEvent, id: string) => {
         e.preventDefault();

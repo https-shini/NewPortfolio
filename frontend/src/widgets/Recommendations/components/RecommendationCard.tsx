@@ -13,7 +13,8 @@ import { IconArrowRight } from "@/shared/ui/Icons";
 interface RecommendationCardProps {
     item: RecommendationItem;
     index: number;
-    onOpen: (item: RecommendationItem, trigger: HTMLElement) => void;
+    /** Abre o modal; a restauração do foco é feita pelo Modal base. */
+    onOpen: (item: RecommendationItem) => void;
     tabbable?: boolean;
 }
 
@@ -39,8 +40,8 @@ export const RecommendationCard = React.memo<RecommendationCardProps>(
                 : "Read full recommendation";
         const readMoreShort = lang === "pt" ? "Ler completo" : "Read full";
 
-        const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-            onOpen(item, e.currentTarget);
+        const handleClick = () => {
+            onOpen(item);
         };
 
         return (
