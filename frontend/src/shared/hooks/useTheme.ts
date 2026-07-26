@@ -67,8 +67,14 @@ function applyTheme(theme: Theme): void {
     if (themeColorMeta) {
         themeColorMeta.setAttribute("content", THEME_COLOR[theme]);
     }
+}
 
-    /* Persiste preferência */
+/**
+ * Persiste a preferência — chamado APENAS quando o usuário escolhe o tema
+ * explicitamente. Persistir também no mount anularia o listener de
+ * `prefers-color-scheme` abaixo (nunca haveria "sem preferência salva").
+ */
+function persistTheme(theme: Theme): void {
     try {
         localStorage.setItem(THEME_KEY, theme);
     } catch {
@@ -107,13 +113,18 @@ export function useTheme() {
         return () => mq.removeEventListener("change", handler);
     }, []);
 
-    /** Alterna entre dark e light */
+    /** Alterna entre dark e light (escolha explícita → persiste) */
     const toggleTheme = useCallback(() => {
-        setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+        setTheme((prev) => {
+            const next: Theme = prev === "dark" ? "light" : "dark";
+            persistTheme(next);
+            return next;
+        });
     }, []);
 
-    /** Define um tema específico sem toggle */
+    /** Define um tema específico sem toggle (escolha explícita → persiste) */
     const setThemeExplicit = useCallback((next: Theme) => {
+        persistTheme(next);
         setTheme(next);
     }, []);
 
