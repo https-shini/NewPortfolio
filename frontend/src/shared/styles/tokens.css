@@ -463,8 +463,10 @@ body.light-mode {
     --z-raised: 10;
     --z-overlay: 100;
     --z-drawer: 200;
-    --z-modal: 300;
-    --z-toast: 400;
     --z-header: 500;
+    /* Modais cobrem toda a página, inclusive o header fixo;
+       toasts ficam acima de modais. */
+    --z-modal: 600;
+    --z-toast: 700;
     --z-top: 9999;
 }

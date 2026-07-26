@@ -3,64 +3,19 @@
    Layout: backdrop + dialog (topbar + main [stage + sidebar] + thumbs)
 ═══════════════════════════════════════════════════════════════ */
 
-/* ── Backdrop ──────────────────────────────────────────────────── */
-.fl-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: var(--z-modal, 300);
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: var(--space-5);
-
-    background: rgba(5, 8, 14, 0.78);
-    backdrop-filter: blur(12px) saturate(1.1);
-    -webkit-backdrop-filter: blur(12px) saturate(1.1);
-
-    animation: fl-backdrop-in 0.28s ease-out;
-}
-
-@keyframes fl-backdrop-in {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-/* ── Dialog ────────────────────────────────────────────────────── */
+/* ── Dialog ────────────────────────────────────────────────────
+   Casca (overlay, portal, foco, Esc, surface, borda, sombra)
+   vem do Modal base (shared/ui/Modal). Aqui: dimensões da
+   instância + layout interno em coluna.
+──────────────────────────────────────────────────────────────── */
 .fl-dialog {
-    --fl-radius: var(--radius-2xl, 24px);
+    --fl-radius: var(--radius-2xl);
+    --modal-width: 1280px;
+    --modal-max-height: calc(100vh - var(--space-10));
 
-    position: relative;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    max-width: 1280px;
-    max-height: calc(100vh - var(--space-10));
-    background: var(--color-surface-1);
-    border: 1px solid var(--color-border-2);
     border-radius: var(--fl-radius);
-    overflow: hidden;
-    box-shadow:
-        0 0 0 1px color-mix(in srgb, var(--color-text-1) 4%, transparent) inset,
-        0 24px 60px rgba(0, 0, 0, 0.55),
-        0 4px 12px rgba(0, 0, 0, 0.4);
-
-    animation: fl-dialog-in 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
-}
-
-@keyframes fl-dialog-in {
-    from {
-        opacity: 0;
-        transform: scale(0.96) translateY(12px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
 }
 
 /* ── Topbar ────────────────────────────────────────────────────── */
@@ -515,12 +470,8 @@
 }
 
 @media (max-width: 768px) {
-    .fl-backdrop {
-        padding: var(--space-3);
-    }
-
     .fl-dialog {
-        max-height: calc(100vh - var(--space-6));
+        --modal-max-height: calc(100vh - var(--space-6));
     }
 
     .fl-main {
@@ -582,7 +533,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .fl-backdrop,
     .fl-dialog,
     .fl-image,
     .fl-stage .fl-figure,

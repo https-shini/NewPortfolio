@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback, useState } from "react";
-import { createPortal } from "react-dom";
 import "./FeaturedLightbox.css";
 import { useLang } from "@/shared/hooks/useLang";
+import { Modal } from "@/shared/ui/Modal/Modal";
 import {
     IconClose,
     IconChevronLeft,
@@ -23,6 +23,12 @@ interface FeaturedLightboxProps {
 /** Direção da última navegação — usada para animar entrada/saída do conteúdo */
 type Direction = "next" | "prev" | "none";
 
+/**
+ * FeaturedLightbox — galeria detalhada dos slides do projeto em destaque.
+ * Portal, scroll-lock, focus-trap, Esc e overlay são do Modal base
+ * (shared/ui/Modal); aqui vivem a navegação entre slides (setas/Home/End,
+ * swipe, thumbnails) e o layout interno.
+ */
 export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
     slides,
     initialIndex,
@@ -35,8 +41,6 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
     const [index, setIndex] = useState(initialIndex);
     const [direction, setDirection] = useState<Direction>("none");
     const [imageLoaded, setImageLoaded] = useState(false);
-    const dialogRef = useRef<HTMLDivElement>(null);
-    const closeBtnRef = useRef<HTMLButtonElement>(null);
     const touchX = useRef(0);
     const touchY = useRef(0);
 
@@ -58,13 +62,10 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
     const goPrev = useCallback(() => goTo(index - 1, "prev"), [goTo, index]);
     const goNext = useCallback(() => goTo(index + 1, "next"), [goTo, index]);
 
-    /* ── Keyboard ───────────────────────────────────────────────── */
+    /* ── Keyboard — navegação entre slides (Esc é do Modal base) ── */
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
-            if (e.key === "Escape") {
-                e.preventDefault();
-                onClose();
-            } else if (e.key === "ArrowLeft") {
+            if (e.key === "ArrowLeft") {
                 e.preventDefault();
                 goPrev();
             } else if (e.key === "ArrowRight") {
@@ -80,20 +81,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
         };
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
-    }, [goNext, goPrev, goTo, onClose, total]);
-
-    /* ── Body scroll lock + initial focus ──────────────────────── */
-    useEffect(() => {
-        const original = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
-        // foco no botão fechar (sem capturar scroll para baixo)
-        requestAnimationFrame(() =>
-            closeBtnRef.current?.focus({ preventScroll: true }),
-        );
-        return () => {
-            document.body.style.overflow = original;
-        };
-    }, []);
+    }, [goNext, goPrev, goTo, total]);
 
     /* ── Preload adjacent images for smoother carousel ─────────── */
     useEffect(() => {
@@ -106,7 +94,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
         });
     }, [index, slides, total]);
 
-    /* ── Touch swipe ────────────────────────────────────────────── */
+    /* ── Touch swipe (na área da imagem) ───────────────────────── */
     const onTouchStart = (e: React.TouchEvent) => {
         touchX.current = e.touches[0]!.clientX;
         touchY.current = e.touches[0]!.clientY;
@@ -121,30 +109,6 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
         }
     };
 
-    /* ── Backdrop click (não fecha em clique dentro do dialog) ─ */
-    const onBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (e.target === e.currentTarget) onClose();
-    };
-
-    /* ── Focus trap simples ────────────────────────────────────── */
-    const onDialogKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key !== "Tab" || !dialogRef.current) return;
-        const focusables = dialogRef.current.querySelectorAll<HTMLElement>(
-            'button, a[href], [tabindex]:not([tabindex="-1"])',
-        );
-        if (focusables.length === 0) return;
-        const first = focusables[0]!;
-        const last = focusables[focusables.length - 1]!;
-        const active = document.activeElement;
-        if (e.shiftKey && active === first) {
-            e.preventDefault();
-            last.focus();
-        } else if (!e.shiftKey && active === last) {
-            e.preventDefault();
-            first.focus();
-        }
-    };
-
     const directionClass =
         direction === "next"
             ? " is-from-right"
@@ -152,200 +116,185 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
               ? " is-from-left"
               : "";
 
-    const lightbox = (
-        /* Clique no backdrop é afordância redundante de dismiss —
-           Escape e o botão fechar cobrem teclado (focus trap ativo). */
-        /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */
-        <div
-            className="fl-backdrop"
-            role="dialog"
-            aria-modal="true"
-            aria-label={`${projectName} — ${slide.label[lang]}`}
-            onClick={onBackdropClick}
-            onTouchStart={onTouchStart}
-            onTouchEnd={onTouchEnd}
+    return (
+        <Modal
+            isOpen
+            onClose={onClose}
+            label={`${projectName} — ${slide.label[lang]}`}
+            className="fl-dialog"
         >
-            {/* onBackdropClick já filtra por e.target === e.currentTarget,
-                então cliques internos não fecham o lightbox. */}
-            <div
-                ref={dialogRef}
-                className="fl-dialog"
-                onKeyDown={onDialogKeyDown}
-            >
-                {/* Top bar — counter + close */}
-                <header className="fl-topbar">
-                    <div className="fl-meta">
-                        <span className="fl-project">{projectName}</span>
-                        <span className="fl-meta-sep" aria-hidden="true">
-                            ·
+            {/* Top bar — counter + close */}
+            <header className="fl-topbar">
+                <div className="fl-meta">
+                    <span className="fl-project">{projectName}</span>
+                    <span className="fl-meta-sep" aria-hidden="true">
+                        ·
+                    </span>
+                    <span className="fl-counter" aria-live="polite">
+                        <span className="fl-counter-current">
+                            {String(index + 1).padStart(2, "0")}
                         </span>
-                        <span className="fl-counter" aria-live="polite">
-                            <span className="fl-counter-current">
-                                {String(index + 1).padStart(2, "0")}
-                            </span>
-                            <span className="fl-counter-sep"> / </span>
-                            <span className="fl-counter-total">
-                                {String(total).padStart(2, "0")}
-                            </span>
+                        <span className="fl-counter-sep"> / </span>
+                        <span className="fl-counter-total">
+                            {String(total).padStart(2, "0")}
                         </span>
-                    </div>
-
-                    <button
-                        ref={closeBtnRef}
-                        type="button"
-                        className="fl-close"
-                        onClick={onClose}
-                        aria-label={t("featured.lightbox.close")}
-                    >
-                        <IconClose width={18} height={18} aria-hidden="true" />
-                    </button>
-                </header>
-
-                {/* Main area — image + sidebar */}
-                <div className="fl-main">
-                    <div className={`fl-stage${directionClass}`} key={index}>
-                        {/* Backdrop blur of the image */}
-                        <div
-                            className="fl-stage-backdrop"
-                            style={{ backgroundImage: `url(${slide.src})` }}
-                            aria-hidden="true"
-                        />
-
-                        {/* Actual image */}
-                        <figure className="fl-figure">
-                            <img
-                                key={slide.src}
-                                src={slide.src}
-                                alt={`${projectName} — ${slide.label[lang]}`}
-                                className={`fl-image${imageLoaded ? " is-loaded" : ""}`}
-                                onLoad={() => setImageLoaded(true)}
-                            />
-                            <figcaption className="sr-only">
-                                {slide.label[lang]}
-                            </figcaption>
-                        </figure>
-
-                        {/* Arrows (overlay on stage) */}
-                        {total > 1 && (
-                            <>
-                                <button
-                                    type="button"
-                                    className="fl-arrow fl-arrow--prev"
-                                    onClick={goPrev}
-                                    aria-label={t("featured.arrow.prev")}
-                                >
-                                    <IconChevronLeft
-                                        width={20}
-                                        height={20}
-                                        aria-hidden="true"
-                                    />
-                                </button>
-                                <button
-                                    type="button"
-                                    className="fl-arrow fl-arrow--next"
-                                    onClick={goNext}
-                                    aria-label={t("featured.arrow.next")}
-                                >
-                                    <IconChevronRight
-                                        width={20}
-                                        height={20}
-                                        aria-hidden="true"
-                                    />
-                                </button>
-                            </>
-                        )}
-                    </div>
-
-                    {/* Sidebar — description */}
-                    <aside className="fl-sidebar">
-                        <span className="fl-tag">
-                            <span className="fl-tag-num">
-                                {String(index + 1).padStart(2, "0")}
-                            </span>
-                            {slide.sub[lang]}
-                        </span>
-
-                        <h3 className="fl-title">{slide.label[lang]}</h3>
-
-                        {slide.description && (
-                            <p className="fl-description">
-                                {slide.description[lang]}
-                            </p>
-                        )}
-
-                        {(liveUrl || repoUrl) && (
-                            <div className="fl-actions">
-                                {liveUrl && (
-                                    <a
-                                        href={liveUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn btn--primary btn--sm fl-cta"
-                                    >
-                                        {t("featured.btn.live")}
-                                        <IconExternalLink
-                                            width={13}
-                                            height={13}
-                                            aria-hidden="true"
-                                        />
-                                    </a>
-                                )}
-                                {repoUrl && (
-                                    <a
-                                        href={repoUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn btn--outline btn--sm fl-cta"
-                                    >
-                                        <IconGitHub
-                                            width={14}
-                                            height={14}
-                                            aria-hidden="true"
-                                        />
-                                        {t("featured.btn.repo")}
-                                    </a>
-                                )}
-                            </div>
-                        )}
-                    </aside>
+                    </span>
                 </div>
 
-                {/* Bottom bar — thumbnails */}
-                {total > 1 && (
-                    <nav
-                        className="fl-thumbs"
-                        aria-label={t("featured.lightbox.thumbnails")}
-                    >
-                        {slides.map((s, i) => (
+                <button
+                    type="button"
+                    className="fl-close"
+                    onClick={onClose}
+                    aria-label={t("featured.lightbox.close")}
+                >
+                    <IconClose width={18} height={18} aria-hidden="true" />
+                </button>
+            </header>
+
+            {/* Main area — image + sidebar */}
+            <div
+                className="fl-main"
+                onTouchStart={onTouchStart}
+                onTouchEnd={onTouchEnd}
+            >
+                <div className={`fl-stage${directionClass}`} key={index}>
+                    {/* Backdrop blur of the image */}
+                    <div
+                        className="fl-stage-backdrop"
+                        style={{ backgroundImage: `url(${slide.src})` }}
+                        aria-hidden="true"
+                    />
+
+                    {/* Actual image */}
+                    <figure className="fl-figure">
+                        <img
+                            key={slide.src}
+                            src={slide.src}
+                            alt={`${projectName} — ${slide.label[lang]}`}
+                            className={`fl-image${imageLoaded ? " is-loaded" : ""}`}
+                            onLoad={() => setImageLoaded(true)}
+                        />
+                        <figcaption className="sr-only">
+                            {slide.label[lang]}
+                        </figcaption>
+                    </figure>
+
+                    {/* Arrows (overlay on stage) */}
+                    {total > 1 && (
+                        <>
                             <button
-                                key={s.src}
                                 type="button"
-                                className={`fl-thumb${i === index ? " is-active" : ""}`}
-                                onClick={() =>
-                                    goTo(i, i > index ? "next" : "prev")
-                                }
-                                aria-label={`${i + 1} — ${s.label[lang]}`}
-                                aria-current={i === index}
+                                className="fl-arrow fl-arrow--prev"
+                                onClick={goPrev}
+                                aria-label={t("featured.arrow.prev")}
                             >
-                                <img
-                                    src={s.src}
-                                    alt=""
-                                    loading="lazy"
-                                    decoding="async"
-                                    width={96}
-                                    height={60}
-                                />
-                                <span
-                                    className="fl-thumb-overlay"
+                                <IconChevronLeft
+                                    width={20}
+                                    height={20}
                                     aria-hidden="true"
                                 />
                             </button>
-                        ))}
-                    </nav>
-                )}
-            </div>
-        </div>
-    );
+                            <button
+                                type="button"
+                                className="fl-arrow fl-arrow--next"
+                                onClick={goNext}
+                                aria-label={t("featured.arrow.next")}
+                            >
+                                <IconChevronRight
+                                    width={20}
+                                    height={20}
+                                    aria-hidden="true"
+                                />
+                            </button>
+                        </>
+                    )}
+                </div>
 
-    return createPortal(lightbox, document.body);
+                {/* Sidebar — description */}
+                <aside className="fl-sidebar">
+                    <span className="fl-tag">
+                        <span className="fl-tag-num">
+                            {String(index + 1).padStart(2, "0")}
+                        </span>
+                        {slide.sub[lang]}
+                    </span>
+
+                    <h3 className="fl-title">{slide.label[lang]}</h3>
+
+                    {slide.description && (
+                        <p className="fl-description">
+                            {slide.description[lang]}
+                        </p>
+                    )}
+
+                    {(liveUrl || repoUrl) && (
+                        <div className="fl-actions">
+                            {liveUrl && (
+                                <a
+                                    href={liveUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn btn--primary btn--sm fl-cta"
+                                >
+                                    {t("featured.btn.live")}
+                                    <IconExternalLink
+                                        width={13}
+                                        height={13}
+                                        aria-hidden="true"
+                                    />
+                                </a>
+                            )}
+                            {repoUrl && (
+                                <a
+                                    href={repoUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn btn--outline btn--sm fl-cta"
+                                >
+                                    <IconGitHub
+                                        width={14}
+                                        height={14}
+                                        aria-hidden="true"
+                                    />
+                                    {t("featured.btn.repo")}
+                                </a>
+                            )}
+                        </div>
+                    )}
+                </aside>
+            </div>
+
+            {/* Bottom bar — thumbnails */}
+            {total > 1 && (
+                <nav
+                    className="fl-thumbs"
+                    aria-label={t("featured.lightbox.thumbnails")}
+                >
+                    {slides.map((s, i) => (
+                        <button
+                            key={s.src}
+                            type="button"
+                            className={`fl-thumb${i === index ? " is-active" : ""}`}
+                            onClick={() => goTo(i, i > index ? "next" : "prev")}
+                            aria-label={`${i + 1} — ${s.label[lang]}`}
+                            aria-current={i === index}
+                        >
+                            <img
+                                src={s.src}
+                                alt=""
+                                loading="lazy"
+                                decoding="async"
+                                width={96}
+                                height={60}
+                            />
+                            <span
+                                className="fl-thumb-overlay"
+                                aria-hidden="true"
+                            />
+                        </button>
+                    ))}
+                </nav>
+            )}
+        </Modal>
+    );
 };
