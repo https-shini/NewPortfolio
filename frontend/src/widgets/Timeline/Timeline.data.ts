@@ -12,8 +12,8 @@ import type {
 const WISE_SYSTEM_BULLETS: CareerBullet[] = [
     {
         text: {
-            pt: "Suporte técnico e funcional a clientes via telefone, chat, e-mail e acesso remoto, orientando sobre uso do ERP e boas práticas operacionais",
-            en: "Technical and functional customer support via phone, chat, email and remote access, guiding ERP usage and operational best practices",
+            pt: "Suporte técnico e funcional a clientes via telefone, chat, e-mail e acesso remoto, orientando sobre uso do SIGO e boas práticas operacionais",
+            en: "Technical and functional customer support via phone, chat, email and remote access, guiding SIGO usage and operational best practices",
         },
         highlight: true,
     },
@@ -32,8 +32,8 @@ const WISE_SYSTEM_BULLETS: CareerBullet[] = [
     },
     {
         text: {
-            pt: "Análise e resolução de inconsistências em arquivos bancários CNAB (remessa e retorno) e integrações com instituições financeiras",
-            en: "Analysis and resolution of inconsistencies in CNAB bank files (outbound and return) and integrations with financial institutions",
+            pt: "Homologação bancária e análise de inconsistências em arquivos CNAB (remessa e retorno) e integrações com instituições financeiras",
+            en: "Bank homologation and analysis of inconsistencies in CNAB files (outbound and return) and integrations with financial institutions",
         },
         highlight: true,
     },
@@ -45,9 +45,10 @@ const WISE_SYSTEM_BULLETS: CareerBullet[] = [
     },
     {
         text: {
-            pt: "Suporte em faturamento e documentos fiscais: emissão, rejeições e homologação de notas fiscais",
-            en: "Support for billing and tax documents: issuance, rejections and approval of invoices",
+            pt: "Suporte em Faturamento e documentos fiscais: emissão de NF e RPS, rejeições, correção de erros na geração da nota e homologação",
+            en: "Support for Billing and tax documents: invoice and RPS issuance, rejections, fixing note generation errors and approval",
         },
+        highlight: true,
     },
     {
         text: {
@@ -89,14 +90,15 @@ const WISE_SYSTEM_BULLETS: CareerBullet[] = [
 ];
 
 const WISE_SYSTEM_TAGS = [
-    { pt: "ERP", en: "ERP" },
-    { pt: "CNAB", en: "CNAB" },
+    { pt: "SIGO", en: "SIGO" },
+    { pt: "SST", en: "SST" },
     { pt: "Financeiro", en: "Finance" },
     { pt: "Faturamento", en: "Billing" },
+    { pt: "CNAB", en: "CNAB" },
     { pt: "Conciliação Bancária", en: "Bank Reconciliation" },
     { pt: "NFS-e", en: "NFS-e" },
+    { pt: "RPS", en: "RPS" },
     { pt: "ServiceDesk", en: "ServiceDesk" },
-    { pt: "Troubleshooting", en: "Troubleshooting" },
 ];
 
 /* ─────────────────────────────────────────────────────────
@@ -125,8 +127,8 @@ export const careerCompanies: CareerCompany[] = [
                 modality: "ON_SITE",
                 statusType: "active",
                 summary: {
-                    pt: "Suporte N1 em ERP de saúde com foco em Financeiro/Faturamento, CNAB e conciliação bancária. Responsável por causa raiz de incidentes, escalonamento técnico e proposição de melhorias contínuas.",
-                    en: "Tier 1 support for a healthcare ERP focused on Finance/Billing, CNAB and bank reconciliation. Responsible for incident root-cause analysis, technical escalation and proposing continuous improvements.",
+                    pt: "Suporte técnico ao SIGO, plataforma de SST (Saúde e Segurança do Trabalho) e eSocial da Wise System, com foco nos módulos Financeiro (homologação bancária, remessa/retorno CNAB, conciliação) e Faturamento (homologação de NF/RPS e correção de erros na emissão). Análise de causa raiz, escalonamento técnico e melhoria contínua.",
+                    en: "Technical support for SIGO, Wise System's occupational health & safety (SST) and eSocial platform, focused on the Finance (bank homologation, CNAB outbound/return, reconciliation) and Billing (invoice/RPS approval and fixing issuance errors) modules. Root-cause analysis, technical escalation and continuous improvement.",
                 },
                 bullets: WISE_SYSTEM_BULLETS,
                 tags: [...WISE_SYSTEM_TAGS],
@@ -143,8 +145,8 @@ export const careerCompanies: CareerCompany[] = [
                 modality: "ON_SITE",
                 statusType: "done",
                 summary: {
-                    pt: "Primeiro contato profissional com o mercado de tecnologia, prestando suporte técnico e funcional a clientes nos módulos do ERP SIGO.",
-                    en: "First professional experience in the tech industry, providing technical and functional support to clients across the SIGO ERP modules.",
+                    pt: "Primeiro contato profissional com o mercado de tecnologia, prestando suporte técnico e funcional a clientes nos módulos do SIGO, o software de SST da Wise System, com foco em Financeiro e Faturamento.",
+                    en: "First professional experience in the tech industry, providing technical and functional support to clients across the modules of SIGO, Wise System's occupational health & safety (SST) software, focused on Finance and Billing.",
                 },
                 bullets: WISE_SYSTEM_BULLETS,
                 tags: [...WISE_SYSTEM_TAGS],
