@@ -1,4 +1,5 @@
 import type { Localized } from "@/shared/lib/localized";
+import { ROUTES } from "@/shared/config/routes";
 
 /* ─────────────────────────────────────────────────────────
    profile.ts — fonte única de verdade da identidade pessoal
@@ -25,6 +26,19 @@ export const PROFILE = {
         pt: "Desenvolvedor de Software",
         en: "Software Developer",
     } satisfies Localized,
+
+    /**
+     * Handle público exibido na página /links. Independente do siteUrl
+     * (gcruz.dev.br) por escolha — é a identidade curta usada em bio de
+     * redes sociais.
+     */
+    handle: "@gcruz.dev",
+
+    /**
+     * Linha de atuação da página /links. Nomes próprios do mercado,
+     * exibidos como estão nos dois idiomas.
+     */
+    roles: ["Full Stack Developer", "AI & Automation", "Freelancer"],
 
     email: "contato.guilhermescruz@gmail.com",
     location: {
@@ -58,10 +72,12 @@ export const PROFILE = {
             handle: "/in/oguilherme-cruz",
             url: "https://linkedin.com/in/oguilherme-cruz",
         },
+        /* Central de links do próprio site (página /links). O app externo que
+           ocupava este lugar virou um dos itens listados lá — ver links.ts. */
         devlinks: {
             label: "DevLinks",
-            handle: "DevLinks",
-            url: "https://devlinks-rocketseat-five.vercel.app/",
+            handle: "gcruz.dev.br/links",
+            url: ROUTES.LINKS,
         },
     } satisfies Record<string, SocialProfile>,
 } as const;
