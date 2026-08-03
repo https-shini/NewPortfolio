@@ -3,6 +3,8 @@ import "./Work.css";
 import { useLang } from "@/shared/hooks/useLang";
 import { type WorkProject } from "./Work.types";
 import { IconGitHub, IconExternalLink } from "@/shared/ui/Icons";
+import { GITHUB_URL } from "@/shared/config/constants";
+import { PROJECT_URLS } from "@/shared/config/links";
 import webchatImg from "@/assets/projects/webchat.webp";
 import financasImg from "@/assets/projects/financas.webp";
 import authLoginImg from "@/assets/authservice/login.webp";
@@ -22,8 +24,8 @@ const PROJECTS: WorkProject[] = [
             { label: "JavaScript", variant: "brand" },
             { label: "WebSocket", variant: "neutral" },
         ],
-        demoUrl: "https://chat-frontend-g42t.onrender.com",
-        repoUrl: "https://github.com/https-shini/web-chat",
+        demoUrl: PROJECT_URLS.webChat.live,
+        repoUrl: PROJECT_URLS.webChat.repo,
     },
     {
         id: "auth",
@@ -39,8 +41,8 @@ const PROJECTS: WorkProject[] = [
             { label: "TypeScript", variant: "brand" },
             { label: "JWT", variant: "neutral" },
         ],
-        demoUrl: "https://authservice-mbul.onrender.com/",
-        repoUrl: "https://github.com/https-shini/AuthService",
+        demoUrl: PROJECT_URLS.authService.live,
+        repoUrl: PROJECT_URLS.authService.repo,
     },
     {
         id: "financas",
@@ -56,8 +58,8 @@ const PROJECTS: WorkProject[] = [
             { label: "JavaScript", variant: "brand" },
             { label: "CSS3", variant: "neutral" },
         ],
-        demoUrl: "https://financas-reactjs.vercel.app",
-        repoUrl: "https://github.com/https-shini/financas-reactjs",
+        demoUrl: PROJECT_URLS.finances.live,
+        repoUrl: PROJECT_URLS.finances.repo,
     },
 ];
 
@@ -180,7 +182,7 @@ export const Work: React.FC = () => {
                 {/* CTA */}
                 <div className="work__cta">
                     <a
-                        href="https://github.com/https-shini"
+                        href={GITHUB_URL}
                         className="btn btn--outline"
                         target="_blank"
                         rel="noopener noreferrer"

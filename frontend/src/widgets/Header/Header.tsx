@@ -4,9 +4,10 @@ import { useTheme } from "@/shared/hooks/useTheme";
 import { useLang } from "@/shared/hooks/useLang";
 import { useScrollLock } from "@/shared/hooks/useScrollLock";
 import { useFocusTrap } from "@/shared/hooks/useFocusTrap";
+import { useRoute } from "@/shared/hooks/useRoute";
 import { scrollToSection } from "@/shared/lib/smoothScroll";
 import { IconSun, IconMoon, IconTranslate } from "@/shared/ui/Icons";
-import { SECTION_IDS } from "@/shared/config/constants";
+import { SECTION_IDS, ROUTES } from "@/shared/config/constants";
 
 const NAV_LINKS = [
     { href: SECTION_IDS.HOME, key: "nav.home" as const },
@@ -27,10 +28,11 @@ const LANG_META = {
 export const Header: React.FC = () => {
     const { theme, toggleTheme } = useTheme();
     const { lang, toggleLang, t } = useLang();
+    const { isHome, navigate } = useRoute();
 
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [activeSection, setActiveSection] = useState<string>(
+    const [observedSection, setObservedSection] = useState<string>(
         SECTION_IDS.HOME,
     );
     const [langSwitching, setLangSwitching] = useState(false);
@@ -55,21 +57,28 @@ export const Header: React.FC = () => {
     }, []);
 
     /* ── Active section ────────────────────────────────────────────── */
+    /* O observer só existe na home: as demais rotas são páginas próprias,
+       sem as seções que ele acompanha. Fora da home a seção ativa é
+       derivada (nenhuma), não guardada em estado. */
     useEffect(() => {
+        if (!isHome) return;
+
         const sections = document.querySelectorAll<HTMLElement>("section[id]");
         if (!sections.length) return;
         const margin = Math.round(window.innerHeight * 0.4);
         const obs = new IntersectionObserver(
             (entries) => {
                 entries.forEach((e) => {
-                    if (e.isIntersecting) setActiveSection(e.target.id);
+                    if (e.isIntersecting) setObservedSection(e.target.id);
                 });
             },
             { rootMargin: `-${margin}px 0px -${margin}px 0px` },
         );
         sections.forEach((s) => obs.observe(s));
         return () => obs.disconnect();
-    }, []);
+    }, [isHome]);
+
+    const activeSection = isHome ? observedSection : "";
 
     const closeMenu = useCallback(() => {
         setIsMenuOpen(false);
@@ -88,7 +97,21 @@ export const Header: React.FC = () => {
     const handleNavClick = (e: React.MouseEvent, id: string) => {
         e.preventDefault();
         closeMenu();
-        setTimeout(() => scrollToSection(id), isMenuOpen ? 300 : 0);
+        /* Espera a animação do drawer antes de rolar. */
+        const delay = isMenuOpen ? 300 : 0;
+
+        if (!isHome) {
+            /* Fora da home a seção não existe no DOM: volta para ela e rola
+               no frame seguinte, já com a página montada. */
+            navigate(ROUTES.HOME);
+            setTimeout(
+                () => requestAnimationFrame(() => scrollToSection(id)),
+                delay,
+            );
+            return;
+        }
+
+        setTimeout(() => scrollToSection(id), delay);
     };
 
     const handleLangToggle = () => {
@@ -233,7 +256,9 @@ export const Header: React.FC = () => {
                         style={{ "--i": i } as React.CSSProperties}
                         onClick={(e) => handleNavClick(e, href)}
                     >
-                        <span className="mobile-nav__link-num">0{i + 1}</span>
+                        <span className="mobile-nav__link-num">
+                            {String(i + 1).padStart(2, "0")}
+                        </span>
                         {t(key)}
                     </a>
                 ))}

@@ -1,8 +1,9 @@
 /* ─────────────────────────────────────────────────────────
    Featured.data — AuthService project
-   Fonte: https://github.com/https-shini/AuthService
+   URLs em shared/config/links.ts (fonte única).
 ───────────────────────────────────────────────────────── */
 
+import { PROJECT_URLS } from "@/shared/config/links";
 import loginImg from "@/assets/authservice/login.webp";
 import cadastroImg from "@/assets/authservice/cadastro.webp";
 import homeImg from "@/assets/authservice/home.webp";
@@ -57,9 +58,9 @@ export const FEATURED_PROJECT = {
         en: "REST API built with FastAPI featuring JWT (HS256) authentication and bcrypt, served alongside a vanilla frontend in a single Docker container. Layered architecture (Controllers → Services → Repositories → Models) with real-time monitoring dashboard.",
     },
 
-    repoUrl: "https://github.com/https-shini/AuthService",
-    liveUrl: "https://authservice-mbul.onrender.com",
-    docsUrl: "https://authservice-mbul.onrender.com/docs",
+    repoUrl: PROJECT_URLS.authService.repo,
+    liveUrl: PROJECT_URLS.authService.live,
+    docsUrl: PROJECT_URLS.authService.docs,
     repoHost: "github.com/https-shini/AuthService",
 
     badges: [

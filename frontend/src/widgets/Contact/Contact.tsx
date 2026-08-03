@@ -1,6 +1,7 @@
 import React from "react";
 import "./Contact.css";
 import { useLang } from "@/shared/hooks/useLang";
+import { useLinkProps } from "@/shared/hooks/useLinkProps";
 import { renderRich, renderRichParagraphs } from "@/shared/lib/richText";
 import {
     IconEmail,
@@ -73,6 +74,19 @@ const PROFILE_DATA: ProfileRow[] = [
 /** Resolve string | Localized no idioma corrente. */
 const resolve = (v: string | Localized, lang: "pt" | "en"): string =>
     typeof v === "string" ? v : v[lang];
+
+/**
+ * ProfileLink — âncora das linhas de perfil.
+ * A lista mistura mailto, sites externos e rota interna (a página /links),
+ * então quem decide como abrir é useLinkProps, não este componente.
+ */
+const ProfileLink: React.FC<React.PropsWithChildren<{ href: string }>> = ({
+    href,
+    children,
+}) => {
+    const { anchorProps } = useLinkProps(href);
+    return <a {...anchorProps}>{children}</a>;
+};
 
 /* ═══════════════════════════════════════════════════════════════════════════
    COMPONENTE PRINCIPAL
@@ -300,22 +314,14 @@ export const Contact: React.FC = () => {
 
                                             <dd className="contact__data-value">
                                                 {item.href ? (
-                                                    <a
+                                                    <ProfileLink
                                                         href={item.href}
-                                                        target={
-                                                            item.href.startsWith(
-                                                                "mailto",
-                                                            )
-                                                                ? undefined
-                                                                : "_blank"
-                                                        }
-                                                        rel="noopener noreferrer"
                                                     >
                                                         {resolve(
                                                             item.value,
                                                             lang,
                                                         )}
-                                                    </a>
+                                                    </ProfileLink>
                                                 ) : (
                                                     resolve(item.value, lang)
                                                 )}

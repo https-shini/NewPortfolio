@@ -13,6 +13,7 @@ import React, { memo, useCallback } from "react";
 import "./Footer.css";
 
 import { useLang } from "@/shared/hooks/useLang";
+import { useRoute } from "@/shared/hooks/useRoute";
 import { scrollToSection } from "@/shared/lib/smoothScroll";
 import { buildMailtoHref } from "@/shared/lib/mailto";
 import {
@@ -21,7 +22,9 @@ import {
     LINKEDIN_URL,
     getCvUrl,
     SECTION_IDS,
+    ROUTES,
 } from "@/shared/config/constants";
+import { PROJECT_URLS } from "@/shared/config/links";
 import {
     IconGitHub,
     IconLinkedIn,
@@ -63,22 +66,24 @@ const NAV_ITEMS: NavItem[] = [
     { id: SECTION_IDS.CONTACT, key: "nav.contact" },
 ];
 
+/* URLs vêm de shared/config/links.ts — fonte única. Aqui só se decide
+   quais projetos o rodapé lista e em que ordem. */
 const PROJECT_ITEMS: ProjectItem[] = [
     /* AuthService é o projeto da seção Destaque — link interno */
     { label: "AuthService", href: `#${SECTION_IDS.FEATURED}`, external: false },
     {
         label: "Web Chat",
-        href: "https://chat-frontend-g42t.onrender.com",
+        href: PROJECT_URLS.webChat.live,
         external: true,
     },
     {
         label: "Controle Financeiro",
-        href: "https://financas-reactjs.vercel.app",
+        href: PROJECT_URLS.finances.live,
         external: true,
     },
     {
         label: "HomeMade Gourmet",
-        href: "https://https-shini.github.io/homemade-gourmet/",
+        href: PROJECT_URLS.homemadeGourmet.live,
         external: true,
     },
 ];
@@ -330,6 +335,7 @@ FooterBottom.displayName = "FooterBottom";
 
 export const Footer: React.FC = () => {
     const { lang, t } = useLang();
+    const { isHome, navigate } = useRoute();
     const year = new Date().getFullYear();
     const mailtoHref = buildMailtoHref(lang);
 
@@ -337,9 +343,28 @@ export const Footer: React.FC = () => {
     const handleInternalNav = useCallback(
         (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
             e.preventDefault();
+
+            /* Fora da home as seções não existem: volta para ela e rola
+               no frame seguinte, já com a página montada. */
+            if (!isHome) {
+                navigate(ROUTES.HOME);
+                requestAnimationFrame(() => scrollToSection(id));
+                return;
+            }
+
             scrollToSection(id);
         },
-        [],
+        [isHome, navigate],
+    );
+
+    /** Navegação entre páginas (rota), não entre seções da home. */
+    const handleRouteNav = useCallback(
+        (e: React.MouseEvent<HTMLAnchorElement>, to: typeof ROUTES.LINKS) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+            e.preventDefault();
+            navigate(to);
+        },
+        [navigate],
     );
 
     const ctaLabel = lang === "pt" ? "Fale comigo" : "Get in touch";
@@ -390,6 +415,19 @@ export const Footer: React.FC = () => {
                                     </a>
                                 </li>
                             ))}
+
+                            {/* Página própria — navega pela rota */}
+                            <li>
+                                <a
+                                    href={ROUTES.LINKS}
+                                    className="footer__link"
+                                    onClick={(e) =>
+                                        handleRouteNav(e, ROUTES.LINKS)
+                                    }
+                                >
+                                    {t("nav.links")}
+                                </a>
+                            </li>
                         </FooterNavCol>
 
                         {/* Coluna 3 — Projetos */}
