@@ -75,8 +75,8 @@ export const PROFILE = {
         /* Central de links do próprio site (página /links). O app externo que
            ocupava este lugar virou um dos itens listados lá — ver links.ts. */
         devlinks: {
-            label: "DevLinks",
-            handle: "gcruz.dev.br/links",
+            label: "Social Links",
+            handle: "Social Links",
             url: ROUTES.LINKS,
         },
     } satisfies Record<string, SocialProfile>,

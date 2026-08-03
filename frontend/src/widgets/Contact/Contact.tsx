@@ -57,7 +57,7 @@ const PROFILE_DATA: ProfileRow[] = [
     },
     {
         icon: <IconDev />,
-        label: "Social Links",
+        label: { pt: "Redes Sociais", en: "Social Networks" },
         value: PROFILE.social.devlinks.handle,
         href: PROFILE.social.devlinks.url,
         noteKey: "contact.meta.devlinks",

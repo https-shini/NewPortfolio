@@ -68,11 +68,19 @@ Cada página declara o próprio título, descrição e canonical via `useDocumen
 
 A `/links` é **autônoma**: não usa o header nem o rodapé do site, e traz os
 próprios controles de tema e idioma. Por isso **não aparece no menu principal** —
-chega-se a ela pelo card "Social Links" da seção Contato e pelo link no rodapé.
+chega-se a ela pelo card "Redes Sociais" da seção Contato e pelo link no rodapé.
+O acesso direto por URL (`gcruz.dev.br/links`) funciona normalmente — é assim que
+a página é compartilhada.
 
-> **Deploy:** `frontend/vercel.json` reescreve `/links` para `index.html`. Sem
-> esse rewrite, abrir `gcruz.dev.br/links` direto retornaria 404. Ao criar uma
-> rota nova, acrescente-a ali também.
+> **Deploy — atenção ao Root Directory.** O `vercel.json` fica na **raiz do
+> repositório**, não em `frontend/`: o Root Directory do projeto na Vercel é a
+> raiz, e um `vercel.json` dentro de `frontend/` é simplesmente ignorado. Ele
+> reescreve `/links` para `index.html`; sem isso o acesso direto retorna 404.
+> Ao criar uma rota nova, acrescente-a ali também.
+>
+> Pela mesma razão, as funções serverless precisam viver em `api/` na raiz do
+> repositório. Hoje elas estão em `frontend/api/`, e por isso
+> `/api/github-stats` responde 404 em produção (o front cai no fallback).
 
 ---
 
