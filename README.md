@@ -41,7 +41,7 @@
 
 Portfólio pessoal de **segunda geração** — SPA construída em **React 18 + TypeScript 5 + Vite 5**, evoluindo a versão anterior em HTML/CSS/JS puro. O projeto tem arquitetura por camadas (app → pages → widgets → shared), design system próprio com tokens CSS, internacionalização completa (PT-BR/EN), tema dark/light persistente e **zero dependências de UI externas** — todos os componentes e os 60+ ícones SVG são do próprio design system.
 
-O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/` contém toda a aplicação — incluindo `frontend/api/`, uma **Vercel Serverless Function** que alimenta as métricas do GitHub sem expor token ao browser. A pasta `backend/` segue reservada para uma API própria no futuro.
+O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/` contém toda a aplicação. Na raiz ficam também as duas peças que a Vercel lê a partir do Root Directory: `vercel.json` (rewrites das rotas) e `api/`, com uma **Vercel Serverless Function** que alimenta as métricas do GitHub sem expor token ao browser. A pasta `backend/` segue reservada para uma API própria no futuro.
 
 ---
 
@@ -78,9 +78,9 @@ a página é compartilhada.
 > reescreve `/links` para `index.html`; sem isso o acesso direto retorna 404.
 > Ao criar uma rota nova, acrescente-a ali também.
 >
-> Pela mesma razão, as funções serverless precisam viver em `api/` na raiz do
-> repositório. Hoje elas estão em `frontend/api/`, e por isso
-> `/api/github-stats` responde 404 em produção (o front cai no fallback).
+> Pela mesma razão, as funções serverless vivem em **`api/` na raiz** do
+> repositório, e não em `frontend/api/` — de onde nunca chegaram a ser
+> compiladas. Vale para qualquer função nova.
 
 ---
 
@@ -122,6 +122,10 @@ a página é compartilhada.
 ## 🏗 Arquitetura
 
 ```
+.                                # Raiz — o que a Vercel lê pelo Root Directory
+├── vercel.json                  # Rewrites das rotas da SPA
+├── api/github-stats.ts          # Serverless: métricas do GitHub (token server-only)
+│
 frontend/
 │
 ├── public/                      # Assets estáticos publicados na raiz do site

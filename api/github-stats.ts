@@ -10,8 +10,17 @@
      Settings → Environment Variables → GITHUB_TOKEN
      (token fine-grained read-only; escopo público basta)
 
-   Fora de src/ — não entra no build do Vite nem no tsc do frontend;
-   a Vercel compila esta função separadamente no deploy.
+   Sem o token a função continua respondendo: `repos` vem do endpoint
+   público de usuário, mas `commits` usa a Search API, que sem
+   autenticação é bloqueada por rate limit — e volta como null.
+
+   POR QUE ESTE ARQUIVO MORA NA RAIZ DO REPOSITÓRIO:
+   o Root Directory do projeto na Vercel é a raiz, e é a partir dela
+   que ela procura a pasta `api/`. Em `frontend/api/` o arquivo era
+   ignorado e a rota respondia 404. Mesma razão do vercel.json.
+
+   Fica fora de src/ — não entra no build do Vite nem no tsc do
+   frontend; a Vercel compila esta função separadamente no deploy.
 ───────────────────────────────────────────────────────── */
 
 interface VercelRequest {
@@ -23,6 +32,9 @@ interface VercelResponse {
     json(body: unknown): void;
 }
 
+/* Espelha PROFILE.githubUsername (frontend/src/shared/config/profile.ts).
+   Não dá para importar: esta função é compilada pela Vercel, fora do
+   build do frontend. Se mudar lá, mude aqui. */
 const GITHUB_USER = "https-shini";
 
 export default async function handler(
