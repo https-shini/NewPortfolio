@@ -17,6 +17,7 @@
 
 - [Sobre o projeto](#-sobre-o-projeto)
 - [Demonstração](#-demonstração)
+- [Páginas e rotas](#-páginas-e-rotas)
 - [Seções](#-seções)
 - [Tecnologias](#-tecnologias)
 - [Arquitetura](#-arquitetura)
@@ -25,6 +26,7 @@
 - [Como executar](#-como-executar)
 - [Scripts](#-scripts)
 - [Variáveis de ambiente](#-variáveis-de-ambiente)
+- [Como adicionar um link](#-como-adicionar-um-link)
 - [Testes](#-testes)
 - [Qualidade e CI](#-qualidade-e-ci)
 - [Acessibilidade](#-acessibilidade)
@@ -51,6 +53,29 @@ O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/`
 
 ---
 
+## 🧭 Páginas e rotas
+
+| Rota     | Página      | Conteúdo                                                              |
+| -------- | ----------- | --------------------------------------------------------------------- |
+| `/`      | `HomePage`  | Portfólio completo — as seções abaixo, navegadas por âncora           |
+| `/links` | `LinksPage` | **Social tree** (link-in-bio): perfil, stack e links públicos         |
+
+O roteamento é próprio, sobre a History API (`app/RouterContext.tsx`), sem
+`react-router-dom` — o projeto mantém apenas `react` e `react-dom` em runtime.
+Os pathnames vivem em `shared/config/routes.ts` e o mapeamento rota → página em
+`app/routes.tsx`, com as páginas secundárias carregadas por `React.lazy`.
+Cada página declara o próprio título, descrição e canonical via `useDocumentMeta`.
+
+A `/links` é **autônoma**: não usa o header nem o rodapé do site, e traz os
+próprios controles de tema e idioma. Por isso **não aparece no menu principal** —
+chega-se a ela pelo card "Social Links" da seção Contato e pelo link no rodapé.
+
+> **Deploy:** `frontend/vercel.json` reescreve `/links` para `index.html`. Sem
+> esse rewrite, abrir `gcruz.dev.br/links` direto retornaria 404. Ao criar uma
+> rota nova, acrescente-a ali também.
+
+---
+
 ## 📄 Seções
 
 | #   | Seção               | Descrição                                                                              |
@@ -63,6 +88,7 @@ O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/`
 | 06  | **Work**            | Grid de projetos com thumbnail local (WebP), badges de tecnologia e ações              |
 | 07  | **Recommendations** | Depoimentos em carrossel paginado (2 por página · 1 no mobile) com modal de leitura    |
 | 08  | **Contact**         | CTA de e-mail, formulário com validação (via env), links e perfil ATS-friendly         |
+| —   | **Links**           | Página `/links`: social tree autônoma, fora do menu (ver *Páginas e rotas*)             |
 | —   | **Header**          | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile               |
 | —   | **Footer**          | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV            |
 
@@ -99,11 +125,16 @@ frontend/
 └── src/
     ├── app/                     # Camada de aplicação
     │   ├── App.tsx              # Composição raiz (Providers + Routes)
-    │   ├── providers.tsx        # LangProvider (i18n)
-    │   ├── routes.tsx           # SPA de página única (sem router)
-    │   └── LangContext.tsx      # Contexto de idioma: lang, t(), toggleLang()
+    │   ├── providers.tsx        # RouterProvider + LangProvider
+    │   ├── routes.tsx           # Mapeamento rota → página (lazy nas secundárias)
+    │   ├── LangContext.tsx      # Contexto de idioma: lang, t(), toggleLang()
+    │   └── RouterContext.tsx    # Rota via History API: path, navigate(), isHome
     │
-    ├── pages/Home/              # Composição da página única
+    ├── pages/
+    │   ├── Home/                # Portfólio completo (/)
+    │   └── Links/               # Social tree (/links) — autônoma
+    │       ├── index.tsx · Links.css
+    │       └── components/      # LinkCard, ParticleField (exclusivos da página)
     │
     ├── widgets/                 # Um módulo por seção (tsx + css co-locados)
     │   ├── Header/  Hero/  About/  Timeline/  Formacoes/
@@ -117,13 +148,16 @@ frontend/
     ├── shared/
     │   ├── config/
     │   │   ├── profile.ts       # ✨ Fonte única de identidade (nome, e-mail, redes)
+    │   │   ├── links.ts         # ✨ Fonte única das URLs públicas e dos projetos
+    │   │   ├── routes.ts        # Pathnames das páginas
     │   │   └── constants.ts     # SECTION_IDS, chaves de storage, aliases do perfil
-    │   ├── hooks/               # useLang, useTheme, useScrollReveal, useReducedMotion…
+    │   ├── hooks/               # useLang, useTheme, useRoute, useLinkProps, useDocumentMeta…
     │   ├── lib/                 # translations, localized, richText, dateUtils, mailto…
     │   ├── styles/              # tokens.css → globals.css → theme-patches.css
     │   └── ui/                  # Modal/ (base reutilizável), Icons.tsx, ScrollUtils
     │
     ├── assets/                  # Imagens otimizadas (WebP) importadas pelo bundle
+    │   └── skills/              # Ícones de stack da /links (skill-icons, MIT — ver CREDITS.md)
     └── test/setup.ts            # Setup do Vitest (jsdom + stubs)
 ```
 
@@ -244,15 +278,79 @@ Definidas em `frontend/.env.local` (ver `frontend/.env.example`):
 
 ---
 
+## 🔗 Como adicionar um link
+
+Toda URL pública do site mora em **`frontend/src/shared/config/links.ts`**. É o
+único arquivo a tocar: nem a página `/links`, nem o Footer, nem o Contato têm
+URL escrita à mão.
+
+### 1. Acrescente um item a `TREE_LINKS`
+
+```ts
+{
+    id: "instagram",                          // único; key do React e dos testes
+    kind: "social",                           // "primary" (card) ou "social" (ícone)
+    label: { pt: "Instagram", en: "Instagram" },
+    href: "https://instagram.com/seu-usuario",
+    icon: IconInstagram,                      // componente de shared/ui/Icons
+    external: true,                           // false só para mailto e rotas internas
+}
+```
+
+- **`primary`** vira um card grande empilhado. Aceita `sublabel` — o handle em
+  fonte mono exibido sob o rótulo.
+- **`social`** vira um botão compacto na linha de ícones, abaixo dos cards.
+
+Pronto: a página se adapta sozinha. Nenhum JSX de layout precisa mudar, e o
+`PRIMARY_LINKS` / `SOCIAL_LINKS` faz a partição.
+
+### 2. Se o link já existe em outro lugar, reaproveite
+
+Nunca reescreva uma URL que o projeto já conhece:
+
+- perfis, e-mail, site e currículo → `PROFILE` (`shared/config/profile.ts`)
+- projetos próprios → `PROJECT_URLS`, no topo do mesmo `links.ts`
+- rotas internas → `ROUTES` (`shared/config/routes.ts`)
+
+```ts
+href: PROFILE.social.github.url;         // ✅
+href: "https://github.com/https-shini";  // ❌ duplica a fonte
+```
+
+### 3. Ícone
+
+Use qualquer export de `shared/ui/Icons.tsx` — são 65 SVGs inline. Para um novo,
+desenhe-o lá com os componentes-base `F` (preenchido) ou `S` (contorno), seguindo
+os existentes, e importe-o em `links.ts`.
+
+### 4. Chip de tecnologia (opcional)
+
+Os chips de stack da `/links` usam SVGs locais em `src/assets/skills/`, com
+variante por tema. Para incluir um: adicione `<nome>-dark.svg` e
+`<nome>-light.svg` (ou um único arquivo, quando não houver variante), registre
+os créditos em `CREDITS.md` e acrescente a entrada em `TECH_STACK`
+(`pages/Links/index.tsx`).
+
+### 5. Verifique
+
+```bash
+npm test   # links.test.ts valida ids únicos, URLs sem duplicata,
+           # derivação de PROFILE e coerência do campo `external`
+```
+
+---
+
 ## 🧪 Testes
 
-Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **74 testes em 13 arquivos**:
+Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **106 testes em 16 arquivos**:
 
 - **Utils** — `dateUtils`, `academicDates`, `text`, `richText`, `mailto`, `careerDates`
+- **Config** — `links` (ids únicos, URLs sem duplicata, derivação de `PROFILE`, coerência de `external`, `linkKind`)
 - **Hooks** — `useTheme` (persistência, `prefers-color-scheme`, DOM), `useGithubStats` (cache e fallback)
-- **Contexto** — `LangContext` (idioma inicial, toggle, persistência)
+- **Contexto** — `LangContext` (idioma inicial, toggle, persistência), `RouterContext` (navigate, popstate, normalização)
 - **UI base** — `Modal` (Esc, overlay, focus-trap, restauração de foco, scroll-lock)
 - **Componentes** — `Hero`, `ContactForm` (validação, envio, erros), `Recommendations` (paginação do carrossel)
+- **Páginas** — `LinksPage` (perfil, `rel` seguro nos externos, mailto sem nova aba, share nativo vs. clipboard, SEO da rota)
 
 ```bash
 npm run test          # run único (CI)
