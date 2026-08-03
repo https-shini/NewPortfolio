@@ -1,0 +1,439 @@
+/* ══════════════════════════════════════════════════════════════════
+   Links.css — página Social Tree (/links)
+   Mobile-first, coluna central. Só tokens do design system.
+   Reaproveita utilitários globais: .btn, .btn--primary, .btn--outline,
+   .social-link, .skip-link (definidos em globals.css).
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Fundos ambientes (fixos, atrás de tudo) ───────────────────── */
+.linktree__grid,
+.linktree__overlay,
+.linktree__particles {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-base);
+    pointer-events: none;
+}
+.linktree__grid {
+    background-image: radial-gradient(var(--dots-color) 1px, transparent 1px);
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(
+        ellipse 70% 60% at 50% 30%,
+        #000 40%,
+        transparent 100%
+    );
+    mask-image: radial-gradient(
+        ellipse 70% 60% at 50% 30%,
+        #000 40%,
+        transparent 100%
+    );
+}
+.linktree__overlay {
+    background: var(--section-gradient-overlay);
+}
+.linktree__particles {
+    overflow: hidden;
+}
+.linktree__particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: linktree-float var(--dur, 24s) linear infinite;
+    animation-delay: var(--delay, 0s);
+}
+@keyframes linktree-float {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.5;
+    }
+    50% {
+        transform: translate(var(--dx, 0), var(--dy, -140px)) scale(1.15);
+        opacity: 0.7;
+    }
+    90% {
+        opacity: 0.3;
+    }
+}
+
+/* ── Controles (topo direito) ──────────────────────────────────── */
+.linktree__controls {
+    position: fixed;
+    top: var(--space-5);
+    right: var(--space-5);
+    z-index: var(--z-overlay);
+    display: flex;
+    gap: var(--space-2);
+}
+.linktree__ctrl {
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    color: var(--color-text-2);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wide);
+    transition: var(--transition-base);
+}
+.linktree__ctrl:hover {
+    color: var(--color-text-1);
+    border-color: var(--color-border-brand);
+    transform: translateY(-2px);
+}
+.linktree__ctrl:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+.linktree__ctrl--icon {
+    width: 38px;
+}
+.linktree__ctrl--lang {
+    padding-inline: var(--space-4);
+}
+
+/* ── Container central ─────────────────────────────────────────── */
+.linktree {
+    position: relative;
+    z-index: var(--z-raised);
+    max-width: 480px;
+    margin-inline: auto;
+    padding: clamp(4rem, 12vh, 7rem) var(--space-5) var(--space-12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+}
+
+/* Entrada com stagger — dirigida por --reveal-i em cada elemento */
+.reveal-item {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: linktree-reveal var(--duration-slower) var(--ease-out) forwards;
+    animation-delay: calc(var(--reveal-i, 0) * 60ms);
+}
+@keyframes linktree-reveal {
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ── Avatar ────────────────────────────────────────────────────── */
+.linktree__avatar {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin-bottom: var(--space-5);
+}
+.linktree__avatar-glow {
+    position: absolute;
+    inset: -14px;
+    z-index: 0;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 180deg,
+        var(--color-brand),
+        var(--color-accent),
+        var(--color-brand)
+    );
+    filter: blur(16px);
+    opacity: 0.5;
+    animation: linktree-spin 8s linear infinite;
+}
+@keyframes linktree-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+.linktree__avatar-ring {
+    position: absolute;
+    inset: -3px;
+    z-index: 1;
+    border-radius: 50%;
+    padding: 3px;
+    background: linear-gradient(
+        135deg,
+        var(--color-brand),
+        var(--color-accent)
+    );
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+/* Frame recorta o círculo; o leve zoom ancorado no topo enquadra o
+   rosto como na seção Sobre (a foto é quadrada, então sem o zoom ela
+   apareceria afastada demais). */
+.linktree__avatar-frame {
+    position: relative;
+    z-index: 2;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--color-surface-2);
+}
+.linktree__avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    transform: scale(1.12);
+    transform-origin: top center;
+}
+.linktree__status {
+    position: absolute;
+    z-index: 3;
+    right: 8px;
+    bottom: 8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--color-success);
+    border: 3px solid var(--color-bg);
+    animation: linktree-pulse 2.4s var(--ease-out) infinite;
+}
+@keyframes linktree-pulse {
+    0% {
+        box-shadow: 0 0 0 0
+            color-mix(in srgb, var(--color-success) 55%, transparent);
+    }
+    100% {
+        box-shadow: 0 0 0 12px transparent;
+    }
+}
+
+/* ── Identidade ────────────────────────────────────────────────── */
+.linktree__name {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: var(--ls-tight);
+    color: var(--color-text-1);
+}
+.linktree__handle {
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: var(--ls-snug);
+    color: var(--color-brand-light);
+}
+.linktree__bio {
+    margin-top: var(--space-4);
+    max-width: 34ch;
+    font-size: var(--text-sm);
+    color: var(--color-text-3);
+}
+.linktree__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    justify-content: center;
+    margin-top: var(--space-4);
+    list-style: none;
+}
+.linktree__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3) var(--space-1) var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-2);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    transition: var(--transition-base);
+}
+.linktree__chip:hover {
+    color: var(--color-text-1);
+    border-color: var(--color-border-brand);
+    transform: translateY(-2px);
+}
+.linktree__chip-ic {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    display: block;
+    flex-shrink: 0;
+}
+
+/* Faixa de papéis sob o handle */
+.linktree__roles {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+.linktree__roles-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    flex-shrink: 0;
+}
+
+/* ── Links + redes + ações ─────────────────────────────────────── */
+.linktree__links {
+    width: 100%;
+    margin-top: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+.linktree__socials {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+}
+.linktree__actions {
+    display: flex;
+    /* Empilha quando os dois rótulos não couberem lado a lado (≈320px),
+       em vez de estourar a largura do documento. */
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    width: 100%;
+    margin-top: var(--space-8);
+}
+.linktree__actions .btn {
+    flex: 1 1 140px;
+    min-width: 0;
+}
+.btn.is-copied {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    color: #fff;
+}
+
+/* ── Footer ────────────────────────────────────────────────────── */
+.linktree__foot {
+    margin-top: var(--space-10);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+}
+.linktree__foot-divider {
+    width: 100%;
+    max-width: 220px;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-border-3),
+        transparent
+    );
+}
+.linktree__foot-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+.linktree__foot-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    /* Alvo de no mínimo 24px de altura (WCAG 2.5.8, AA) sem alterar
+       o ritmo visual da linha. */
+    padding-block: var(--space-1);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+    text-decoration: none;
+    transition: var(--transition-base);
+}
+.linktree__foot-link:hover {
+    color: var(--color-brand-light);
+}
+.linktree__foot-sep {
+    color: var(--color-text-4);
+}
+.linktree__foot-name {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--ls-snug);
+    color: var(--color-text-2);
+}
+.linktree__foot-name span {
+    color: var(--color-text-4);
+}
+.linktree__foot-text {
+    font-size: var(--text-xs);
+    color: var(--color-text-4);
+    text-align: center;
+}
+.linktree__heart {
+    color: var(--color-brand);
+}
+.linktree__foot-brand {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+.linktree__foot-brand:hover {
+    color: var(--color-text-2);
+}
+.linktree__foot-brand b {
+    color: var(--color-text-2);
+}
+
+/* Quando os dois links do rodapé quebram em linhas separadas, o "·" fica
+   órfão no fim da primeira. */
+@media (max-width: 480px) {
+    .linktree__foot-sep {
+        display: none;
+    }
+}
+
+/* Alvo de toque ≥ 44px (WCAG 2.5.5). Mesma condição de globals.css:
+   telas estreitas contam mesmo quando o ponteiro é fino. */
+@media (pointer: coarse), (max-width: 640px) {
+    .linktree__ctrl {
+        height: 44px;
+    }
+    .linktree__ctrl--icon {
+        width: 44px;
+    }
+    .linktree__actions .btn {
+        min-height: 44px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal-item {
+        animation: none;
+        opacity: 1;
+        transform: none;
+    }
+    .linktree__avatar-glow,
+    .linktree__status {
+        animation: none;
+    }
+}

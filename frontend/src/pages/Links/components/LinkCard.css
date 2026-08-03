@@ -1,0 +1,152 @@
+/* ─────────────────────────────────────────────────────────
+   LinkCard — card primário do Social Tree
+   Usa exclusivamente tokens do design system (tokens.css).
+─────────────────────────────────────────────────────────── */
+
+.link-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    width: 100%;
+    /* min-height garante o alvo de toque de 44px (WCAG 2.5.5) em
+       qualquer tamanho de fonte. */
+    min-height: 44px;
+    padding: var(--space-4) var(--space-5);
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--color-text-1);
+
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+
+    transition:
+        transform var(--transition-base),
+        box-shadow var(--transition-base),
+        border-color var(--transition-base);
+}
+
+/* Barra brand que cresce da esquerda no hover */
+.link-card::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 3px;
+    background: linear-gradient(var(--color-brand), var(--color-accent));
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform var(--duration-base) var(--ease-spring);
+}
+
+.link-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: transparent;
+}
+.link-card:hover::before {
+    transform: scaleY(1);
+}
+.link-card:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+}
+
+/* Ripple na origem do clique */
+.link-card.is-rippling::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+        circle at var(--rx, 50%) var(--ry, 50%),
+        color-mix(in srgb, var(--color-brand) 32%, transparent),
+        transparent 55%
+    );
+    animation: link-card-ripple var(--duration-slower) var(--ease-out) forwards;
+}
+@keyframes link-card-ripple {
+    from {
+        opacity: 0.9;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Chip do ícone */
+.link-card__icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-md);
+    background: var(--color-brand-subtle);
+    color: var(--color-brand-light);
+    transition: var(--transition-base);
+}
+.link-card:hover .link-card__icon {
+    background: var(--color-brand);
+    /* #fff literal por convenção do projeto: é o que globals.css usa em
+       .btn--primary para texto sobre fundo saturado. --color-text-inverse
+       ficaria quase preto no tema escuro, sem contraste sobre o crimson. */
+    color: #fff;
+    transform: scale(1.06);
+}
+
+.link-card__body {
+    flex: 1;
+    min-width: 0;
+    text-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.link-card__title {
+    font-weight: 600;
+    font-size: var(--text-md);
+    line-height: var(--lh-tight);
+    color: var(--color-text-1);
+}
+.link-card__sub {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-4);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.link-card__arrow {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    color: var(--color-text-4);
+    transition: var(--transition-base);
+}
+.link-card:hover .link-card__arrow {
+    color: var(--color-brand-light);
+    transform: translate(3px, -3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .link-card,
+    .link-card::before,
+    .link-card__icon,
+    .link-card__arrow {
+        transition: none;
+    }
+    .link-card:hover {
+        transform: none;
+    }
+    .link-card.is-rippling::after {
+        animation: none;
+        display: none;
+    }
+}

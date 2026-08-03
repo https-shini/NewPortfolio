@@ -10,6 +10,7 @@ export type TranslationKey =
     | "nav.work"
     | "nav.recommendations"
     | "nav.contact"
+    | "nav.links"
 
     /* ── HERO ──────────────────────────────────────── */
     | "hero.greeting"
@@ -180,6 +181,22 @@ export type TranslationKey =
     | "rec.source.text"
     | "rec.source.label"
 
+    /* ── LINKS (página /links — social tree) ────────── */
+    | "links.pageTitle"
+    | "links.meta.description"
+    | "links.bio"
+    | "links.available"
+    | "links.techLabel"
+    | "links.mainLinks"
+    | "links.socialLinks"
+    | "links.cv"
+    | "links.share"
+    | "links.copied"
+    | "links.newTab"
+    | "links.skip"
+    | "links.madeWith"
+    | "links.builtWith"
+
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
     | "footer.nav"
@@ -206,6 +223,7 @@ const pt: Translations = {
     "nav.work": "Projetos",
     "nav.recommendations": "Recomendações",
     "nav.contact": "Contato",
+    "nav.links": "Links",
 
     /* HERO */
     "hero.greeting": "Olá, eu sou",
@@ -393,6 +411,24 @@ const pt: Translations = {
     "rec.source.text": "Via LinkedIn",
     "rec.source.label": "Ver recomendações no LinkedIn",
 
+    /* LINKS */
+    "links.pageTitle": "Links",
+    "links.meta.description":
+        "Central de links de Guilherme Cruz — portfólio, GitHub, LinkedIn, currículo e contato em uma única página.",
+    "links.bio":
+        "Desenvolvendo soluções digitais que transformam desafios em oportunidades.",
+    "links.available": "Disponível",
+    "links.techLabel": "Principais tecnologias",
+    "links.mainLinks": "Links principais",
+    "links.socialLinks": "Redes secundárias",
+    "links.cv": "Currículo",
+    "links.share": "Compartilhar",
+    "links.copied": "Copiado!",
+    "links.newTab": "abre em nova aba",
+    "links.skip": "Ir para o conteúdo principal",
+    "links.madeWith": "Feito com",
+    "links.builtWith": "usando o Design System do portfólio",
+
     /* FOOTER */
     "footer.tagline":
         "Desenvolvedor Júnior em transição, com prática real em React, Node.js e sistemas em produção.",
@@ -420,6 +456,7 @@ const en: Translations = {
     "nav.work": "Projects",
     "nav.recommendations": "Recommendations",
     "nav.contact": "Contact",
+    "nav.links": "Links",
 
     /* HERO */
     "hero.greeting": "Hi, I'm",
@@ -606,6 +643,24 @@ const en: Translations = {
     "rec.count.many": "recommendations",
     "rec.source.text": "Via LinkedIn",
     "rec.source.label": "View recommendations on LinkedIn",
+
+    /* LINKS */
+    "links.pageTitle": "Links",
+    "links.meta.description":
+        "Guilherme Cruz's link hub — portfolio, GitHub, LinkedIn, résumé and contact on a single page.",
+    "links.bio":
+        "Building digital solutions that turn challenges into opportunities.",
+    "links.available": "Available",
+    "links.techLabel": "Core technologies",
+    "links.mainLinks": "Main links",
+    "links.socialLinks": "Secondary networks",
+    "links.cv": "Resume",
+    "links.share": "Share",
+    "links.copied": "Copied!",
+    "links.newTab": "opens in a new tab",
+    "links.skip": "Skip to main content",
+    "links.madeWith": "Built with",
+    "links.builtWith": "using the portfolio's Design System",
 
     /* FOOTER */
     "footer.tagline":
