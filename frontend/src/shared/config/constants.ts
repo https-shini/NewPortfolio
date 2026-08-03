@@ -52,3 +52,10 @@ export const SECTION_IDS = {
 } as const;
 
 export type SectionId = (typeof SECTION_IDS)[keyof typeof SECTION_IDS];
+
+/**
+ * ROUTES — reexportado de routes.ts por ergonomia dos consumidores,
+ * mesmo motivo dos aliases de PROFILE acima. A definição mora em
+ * shared/config/routes.ts para que profile.ts possa usá-la sem ciclo.
+ */
+export { ROUTES, type RoutePath } from "@/shared/config/routes";

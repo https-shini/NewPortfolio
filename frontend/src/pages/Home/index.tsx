@@ -13,11 +13,29 @@ import { ScrollUtils } from "@/shared/ui/ScrollUtils";
 import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { useLang } from "@/shared/hooks/useLang";
+import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
+import { ROUTES } from "@/shared/config/routes";
+
+/* Título e descrição da home — os mesmos do index.html, declarados aqui
+   para que voltar de outra rota restaure exatamente este estado. */
+const META = {
+    pt: {
+        title: "Guilherme Cruz — Desenvolvedor de Software | React, TypeScript & Node.js",
+        description:
+            "Portfólio profissional de Guilherme Cruz — Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e Python. Projetos reais, experiência e formação.",
+    },
+    en: {
+        title: "Guilherme Cruz — Software Developer | React, TypeScript & Node.js",
+        description:
+            "Professional portfolio of Guilherme Cruz — Full Stack Developer specialized in React, TypeScript, Node.js and Python. Real projects, experience and education.",
+    },
+} as const;
 
 export const HomePage: React.FC = () => {
     const { lang } = useLang();
     useReducedMotion();
     useScrollReveal();
+    useDocumentMeta({ ...META[lang], path: ROUTES.HOME });
 
     return (
         <>

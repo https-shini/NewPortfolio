@@ -23,6 +23,12 @@ Object.defineProperty(window, "matchMedia", {
     })),
 });
 
+/* jsdom não implementa scrollTo — o router chama no pushState. */
+Object.defineProperty(window, "scrollTo", {
+    writable: true,
+    value: vi.fn(),
+});
+
 class IntersectionObserverStub {
     observe = vi.fn();
     unobserve = vi.fn();
