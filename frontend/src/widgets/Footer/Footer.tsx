@@ -9,7 +9,7 @@
  * ⑤ Ícones exclusivamente do design system Icons.tsx — sem SVG inline.
  */
 
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback, useState, lazy, Suspense } from "react";
 import "./Footer.css";
 
 import { useLang } from "@/shared/hooks/useLang";
@@ -32,7 +32,17 @@ import {
     IconHeart,
     IconLocation,
     IconDownload,
+    IconGitBranch,
 } from "@/shared/ui/Icons";
+import { Modal } from "@/shared/ui/Modal/Modal";
+
+/* As notas de versão só existem depois de um clique — carregam sob
+   demanda, como os demais modais do site. */
+const ReleaseNotes = lazy(() =>
+    import("@/widgets/ReleaseNotes/ReleaseNotes").then((m) => ({
+        default: m.ReleaseNotes,
+    })),
+);
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Tipos locais
@@ -283,16 +293,20 @@ interface FooterBottomProps {
     cvLabel: string;
     cvUrl: string;
     lang: "pt" | "en";
+    /** Badge de versão que abre as notas de versão. */
+    versionBadge: React.ReactNode;
 }
 
 const FooterBottom = memo<FooterBottomProps>(
-    ({ year, rights, made, coffee, cvLabel, cvUrl, lang }) => (
+    ({ year, rights, made, coffee, cvLabel, cvUrl, lang, versionBadge }) => (
         <div className="footer__bottom">
             {/* Copyright com <time> semântico */}
             <p className="footer__copyright">
                 <span>©</span> <time dateTime={String(year)}>{year}</time>{" "}
                 Guilherme Cruz. {rights}
             </p>
+
+            {versionBadge}
 
             {/* Ações secundárias: CV + made with */}
             <div className="footer__bottom-end">
@@ -338,6 +352,7 @@ export const Footer: React.FC = () => {
     const { isHome, navigate } = useRoute();
     const year = new Date().getFullYear();
     const mailtoHref = buildMailtoHref(lang);
+    const [notesOpen, setNotesOpen] = useState(false);
 
     /* Estável entre renders — não recria a função desnecessariamente */
     const handleInternalNav = useCallback(
@@ -495,9 +510,41 @@ export const Footer: React.FC = () => {
                         cvLabel={cvLabel}
                         cvUrl={cvUrl}
                         lang={lang}
+                        versionBadge={
+                            <button
+                                type="button"
+                                className="footer__version"
+                                aria-label={t("releaseNotes.openLabel")}
+                                onClick={() => setNotesOpen(true)}
+                            >
+                                <IconGitBranch
+                                    width={12}
+                                    height={12}
+                                    aria-hidden="true"
+                                />
+                                <span className="footer__version-number">
+                                    v{__APP_VERSION__}
+                                </span>
+                                <span className="footer__version-label">
+                                    {t("releaseNotes.badge")}
+                                </span>
+                            </button>
+                        }
                     />
                 </div>
             </div>
+
+            {/* ── 4. Notas de versão ───────────────────────────────────────────── */}
+            <Modal
+                isOpen={notesOpen}
+                onClose={() => setNotesOpen(false)}
+                labelledBy="release-notes-title"
+                className="release-notes-modal"
+            >
+                <Suspense fallback={null}>
+                    <ReleaseNotes titleId="release-notes-title" />
+                </Suspense>
+            </Modal>
         </footer>
     );
 };

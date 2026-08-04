@@ -97,6 +97,7 @@ a página é compartilhada.
 | 07  | **Recommendations** | Depoimentos em carrossel paginado (2 por página · 1 no mobile) com modal de leitura    |
 | 08  | **Contact**         | CTA de e-mail, formulário com validação (via env), links e perfil ATS-friendly         |
 | —   | **Links**           | Página `/links`: social tree autônoma, fora do menu (ver *Páginas e rotas*)             |
+| —   | **Release Notes**   | Linha do tempo das versões, aberta pelo badge de versão no rodapé                       |
 | —   | **Header**          | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile               |
 | —   | **Footer**          | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV            |
 
@@ -150,7 +151,7 @@ frontend/
     │
     ├── widgets/                 # Um módulo por seção (tsx + css co-locados)
     │   ├── Header/  Hero/  About/  Timeline/  Formacoes/
-    │   ├── Featured/  Work/  Recommendations/  Contact/  Footer/
+    │   ├── Featured/  Work/  Recommendations/  Contact/  Footer/  ReleaseNotes/
     │   └── <Widget>/
     │       ├── <Widget>.tsx · <Widget>.css
     │       ├── <Widget>.data.ts     # Dados estáticos bilíngues
@@ -161,12 +162,13 @@ frontend/
     │   ├── config/
     │   │   ├── profile.ts       # ✨ Fonte única de identidade (nome, e-mail, redes)
     │   │   ├── links.ts         # ✨ Fonte única das URLs públicas e dos projetos
+    │   │   ├── releaseNotes.ts  # ✨ Histórico de versões (camada local)
     │   │   ├── routes.ts        # Pathnames das páginas
     │   │   └── constants.ts     # SECTION_IDS, chaves de storage, aliases do perfil
     │   ├── hooks/               # useLang, useTheme, useRoute, useLinkProps, useDocumentMeta…
     │   ├── lib/                 # translations, localized, richText, dateUtils, mailto…
     │   ├── styles/              # tokens.css → globals.css → theme-patches.css
-    │   └── ui/                  # Modal/ (base reutilizável), Icons.tsx, ScrollUtils
+    │   └── ui/                  # Modal/ e Accordion/ (bases reutilizáveis), Icons.tsx, ScrollUtils
     │
     ├── assets/                  # Imagens otimizadas (WebP) importadas pelo bundle
     │   └── skills/              # Ícones de stack da /links (skill-icons, MIT — ver CREDITS.md)
@@ -354,14 +356,14 @@ npm test   # links.test.ts valida ids únicos, URLs sem duplicata,
 
 ## 🧪 Testes
 
-Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **106 testes em 16 arquivos**:
+Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **151 testes em 20 arquivos**:
 
-- **Utils** — `dateUtils`, `academicDates`, `text`, `richText`, `mailto`, `careerDates`
-- **Config** — `links` (ids únicos, URLs sem duplicata, derivação de `PROFILE`, coerência de `external`, `linkKind`)
-- **Hooks** — `useTheme` (persistência, `prefers-color-scheme`, DOM), `useGithubStats` (cache e fallback)
+- **Utils** — `dateUtils` (durações e data por extenso), `academicDates`, `text`, `richText`, `mailto`, `careerDates`, `cache` (TTL e storage indisponível)
+- **Config** — `links` (ids únicos, URLs sem duplicata, derivação de `PROFILE`), `releaseNotes` (versão casa com o `package.json`, ordenação, bilíngue completo)
+- **Hooks** — `useTheme` (persistência, `prefers-color-scheme`, DOM), `useGithubStats` (cache, expiração e fallback)
 - **Contexto** — `LangContext` (idioma inicial, toggle, persistência), `RouterContext` (navigate, popstate, normalização)
-- **UI base** — `Modal` (Esc, overlay, focus-trap, restauração de foco, scroll-lock)
-- **Componentes** — `Hero`, `ContactForm` (validação, envio, erros), `Recommendations` (paginação do carrossel)
+- **UI base** — `Modal` (Esc, overlay, focus-trap, restauração de foco, scroll-lock), `Accordion` (teclado, ARIA, modo controlado)
+- **Componentes** — `Hero`, `ContactForm` (validação, envio, erros), `Recommendations` (paginação do carrossel), `ReleaseNotes` (topo expandido, accordion, filtro, paginação)
 - **Páginas** — `LinksPage` (perfil, `rel` seguro nos externos, mailto sem nova aba, share nativo vs. clipboard, SEO da rota)
 
 ```bash

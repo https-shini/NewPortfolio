@@ -197,6 +197,30 @@ export type TranslationKey =
     | "links.madeWith"
     | "links.builtWith"
 
+    /* ── RELEASE NOTES ─────────────────────────────── */
+    | "releaseNotes.title"
+    | "releaseNotes.subtitle"
+    | "releaseNotes.badge"
+    | "releaseNotes.openLabel"
+    | "releaseNotes.latest"
+    | "releaseNotes.previous"
+    | "releaseNotes.loadOlder"
+    | "releaseNotes.remaining"
+    | "releaseNotes.filterLabel"
+    | "releaseNotes.filterAll"
+    | "releaseNotes.expand"
+    | "releaseNotes.collapse"
+    | "releaseNotes.empty"
+    | "releaseNotes.category.added"
+    | "releaseNotes.category.changed"
+    | "releaseNotes.category.fixed"
+    | "releaseNotes.category.removed"
+    | "releaseNotes.tag.design"
+    | "releaseNotes.tag.feature"
+    | "releaseNotes.tag.perf"
+    | "releaseNotes.tag.a11y"
+    | "releaseNotes.tag.fix"
+
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
     | "footer.nav"
@@ -428,6 +452,31 @@ const pt: Translations = {
     "links.skip": "Ir para o conteúdo principal",
     "links.madeWith": "Feito com",
     "links.builtWith": "usando o Design System do portfólio",
+
+    /* RELEASE NOTES */
+    "releaseNotes.title": "Notas de versão",
+    "releaseNotes.subtitle":
+        "Registro completo das mudanças e melhorias do site.",
+    "releaseNotes.badge": "notas de versão",
+    "releaseNotes.openLabel": "Abrir as notas de versão",
+    "releaseNotes.latest": "mais recente",
+    "releaseNotes.previous": "Versões anteriores",
+    "releaseNotes.loadOlder": "Ver versões mais antigas",
+    "releaseNotes.remaining": "restantes",
+    "releaseNotes.filterLabel": "Filtrar versões por tema",
+    "releaseNotes.filterAll": "Tudo",
+    "releaseNotes.expand": "Expandir",
+    "releaseNotes.collapse": "Recolher",
+    "releaseNotes.empty": "Nenhuma versão com este tema.",
+    "releaseNotes.category.added": "Adicionado",
+    "releaseNotes.category.changed": "Alterado",
+    "releaseNotes.category.fixed": "Corrigido",
+    "releaseNotes.category.removed": "Removido",
+    "releaseNotes.tag.design": "Design",
+    "releaseNotes.tag.feature": "Recursos",
+    "releaseNotes.tag.perf": "Performance",
+    "releaseNotes.tag.a11y": "Acessibilidade",
+    "releaseNotes.tag.fix": "Correções",
 
     /* FOOTER */
     "footer.tagline":
@@ -661,6 +710,31 @@ const en: Translations = {
     "links.skip": "Skip to main content",
     "links.madeWith": "Built with",
     "links.builtWith": "using the portfolio's Design System",
+
+    /* RELEASE NOTES */
+    "releaseNotes.title": "Release notes",
+    "releaseNotes.subtitle":
+        "A complete record of the site's changes and improvements.",
+    "releaseNotes.badge": "release notes",
+    "releaseNotes.openLabel": "Open the release notes",
+    "releaseNotes.latest": "latest",
+    "releaseNotes.previous": "Previous versions",
+    "releaseNotes.loadOlder": "Show older versions",
+    "releaseNotes.remaining": "remaining",
+    "releaseNotes.filterLabel": "Filter versions by topic",
+    "releaseNotes.filterAll": "All",
+    "releaseNotes.expand": "Expand",
+    "releaseNotes.collapse": "Collapse",
+    "releaseNotes.empty": "No version matches this topic.",
+    "releaseNotes.category.added": "Added",
+    "releaseNotes.category.changed": "Changed",
+    "releaseNotes.category.fixed": "Fixed",
+    "releaseNotes.category.removed": "Removed",
+    "releaseNotes.tag.design": "Design",
+    "releaseNotes.tag.feature": "Features",
+    "releaseNotes.tag.perf": "Performance",
+    "releaseNotes.tag.a11y": "Accessibility",
+    "releaseNotes.tag.fix": "Fixes",
 
     /* FOOTER */
     "footer.tagline":

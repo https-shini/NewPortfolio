@@ -452,6 +452,71 @@
     }
 }
 
+/* ── Badge de versão → notas de versão ─────────────────────────────────── */
+.footer__version {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+
+    font-family: inherit;
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+
+    background: none;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+
+    transition:
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.footer__version:hover {
+    color: var(--color-text-1);
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+}
+
+.footer__version:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+
+.footer__version-number {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--color-brand);
+}
+
+.footer__version-label {
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    font-size: var(--text-2xs);
+}
+
+/* Em telas estreitas o rótulo sai; o número já identifica o botão
+   (o nome acessível vem do aria-label, que permanece completo). */
+@media (max-width: 480px) {
+    .footer__version-label {
+        display: none;
+    }
+}
+
+@media (pointer: coarse), (max-width: 640px) {
+    .footer__version {
+        min-height: 44px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .footer__version {
+        transition: none;
+    }
+}
+
 /* ── Ajustes de light mode ─────────────────────────────────────────────── */
 body.light-mode .footer::before {
     opacity: 0.5;
