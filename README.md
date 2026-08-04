@@ -485,12 +485,16 @@ claro. Ele continua correto como **preenchimento**, onde o critério é 1.4.11, 
 > Ao pintar texto com a cor da marca, use `--color-brand-text`. `--color-brand`
 > fica para fundos, bordas e ícones.
 
-**Pendência conhecida.** No tema escuro, `--color-text-4` é slate-600 e rende
-2.56:1 sobre o fundo — inutilizável para texto. Nove elementos do rodapé
-(tagline, títulos de coluna, localização, copyright) ainda o usam e reprovam o AA
-em todas as páginas. Corrigir exige uma decisão de design com alcance global —
-subir o token no escuro (o que aproxima demais de `--color-text-3`) ou repontar os
-usos do rodapé —, então ficou fora do escopo das Release Notes.
+**`--color-text-4` não serve para texto no tema escuro.** Lá ele é slate-600 e
+rende 2.56:1 — bom como tom decorativo, reprovado como leitura. O rodapé usava-o
+em cinco regras (tagline, títulos de coluna, localização, copyright, assinatura) e
+reprovava o AA em todas as páginas; hoje essas regras usam `--color-text-3`
+(~7.3:1). No tema claro o token é slate-500 e passa, então os overrides de
+`theme-patches.css` seguem como estavam.
+
+> Auditoria: **22/22** combinações limpas no axe-core — 11 perfis de dispositivo
+> (Galaxy Fold fechado a 280px até 4K, retrato e paisagem) nos dois temas, sem
+> violação WCAG A/AA e sem overflow horizontal.
 
 ---
 
