@@ -1,7 +1,9 @@
 import React from "react";
 import { useLang } from "@/shared/hooks/useLang";
+import { useRoute } from "@/shared/hooks/useRoute";
 import { Accordion } from "@/shared/ui/Accordion/Accordion";
-import { IconChevronDown } from "@/shared/ui/Icons";
+import { IconChevronDown, IconArrowRight } from "@/shared/ui/Icons";
+import { releaseNotePath } from "@/shared/config/routes";
 import type { ReleaseEntry } from "@/shared/config/releaseNotes";
 import { ChangeList } from "./ChangeList";
 import { ReleaseMeta } from "./ReleaseMeta";
@@ -27,10 +29,14 @@ export const ReleaseAccordionItem: React.FC<ReleaseAccordionItemProps> = ({
     headingLevel = 4,
 }) => {
     const { t, lang } = useLang();
+    const { navigate } = useRoute();
 
     const trigger = (
         <>
             <ReleaseMeta entry={entry} />
+
+            {/* Toda versão tem título — é o que dá nome à página dela. */}
+            <p className="release-item__title">{entry.title[lang]}</p>
 
             {entry.summary && (
                 <p className="release-item__summary">{entry.summary[lang]}</p>
@@ -58,6 +64,21 @@ export const ReleaseAccordionItem: React.FC<ReleaseAccordionItemProps> = ({
                     changes={entry.changes}
                     headingLevel={headingLevel}
                 />
+
+                {/* Link de verdade: o painel é um resumo, a página da
+                    versão é o conteúdo completo. */}
+                <a
+                    className="release-item__full"
+                    href={releaseNotePath(entry.version)}
+                    onClick={(e) => {
+                        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+                        e.preventDefault();
+                        navigate(releaseNotePath(entry.version));
+                    }}
+                >
+                    {t("releaseNotes.readFull")}
+                    <IconArrowRight width={14} height={14} aria-hidden="true" />
+                </a>
             </Accordion>
         </li>
     );

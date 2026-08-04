@@ -115,6 +115,15 @@ export const Accordion: React.FC<AccordionProps> = ({
                     height: bodyHeight === "auto" ? "auto" : `${bodyHeight}px`,
                 }}
                 aria-hidden={!isOpen}
+                /* `inert` acompanha o `aria-hidden`: sem ele, um link ou
+                   botão dentro do painel fechado continuaria alcançável
+                   por Tab, num conteúdo que o leitor de tela não anuncia.
+                   Escrito via ref porque o React 18 não conhece o atributo. */
+                ref={(el) => {
+                    if (!el) return;
+                    if (isOpen) el.removeAttribute("inert");
+                    else el.setAttribute("inert", "");
+                }}
             >
                 <div ref={bodyRef} className={`${classPrefix}__panel-inner`}>
                     {children}

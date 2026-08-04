@@ -66,7 +66,12 @@ export interface ReleaseEntry {
     date: string;
     /** Trata a entrada como post editorial completo. */
     featured?: boolean;
-    title?: Localized;
+    /**
+     * Obrigatório: toda versão tem página própria, e uma página precisa
+     * de manchete. Nas releases vindas do GitHub o título é o `name` da
+     * release, com a tag como reserva (ver api/release-notes.ts).
+     */
+    title: Localized;
     /** Uma linha, exibida no cabeçalho colapsado do histórico. */
     summary?: Localized;
     /** Imagem de topo do post — só faz sentido em `featured`. */
@@ -168,6 +173,10 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
         version: "2.0.0-rc.1",
         date: "2026-08-03",
         tags: ["feature", "fix"],
+        title: {
+            pt: "Central de links e roteamento próprio",
+            en: "Link hub and in-house routing",
+        },
         summary: {
             pt: "Central de links, roteamento próprio e correções de deploy.",
             en: "Link hub, in-house routing and deploy fixes.",
@@ -203,6 +212,10 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
         version: "2.0.0-beta.2",
         date: "2026-07-26",
         tags: ["perf", "design"],
+        title: {
+            pt: "Modal reutilizável e bundle dividido",
+            en: "Reusable modal and a split bundle",
+        },
         summary: {
             pt: "Modal reutilizável, carrossel de recomendações e bundle menor.",
             en: "Reusable modal, recommendations carousel and a smaller bundle.",
@@ -236,6 +249,10 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
         version: "2.0.0-beta.1",
         date: "2026-07-23",
         tags: ["design", "a11y"],
+        title: {
+            pt: "Refatoração completa da base",
+            en: "Full refactor of the codebase",
+        },
         summary: {
             pt: "Refatoração completa unificada na branch principal.",
             en: "Full refactor unified into the main branch.",

@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from "react";
 import "./ReleaseNotes.css";
 import { useLang } from "@/shared/hooks/useLang";
+import { useRoute } from "@/shared/hooks/useRoute";
 import { useReleaseNotes } from "@/shared/hooks/useReleaseNotes";
+import { releaseNotesPagePath } from "@/shared/config/routes";
 import { RELEASE_NOTES, getUsedTags } from "@/shared/config/releaseNotes";
 import {
     mergeReleaseNotes,
@@ -14,8 +16,14 @@ import { TagFilter } from "./components/TagFilter";
 import { SyncBadge } from "./components/SyncBadge";
 import type { ReleaseFilter } from "./ReleaseNotes.types";
 
-/** Quantos itens do histórico aparecem antes de "ver mais antigas". */
-const PAGE_SIZE = 3;
+/**
+ * Quantas versões do histórico cabem numa página do índice.
+ *
+ * A mais recente fica fora da conta: ela ocupa o topo, sempre aberta.
+ * Com o histórico curto de hoje a paginação nem aparece — o número
+ * existe para quando aparecer.
+ */
+export const PAGE_SIZE = 50;
 
 interface ReleaseNotesProps {
     /**
@@ -33,6 +41,8 @@ interface ReleaseNotesProps {
      * internos acompanham, para que a hierarquia nunca pule um nível.
      */
     headingLevel?: 1 | 2;
+    /** Página do histórico, 1-based. Vem da rota. */
+    page?: number;
 }
 
 /**
@@ -46,12 +56,13 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
     titleId,
     action,
     headingLevel = 2,
+    page = 1,
 }) => {
     const { t } = useLang();
+    const { navigate } = useRoute();
     const Heading = `h${headingLevel}` as "h1" | "h2";
     const SubHeading = `h${headingLevel + 1}` as "h2" | "h3";
     const [filter, setFilter] = useState<ReleaseFilter>("all");
-    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
     const { releases, status } = useReleaseNotes({ enabled: !entries });
 
@@ -75,14 +86,29 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
         [history, filter],
     );
 
-    const visible = filtered.slice(0, visibleCount);
-    const remaining = filtered.length - visible.length;
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    /* Página fora do intervalo (link velho, histórico encurtado por um
+       filtro) cai na última existente, em vez de mostrar lista vazia. */
+    const current = Math.min(Math.max(page, 1), totalPages);
+    const visible = filtered.slice(
+        (current - 1) * PAGE_SIZE,
+        current * PAGE_SIZE,
+    );
 
     const handleFilter = (next: ReleaseFilter) => {
         setFilter(next);
-        /* Trocar de filtro recomeça a paginação — senão o usuário veria
-           uma lista já "aberta" por uma escolha anterior. */
-        setVisibleCount(PAGE_SIZE);
+        /* Trocar de filtro recomeça o histórico — senão o usuário cairia
+           numa página que talvez nem exista no recorte novo. */
+        if (current !== 1) navigate(releaseNotesPagePath(1));
+    };
+
+    /* Links de verdade, com href: abrem em nova aba, aparecem no menu de
+       contexto e funcionam sem JS. O clique comum é interceptado para
+       navegar pelo router, sem recarregar. */
+    const goToPage = (target: number) => (e: React.MouseEvent) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+        e.preventDefault();
+        navigate(releaseNotesPagePath(target));
     };
 
     if (!latest) return null;
@@ -164,22 +190,41 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
                             </ol>
                         )}
 
-                        {remaining > 0 && (
-                            <div className="release-notes__more">
-                                <button
-                                    type="button"
+                        {totalPages > 1 && (
+                            <nav
+                                className="release-notes__pagination"
+                                aria-label={t("releaseNotes.previous")}
+                            >
+                                <a
                                     className="btn btn--outline btn--sm"
-                                    onClick={() =>
-                                        setVisibleCount((v) => v + PAGE_SIZE)
-                                    }
+                                    href={releaseNotesPagePath(current - 1)}
+                                    onClick={goToPage(current - 1)}
+                                    aria-disabled={current === 1}
+                                    hidden={current === 1}
                                 >
-                                    {t("releaseNotes.loadOlder")}
-                                    <span className="release-notes__more-count">
-                                        {remaining}{" "}
-                                        {t("releaseNotes.remaining")}
-                                    </span>
-                                </button>
-                            </div>
+                                    {t("releaseNotes.page.previous")}
+                                </a>
+
+                                <span
+                                    className="release-notes__page-status"
+                                    role="status"
+                                    aria-live="polite"
+                                >
+                                    {t("releaseNotes.page.status")
+                                        .replace("{current}", String(current))
+                                        .replace("{total}", String(totalPages))}
+                                </span>
+
+                                <a
+                                    className="btn btn--outline btn--sm"
+                                    href={releaseNotesPagePath(current + 1)}
+                                    onClick={goToPage(current + 1)}
+                                    aria-disabled={current === totalPages}
+                                    hidden={current === totalPages}
+                                >
+                                    {t("releaseNotes.page.next")}
+                                </a>
+                            </nav>
                         )}
                     </>
                 )}

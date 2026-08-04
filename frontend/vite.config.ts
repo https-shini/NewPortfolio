@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
+import { readFile, writeFile } from "node:fs/promises";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,12 +33,51 @@ function siteUrlHtmlPlugin() {
     };
 }
 
+/**
+ * Acrescenta ao sitemap uma URL por versão publicada.
+ *
+ * O `public/sitemap.xml` continua sendo a fonte das rotas fixas e das
+ * âncoras da home, escritas à mão. As notas de versão, não: cada entrada
+ * nova em `RELEASE_NOTES` viraria uma linha a lembrar de copiar. Aqui elas
+ * saem da própria lista, no build — acrescentar uma versão continua sendo
+ * mexer num arquivo só.
+ */
+function releaseNotesSitemapPlugin() {
+    return {
+        name: "release-notes-sitemap",
+        async closeBundle() {
+            const { RELEASE_NOTES } =
+                await import("./src/shared/config/releaseNotes");
+            const file = path.resolve(__dirname, "./dist/sitemap.xml");
+
+            const xml = await readFile(file, "utf8").catch(() => null);
+            if (!xml) return;
+
+            const urls = RELEASE_NOTES.map(
+                (entry) => `    <url>
+        <loc>${SITE_URL}/release-notes/v${entry.version}</loc>
+        <lastmod>${entry.date}</lastmod>
+        <changefreq>yearly</changefreq>
+        <priority>0.6</priority>
+    </url>`,
+            ).join("\n");
+
+            await writeFile(
+                file,
+                xml.replace("</urlset>", `${urls}\n</urlset>`),
+                "utf8",
+            );
+        },
+    };
+}
+
 export default defineConfig({
     plugins: [
         react({
             jsxRuntime: "automatic",
         }),
         siteUrlHtmlPlugin(),
+        releaseNotesSitemapPlugin(),
     ],
 
     /* Constante de build — ver a declaração em src/vite-env.d.ts. */

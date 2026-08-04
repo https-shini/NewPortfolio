@@ -4,6 +4,7 @@
     { "source": "/links", "destination": "/index.html" },
     { "source": "/links/", "destination": "/index.html" },
     { "source": "/release-notes", "destination": "/index.html" },
-    { "source": "/release-notes/", "destination": "/index.html" }
+    { "source": "/release-notes/", "destination": "/index.html" },
+    { "source": "/release-notes/(.*)", "destination": "/index.html" }
   ]
 }

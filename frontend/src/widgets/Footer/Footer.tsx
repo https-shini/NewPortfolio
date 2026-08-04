@@ -9,7 +9,7 @@
  * ⑤ Ícones exclusivamente do design system Icons.tsx — sem SVG inline.
  */
 
-import React, { memo, useCallback, useState, lazy, Suspense } from "react";
+import React, { memo, useCallback } from "react";
 import "./Footer.css";
 
 import { useLang } from "@/shared/hooks/useLang";
@@ -34,15 +34,6 @@ import {
     IconDownload,
     IconGitBranch,
 } from "@/shared/ui/Icons";
-import { Modal } from "@/shared/ui/Modal/Modal";
-
-/* As notas de versão só existem depois de um clique — carregam sob
-   demanda, como os demais modais do site. */
-const ReleaseNotes = lazy(() =>
-    import("@/widgets/ReleaseNotes/ReleaseNotes").then((m) => ({
-        default: m.ReleaseNotes,
-    })),
-);
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Tipos locais
@@ -352,7 +343,6 @@ export const Footer: React.FC = () => {
     const { isHome, navigate } = useRoute();
     const year = new Date().getFullYear();
     const mailtoHref = buildMailtoHref(lang);
-    const [notesOpen, setNotesOpen] = useState(false);
 
     /* Estável entre renders — não recria a função desnecessariamente */
     const handleInternalNav = useCallback(
@@ -511,11 +501,20 @@ export const Footer: React.FC = () => {
                         cvUrl={cvUrl}
                         lang={lang}
                         versionBadge={
-                            <button
-                                type="button"
+                            /* Link, não botão: as notas agora têm rota
+                               própria, então o badge abre uma página — e
+                               deve poder ir para nova aba e aparecer no
+                               menu de contexto. */
+                            <a
+                                href={ROUTES.RELEASE_NOTES}
                                 className="footer__version"
                                 aria-label={t("releaseNotes.openLabel")}
-                                onClick={() => setNotesOpen(true)}
+                                onClick={(e) => {
+                                    if (e.metaKey || e.ctrlKey || e.shiftKey)
+                                        return;
+                                    e.preventDefault();
+                                    navigate(ROUTES.RELEASE_NOTES);
+                                }}
                             >
                                 <IconGitBranch
                                     width={12}
@@ -528,40 +527,11 @@ export const Footer: React.FC = () => {
                                 <span className="footer__version-label">
                                     {t("releaseNotes.badge")}
                                 </span>
-                            </button>
+                            </a>
                         }
                     />
                 </div>
             </div>
-
-            {/* ── 4. Notas de versão ───────────────────────────────────────────── */}
-            <Modal
-                isOpen={notesOpen}
-                onClose={() => setNotesOpen(false)}
-                labelledBy="release-notes-title"
-                className="release-notes-modal"
-            >
-                <Suspense fallback={null}>
-                    <ReleaseNotes
-                        titleId="release-notes-title"
-                        action={
-                            <a
-                                href={ROUTES.RELEASE_NOTES}
-                                className="btn btn--outline btn--sm release-notes__view-all"
-                                onClick={(e) => {
-                                    if (e.metaKey || e.ctrlKey || e.shiftKey)
-                                        return;
-                                    e.preventDefault();
-                                    setNotesOpen(false);
-                                    navigate(ROUTES.RELEASE_NOTES);
-                                }}
-                            >
-                                {t("releaseNotes.viewAll")}
-                            </a>
-                        }
-                    />
-                </Suspense>
-            </Modal>
         </footer>
     );
 };

@@ -73,15 +73,31 @@ describe("RELEASE_NOTES — integridade dos dados", () => {
 describe("getUsedTags", () => {
     it("lista cada tag uma vez, na ordem de aparição", () => {
         const tags = getUsedTags([
-            { version: "1.0.0", date: "2026-01-01", tags: ["design", "fix"] },
-            { version: "0.9.0", date: "2025-12-01", tags: ["fix", "perf"] },
+            {
+                version: "1.0.0",
+                date: "2026-01-01",
+                title: { pt: "Um", en: "One" },
+                tags: ["design", "fix"],
+            },
+            {
+                version: "0.9.0",
+                date: "2025-12-01",
+                title: { pt: "Dois", en: "Two" },
+                tags: ["fix", "perf"],
+            },
         ]);
         expect(tags).toEqual(["design", "fix", "perf"]);
     });
 
     it("ignora entradas sem tags", () => {
-        expect(getUsedTags([{ version: "1.0.0", date: "2026-01-01" }])).toEqual(
-            [],
-        );
+        expect(
+            getUsedTags([
+                {
+                    version: "1.0.0",
+                    date: "2026-01-01",
+                    title: { pt: "Sem tags", en: "No tags" },
+                },
+            ]),
+        ).toEqual([]);
     });
 });

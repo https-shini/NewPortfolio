@@ -107,4 +107,33 @@ describe("Accordion", () => {
         /* Continua fechado: quem manda é a prop. */
         expect(trigger).toHaveAttribute("aria-expanded", "false");
     });
+
+    it("painel fechado sai da ordem de foco, não só da leitura", () => {
+        /* Só `aria-hidden` deixaria um link dentro do painel fechado
+           alcançável por Tab, num conteúdo que o leitor não anuncia —
+           é a violação aria-hidden-focus. */
+        render(
+            <Accordion classPrefix="teste" trigger={<span>Abrir</span>}>
+                <a href="/algum-lugar">link no painel</a>
+            </Accordion>,
+        );
+
+        const painel = document.querySelector(".teste__panel")!;
+        expect(painel.hasAttribute("inert")).toBe(true);
+        expect(painel.getAttribute("aria-hidden")).toBe("true");
+    });
+
+    it("painel aberto volta a ser alcançável", async () => {
+        const user = userEvent.setup();
+        render(
+            <Accordion classPrefix="teste" trigger={<span>Abrir</span>}>
+                <a href="/algum-lugar">link no painel</a>
+            </Accordion>,
+        );
+
+        await user.click(screen.getByRole("button"));
+
+        const painel = document.querySelector(".teste__panel")!;
+        expect(painel.hasAttribute("inert")).toBe(false);
+    });
 });

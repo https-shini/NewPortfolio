@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import "./ReleaseNotesPage.css";
+import "@/widgets/ReleaseNotes/ReleaseNotes.css";
 import { Header } from "@/widgets/Header/Header";
 import { Footer } from "@/widgets/Footer/Footer";
 import { ScrollUtils } from "@/shared/ui/ScrollUtils";
@@ -7,7 +7,7 @@ import { ReleaseNotes } from "@/widgets/ReleaseNotes/ReleaseNotes";
 import { useLang } from "@/shared/hooks/useLang";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
-import { ROUTES } from "@/shared/config/routes";
+import { releaseNotesPagePath } from "@/shared/config/routes";
 import { PROFILE } from "@/shared/config/profile";
 
 /**
@@ -77,7 +77,14 @@ function usePermalink(): void {
     }, []);
 }
 
-export const ReleaseNotesPage: React.FC = () => {
+interface ReleaseNotesPageProps {
+    /** Página do histórico, vinda da rota. */
+    page?: number;
+}
+
+export const ReleaseNotesPage: React.FC<ReleaseNotesPageProps> = ({
+    page = 1,
+}) => {
     const { lang, t } = useLang();
     useReducedMotion();
     usePermalink();
@@ -85,7 +92,7 @@ export const ReleaseNotesPage: React.FC = () => {
     useDocumentMeta({
         title: `${t("releaseNotes.title")} — ${PROFILE.name}`,
         description: t("releaseNotes.meta.description"),
-        path: ROUTES.RELEASE_NOTES,
+        path: releaseNotesPagePath(page),
     });
 
     return (
@@ -105,7 +112,7 @@ export const ReleaseNotesPage: React.FC = () => {
                 <div className="container">
                     {/* Aqui a timeline é a manchete da página, não uma
                         seção dentro dela — daí o h1. */}
-                    <ReleaseNotes headingLevel={1} />
+                    <ReleaseNotes headingLevel={1} page={page} />
                 </div>
             </main>
             <Footer />

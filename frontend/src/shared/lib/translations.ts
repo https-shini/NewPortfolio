@@ -217,6 +217,16 @@ export type TranslationKey =
     | "releaseNotes.viewOnGithub"
     | "releaseNotes.viewAll"
     | "releaseNotes.meta.description"
+    | "releaseNotes.readFull"
+    | "releaseNotes.backToIndex"
+    | "releaseNotes.newerVersion"
+    | "releaseNotes.olderVersion"
+    | "releaseNotes.loading"
+    | "releaseNotes.notFound.title"
+    | "releaseNotes.notFound.body"
+    | "releaseNotes.page.previous"
+    | "releaseNotes.page.next"
+    | "releaseNotes.page.status"
     | "releaseNotes.category.added"
     | "releaseNotes.category.changed"
     | "releaseNotes.category.fixed"
@@ -481,6 +491,17 @@ const pt: Translations = {
     "releaseNotes.viewAll": "Ver todas as versões",
     "releaseNotes.meta.description":
         "Histórico de versões do portfólio de Guilherme Cruz — o que mudou em cada release, com data e detalhes.",
+    "releaseNotes.readFull": "Ver esta versão",
+    "releaseNotes.backToIndex": "Todas as versões",
+    "releaseNotes.newerVersion": "Versão mais recente",
+    "releaseNotes.olderVersion": "Versão anterior",
+    "releaseNotes.loading": "Carregando a versão",
+    "releaseNotes.notFound.title": "Versão não encontrada",
+    "releaseNotes.notFound.body":
+        "Não há notas publicadas para esta versão. Veja a lista completa de versões.",
+    "releaseNotes.page.previous": "Página anterior",
+    "releaseNotes.page.next": "Próxima página",
+    "releaseNotes.page.status": "Página {current} de {total}",
     "releaseNotes.category.added": "Adicionado",
     "releaseNotes.category.changed": "Alterado",
     "releaseNotes.category.fixed": "Corrigido",
@@ -746,6 +767,17 @@ const en: Translations = {
     "releaseNotes.viewAll": "See every version",
     "releaseNotes.meta.description":
         "Version history of Guilherme Cruz's portfolio — what changed in each release, with dates and details.",
+    "releaseNotes.readFull": "See this version",
+    "releaseNotes.backToIndex": "All versions",
+    "releaseNotes.newerVersion": "Newer version",
+    "releaseNotes.olderVersion": "Older version",
+    "releaseNotes.loading": "Loading the version",
+    "releaseNotes.notFound.title": "Version not found",
+    "releaseNotes.notFound.body":
+        "There are no notes published for this version. See the full list of versions.",
+    "releaseNotes.page.previous": "Previous page",
+    "releaseNotes.page.next": "Next page",
+    "releaseNotes.page.status": "Page {current} of {total}",
     "releaseNotes.category.added": "Added",
     "releaseNotes.category.changed": "Changed",
     "releaseNotes.category.fixed": "Fixed",

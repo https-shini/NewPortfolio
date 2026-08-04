@@ -5,6 +5,25 @@
    vem de shared/ui/Accordion.
 ═══════════════════════════════════════════════════════════════ */
 
+/* ── Casca das rotas de notas ──────────────────────────────────
+   Compartilhada pelo índice (/release-notes) e pela página de cada
+   versão. Mora aqui, e não no CSS de uma das páginas, porque as
+   duas carregam este arquivo — é o que evita a duplicação. */
+.release-page {
+    /* Compensa o header fixo. */
+    padding-top: calc(var(--header-height) + var(--section-pad-y));
+    padding-bottom: var(--section-pad-y);
+    min-height: 100vh;
+}
+
+/* Fora do modal a coluna precisa de um limite de leitura próprio —
+   o container do site vai a 1200px, largo demais para texto corrido. */
+.release-page .release-notes,
+.release-page__content {
+    max-width: 820px;
+    margin-inline: auto;
+}
+
 /* ── Dimensão do modal que envolve a timeline ──────────────────── */
 .release-notes-modal {
     --modal-width: 760px;
@@ -567,6 +586,17 @@
     outline-offset: -2px;
 }
 
+.release-item__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-base);
+    font-weight: 600;
+    line-height: var(--lh-snug);
+    color: var(--color-text-1);
+    /* Espaço para o chevron, que é absoluto no canto. */
+    padding-inline-end: var(--space-6);
+}
+
 .release-item__summary {
     margin: 0;
     font-size: var(--text-sm);
@@ -593,17 +623,43 @@
     padding: 0 var(--space-4) var(--space-4);
 }
 
-/* ── Carregar mais ─────────────────────────────────────────────── */
-.release-notes__more {
-    display: flex;
-    justify-content: center;
-    margin-top: var(--space-5);
+/* Link para a página completa da versão, no pé do painel. */
+.release-item__full {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    /* Mínimo do critério 2.5.8, que vale em qualquer ponteiro. */
+    min-height: 24px;
+
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-brand-text);
+    text-decoration: none;
 }
 
-.release-notes__more-count {
+.release-item__full:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ── Paginação do histórico ────────────────────────────────────── */
+.release-notes__pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+}
+
+.release-notes__page-status {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
-    color: var(--color-text-4);
+    letter-spacing: var(--ls-wide);
+    color: var(--color-text-3);
+    /* Fica no meio mesmo quando um dos lados está oculto nas pontas. */
+    margin-inline: auto;
 }
 
 /* ── Telas estreitas ───────────────────────────────────────────── */

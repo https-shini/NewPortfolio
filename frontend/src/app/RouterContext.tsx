@@ -34,8 +34,14 @@ function getInitialPath(): string {
 interface RouterContextValue {
     /** Pathname corrente, já normalizado. */
     path: string;
-    /** Navega para uma rota interna, empilhando no histórico do browser. */
-    navigate: (to: RoutePath) => void;
+    /**
+     * Navega para uma rota interna, empilhando no histórico do browser.
+     *
+     * Aceita `string`, e não só `RoutePath`: as notas de versão têm rota
+     * por versão (`/release-notes/v2.0.0`), montada pelos construtores de
+     * `shared/config/routes.ts`. Nenhum caminho deve ser escrito à mão.
+     */
+    navigate: (to: RoutePath | string) => void;
     /** True quando a rota corrente é a home. */
     isHome: boolean;
 }
@@ -55,7 +61,7 @@ export const RouterProvider: React.FC<{ children: React.ReactNode }> = ({
         return () => window.removeEventListener("popstate", handlePopState);
     }, []);
 
-    const navigate = useCallback((to: RoutePath) => {
+    const navigate = useCallback((to: RoutePath | string) => {
         const next = normalize(to);
         if (normalize(window.location.pathname) === next) return;
 

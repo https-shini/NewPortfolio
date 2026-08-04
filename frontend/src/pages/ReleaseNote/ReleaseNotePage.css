@@ -1,0 +1,111 @@
+/* ════════════════════════════════════════════════════════════════
+   ReleaseNotePage — a página de uma versão
+   A casca (.release-page, .release-page__content) vem do CSS do
+   widget, compartilhada com o índice. Aqui ficam só as peças
+   exclusivas: voltar, estados vazios e a navegação entre versões.
+═══════════════════════════════════════════════════════════════ */
+
+.release-note__back {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    padding-block: var(--space-1);
+
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-3);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.release-note__back:hover {
+    color: var(--color-brand-text);
+}
+
+/* ── Carregando / não encontrada ───────────────────────────────── */
+.release-note__status {
+    padding-block: var(--space-12);
+    text-align: center;
+    color: var(--color-text-3);
+}
+
+.release-note__status-title {
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+/* ── Versão anterior / seguinte ────────────────────────────────── */
+.release-note__nav {
+    display: grid;
+    /* Duas colunas quando cabe; empilha sozinho em tela estreita, sem
+       precisar de media query. */
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-10);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border-1);
+}
+
+.release-note__nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4);
+
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-1);
+    text-decoration: none;
+
+    transition:
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.release-note__nav-link:hover {
+    border-color: var(--color-border-brand);
+    transform: translateY(-2px);
+}
+
+/* A seguinte alinha à direita — a direção reforça para onde leva. */
+.release-note__nav-link--next {
+    text-align: end;
+    align-items: flex-end;
+}
+
+.release-note__nav-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.release-note__nav-title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-1);
+    line-height: var(--lh-snug);
+}
+
+/* Alvo confortável no toque e em telas estreitas — mesma consulta do
+   resto do projeto, cobrindo o ponteiro grosso e a janela pequena. */
+@media (pointer: coarse), (max-width: 640px) {
+    .release-note__back {
+        min-height: 44px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .release-note__nav-link:hover {
+        transform: none;
+    }
+}

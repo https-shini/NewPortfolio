@@ -1,0 +1,109 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import React from "react";
+import { LangProvider } from "@/app/LangContext";
+import { RouterProvider } from "@/app/RouterContext";
+import { ReleaseNotePage } from "./index";
+import { PROFILE } from "@/shared/config/profile";
+import { RELEASE_NOTES } from "@/shared/config/releaseNotes";
+import { releaseNotePath } from "@/shared/config/routes";
+
+const [latest, previous] = RELEASE_NOTES;
+
+const setup = (version: string) => {
+    localStorage.setItem("portfolio-lang", "pt");
+    window.history.replaceState({}, "", releaseNotePath(version));
+
+    return render(
+        <RouterProvider>
+            <LangProvider>
+                <ReleaseNotePage version={version} />
+            </LangProvider>
+        </RouterProvider>,
+    );
+};
+
+describe("ReleaseNotePage", () => {
+    beforeEach(() => {
+        sessionStorage.clear();
+        /* Endpoint pendente: a página se sustenta na camada local. */
+        vi.stubGlobal("fetch", vi.fn().mockReturnValue(new Promise(() => {})));
+    });
+
+    afterEach(() => vi.unstubAllGlobals());
+
+    it("mostra a versão pedida, com título como manchete", () => {
+        setup(latest!.version);
+
+        expect(
+            screen.getByRole("heading", { level: 1, name: latest!.title.pt }),
+        ).toBeInTheDocument();
+    });
+
+    it("usa o mesmo header e rodapé do site", () => {
+        setup(latest!.version);
+
+        expect(document.getElementById("site-header")).toBeInTheDocument();
+        expect(screen.getByRole("contentinfo")).toBeInTheDocument();
+    });
+
+    it("define título e canonical da versão", () => {
+        setup(latest!.version);
+
+        expect(document.title).toContain(`v${latest!.version}`);
+        expect(document.title).toContain(PROFILE.name);
+        expect(
+            document.head
+                .querySelector('link[rel="canonical"]')
+                ?.getAttribute("href"),
+        ).toBe(`${PROFILE.siteUrl}${releaseNotePath(latest!.version)}`);
+    });
+
+    it("aceita a versão com ou sem o prefixo v", () => {
+        setup(`v${latest!.version}`);
+        expect(
+            screen.getByRole("heading", { level: 1, name: latest!.title.pt }),
+        ).toBeInTheDocument();
+    });
+
+    it("oferece o caminho de volta para o índice", () => {
+        setup(latest!.version);
+
+        expect(
+            screen.getByRole("link", { name: /Todas as versões/ }),
+        ).toHaveAttribute("href", "/release-notes");
+    });
+
+    it("liga as versões vizinhas", () => {
+        setup(previous!.version);
+
+        /* A anterior tem uma mais nova acima e uma mais velha abaixo. */
+        expect(
+            screen.getByRole("link", { name: new RegExp(latest!.title.pt) }),
+        ).toHaveAttribute("href", releaseNotePath(latest!.version));
+    });
+
+    it("a mais recente não aponta para uma versão mais nova", () => {
+        setup(latest!.version);
+
+        expect(
+            screen.queryByText("Versão mais recente"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("enquanto carrega, não declara versão inexistente", () => {
+        /* Uma versão que só existe no GitHub ainda não chegou. Dizer
+           "não encontrada" aqui seria errado. */
+        setup("9.9.9");
+
+        expect(screen.getByText("Carregando a versão")).toBeInTheDocument();
+        expect(
+            screen.queryByText("Versão não encontrada"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("versão inexistente não quebra a página", () => {
+        expect(() => setup("9.9.9")).not.toThrow();
+        expect(screen.getByRole("contentinfo")).toBeInTheDocument();
+    });
+});

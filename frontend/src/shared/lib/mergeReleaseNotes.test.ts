@@ -19,7 +19,12 @@ const local = (
     version: string,
     date: string,
     extra: Partial<ReleaseEntry> = {},
-): ReleaseEntry => ({ version, date, ...extra });
+): ReleaseEntry => ({
+    version,
+    date,
+    title: { pt: `Versão ${version}`, en: `Version ${version}` },
+    ...extra,
+});
 
 describe("mergeReleaseNotes", () => {
     it("com lista vazia dos dois lados, devolve vazio", () => {

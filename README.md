@@ -60,7 +60,9 @@ O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/`
 | ----------------- | ------------------ | --------------------------------------------------------------- |
 | `/`               | `HomePage`         | Portfólio completo — as seções abaixo, navegadas por âncora     |
 | `/links`          | `LinksPage`        | **Social tree** (link-in-bio): perfil, stack e links públicos   |
-| `/release-notes`  | `ReleaseNotesPage` | Linha do tempo das versões do site (ver *Como publicar uma versão*) |
+| `/release-notes`  | `ReleaseNotesPage` | Linha do tempo das versões (ver *Como publicar uma versão*)      |
+| `/release-notes/page/2` | `ReleaseNotesPage` | Páginas seguintes do histórico, de 50 em 50                |
+| `/release-notes/v2.0.0` | `ReleaseNotePage`  | Uma versão, com endereço próprio e conteúdo completo       |
 
 O roteamento é próprio, sobre a History API (`app/RouterContext.tsx`), sem
 `react-router-dom` — o projeto mantém apenas `react` e `react-dom` em runtime.
@@ -74,16 +76,24 @@ chega-se a ela pelo card "Redes Sociais" da seção Contato e pelo link no rodap
 O acesso direto por URL (`gcruz.dev.br/links`) funciona normalmente — é assim que
 a página é compartilhada.
 
-A `/release-notes`, ao contrário, é uma página **do site**: usa o mesmo header e
-rodapé e herda o tema e o idioma correntes. Chega-se a ela pelo badge de versão no
-rodapé — que abre a mesma linha do tempo em um modal — e pelo botão "Ver todas as
-versões" de dentro dele. Cada versão tem permalink próprio, derivado da SemVer
-(`/release-notes#v2-0-0`), que rola até a entrada e abre o painel dela.
+As notas de versão, ao contrário, são páginas **do site**: usam o mesmo header e
+rodapé e herdam o tema e o idioma correntes. Chega-se a elas pelo badge de versão no
+rodapé, que leva ao índice.
+
+O índice traz a versão mais recente aberta no topo e o histórico em accordion,
+paginado de 50 em 50 conforme cresce. **Cada versão também tem página própria**,
+com título como manchete, navegação para a versão anterior e a seguinte, e volta
+para o índice. O caminho sai sempre dos construtores de `shared/config/routes.ts`
+(`releaseNotePath`, `releaseNotesPagePath`) — nenhuma URL é montada à mão. O
+casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
+
+> Uma versão publicada só no GitHub também ganha página: a rota é resolvida em
+> tempo de execução pelo mesmo merge do índice, não por uma lista estática.
 
 > **Deploy — atenção ao Root Directory.** O `vercel.json` fica na **raiz do
 > repositório**, não em `frontend/`: o Root Directory do projeto na Vercel é a
 > raiz, e um `vercel.json` dentro de `frontend/` é simplesmente ignorado. Ele
-> reescreve `/links` e `/release-notes` para `index.html`; sem isso o acesso
+> reescreve `/links` e `/release-notes/*` para `index.html`; sem isso o acesso
 > direto retorna 404. Ao criar uma rota nova, acrescente-a ali também.
 >
 > Pela mesma razão, as funções serverless vivem em **`api/` na raiz** do
@@ -243,8 +253,9 @@ Utilitários globais: `.btn`, `.badge`, `.section*`, `.container`, `.social-link
 **Notas de versão**
 
 - Linha do tempo em duas camadas: releases do GitHub pela serverless + edição bilíngue local
-- Badge de versão no rodapé (número vindo do `package.json`, injetado no build) abrindo a mesma timeline em modal
-- Página `/release-notes` com filtro por tema, "carregar mais" e permalink por versão
+- Badge de versão no rodapé (número vindo do `package.json`, injetado no build) levando ao índice
+- Índice `/release-notes` com filtro por tema, paginação de 50 em 50 e permalink por versão
+- **Uma página por versão** (`/release-notes/v2.0.0`), com navegação entre versões e entrada própria no sitemap, gerada no build
 - Sem rede ou sem token, cai na camada local e segue completa — o selo de sincronização informa o estado
 
 **SEO**
@@ -433,16 +444,18 @@ local. O selo de sincronização no cabeçalho informa o estado.
 
 ## 🧪 Testes
 
-Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **198 testes em 24 arquivos**, cobrindo também as funções serverless em `api/`:
+Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **245 testes em 29 arquivos**, cobrindo também as funções serverless em `api/`:
 
 - **Utils** — `dateUtils` (durações e data por extenso), `academicDates`, `text`, `richText`, `mailto`, `careerDates`, `cache` (TTL e storage indisponível), `mergeReleaseNotes` (precedência GitHub × local, ordenação, imutabilidade)
 - **Serverless** — `_markdown` (conversão sem dependências; o escape do HTML **antecede** a transformação, e é isso que sanitiza — protocolos perigosos em links, atributos injetados, blockquote e headings limitados a h2–h4)
 - **Config** — `links` (ids únicos, URLs sem duplicata, derivação de `PROFILE`), `releaseNotes` (versão casa com o `package.json`, ordenação, bilíngue completo)
 - **Hooks** — `useTheme` (persistência, `prefers-color-scheme`, DOM), `useGithubStats` (cache, expiração e fallback), `useReleaseNotes` (cache com TTL, erro de rede, resposta malformada)
 - **Contexto** — `LangContext` (idioma inicial, toggle, persistência), `RouterContext` (navigate, popstate, normalização)
-- **UI base** — `Modal` (Esc, overlay, focus-trap, restauração de foco, scroll-lock), `Accordion` (teclado, ARIA, modo controlado)
+- **UI base** — `Modal` (Esc, overlay, focus-trap, congelamento da página, fundo inerte), `Accordion` (teclado, ARIA, modo controlado, painel fechado fora da ordem de foco)
+- **Overlays** — `useScrollLock` (posição preservada, barra compensada, travas aninhadas), `useInertBackground` (marca os irmãos, poupa o overlay, compõe aninhado)
 - **Componentes** — `Hero`, `ContactForm` (validação, envio, erros), `Recommendations` (paginação do carrossel), `ReleaseNotes` (topo expandido, accordion, filtro, paginação)
-- **Páginas** — `LinksPage` (perfil, `rel` seguro nos externos, mailto sem nova aba, share nativo vs. clipboard, SEO da rota), `ReleaseNotesPage` (SEO, degradação para a camada local, permalink que expande na carga e no `hashchange`, âncora desconhecida)
+- **Páginas** — `LinksPage` (perfil, `rel` seguro nos externos, mailto sem nova aba, share nativo vs. clipboard, SEO da rota), `ReleaseNotesPage` (SEO, degradação para a camada local, permalink que expande na carga e no `hashchange`, âncora desconhecida), `ReleaseNotePage` (versão pedida, vizinhas, SEO próprio, carregando × inexistente)
+- **Rotas** — construtores e `matchReleaseNotes` (versão com e sem `v`, pré-lançamento, página inválida, ida e volta estável)
 
 ```bash
 npm run test          # run único (CI)
