@@ -89,6 +89,13 @@ versões" de dentro dele. Cada versão tem permalink próprio, derivado da SemVe
 > Pela mesma razão, as funções serverless vivem em **`api/` na raiz** do
 > repositório, e não em `frontend/api/` — de onde nunca chegaram a ser
 > compiladas. Vale para qualquer função nova.
+>
+> **A raiz precisa de uma TypeScript 5.x explícita.** O builder das funções
+> resolve a `typescript` do `node_modules` da raiz, não a do `frontend/`. Sem
+> uma dependência direta, quem ficava lá era a **7.0.2** que o `@commitlint/cli`
+> puxa por transitividade — a reescrita nativa, cuja API JS mudou —, e o deploy
+> morria em `Cannot read properties of undefined (reading 'readFile')` depois de
+> o Vite já ter buildado. Por isso `typescript` é devDependency da raiz também.
 
 ---
 
