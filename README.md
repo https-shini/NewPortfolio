@@ -27,6 +27,7 @@
 - [Scripts](#-scripts)
 - [Variáveis de ambiente](#-variáveis-de-ambiente)
 - [Como adicionar um link](#-como-adicionar-um-link)
+- [Como publicar uma versão](#-como-publicar-uma-versão)
 - [Testes](#-testes)
 - [Qualidade e CI](#-qualidade-e-ci)
 - [Acessibilidade](#-acessibilidade)
@@ -41,7 +42,7 @@
 
 Portfólio pessoal de **segunda geração** — SPA construída em **React 18 + TypeScript 5 + Vite 5**, evoluindo a versão anterior em HTML/CSS/JS puro. O projeto tem arquitetura por camadas (app → pages → widgets → shared), design system próprio com tokens CSS, internacionalização completa (PT-BR/EN), tema dark/light persistente e **zero dependências de UI externas** — todos os componentes e os 60+ ícones SVG são do próprio design system.
 
-O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/` contém toda a aplicação. Na raiz ficam também as duas peças que a Vercel lê a partir do Root Directory: `vercel.json` (rewrites das rotas) e `api/`, com uma **Vercel Serverless Function** que alimenta as métricas do GitHub sem expor token ao browser. A pasta `backend/` segue reservada para uma API própria no futuro.
+O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/` contém toda a aplicação. Na raiz ficam também as duas peças que a Vercel lê a partir do Root Directory: `vercel.json` (rewrites das rotas) e `api/`, com duas **Vercel Serverless Functions** que falam com o GitHub sem expor token ao browser — `/api/github-stats` (métricas do perfil) e `/api/release-notes` (releases publicadas, já convertidas de markdown para HTML no servidor). A pasta `backend/` segue reservada para uma API própria no futuro.
 
 ---
 
@@ -55,10 +56,11 @@ O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/`
 
 ## 🧭 Páginas e rotas
 
-| Rota     | Página      | Conteúdo                                                              |
-| -------- | ----------- | --------------------------------------------------------------------- |
-| `/`      | `HomePage`  | Portfólio completo — as seções abaixo, navegadas por âncora           |
-| `/links` | `LinksPage` | **Social tree** (link-in-bio): perfil, stack e links públicos         |
+| Rota              | Página             | Conteúdo                                                        |
+| ----------------- | ------------------ | --------------------------------------------------------------- |
+| `/`               | `HomePage`         | Portfólio completo — as seções abaixo, navegadas por âncora     |
+| `/links`          | `LinksPage`        | **Social tree** (link-in-bio): perfil, stack e links públicos   |
+| `/release-notes`  | `ReleaseNotesPage` | Linha do tempo das versões do site (ver *Como publicar uma versão*) |
 
 O roteamento é próprio, sobre a History API (`app/RouterContext.tsx`), sem
 `react-router-dom` — o projeto mantém apenas `react` e `react-dom` em runtime.
@@ -72,11 +74,17 @@ chega-se a ela pelo card "Redes Sociais" da seção Contato e pelo link no rodap
 O acesso direto por URL (`gcruz.dev.br/links`) funciona normalmente — é assim que
 a página é compartilhada.
 
+A `/release-notes`, ao contrário, é uma página **do site**: usa o mesmo header e
+rodapé e herda o tema e o idioma correntes. Chega-se a ela pelo badge de versão no
+rodapé — que abre a mesma linha do tempo em um modal — e pelo botão "Ver todas as
+versões" de dentro dele. Cada versão tem permalink próprio, derivado da SemVer
+(`/release-notes#v2-0-0`), que rola até a entrada e abre o painel dela.
+
 > **Deploy — atenção ao Root Directory.** O `vercel.json` fica na **raiz do
 > repositório**, não em `frontend/`: o Root Directory do projeto na Vercel é a
 > raiz, e um `vercel.json` dentro de `frontend/` é simplesmente ignorado. Ele
-> reescreve `/links` para `index.html`; sem isso o acesso direto retorna 404.
-> Ao criar uma rota nova, acrescente-a ali também.
+> reescreve `/links` e `/release-notes` para `index.html`; sem isso o acesso
+> direto retorna 404. Ao criar uma rota nova, acrescente-a ali também.
 >
 > Pela mesma razão, as funções serverless vivem em **`api/` na raiz** do
 > repositório, e não em `frontend/api/` — de onde nunca chegaram a ser
@@ -125,7 +133,10 @@ a página é compartilhada.
 ```
 .                                # Raiz — o que a Vercel lê pelo Root Directory
 ├── vercel.json                  # Rewrites das rotas da SPA
-├── api/github-stats.ts          # Serverless: métricas do GitHub (token server-only)
+├── api/                         # Serverless (token server-only, cache de CDN)
+│   ├── github-stats.ts          #   Métricas do perfil
+│   ├── release-notes.ts         #   Releases publicadas, já em HTML
+│   └── _markdown.ts             #   Markdown → HTML sem dependências; escapa antes de converter
 │
 frontend/
 │
@@ -145,9 +156,10 @@ frontend/
     │
     ├── pages/
     │   ├── Home/                # Portfólio completo (/)
-    │   └── Links/               # Social tree (/links) — autônoma
-    │       ├── index.tsx · Links.css
-    │       └── components/      # LinkCard, ParticleField (exclusivos da página)
+    │   ├── Links/               # Social tree (/links) — autônoma
+    │   │   ├── index.tsx · Links.css
+    │   │   └── components/      # LinkCard, ParticleField (exclusivos da página)
+    │   └── ReleaseNotes/        # Linha do tempo das versões (/release-notes)
     │
     ├── widgets/                 # Um módulo por seção (tsx + css co-locados)
     │   ├── Header/  Hero/  About/  Timeline/  Formacoes/
@@ -221,6 +233,13 @@ Utilitários globais: `.btn`, `.badge`, `.section*`, `.container`, `.social-link
 - Formulário com validação completa, estados de loading/sucesso/erro, honeypot anti-spam e endpoint configurável por env
 - Fallback automático para mailto quando o endpoint não está configurado
 
+**Notas de versão**
+
+- Linha do tempo em duas camadas: releases do GitHub pela serverless + edição bilíngue local
+- Badge de versão no rodapé (número vindo do `package.json`, injetado no build) abrindo a mesma timeline em modal
+- Página `/release-notes` com filtro por tema, "carregar mais" e permalink por versão
+- Sem rede ou sem token, cai na camada local e segue completa — o selo de sincronização informa o estado
+
 **SEO**
 
 - Meta tags completas (canonical, Open Graph, Twitter Cards), JSON-LD (`Person`), sitemap, robots.txt, favicons e manifest PWA
@@ -286,7 +305,7 @@ Definidas em `frontend/.env.local` (ver `frontend/.env.example`):
 | -------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `VITE_FORM_ENDPOINT` | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail.                                                         |
 | `VITE_SITE_URL`      | Não         | Domínio canônico injetado no `index.html` no build (canonical, Open Graph, JSON-LD). Default: `https://gcruz.dev.br`.                                                       |
-| `GITHUB_TOKEN`       | Não         | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Usado por `/api/github-stats` para as métricas do GitHub; sem ela, o card de commits usa o valor de fallback. |
+| `GITHUB_TOKEN`       | Não         | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Usado pelas duas serverless: `/api/github-stats` (sem ela o card de commits cai no valor de fallback) e `/api/release-notes` (sem ela a lista vem vazia e a linha do tempo se sustenta na camada local). |
 
 > Variáveis com prefixo `VITE_` são expostas ao browser — nunca coloque segredos.
 
@@ -354,17 +373,69 @@ npm test   # links.test.ts valida ids únicos, URLs sem duplicata,
 
 ---
 
+## 🚢 Como publicar uma versão
+
+A linha do tempo de `/release-notes` tem **duas camadas**, e o caminho curto não
+passa pelo código.
+
+### Caminho curto — só publicar a release
+
+Suba a tag e publique a release no GitHub, com o corpo em markdown. A
+`/api/release-notes` busca as releases com o `GITHUB_TOKEN`, converte o markdown
+em HTML **no servidor** e devolve `{version, date, title, html, url}` com cache de
+CDN (`s-maxage=3600`). **A versão aparece no site sem tocar em nenhum arquivo.**
+
+```bash
+npm version minor          # atualiza o package.json e cria a tag
+git push --follow-tags
+# publique a release no GitHub apontando para a tag
+```
+
+A versão exibida no badge do rodapé vem do `package.json`, injetada no build como
+`__APP_VERSION__` (`vite.config.ts`) — não existe número digitado à mão.
+
+### Caminho longo — tratamento editorial
+
+O corpo de uma release do GitHub é monolíngue e sem mídia. Para uma versão que
+mereça destaque, acrescente uma entrada em
+`frontend/src/shared/config/releaseNotes.ts`:
+
+```ts
+{
+    version: "2.1.0",                       // casa com a tag, com ou sem "v"
+    date: "2026-09-01",                     // ISO; o GitHub sobrescreve se houver release
+    featured: true,                         // trata como post: capa, corpo e mídia
+    title: { pt: "…", en: "…" },
+    summary: { pt: "…", en: "…" },          // uma linha, no cabeçalho colapsado
+    body: { pt: "…", en: "…" },             // substitui o HTML do GitHub
+    tags: ["design", "a11y"],               // alimenta os chips de filtro
+    changes: [{ type: "added", items: { pt: [...], en: [...] } }],
+}
+```
+
+A precedência é fixa e testada em `shared/lib/mergeReleaseNotes.ts`: o **GitHub
+manda** em `version`, `date` e `url`; o **local sobrepõe** `title`, `summary`,
+`body`, `media`, `tags`, `featured`, `changes` e `links`. Definir `body` local
+zera o `html` do GitHub — o mesmo conteúdo nunca aparece duas vezes.
+
+Sem rede, sem token ou com o rate limit estourado, a serverless responde
+`{"releases": []}` com status 200 e a linha do tempo se sustenta só na camada
+local. O selo de sincronização no cabeçalho informa o estado.
+
+---
+
 ## 🧪 Testes
 
-Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **151 testes em 20 arquivos**:
+Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **198 testes em 24 arquivos**, cobrindo também as funções serverless em `api/`:
 
-- **Utils** — `dateUtils` (durações e data por extenso), `academicDates`, `text`, `richText`, `mailto`, `careerDates`, `cache` (TTL e storage indisponível)
+- **Utils** — `dateUtils` (durações e data por extenso), `academicDates`, `text`, `richText`, `mailto`, `careerDates`, `cache` (TTL e storage indisponível), `mergeReleaseNotes` (precedência GitHub × local, ordenação, imutabilidade)
+- **Serverless** — `_markdown` (conversão sem dependências; o escape do HTML **antecede** a transformação, e é isso que sanitiza — protocolos perigosos em links, atributos injetados, blockquote e headings limitados a h2–h4)
 - **Config** — `links` (ids únicos, URLs sem duplicata, derivação de `PROFILE`), `releaseNotes` (versão casa com o `package.json`, ordenação, bilíngue completo)
-- **Hooks** — `useTheme` (persistência, `prefers-color-scheme`, DOM), `useGithubStats` (cache, expiração e fallback)
+- **Hooks** — `useTheme` (persistência, `prefers-color-scheme`, DOM), `useGithubStats` (cache, expiração e fallback), `useReleaseNotes` (cache com TTL, erro de rede, resposta malformada)
 - **Contexto** — `LangContext` (idioma inicial, toggle, persistência), `RouterContext` (navigate, popstate, normalização)
 - **UI base** — `Modal` (Esc, overlay, focus-trap, restauração de foco, scroll-lock), `Accordion` (teclado, ARIA, modo controlado)
 - **Componentes** — `Hero`, `ContactForm` (validação, envio, erros), `Recommendations` (paginação do carrossel), `ReleaseNotes` (topo expandido, accordion, filtro, paginação)
-- **Páginas** — `LinksPage` (perfil, `rel` seguro nos externos, mailto sem nova aba, share nativo vs. clipboard, SEO da rota)
+- **Páginas** — `LinksPage` (perfil, `rel` seguro nos externos, mailto sem nova aba, share nativo vs. clipboard, SEO da rota), `ReleaseNotesPage` (SEO, degradação para a camada local, permalink que expande na carga e no `hashchange`, âncora desconhecida)
 
 ```bash
 npm run test          # run único (CI)
@@ -393,7 +464,26 @@ npm run test:watch    # watch mode
 | Focus trap            | Menu mobile e modais capturam o foco                                                       |
 | Formulário            | Labels reais, `aria-invalid`, `aria-describedby` por erro, status com `role="status"`      |
 | Movimento reduzido    | `prefers-reduced-motion` remove animações e autoplay                                       |
+| Alvos de toque        | Mínimo de 24px em qualquer ponteiro (2.5.8) e 44px no toque (2.5.5)                        |
+| Hierarquia de títulos | Um `h1` por página; a timeline ajusta seu nível conforme o contexto (`headingLevel`)        |
 | Lint de a11y          | `eslint-plugin-jsx-a11y` no CI                                                             |
+
+**Contraste e o token `--color-brand-text`.** O crimson da marca (`--color-brand`,
+crimson-600) foi medido com axe-core sobre o build e **reprova o AA de 4.5:1 como
+texto** nos dois temas: 4.13:1 sobre o fundo escuro e 4.26:1 sobre o off-white do
+claro. Ele continua correto como **preenchimento**, onde o critério é 1.4.11, de
+3:1. Por isso existe `--color-brand-text`, que resolve para crimson-500 no escuro
+(5.29:1) e crimson-700 no claro (5.71:1).
+
+> Ao pintar texto com a cor da marca, use `--color-brand-text`. `--color-brand`
+> fica para fundos, bordas e ícones.
+
+**Pendência conhecida.** No tema escuro, `--color-text-4` é slate-600 e rende
+2.56:1 sobre o fundo — inutilizável para texto. Nove elementos do rodapé
+(tagline, títulos de coluna, localização, copyright) ainda o usam e reprovam o AA
+em todas as páginas. Corrigir exige uma decisão de design com alcance global —
+subir o token no escuro (o que aproxima demais de `--color-text-3`) ou repontar os
+usos do rodapé —, então ficou fora do escopo das Release Notes.
 
 ---
 

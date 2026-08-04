@@ -2,8 +2,13 @@ import React from "react";
 import { useLang } from "@/shared/hooks/useLang";
 import { useLinkProps } from "@/shared/hooks/useLinkProps";
 import { renderRichParagraphs } from "@/shared/lib/richText";
-import { IconExternalLink, IconArrowRight } from "@/shared/ui/Icons";
-import type { ReleaseEntry, ReleaseLink } from "@/shared/config/releaseNotes";
+import {
+    IconExternalLink,
+    IconArrowRight,
+    IconGitHub,
+} from "@/shared/ui/Icons";
+import type { ReleaseLink } from "@/shared/config/releaseNotes";
+import type { MergedRelease } from "@/shared/lib/mergeReleaseNotes";
 import { ChangeList } from "./ChangeList";
 import { ReleaseMeta } from "./ReleaseMeta";
 import { versionSlug } from "../ReleaseNotes.types";
@@ -26,7 +31,9 @@ const ReleaseLinkItem: React.FC<{ link: ReleaseLink }> = ({ link }) => {
 };
 
 interface ReleaseCardProps {
-    entry: ReleaseEntry;
+    entry: MergedRelease;
+    /** Acompanha o nível do título da timeline — ver ReleaseNotes.tsx. */
+    headingLevel?: number;
 }
 
 /**
@@ -34,9 +41,13 @@ interface ReleaseCardProps {
  * Traz o tratamento editorial completo: capa, título, texto,
  * mídia e, no rodapé, a lista estruturada.
  */
-export const ReleaseCard: React.FC<ReleaseCardProps> = ({ entry }) => {
-    const { lang } = useLang();
+export const ReleaseCard: React.FC<ReleaseCardProps> = ({
+    entry,
+    headingLevel = 3,
+}) => {
+    const { t, lang } = useLang();
     const titleId = `${versionSlug(entry.version)}-title`;
+    const Heading = `h${headingLevel}` as "h2" | "h3";
 
     return (
         <article
@@ -57,18 +68,28 @@ export const ReleaseCard: React.FC<ReleaseCardProps> = ({ entry }) => {
             <ReleaseMeta entry={entry} isLatest />
 
             {entry.title && (
-                <h3 className="release-card__title" id={titleId}>
+                <Heading className="release-card__title" id={titleId}>
                     {entry.title[lang]}
-                </h3>
+                </Heading>
             )}
 
-            {entry.body && (
+            {entry.body ? (
                 <div className="release-card__body">
                     {renderRichParagraphs(
                         entry.body[lang],
                         "release-card__paragraph",
                     )}
                 </div>
+            ) : (
+                entry.html && (
+                    /* HTML produzido pela própria serverless, que escapa o
+                       texto antes de converter — as únicas tags presentes
+                       são as que ela emite. Ver api/_markdown.ts. */
+                    <div
+                        className="release-card__body release-card__body--html"
+                        dangerouslySetInnerHTML={{ __html: entry.html }}
+                    />
+                )
             )}
 
             {entry.media && entry.media.length > 0 && (
@@ -102,13 +123,32 @@ export const ReleaseCard: React.FC<ReleaseCardProps> = ({ entry }) => {
                 </div>
             )}
 
-            <ChangeList changes={entry.changes} />
+            <ChangeList
+                changes={entry.changes}
+                headingLevel={headingLevel + 1}
+            />
 
-            {entry.links && entry.links.length > 0 && (
+            {(entry.links?.length || entry.url) && (
                 <div className="release-card__links">
-                    {entry.links.map((link) => (
+                    {entry.links?.map((link) => (
                         <ReleaseLinkItem key={link.href} link={link} />
                     ))}
+
+                    {entry.url && (
+                        <a
+                            className="release-card__link"
+                            href={entry.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <IconGitHub
+                                width={13}
+                                height={13}
+                                aria-hidden="true"
+                            />
+                            {t("releaseNotes.viewOnGithub")}
+                        </a>
+                    )}
                 </div>
             )}
         </article>

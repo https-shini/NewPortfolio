@@ -29,6 +29,12 @@ Object.defineProperty(window, "scrollTo", {
     value: vi.fn(),
 });
 
+/* Nem scrollIntoView, usado pelo permalink de /release-notes. */
+Object.defineProperty(Element.prototype, "scrollIntoView", {
+    writable: true,
+    value: vi.fn(),
+});
+
 class IntersectionObserverStub {
     observe = vi.fn();
     unobserve = vi.fn();

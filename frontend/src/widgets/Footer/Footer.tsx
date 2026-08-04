@@ -542,7 +542,24 @@ export const Footer: React.FC = () => {
                 className="release-notes-modal"
             >
                 <Suspense fallback={null}>
-                    <ReleaseNotes titleId="release-notes-title" />
+                    <ReleaseNotes
+                        titleId="release-notes-title"
+                        action={
+                            <a
+                                href={ROUTES.RELEASE_NOTES}
+                                className="btn btn--outline btn--sm release-notes__view-all"
+                                onClick={(e) => {
+                                    if (e.metaKey || e.ctrlKey || e.shiftKey)
+                                        return;
+                                    e.preventDefault();
+                                    setNotesOpen(false);
+                                    navigate(ROUTES.RELEASE_NOTES);
+                                }}
+                            >
+                                {t("releaseNotes.viewAll")}
+                            </a>
+                        }
+                    />
                 </Suspense>
             </Modal>
         </footer>

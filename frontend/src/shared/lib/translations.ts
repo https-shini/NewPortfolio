@@ -211,6 +211,12 @@ export type TranslationKey =
     | "releaseNotes.expand"
     | "releaseNotes.collapse"
     | "releaseNotes.empty"
+    | "releaseNotes.sync.loading"
+    | "releaseNotes.sync.ok"
+    | "releaseNotes.sync.local"
+    | "releaseNotes.viewOnGithub"
+    | "releaseNotes.viewAll"
+    | "releaseNotes.meta.description"
     | "releaseNotes.category.added"
     | "releaseNotes.category.changed"
     | "releaseNotes.category.fixed"
@@ -468,6 +474,13 @@ const pt: Translations = {
     "releaseNotes.expand": "Expandir",
     "releaseNotes.collapse": "Recolher",
     "releaseNotes.empty": "Nenhuma versão com este tema.",
+    "releaseNotes.sync.loading": "Sincronizando",
+    "releaseNotes.sync.ok": "Sincronizado",
+    "releaseNotes.sync.local": "Exibindo o histórico local",
+    "releaseNotes.viewOnGithub": "Ver no GitHub",
+    "releaseNotes.viewAll": "Ver todas as versões",
+    "releaseNotes.meta.description":
+        "Histórico de versões do portfólio de Guilherme Cruz — o que mudou em cada release, com data e detalhes.",
     "releaseNotes.category.added": "Adicionado",
     "releaseNotes.category.changed": "Alterado",
     "releaseNotes.category.fixed": "Corrigido",
@@ -726,6 +739,13 @@ const en: Translations = {
     "releaseNotes.expand": "Expand",
     "releaseNotes.collapse": "Collapse",
     "releaseNotes.empty": "No version matches this topic.",
+    "releaseNotes.sync.loading": "Syncing",
+    "releaseNotes.sync.ok": "Synced",
+    "releaseNotes.sync.local": "Showing the local history",
+    "releaseNotes.viewOnGithub": "View on GitHub",
+    "releaseNotes.viewAll": "See every version",
+    "releaseNotes.meta.description":
+        "Version history of Guilherme Cruz's portfolio — what changed in each release, with dates and details.",
     "releaseNotes.category.added": "Added",
     "releaseNotes.category.changed": "Changed",
     "releaseNotes.category.fixed": "Fixed",

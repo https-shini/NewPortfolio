@@ -9,10 +9,17 @@ import { ROUTES } from "@/shared/config/constants";
  * A home é síncrona (destino da maioria das visitas e fallback de rota
  * desconhecida); páginas secundárias entram por lazy, como já se faz com os
  * modais. Para adicionar uma página: crie-a em `pages/`, registre o pathname
- * em ROUTES (shared/config/constants.ts) e acrescente um caso aqui.
+ * em ROUTES (shared/config/routes.ts), acrescente um caso aqui e o rewrite
+ * correspondente no vercel.json da raiz.
  */
 const LinksPage = lazy(() =>
     import("@/pages/Links").then((m) => ({ default: m.LinksPage })),
+);
+
+const ReleaseNotesPage = lazy(() =>
+    import("@/pages/ReleaseNotes").then((m) => ({
+        default: m.ReleaseNotesPage,
+    })),
 );
 
 export const Routes: React.FC = () => {
@@ -22,6 +29,14 @@ export const Routes: React.FC = () => {
         return (
             <Suspense fallback={null}>
                 <LinksPage />
+            </Suspense>
+        );
+    }
+
+    if (path === ROUTES.RELEASE_NOTES) {
+        return (
+            <Suspense fallback={null}>
+                <ReleaseNotesPage />
             </Suspense>
         );
     }

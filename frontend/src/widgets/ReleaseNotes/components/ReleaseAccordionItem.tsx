@@ -9,6 +9,12 @@ import { versionSlug } from "../ReleaseNotes.types";
 
 interface ReleaseAccordionItemProps {
     entry: ReleaseEntry;
+    /**
+     * Nível dos rótulos de categoria dentro do painel. O gatilho é um
+     * botão, não um título, então quem manda é o cabeçalho do histórico
+     * logo acima — ver `headingLevel` em ReleaseNotes.tsx.
+     */
+    headingLevel?: number;
 }
 
 /**
@@ -18,6 +24,7 @@ interface ReleaseAccordionItemProps {
  */
 export const ReleaseAccordionItem: React.FC<ReleaseAccordionItemProps> = ({
     entry,
+    headingLevel = 4,
 }) => {
     const { t, lang } = useLang();
 
@@ -47,7 +54,10 @@ export const ReleaseAccordionItem: React.FC<ReleaseAccordionItemProps> = ({
                 trigger={trigger}
                 triggerLabel={label}
             >
-                <ChangeList changes={entry.changes} />
+                <ChangeList
+                    changes={entry.changes}
+                    headingLevel={headingLevel}
+                />
             </Accordion>
         </li>
     );

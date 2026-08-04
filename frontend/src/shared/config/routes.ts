@@ -12,6 +12,7 @@
 export const ROUTES = {
     HOME: "/",
     LINKS: "/links",
+    RELEASE_NOTES: "/release-notes",
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];

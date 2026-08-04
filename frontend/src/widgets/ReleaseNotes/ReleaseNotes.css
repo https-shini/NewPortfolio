@@ -29,6 +29,14 @@
 }
 
 /* ── Cabeçalho ─────────────────────────────────────────────────── */
+.release-notes__eyebrow-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
 .release-notes__eyebrow {
     display: inline-flex;
     align-items: center;
@@ -37,7 +45,8 @@
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     letter-spacing: var(--ls-wide);
-    color: var(--color-brand);
+    /* Texto, não preenchimento — ver --color-brand-text em tokens.css. */
+    color: var(--color-brand-text);
 }
 
 .release-notes__title {
@@ -55,6 +64,47 @@
     font-size: var(--text-sm);
     line-height: var(--lh-base);
     color: var(--color-text-3);
+}
+
+/* ── Selo de sincronização ─────────────────────────────────────── */
+.release-notes__sync {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+
+    font-size: var(--text-2xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+}
+
+.release-notes__sync-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: currentColor;
+}
+
+.release-notes__sync--ok {
+    color: var(--color-success);
+}
+
+.release-notes__sync--loading .release-notes__sync-dot {
+    animation: release-sync-pulse 1.4s var(--ease-in-out) infinite;
+}
+
+.release-notes__sync--local {
+    color: var(--color-warning);
+}
+
+@keyframes release-sync-pulse {
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
 }
 
 /* ── Trilha ────────────────────────────────────────────────────── */
@@ -166,6 +216,76 @@
     font-weight: 600;
 }
 
+/* ── Corpo vindo do GitHub (HTML gerado pela serverless) ───────── */
+.release-card__body--html {
+    font-size: var(--text-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-2);
+}
+
+.release-card__body--html > * {
+    margin: 0;
+}
+
+.release-card__body--html h2,
+.release-card__body--html h3,
+.release-card__body--html h4 {
+    margin-top: var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.release-card__body--html ul,
+.release-card__body--html ol {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding-inline-start: var(--space-5);
+    list-style: revert;
+}
+
+.release-card__body--html a {
+    color: var(--color-brand-text);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.release-card__body--html code {
+    padding: 1px var(--space-1);
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--color-accent);
+    background: var(--color-surface-3);
+    border-radius: var(--radius-sm);
+}
+
+.release-card__body--html pre {
+    padding: var(--space-3);
+    overflow-x: auto;
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+}
+
+.release-card__body--html pre code {
+    padding: 0;
+    background: none;
+    color: var(--color-text-2);
+}
+
+.release-card__body--html blockquote {
+    padding-inline-start: var(--space-3);
+    border-inline-start: 2px solid var(--color-border-brand);
+    color: var(--color-text-3);
+}
+
+.release-card__body--html hr {
+    border: none;
+    border-top: 1px solid var(--color-border-1);
+}
+
 .release-card__media {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -205,7 +325,7 @@
 
     font-size: var(--text-xs);
     font-weight: 600;
-    color: var(--color-brand);
+    color: var(--color-brand-text);
     text-decoration: none;
     transition: color var(--transition-fast);
 }
@@ -228,7 +348,7 @@
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     font-weight: 600;
-    color: var(--color-brand);
+    color: var(--color-brand-text);
     background: var(--color-brand-subtle);
     border: 1px solid var(--color-border-brand);
     border-radius: var(--radius-sm);
@@ -253,14 +373,18 @@
 
 .release-meta__date {
     font-size: var(--text-xs);
-    color: var(--color-text-4);
+    /* text-4 é tom de apoio decorativo: no escuro cai a 2.48:1 sobre o
+       cartão. A data é informação, então usa o tom de texto secundário. */
+    color: var(--color-text-3);
 }
 
 .release-meta__tag {
     font-size: var(--text-2xs);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
-    color: var(--color-accent);
+    /* accent puro é indigo-500 no escuro: 4.21:1, abaixo do AA a 10px.
+       accent-light sobe para indigo-400 lá e não muda nada no claro. */
+    color: var(--color-accent-light);
 }
 
 /* ── Lista estruturada (Keep a Changelog) ──────────────────────── */
@@ -348,8 +472,15 @@
 }
 
 .release-notes__filter {
+    display: inline-flex;
+    align-items: center;
     min-width: 0;
     max-width: 100%;
+    /* WCAG 2.5.8 (Target Size, Minimum) exige 24px em QUALQUER ponteiro,
+       não só no toque. O texto tem 21px de caixa; o mínimo abaixo cobre
+       o mouse, e a consulta de ponteiro grosso mais adiante sobe para os
+       44px de conforto do 2.5.5. */
+    min-height: 24px;
     padding: var(--space-1) var(--space-3);
 
     font-family: inherit;
@@ -380,7 +511,10 @@
 }
 
 .release-notes__filter.is-active {
-    color: var(--color-text-inverse);
+    /* Branco literal, como .btn--primary em globals.css: sobre o crimson
+       preenchido ele dá 4.70:1, enquanto --color-text-inverse fica em
+       4.13:1 no tema escuro, onde é o azul-marinho de fundo. */
+    color: #fff;
     background: var(--color-brand);
     border-color: var(--color-brand);
 }

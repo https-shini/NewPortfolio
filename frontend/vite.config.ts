@@ -59,6 +59,9 @@ export default defineConfig({
         port: 5173,
         open: true,
         strictPort: true,
+        /* A raiz do repositório contém a pasta api/, cujo conversor de
+           markdown entra na suíte de testes (ver `test.include`). */
+        fs: { allow: [".."] },
     },
 
     preview: {
@@ -118,6 +121,9 @@ export default defineConfig({
         globals: true,
         setupFiles: "./src/test/setup.ts",
         css: false,
-        include: ["src/**/*.test.{ts,tsx}"],
+        /* A pasta api/ mora na raiz do repositório (é de lá que a Vercel
+           lê as funções), mas o conversor de markdown é código de
+           segurança e precisa da mesma suíte. */
+        include: ["src/**/*.test.{ts,tsx}", "../api/**/*.test.ts"],
     },
 });

@@ -1,25 +1,38 @@
 import React, { useMemo, useState } from "react";
 import "./ReleaseNotes.css";
 import { useLang } from "@/shared/hooks/useLang";
+import { useReleaseNotes } from "@/shared/hooks/useReleaseNotes";
+import { RELEASE_NOTES, getUsedTags } from "@/shared/config/releaseNotes";
 import {
-    RELEASE_NOTES,
-    getUsedTags,
-    type ReleaseEntry,
-} from "@/shared/config/releaseNotes";
+    mergeReleaseNotes,
+    type MergedRelease,
+} from "@/shared/lib/mergeReleaseNotes";
 import { IconGitBranch } from "@/shared/ui/Icons";
 import { ReleaseCard } from "./components/ReleaseCard";
 import { ReleaseAccordionItem } from "./components/ReleaseAccordionItem";
 import { TagFilter } from "./components/TagFilter";
+import { SyncBadge } from "./components/SyncBadge";
 import type { ReleaseFilter } from "./ReleaseNotes.types";
 
 /** Quantos itens do histórico aparecem antes de "ver mais antigas". */
 const PAGE_SIZE = 3;
 
 interface ReleaseNotesProps {
-    /** Entradas a exibir; por padrão, a camada local. */
-    entries?: ReleaseEntry[];
+    /**
+     * Entradas prontas. Quando informado, desliga a busca no GitHub —
+     * é o caminho usado pelos testes e por quem já tem os dados.
+     */
+    entries?: MergedRelease[];
     /** id do título, para o `aria-labelledby` do modal que a envolve. */
     titleId?: string;
+    /** Ação extra no cabeçalho (ex.: "ver todas" no modal). */
+    action?: React.ReactNode;
+    /**
+     * Nível do título da timeline. `2` no modal, onde a página já tem o
+     * seu `h1`; `1` na rota dedicada, onde esta É a manchete. Os títulos
+     * internos acompanham, para que a hierarquia nunca pule um nível.
+     */
+    headingLevel?: 1 | 2;
 }
 
 /**
@@ -29,16 +42,30 @@ interface ReleaseNotesProps {
  * viram itens colapsáveis, filtráveis por tema e revelados aos poucos.
  */
 export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
-    entries = RELEASE_NOTES,
+    entries,
     titleId,
+    action,
+    headingLevel = 2,
 }) => {
     const { t } = useLang();
+    const Heading = `h${headingLevel}` as "h1" | "h2";
+    const SubHeading = `h${headingLevel + 1}` as "h2" | "h3";
     const [filter, setFilter] = useState<ReleaseFilter>("all");
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-    const [latest, ...history] = entries;
+    const { releases, status } = useReleaseNotes({ enabled: !entries });
 
-    const tags = useMemo(() => getUsedTags(entries), [entries]);
+    /* GitHub manda na estrutura; a camada local sobrepõe o editorial.
+       Em erro, `releases` fica vazio e sobra só o local — a timeline
+       continua completa. */
+    const resolved = useMemo(
+        () => entries ?? mergeReleaseNotes(RELEASE_NOTES, releases),
+        [entries, releases],
+    );
+
+    const [latest, ...history] = resolved;
+
+    const tags = useMemo(() => getUsedTags(resolved), [resolved]);
 
     const filtered = useMemo(
         () =>
@@ -66,18 +93,27 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
            — que já existe uma vez na página, no Header do site. */
         <section className="release-notes" aria-labelledby={titleId}>
             <header className="release-notes__header">
-                <span className="release-notes__eyebrow">
-                    <IconGitBranch width={14} height={14} aria-hidden="true" />v
-                    {latest.version}
-                </span>
+                <div className="release-notes__eyebrow-row">
+                    <span className="release-notes__eyebrow">
+                        <IconGitBranch
+                            width={14}
+                            height={14}
+                            aria-hidden="true"
+                        />
+                        v{latest.version}
+                    </span>
+                    {!entries && <SyncBadge status={status} />}
+                </div>
 
-                <h2 className="release-notes__title" id={titleId}>
+                <Heading className="release-notes__title" id={titleId}>
                     {t("releaseNotes.title")}
-                </h2>
+                </Heading>
 
                 <p className="release-notes__subtitle">
                     {t("releaseNotes.subtitle")}
                 </p>
+
+                {action}
             </header>
 
             <div className="release-notes__timeline">
@@ -86,16 +122,19 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
 
                 <ol className="release-notes__list">
                     <li className="release-notes__entry release-notes__entry--latest">
-                        <ReleaseCard entry={latest} />
+                        <ReleaseCard
+                            entry={latest}
+                            headingLevel={headingLevel + 1}
+                        />
                     </li>
                 </ol>
 
                 {history.length > 0 && (
                     <>
                         <div className="release-notes__history-header">
-                            <h3 className="release-notes__history-title">
+                            <SubHeading className="release-notes__history-title">
                                 {t("releaseNotes.previous")}
-                            </h3>
+                            </SubHeading>
                             <TagFilter
                                 tags={tags}
                                 active={filter}
@@ -117,6 +156,7 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
                                     <ReleaseAccordionItem
                                         key={entry.version}
                                         entry={entry}
+                                        headingLevel={headingLevel + 2}
                                     />
                                 ))}
                             </ol>
