@@ -478,6 +478,39 @@ body.light-mode {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   8b. BREAKPOINTS — escala única
+
+   ATENÇÃO: custom property NÃO funciona em @media. `@media (min-width:
+   var(--bp-md))` é inválido por especificação, porque a media query é
+   avaliada antes da cascata. As alternativas seriam `@custom-media` (exige
+   PostCSS, e o projeto não adiciona dependência) ou container queries.
+
+   Então a fonte única é esta tabela: o literal continua escrito na media
+   query, mas SÓ com um destes cinco valores, e a intenção mora aqui.
+
+     --bp-sm    480px   celular grande / fim do layout de uma coluna
+     --bp-md    640px   phablet; é onde o toque deixa de ser a regra
+     --bp-lg    768px   tablet retrato
+     --bp-xl   1024px   tablet paisagem / notebook pequeno
+     --bp-2xl  1280px   desktop
+
+   O CSS é mobile-first: o estilo base vale para a menor tela e cada
+   `min-width` acrescenta. Antes desta escala havia dez valores soltos,
+   com 560/600/640, 768/780 e 880/900 dizendo a mesma coisa de três
+   jeitos diferentes.
+
+   As custom properties abaixo existem para quem precisa do valor em
+   `clamp()`, `min()` ou container query — não para a media query.
+   ───────────────────────────────────────────────────────────────────────────── */
+:root {
+    --bp-sm: 480px;
+    --bp-md: 640px;
+    --bp-lg: 768px;
+    --bp-xl: 1024px;
+    --bp-2xl: 1280px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    9. Z-INDEX — escala semântica
    ───────────────────────────────────────────────────────────────────────────── */
 :root {

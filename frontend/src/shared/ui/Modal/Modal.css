@@ -35,7 +35,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-4);
+    /* Mobile-first: o respiro apertado é a base; a partir de --bp-md
+       ele cresce (ver o bloco no fim do arquivo). */
+    padding: var(--space-3);
     background: color-mix(in srgb, var(--color-bg) 72%, transparent);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -54,7 +56,9 @@
 .modal-dialog {
     position: relative;
     width: min(var(--modal-width, 960px), 100%);
-    max-height: var(--modal-max-height, min(85dvh, 760px));
+    /* Base: quase toda a altura da tela, com margem de segurança. A
+       dimensão que a instância pede só entra a partir de --bp-md. */
+    max-height: calc(100dvh - var(--space-6));
 
     /* Uma linha que ocupa a altura toda e não deixa o filho crescer
        além dela: é o que faz o `overflow-y` do conteúdo valer. Quem
@@ -81,14 +85,17 @@
     }
 }
 
-/* ── Telas pequenas — largura quase total com margens seguras ── */
-@media (max-width: 640px) {
+/* ── A partir de --bp-md (640px) ───────────────────────────────
+   O limite é 641px, e não 640px, porque a escala guarda o ÚLTIMO
+   pixel da faixa menor — é o que mantém o comportamento idêntico
+   ao que havia antes da inversão para mobile-first. */
+@media (min-width: 641px) {
     .modal-backdrop {
-        padding: var(--space-3);
+        padding: var(--space-4);
     }
 
     .modal-dialog {
-        max-height: calc(100dvh - var(--space-6));
+        max-height: var(--modal-max-height, min(85dvh, 760px));
     }
 }
 

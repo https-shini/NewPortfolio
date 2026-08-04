@@ -34,8 +34,10 @@
 /* ── Back-to-top button ────────────────────────────────────────── */
 .back-to-top {
     position: fixed;
-    right: var(--space-6);
-    bottom: var(--space-6);
+    /* Mobile-first: colado à borda na tela pequena; a partir de
+       --bp-md ele se afasta (bloco no fim do arquivo). */
+    right: var(--space-4);
+    bottom: var(--space-4);
     z-index: var(--z-overlay, 100);
 
     width: var(--tap-comfort);
@@ -100,13 +102,11 @@
     outline-offset: 3px;
 }
 
-@media (max-width: 640px) {
+/* A partir de --bp-md o botão se afasta mais da borda. */
+@media (min-width: 641px) {
     .back-to-top {
-        right: var(--space-4);
-        bottom: var(--space-4);
-        /* Mantém ≥44px para toque confortável (WCAG 2.5.5) */
-        width: var(--tap-comfort);
-        height: var(--tap-comfort);
+        right: var(--space-6);
+        bottom: var(--space-6);
     }
 }
 
