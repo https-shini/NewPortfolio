@@ -43,3 +43,16 @@ Object.defineProperty(window, "IntersectionObserver", {
     writable: true,
     value: IntersectionObserverStub,
 });
+
+/* jsdom também não implementa ResizeObserver — o Accordion o usa para
+   medir a altura do painel e animar a transição. */
+class ResizeObserverStub {
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+}
+
+Object.defineProperty(window, "ResizeObserver", {
+    writable: true,
+    value: ResizeObserverStub,
+});

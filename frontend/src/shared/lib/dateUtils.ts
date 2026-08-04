@@ -68,6 +68,28 @@ export function calculateDuration(
     return endDate ? duration : `${s.ongoing} · ${duration}`;
 }
 
+/**
+ * formatFullDate — data ISO completa por extenso, no idioma corrente.
+ *
+ * Ex.: "2026-04-06" + "pt" → "6 de abril de 2026"
+ *      "2026-04-06" + "en" → "April 6, 2026"
+ *
+ * Aceita "YYYY-MM-DD" e timestamps ISO completos (o `published_at` das
+ * releases do GitHub, por exemplo). A data é construída em horário local
+ * a partir dos componentes, evitando o deslocamento de fuso que `new
+ * Date("2026-04-06")` causaria.
+ */
+export function formatFullDate(iso: string, lang: Lang = "pt"): string {
+    const [y, m, d] = iso.slice(0, 10).split("-").map(Number);
+    const date = new Date(y!, (m ?? 1) - 1, d ?? 1);
+
+    return new Intl.DateTimeFormat(lang === "pt" ? "pt-BR" : "en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    }).format(date);
+}
+
 export function formatMonthYear(date: string, lang: Lang = "pt"): string {
     const p = date.split("-").map(Number);
     const d = new Date(p[0], p[1] - 1, 1);

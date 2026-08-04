@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
     calculateDuration,
+    formatFullDate,
     formatMonthYear,
     monthsSince,
     yearsSince,
@@ -82,5 +83,26 @@ describe("formatMonthYear", () => {
     it("formata mês/ano em en-US", () => {
         expect(formatMonthYear("2024-12", "en")).toMatch(/Dec/);
         expect(formatMonthYear("2024-12", "en")).toContain("2024");
+    });
+});
+
+describe("formatFullDate", () => {
+    it("formata a data por extenso em pt-BR", () => {
+        expect(formatFullDate("2026-04-06", "pt")).toBe("6 de abril de 2026");
+    });
+
+    it("formata a data por extenso em en-US", () => {
+        expect(formatFullDate("2026-04-06", "en")).toBe("April 6, 2026");
+    });
+
+    it("aceita timestamp ISO completo (published_at do GitHub)", () => {
+        expect(formatFullDate("2026-04-06T18:30:00Z", "pt")).toBe(
+            "6 de abril de 2026",
+        );
+    });
+
+    it("não desloca o dia por fuso horário", () => {
+        /* new Date("2026-01-01") seria UTC e viraria 31/12 em fusos negativos. */
+        expect(formatFullDate("2026-01-01", "pt")).toContain("1 de janeiro");
     });
 });

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useGithubStats } from "./useGithubStats";
+import { writeCache } from "@/shared/lib/cache";
 
 describe("useGithubStats", () => {
     beforeEach(() => {
@@ -9,6 +10,7 @@ describe("useGithubStats", () => {
     });
     afterEach(() => {
         vi.unstubAllGlobals();
+        vi.useRealTimers();
     });
 
     it("inicia com valores nulos (consumidor aplica fallback)", () => {
@@ -37,12 +39,24 @@ describe("useGithubStats", () => {
     });
 
     it("usa o cache de sessão sem refazer a chamada", () => {
-        sessionStorage.setItem(
-            "github-stats",
-            JSON.stringify({ commits: 999, repos: 10 }),
-        );
+        writeCache("github-stats", { commits: 999, repos: 10 });
         const { result } = renderHook(() => useGithubStats());
         expect(result.current.commits).toBe(999);
         expect(fetch).not.toHaveBeenCalled();
+    });
+
+    it("ignora cache expirado e refaz a chamada", () => {
+        vi.useFakeTimers();
+        writeCache("github-stats", { commits: 999, repos: 10 });
+        /* Avança além do TTL de 1 h do hook. O relógio falso segue ativo
+           durante o render — voltar ao real aqui desfaria o avanço. */
+        vi.setSystemTime(Date.now() + 1000 * 60 * 61);
+
+        vi.mocked(fetch).mockReturnValue(new Promise(() => {})); // pendente
+        const { result } = renderHook(() => useGithubStats());
+
+        expect(fetch).toHaveBeenCalledWith("/api/github-stats");
+        /* Não reaproveitou o valor vencido. */
+        expect(result.current.commits).toBeNull();
     });
 });

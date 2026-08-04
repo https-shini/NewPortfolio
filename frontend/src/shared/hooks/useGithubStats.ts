@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { readCache, writeCache } from "@/shared/lib/cache";
 
 /* ─────────────────────────────────────────────────────────
    useGithubStats — consome /api/github-stats (serverless Vercel)
@@ -19,23 +20,18 @@ export interface GithubStats {
 
 const CACHE_KEY = "github-stats";
 const ENDPOINT = "/api/github-stats";
+/* 1 h — a serverless já cacheia na CDN; isto evita a ida até ela. */
+const TTL = 1000 * 60 * 60;
 const EMPTY: GithubStats = { commits: null, repos: null };
 
-function readCache(): GithubStats | null {
-    try {
-        const raw = sessionStorage.getItem(CACHE_KEY);
-        return raw ? (JSON.parse(raw) as GithubStats) : null;
-    } catch {
-        return null;
-    }
-}
-
 export function useGithubStats(): GithubStats {
-    const [stats, setStats] = useState<GithubStats>(() => readCache() ?? EMPTY);
+    const [stats, setStats] = useState<GithubStats>(
+        () => readCache<GithubStats>(CACHE_KEY, TTL) ?? EMPTY,
+    );
 
     useEffect(() => {
-        /* Já resolvido nesta sessão → não refaz a chamada. */
-        if (readCache()) return;
+        /* Já resolvido e ainda válido → não refaz a chamada. */
+        if (readCache<GithubStats>(CACHE_KEY, TTL)) return;
 
         let cancelled = false;
 
@@ -44,11 +40,7 @@ export function useGithubStats(): GithubStats {
             .then((data) => {
                 if (cancelled || !data) return;
                 setStats(data);
-                try {
-                    sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
-                } catch {
-                    /* sessionStorage indisponível — segue sem cache */
-                }
+                writeCache(CACHE_KEY, data);
             })
             .catch(() => {
                 /* mantém o fallback do consumidor */

@@ -1,4 +1,4 @@
-import type { Lang, Localized } from "@/shared/lib/localized";
+import type { Localized } from "@/shared/lib/localized";
 
 export interface RecommendationItem {
     /** Unique identifier */
@@ -20,20 +20,11 @@ export interface RecommendationItem {
 }
 
 /**
- * formatRecommendationDate — formata uma data ISO no formato long (pt/en).
- * Ex.: '2026-04-06' + 'pt' → "6 de abril de 2026"
- *      '2026-04-06' + 'en' → "April 6, 2026"
+ * formatRecommendationDate — alias de `formatFullDate`.
+ * A formatação virou utilitário compartilhado quando as Release Notes
+ * passaram a precisar da mesma data por extenso.
  */
-export function formatRecommendationDate(iso: string, lang: Lang): string {
-    const [y, m, d] = iso.split("-").map(Number);
-    const date = new Date(y!, (m ?? 1) - 1, d ?? 1);
-    const locale = lang === "pt" ? "pt-BR" : "en-US";
-    return new Intl.DateTimeFormat(locale, {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    }).format(date);
-}
+export { formatFullDate as formatRecommendationDate } from "@/shared/lib/dateUtils";
 
 /**
  * summarize — corta `text` em até `maxChars` preservando a palavra inteira.

@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect, useId, useCallback } from "react";
+import React from "react";
 import "./PositionEntry.css";
 import { useLang } from "@/shared/hooks/useLang";
+import { Accordion } from "@/shared/ui/Accordion/Accordion";
 import {
     IconChevronDown,
     IconSparkles,
@@ -49,13 +50,6 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
     isPromotion = false,
 }) => {
     const { lang, t } = useLang();
-    const [isOpen, setIsOpen] = useState(defaultOpen);
-    const bodyRef = useRef<HTMLDivElement>(null);
-    const [bodyHeight, setBodyHeight] = useState<number | "auto">(
-        defaultOpen ? "auto" : 0,
-    );
-    const panelId = useId();
-    const buttonId = useId();
 
     const present = t("career.present");
     const period = resolvePeriod(position, lang, present);
@@ -76,179 +70,135 @@ export const PositionEntry: React.FC<PositionEntryProps> = ({
     // Quando não há destaques marcados, "Atividades" recebe a lista completa.
     const activities = highlights.length > 0 ? rest : position.bullets;
 
-    // Mede a altura do body para a transição suave
-    useEffect(() => {
-        if (!bodyRef.current) return;
-        const measure = () => {
-            if (!bodyRef.current) return;
-            const h = bodyRef.current.scrollHeight;
-            setBodyHeight(isOpen ? h : 0);
-        };
-        measure();
-        const ro = new ResizeObserver(measure);
-        ro.observe(bodyRef.current);
-        return () => ro.disconnect();
-    }, [isOpen, lang]);
+    /* Estado, ids, medição de altura e ARIA vivem no Accordion compartilhado. */
+    const trigger = (
+        <>
+            {/* Header row: title + status */}
+            <div className="position-entry__title-row">
+                <h4 className="position-entry__title">
+                    {position.title[lang]}
+                </h4>
+                <span
+                    className={`position-entry__status position-entry__status--${position.statusType}`}
+                >
+                    <span
+                        className="position-entry__status-dot"
+                        aria-hidden="true"
+                    />
+                    {statusLabel}
+                </span>
+            </div>
 
-    const toggle = useCallback(() => setIsOpen((v) => !v), []);
+            {/* Meta row — chips estruturados com ícones */}
+            <div className="position-entry__meta">
+                <span className="position-entry__chip">
+                    <IconBriefcase width={12} height={12} aria-hidden="true" />
+                    {employment}
+                </span>
+                <span className="position-entry__chip position-entry__chip--period">
+                    <IconCalendar width={12} height={12} aria-hidden="true" />
+                    {period}
+                </span>
+                <span className="position-entry__chip">
+                    <IconClock width={12} height={12} aria-hidden="true" />
+                    {duration}
+                </span>
+                {modality && (
+                    <span className="position-entry__chip">
+                        <IconLocation
+                            width={12}
+                            height={12}
+                            aria-hidden="true"
+                        />
+                        {modality}
+                    </span>
+                )}
+                {isPromotion && (
+                    <span className="position-entry__chip position-entry__chip--promo">
+                        <IconTrendingUp
+                            width={12}
+                            height={12}
+                            aria-hidden="true"
+                        />
+                        {t("career.promoted")}
+                    </span>
+                )}
+            </div>
+
+            {/* Summary (sempre visível como tagline do cargo) */}
+            {position.summary && (
+                <p className="position-entry__summary">
+                    {position.summary[lang]}
+                </p>
+            )}
+
+            <span className="position-entry__chevron" aria-hidden="true">
+                <IconChevronDown width={18} height={18} />
+            </span>
+        </>
+    );
 
     return (
-        <article
-            className={`position-entry${isOpen ? " is-open" : ""} position-entry--${position.statusType}`}
+        <Accordion
+            as="article"
+            classPrefix="position-entry"
+            className={`position-entry--${position.statusType}`}
+            defaultOpen={defaultOpen}
             style={{ ["--stagger-index" as string]: staggerIndex }}
+            trigger={trigger}
         >
-            <button
-                id={buttonId}
-                type="button"
-                className="position-entry__trigger"
-                aria-expanded={isOpen}
-                aria-controls={panelId}
-                onClick={toggle}
-            >
-                {/* Header row: title + status */}
-                <div className="position-entry__title-row">
-                    <h4 className="position-entry__title">
-                        {position.title[lang]}
-                    </h4>
-                    <span
-                        className={`position-entry__status position-entry__status--${position.statusType}`}
-                    >
-                        <span
-                            className="position-entry__status-dot"
+            {/* Destaques */}
+            {highlights.length > 0 && (
+                <section className="position-entry__section position-entry__section--highlights">
+                    <h5 className="position-entry__section-title">
+                        <IconSparkles
+                            width={14}
+                            height={14}
                             aria-hidden="true"
                         />
-                        {statusLabel}
-                    </span>
-                </div>
+                        {t("career.highlights")}
+                    </h5>
+                    <ul className="position-entry__highlights">
+                        {highlights.map((h, i) => (
+                            <li key={i} className="position-entry__highlight">
+                                {h.text[lang]}
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )}
 
-                {/* Meta row — chips estruturados com ícones */}
-                <div className="position-entry__meta">
-                    <span className="position-entry__chip">
-                        <IconBriefcase
-                            width={12}
-                            height={12}
-                            aria-hidden="true"
-                        />
-                        {employment}
-                    </span>
-                    <span className="position-entry__chip position-entry__chip--period">
-                        <IconCalendar
-                            width={12}
-                            height={12}
-                            aria-hidden="true"
-                        />
-                        {period}
-                    </span>
-                    <span className="position-entry__chip">
-                        <IconClock width={12} height={12} aria-hidden="true" />
-                        {duration}
-                    </span>
-                    {modality && (
-                        <span className="position-entry__chip">
-                            <IconLocation
-                                width={12}
-                                height={12}
-                                aria-hidden="true"
-                            />
-                            {modality}
-                        </span>
-                    )}
-                    {isPromotion && (
-                        <span className="position-entry__chip position-entry__chip--promo">
-                            <IconTrendingUp
-                                width={12}
-                                height={12}
-                                aria-hidden="true"
-                            />
-                            {t("career.promoted")}
-                        </span>
-                    )}
-                </div>
+            {/* Demais atividades */}
+            {activities.length > 0 && (
+                <section className="position-entry__section">
+                    <h5 className="position-entry__section-title">
+                        {t("career.activities")}
+                    </h5>
+                    <ul className="position-entry__bullets">
+                        {activities.map((b, i) => (
+                            <li key={i} className="position-entry__bullet">
+                                {b.text[lang]}
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )}
 
-                {/* Summary (sempre visível como tagline do cargo) */}
-                {position.summary && (
-                    <p className="position-entry__summary">
-                        {position.summary[lang]}
-                    </p>
-                )}
-
-                <span className="position-entry__chevron" aria-hidden="true">
-                    <IconChevronDown width={18} height={18} />
-                </span>
-            </button>
-
-            {/* Corpo expansível */}
-            <div
-                id={panelId}
-                role="region"
-                aria-labelledby={buttonId}
-                className="position-entry__panel"
-                style={{
-                    height: bodyHeight === "auto" ? "auto" : `${bodyHeight}px`,
-                }}
-                aria-hidden={!isOpen}
-            >
-                <div ref={bodyRef} className="position-entry__panel-inner">
-                    {/* Destaques */}
-                    {highlights.length > 0 && (
-                        <section className="position-entry__section position-entry__section--highlights">
-                            <h5 className="position-entry__section-title">
-                                <IconSparkles
-                                    width={14}
-                                    height={14}
-                                    aria-hidden="true"
-                                />
-                                {t("career.highlights")}
-                            </h5>
-                            <ul className="position-entry__highlights">
-                                {highlights.map((h, i) => (
-                                    <li
-                                        key={i}
-                                        className="position-entry__highlight"
-                                    >
-                                        {h.text[lang]}
-                                    </li>
-                                ))}
-                            </ul>
-                        </section>
-                    )}
-
-                    {/* Demais atividades */}
-                    {activities.length > 0 && (
-                        <section className="position-entry__section">
-                            <h5 className="position-entry__section-title">
-                                {t("career.activities")}
-                            </h5>
-                            <ul className="position-entry__bullets">
-                                {activities.map((b, i) => (
-                                    <li
-                                        key={i}
-                                        className="position-entry__bullet"
-                                    >
-                                        {b.text[lang]}
-                                    </li>
-                                ))}
-                            </ul>
-                        </section>
-                    )}
-
-                    {/* Competências */}
-                    {position.tags.length > 0 && (
-                        <section className="position-entry__section">
-                            <h5 className="position-entry__section-title">
-                                {t("career.skills")}
-                            </h5>
-                            <ul className="position-entry__tags">
-                                {position.tags.map((tag, i) => (
-                                    <li key={i} className="position-entry__tag">
-                                        {tag[lang]}
-                                    </li>
-                                ))}
-                            </ul>
-                        </section>
-                    )}
-                </div>
-            </div>
-        </article>
+            {/* Competências */}
+            {position.tags.length > 0 && (
+                <section className="position-entry__section">
+                    <h5 className="position-entry__section-title">
+                        {t("career.skills")}
+                    </h5>
+                    <ul className="position-entry__tags">
+                        {position.tags.map((tag, i) => (
+                            <li key={i} className="position-entry__tag">
+                                {tag[lang]}
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+            )}
+        </Accordion>
     );
 };

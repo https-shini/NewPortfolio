@@ -11,3 +11,10 @@ interface ImportMetaEnv {
 interface ImportMeta {
     readonly env: ImportMetaEnv;
 }
+
+/**
+ * Versão da aplicação, injetada no build a partir do `package.json`
+ * (ver `define` no vite.config.ts). É a fonte única: nenhum arquivo
+ * deve digitar o número da versão.
+ */
+declare const __APP_VERSION__: string;

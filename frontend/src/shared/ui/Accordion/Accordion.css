@@ -1,0 +1,18 @@
+/* ─────────────────────────────────────────────────────────
+   Accordion — base do painel expansível
+   ─────────────────────────────────────────────────────────
+   Só a mecânica da transição de altura. Aparência (cores,
+   espaçamento, chevron) fica no CSS de cada consumidor, via
+   as classes do seu próprio `classPrefix`.
+───────────────────────────────────────────────────────── */
+
+.accordion__panel {
+    overflow: hidden;
+    transition: height var(--duration-base) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .accordion__panel {
+        transition: none;
+    }
+}
