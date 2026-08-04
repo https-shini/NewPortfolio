@@ -5,6 +5,8 @@ import type { ReleaseStatus } from "@/shared/hooks/useReleaseNotes";
 
 interface SyncBadgeProps {
     status: ReleaseStatus;
+    /** Quantas releases o GitHub devolveu de fato. */
+    count: number;
 }
 
 /**
@@ -13,8 +15,13 @@ interface SyncBadgeProps {
  * O estado de erro é informativo, não alarmante: a página continua
  * inteira, só sem as releases do GitHub. Por isso o texto fala do que
  * está sendo exibido, e não do que falhou.
+ *
+ * "Sincronizado" exige que algo tenha vindo de lá. Um `ok` com lista
+ * vazia — repositório ainda sem releases publicadas — é, na prática,
+ * a mesma situação do erro: o que está na tela é só a camada local.
+ * Anunciar sincronia ali seria falso.
  */
-export const SyncBadge: React.FC<SyncBadgeProps> = ({ status }) => {
+export const SyncBadge: React.FC<SyncBadgeProps> = ({ status, count }) => {
     const { t } = useLang();
 
     if (status === "loading") {
@@ -29,7 +36,7 @@ export const SyncBadge: React.FC<SyncBadgeProps> = ({ status }) => {
         );
     }
 
-    if (status === "error") {
+    if (status === "error" || count === 0) {
         return (
             <span
                 className="release-notes__sync release-notes__sync--local"

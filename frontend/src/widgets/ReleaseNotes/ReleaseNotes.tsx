@@ -102,7 +102,9 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
                         />
                         v{latest.version}
                     </span>
-                    {!entries && <SyncBadge status={status} />}
+                    {!entries && (
+                        <SyncBadge status={status} count={releases.length} />
+                    )}
                 </div>
 
                 <Heading className="release-notes__title" id={titleId}>

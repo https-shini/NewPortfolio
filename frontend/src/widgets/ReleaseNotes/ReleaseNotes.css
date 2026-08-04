@@ -75,7 +75,8 @@
     font-size: var(--text-2xs);
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
-    color: var(--color-text-4);
+    /* text-4 rende 2.56:1 no tema escuro — abaixo do AA, e a 10px. */
+    color: var(--color-text-3);
 }
 
 .release-notes__sync-dot {
@@ -93,8 +94,12 @@
     animation: release-sync-pulse 1.4s var(--ease-in-out) infinite;
 }
 
+/* Sem cor própria, de propósito: --color-warning é âmbar e rende 1.95:1
+   sobre o off-white do tema claro, num texto de 10px. O estado é
+   informativo, não um alerta — a distinção em relação ao "sincronizado"
+   já vem do verde e do ícone do GitHub que só aquele traz. */
 .release-notes__sync--local {
-    color: var(--color-warning);
+    color: var(--color-text-3);
 }
 
 @keyframes release-sync-pulse {

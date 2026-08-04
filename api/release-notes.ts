@@ -71,6 +71,15 @@ export default async function handler(
         );
 
         if (!response.ok) {
+            /* O corpo é o mesmo de "não há releases publicadas", então sem
+               este log as duas situações ficam indistinguíveis de fora e
+               uma queda real passaria despercebida. Vai para os Runtime
+               Logs da Vercel; o cliente continua vendo só a lista vazia. */
+            console.warn(
+                `[release-notes] GitHub respondeu ${response.status}` +
+                    (token ? "" : " (sem GITHUB_TOKEN: limite de 60 req/h)"),
+            );
+
             /* 200 com lista vazia: para o frontend isso é "não há nada do
                GitHub", e a camada local assume sozinha. */
             res.setHeader("Cache-Control", "s-maxage=60");
@@ -98,8 +107,9 @@ export default async function handler(
             "s-maxage=3600, stale-while-revalidate=86400",
         );
         res.status(200).json({ releases });
-    } catch {
+    } catch (error) {
         /* Falha de rede — o frontend cai na camada local. */
+        console.error("[release-notes] falha ao buscar as releases:", error);
         res.setHeader("Cache-Control", "s-maxage=60");
         res.status(200).json({ releases: [] });
     }
