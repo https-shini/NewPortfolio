@@ -13,10 +13,15 @@
 ─────────────────────────────────────────────────────────── */
 .rec-modal {
     --modal-width: 980px;
-    --modal-max-height: min(85vh, 760px);
+    /* dvh, não vh: no mobile a barra dinâmica faz `vh` medir a mais e
+       o diálogo passa da tela. */
+    --modal-max-height: min(85dvh, 760px);
 
     display: grid;
     grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    /* Sem isto a linha é `auto`, as duas colunas crescem com o conteúdo
+       e o `overflow-y` delas nunca entra em ação. */
+    grid-template-rows: minmax(0, 1fr);
 }
 
 /* ── Close button (absolute, over content) ───────────────── */
@@ -63,6 +68,8 @@
         var(--space-10) + var(--space-2)
     ); /* clears close btn */
     overflow-y: auto;
+    /* Sem isto o gesto continua na página atrás quando o texto acaba. */
+    overscroll-behavior: contain;
     min-height: 0;
 }
 
@@ -119,6 +126,7 @@
     background: var(--color-surface-2);
     border-left: 1px solid var(--color-border-1);
     overflow-y: auto;
+    overscroll-behavior: contain;
     min-height: 0;
 }
 
@@ -262,9 +270,16 @@
 ───────────────────────────────────────────────────────── */
 @media (max-width: 780px) {
     .rec-modal {
-        --modal-max-height: 92vh;
+        --modal-max-height: 92dvh;
 
         grid-template-columns: 1fr;
+        /* Empilhado a barra lateral vem primeiro (order: -1) e as duas
+           faixas rolam por dentro. A proporção é o que importa: com
+           `auto` na primeira, num celular deitado — diálogo de ~296px —
+           a barra lateral ficava com os 294px e sobrava ZERO para o
+           texto, que era o conteúdo do modal. Repartir garante que
+           nenhuma das duas engula a outra, em qualquer altura de tela. */
+        grid-template-rows: minmax(0, 2fr) minmax(0, 3fr);
     }
 
     .rec-modal__sidebar {

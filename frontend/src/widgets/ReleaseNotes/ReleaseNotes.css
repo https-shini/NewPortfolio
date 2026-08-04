@@ -13,7 +13,7 @@
     /* Compensa o header fixo. */
     padding-top: calc(var(--header-height) + var(--section-pad-y));
     padding-bottom: var(--section-pad-y);
-    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 /* Fora do modal a coluna precisa de um limite de leitura próprio —
@@ -22,22 +22,6 @@
 .release-page__content {
     max-width: 820px;
     margin-inline: auto;
-}
-
-/* ── Dimensão do modal que envolve a timeline ──────────────────── */
-.release-notes-modal {
-    --modal-width: 760px;
-    --modal-max-height: calc(100vh - var(--space-10));
-
-    padding: var(--space-6);
-    overflow-y: auto;
-}
-
-@media (max-width: 640px) {
-    .release-notes-modal {
-        --modal-max-height: calc(100vh - var(--space-6));
-        padding: var(--space-4);
-    }
 }
 
 .release-notes {

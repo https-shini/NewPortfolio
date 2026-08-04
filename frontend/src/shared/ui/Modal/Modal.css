@@ -7,6 +7,25 @@
      --modal-max-height  (default: min(85dvh, 760px))
    Todo o restante (portal, centralização, scroll-lock, foco,
    Esc) vem de Modal.tsx — nada disso deve ser reimplementado.
+
+   ── Regra para quem monta um modal ────────────────────────
+   O diálogo tem altura limitada e `overflow: hidden`, para
+   respeitar o raio da borda. Quem rola é uma área INTERNA,
+   nunca o diálogo — assim um botão fechar posicionado sobre
+   ele nunca sai da vista.
+
+   Para isso a área rolável precisa de três coisas:
+     · `overflow-y: auto`
+     · `min-height: 0` (senão o filho de grid/flex cresce e
+       ignora a restrição de altura)
+     · `overscroll-behavior: contain` (senão o gesto continua
+       na página atrás quando o conteúdo acaba)
+
+   E o layout do diálogo precisa CONSTRANGER essa área: linhas
+   de grid `auto` deixam o filho crescer à vontade e o
+   `overflow-y` nunca entra em ação. Foi assim que o modal de
+   recomendação chegou a cortar texto sem forma de ler em
+   celular deitado. O default abaixo já resolve o caso simples.
 ═══════════════════════════════════════════════════════════ */
 
 .modal-backdrop {
@@ -36,6 +55,13 @@
     position: relative;
     width: min(var(--modal-width, 960px), 100%);
     max-height: var(--modal-max-height, min(85dvh, 760px));
+
+    /* Uma linha que ocupa a altura toda e não deixa o filho crescer
+       além dela: é o que faz o `overflow-y` do conteúdo valer. Quem
+       precisa de outro arranjo sobrescreve, mas então assume também
+       o dimensionamento das próprias linhas. */
+    display: grid;
+    grid-template-rows: minmax(0, 1fr);
     background: var(--color-surface-1);
     border: 1px solid var(--color-border-2);
     border-radius: var(--radius-xl);

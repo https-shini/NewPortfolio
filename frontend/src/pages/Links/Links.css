@@ -114,7 +114,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    min-height: 100vh;
+    min-height: 100dvh;
 }
 
 /* Entrada com stagger — dirigida por --reveal-i em cada elemento */

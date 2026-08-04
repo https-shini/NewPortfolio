@@ -11,7 +11,8 @@
 .fl-dialog {
     --fl-radius: var(--radius-2xl);
     --modal-width: 1280px;
-    --modal-max-height: calc(100vh - var(--space-10));
+    /* dvh: a barra dinâmica do mobile faz `vh` medir a mais. */
+    --modal-max-height: calc(100dvh - var(--space-10));
 
     display: flex;
     flex-direction: column;
@@ -270,6 +271,8 @@
     border-left: 1px solid var(--color-border-2);
     overflow-y: auto;
     overflow-x: hidden;
+    /* Sem isto o gesto continua na página atrás ao fim do conteúdo. */
+    overscroll-behavior: contain;
 
     /* Custom scrollbar */
     scrollbar-width: thin;
@@ -471,7 +474,7 @@
 
 @media (max-width: 768px) {
     .fl-dialog {
-        --modal-max-height: calc(100vh - var(--space-6));
+        --modal-max-height: calc(100dvh - var(--space-6));
     }
 
     .fl-main {
@@ -482,7 +485,7 @@
     .fl-sidebar {
         border-left: none;
         border-top: 1px solid var(--color-border-2);
-        max-height: 38vh;
+        max-height: 38dvh;
         padding: var(--space-5);
     }
 
@@ -523,7 +526,7 @@
     }
 
     .fl-sidebar {
-        max-height: 42vh;
+        max-height: 42dvh;
         gap: var(--space-3);
     }
 
