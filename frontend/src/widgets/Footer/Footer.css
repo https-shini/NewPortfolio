@@ -90,7 +90,8 @@
 }
 
 .footer__logo-suffix {
-    color: var(--color-brand);
+    /* Texto de leitura — ver --color-brand-text em tokens.css. */
+    color: var(--color-brand-text);
     transition:
         color var(--transition-fast),
         opacity var(--transition-fast);

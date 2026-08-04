@@ -90,7 +90,10 @@
 }
 
 .header__logo-suffix {
-    color: var(--color-brand);
+    /* Texto de leitura sobre o fundo da página: no tema claro o
+       crimson-600 fica em 4.26:1 e reprova o AA. Ver --color-brand-text
+       em tokens.css. */
+    color: var(--color-brand-text);
     transition:
         color var(--transition-fast),
         opacity var(--transition-fast);

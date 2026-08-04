@@ -82,6 +82,13 @@
     --color-brand-hover: var(--_crimson-700);
     --color-brand-light: var(--_crimson-400);
     --color-brand-muted: var(--_crimson-800);
+    /* Marca aplicada a TEXTO sobre o fundo da página.
+       crimson-600 sobre o #070d19 do tema escuro vale 4.13:1 e reprova
+       o AA de 4.5:1 — crimson-500 sobe para 5.29:1. Medido com axe-core
+       sobre o build. Use este token, e não --color-brand, sempre que a
+       cor for de leitura: preencher uma forma exige 3:1 (critério
+       1.4.11) e pintar texto exige 4.5:1 (critério 1.4.3). */
+    --color-brand-text: var(--_crimson-500);
     --color-brand-subtle: color-mix(
         in srgb,
         var(--_crimson-600) 13%,
@@ -211,11 +218,15 @@
    ───────────────────────────────────────────────────────────────────────────── */
 body.light-mode {
     /* ╌╌ Brand no light ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
-   *  No dark: crimson-600 sobre fundos escuros → OK
-   *  No light: crimson-600 sobre branco = 5.9:1 → WCAG AA (suficiente).
-   *  Usamos crimson-700 para texto sobre --color-brand-subtle para AAA.
+   *  crimson-600 vale 5.9:1 sobre BRANCO PURO — mas o fundo real da
+   *  página é off-white (#f2f4f8), onde cai para 4.26:1 e reprova o AA
+   *  de 4.5:1. Medido com axe-core sobre o build.
+   *  Por isso o texto de marca usa crimson-700 aqui: 5.71:1 sobre o
+   *  mesmo fundo. O preenchimento (--color-brand) segue crimson-600,
+   *  que responde pelo critério 1.4.11, de 3:1.
    */
     --color-brand: var(--_crimson-600);
+    --color-brand-text: var(--_crimson-700);
     --color-brand-hover: var(--_crimson-700);
     --color-brand-light: var(--_crimson-600);
     --color-brand-muted: var(--_crimson-100);

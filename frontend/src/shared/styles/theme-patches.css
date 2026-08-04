@@ -52,7 +52,9 @@ body.light-mode .header__logo-prefix {
 }
 
 body.light-mode .header__logo-suffix {
-    color: var(--color-brand);
+    /* Ver --color-brand-text em tokens.css: --color-brand puro reprova o
+       AA como texto sobre o off-white da página. */
+    color: var(--color-brand-text);
 }
 
 body.light-mode .header__logo:hover .header__logo-prefix {
@@ -889,7 +891,8 @@ body.light-mode .footer__logo-prefix {
 }
 
 body.light-mode .footer__logo-suffix {
-    color: var(--color-brand);
+    /* Mesmo caso do logo do header — ver --color-brand-text. */
+    color: var(--color-brand-text);
 }
 
 body.light-mode .footer__logo:hover .footer__logo-prefix {
