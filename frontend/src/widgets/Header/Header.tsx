@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import "./Header.css";
 import { useTheme } from "@/shared/hooks/useTheme";
 import { useLang } from "@/shared/hooks/useLang";
 import { useScrollLock } from "@/shared/hooks/useScrollLock";
 import { useFocusTrap } from "@/shared/hooks/useFocusTrap";
+import { useInertBackground } from "@/shared/hooks/useInertBackground";
 import { useRoute } from "@/shared/hooks/useRoute";
 import { scrollToSection } from "@/shared/lib/smoothScroll";
 import { IconSun, IconMoon, IconTranslate } from "@/shared/ui/Icons";
@@ -87,6 +89,7 @@ export const Header: React.FC = () => {
 
     /* ── Drawer mobile — mesma mecânica do Modal base ──────────────── */
     useScrollLock(isMenuOpen);
+    useInertBackground(mobileNavRef, isMenuOpen);
     useFocusTrap(mobileNavRef, {
         active: isMenuOpen,
         onEscape: closeMenu,
@@ -229,74 +232,85 @@ export const Header: React.FC = () => {
             </header>
 
             {/* ── Mobile nav ──────────────────────────────────────── */}
-            {/* Clique no backdrop é afordância redundante de dismiss —
-                Escape e o botão hamburger cobrem teclado (focus trap ativo). */}
-            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
-            <nav
-                ref={mobileNavRef}
-                id="mobile-nav"
-                className={`mobile-nav${isMenuOpen ? " is-open" : ""}`}
-                role="dialog"
-                aria-modal="true"
-                aria-label={navMenuLabel}
-                aria-hidden={!isMenuOpen}
-                onClick={(e) => {
-                    if (e.target === mobileNavRef.current) closeMenu();
-                }}
-            >
-                <div className="mobile-nav__logo" aria-hidden="true">
-                    <span className="header__logo-dot" />
-                </div>
-
-                {NAV_LINKS.map(({ href, key }, i) => (
-                    <a
-                        key={href}
-                        href={`#${href}`}
-                        className={`mobile-nav__link${activeSection === href ? " is-active" : ""}`}
-                        style={{ "--i": i } as React.CSSProperties}
-                        onClick={(e) => handleNavClick(e, href)}
-                    >
-                        <span className="mobile-nav__link-num">
-                            {String(i + 1).padStart(2, "0")}
-                        </span>
-                        {t(key)}
-                    </a>
-                ))}
-
-                <div className="mobile-nav__controls">
-                    <button
-                        className={`header__lang${langSwitching ? " is-switching" : ""}`}
-                        type="button"
-                        onClick={handleLangToggle}
-                        aria-label={currentLang.switchLabel}
-                    >
-                        <span className="header__lang-flag" aria-hidden="true">
-                            {currentLang.flag}
-                        </span>
-                        <span className="header__lang-code">
-                            {currentLang.label}
-                        </span>
-                    </button>
-
-                    <button
-                        className="header__ctrl"
-                        type="button"
-                        onClick={toggleTheme}
-                        aria-label={themeLabel}
-                    >
-                        {theme === "dark" ? <IconSun /> : <IconMoon />}
-                    </button>
-                </div>
-
-                <a
-                    href={`#${SECTION_IDS.CONTACT}`}
-                    className="mobile-nav__cta"
-                    onClick={(e) => handleNavClick(e, SECTION_IDS.CONTACT)}
+            {/* Num portal para o <body>, como os demais overlays: o
+                useInertBackground neutraliza os irmãos do overlay, e
+                daqui de dentro do #root o drawer seria desligado junto
+                com o resto da página. O CSS não sente a mudança — todo
+                seletor dele é `.mobile-nav*` ou parte de `body`. */}
+            {createPortal(
+                /* Clique no backdrop é afordância redundante de dismiss —
+                   Escape e o botão hamburger cobrem teclado (focus trap ativo). */
+                /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */
+                <nav
+                    ref={mobileNavRef}
+                    id="mobile-nav"
+                    className={`mobile-nav${isMenuOpen ? " is-open" : ""}`}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={navMenuLabel}
+                    aria-hidden={!isMenuOpen}
+                    onClick={(e) => {
+                        if (e.target === mobileNavRef.current) closeMenu();
+                    }}
                 >
-                    <span>{ctaLabel}</span>
-                    <span aria-hidden="true">↗</span>
-                </a>
-            </nav>
+                    <div className="mobile-nav__logo" aria-hidden="true">
+                        <span className="header__logo-dot" />
+                    </div>
+
+                    {NAV_LINKS.map(({ href, key }, i) => (
+                        <a
+                            key={href}
+                            href={`#${href}`}
+                            className={`mobile-nav__link${activeSection === href ? " is-active" : ""}`}
+                            style={{ "--i": i } as React.CSSProperties}
+                            onClick={(e) => handleNavClick(e, href)}
+                        >
+                            <span className="mobile-nav__link-num">
+                                {String(i + 1).padStart(2, "0")}
+                            </span>
+                            {t(key)}
+                        </a>
+                    ))}
+
+                    <div className="mobile-nav__controls">
+                        <button
+                            className={`header__lang${langSwitching ? " is-switching" : ""}`}
+                            type="button"
+                            onClick={handleLangToggle}
+                            aria-label={currentLang.switchLabel}
+                        >
+                            <span
+                                className="header__lang-flag"
+                                aria-hidden="true"
+                            >
+                                {currentLang.flag}
+                            </span>
+                            <span className="header__lang-code">
+                                {currentLang.label}
+                            </span>
+                        </button>
+
+                        <button
+                            className="header__ctrl"
+                            type="button"
+                            onClick={toggleTheme}
+                            aria-label={themeLabel}
+                        >
+                            {theme === "dark" ? <IconSun /> : <IconMoon />}
+                        </button>
+                    </div>
+
+                    <a
+                        href={`#${SECTION_IDS.CONTACT}`}
+                        className="mobile-nav__cta"
+                        onClick={(e) => handleNavClick(e, SECTION_IDS.CONTACT)}
+                    >
+                        <span>{ctaLabel}</span>
+                        <span aria-hidden="true">↗</span>
+                    </a>
+                </nav>,
+                document.body,
+            )}
         </>
     );
 };

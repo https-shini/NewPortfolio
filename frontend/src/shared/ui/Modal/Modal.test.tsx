@@ -109,12 +109,27 @@ describe("Modal", () => {
         await waitFor(() => expect(trigger).toHaveFocus());
     });
 
-    it("trava o scroll do body enquanto aberto e restaura ao fechar", () => {
-        document.body.style.overflow = "auto";
+    it("congela a página enquanto aberto e a libera ao fechar", () => {
+        /* O mecanismo é tirar o body do fluxo: `overflow: hidden` não
+           travava nada aqui, porque quem rola é o <html>. Ver o cabeçalho
+           de useScrollLock.ts. */
         const { unmount } = renderModal();
-        expect(document.body.style.overflow).toBe("hidden");
+        expect(document.body.style.position).toBe("fixed");
+
         unmount();
-        expect(document.body.style.overflow).toBe("auto");
-        document.body.style.overflow = "";
+        expect(document.body.style.position).toBe("");
+    });
+
+    it("torna o resto da página inerte enquanto aberto", () => {
+        const fundo = document.createElement("div");
+        fundo.innerHTML = "<button>fundo</button>";
+        document.body.appendChild(fundo);
+
+        const { unmount } = renderModal();
+        expect(fundo.hasAttribute("inert")).toBe(true);
+
+        unmount();
+        expect(fundo.hasAttribute("inert")).toBe(false);
+        fundo.remove();
     });
 });

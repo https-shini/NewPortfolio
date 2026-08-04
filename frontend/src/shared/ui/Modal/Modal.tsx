@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import "./Modal.css";
 import { useScrollLock } from "@/shared/hooks/useScrollLock";
 import { useFocusTrap } from "@/shared/hooks/useFocusTrap";
+import { useInertBackground } from "@/shared/hooks/useInertBackground";
 
 /* ─────────────────────────────────────────────────────────
    Modal — componente base reutilizável de diálogo modal.
@@ -51,8 +52,12 @@ export const Modal: React.FC<ModalProps> = ({
 }) => {
     const dialogRef = useRef<HTMLDivElement>(null);
 
-    /* Mecânica compartilhada — hooks reutilizados pelo drawer do Header. */
+    /* Mecânica compartilhada — hooks reutilizados pelo drawer do Header.
+       Os três se dividem: a trava congela a página e devolve a posição,
+       o inerte neutraliza ponteiro e leitor de tela, o trap cuida do
+       teclado. */
     useScrollLock(isOpen);
+    useInertBackground(dialogRef, isOpen);
     useFocusTrap(dialogRef, { active: isOpen, onEscape: onClose });
 
     if (!isOpen || typeof document === "undefined") return null;
