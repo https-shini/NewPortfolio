@@ -77,7 +77,9 @@ describe("renderMarkdown — conversão", () => {
 
     it("converte ênfase e código inline", () => {
         expect(renderMarkdown("**forte**")).toContain("<strong>forte</strong>");
-        expect(renderMarkdown("um _itálico_ aqui")).toContain("<em>itálico</em>");
+        expect(renderMarkdown("um _itálico_ aqui")).toContain(
+            "<em>itálico</em>",
+        );
         expect(renderMarkdown("`cod`")).toContain("<code>cod</code>");
     });
 
