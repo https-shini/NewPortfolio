@@ -464,6 +464,17 @@ body.light-mode {
     --gutter: clamp(1rem, 0.3rem + 3vw, 2rem);
     --gutter-sm: var(--space-6);
     --gutter-xs: var(--space-4);
+
+    /* ╌╌ Alvos de apontamento ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+   *  --tap-min      mínimo do critério 2.5.8 (AA). Vale para QUALQUER
+   *                 ponteiro, não só o toque — inclusive mouse.
+   *  --tap-comfort  o 2.5.5 (AAA), aplicado aos controles de AÇÃO sob
+   *                 ponteiro grosso: botões, chips de filtro, setas.
+   *                 Links dentro de uma frase ficam no mínimo, que é a
+   *                 exceção prevista pela própria norma.
+   */
+    --tap-min: 24px;
+    --tap-comfort: 44px;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

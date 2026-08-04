@@ -841,6 +841,8 @@
 .featured__docs-link {
     display: inline-flex;
     align-items: center;
+    /* 16px de caixa — abaixo do mínimo do 2.5.8. */
+    min-height: var(--tap-min);
     gap: 4px;
     font-family: var(--font-mono);
     font-size: var(--text-2xs);

@@ -11,7 +11,7 @@
     width: 100%;
     /* min-height garante o alvo de toque de 44px (WCAG 2.5.5) em
        qualquer tamanho de fonte. */
-    min-height: 44px;
+    min-height: var(--tap-comfort);
     padding: var(--space-4) var(--space-5);
     overflow: hidden;
     text-decoration: none;
@@ -82,8 +82,8 @@
 /* Chip do ícone */
 .link-card__icon {
     flex-shrink: 0;
-    width: 44px;
-    height: 44px;
+    width: var(--tap-comfort);
+    height: var(--tap-comfort);
     display: grid;
     place-items: center;
     border-radius: var(--radius-md);

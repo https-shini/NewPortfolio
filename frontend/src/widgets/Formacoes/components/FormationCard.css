@@ -263,6 +263,8 @@
 .formation-card__inst-link {
     display: inline-flex;
     align-items: center;
+    /* 18px de caixa — abaixo do mínimo do 2.5.8. */
+    min-height: var(--tap-min);
     gap: 6px;
     color: var(--color-text-2);
     text-decoration: none;

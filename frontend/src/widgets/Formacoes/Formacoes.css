@@ -211,6 +211,8 @@
     .formations__filter {
         flex-shrink: 0;
         padding: 6px 12px;
+        /* Chip é controle de ação: conforto no toque. */
+        min-height: var(--tap-comfort);
     }
 }
 

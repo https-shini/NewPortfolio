@@ -100,7 +100,7 @@
    resto do projeto, cobrindo o ponteiro grosso e a janela pequena. */
 @media (pointer: coarse), (max-width: 640px) {
     .release-note__back {
-        min-height: 44px;
+        min-height: var(--tap-comfort);
     }
 }
 

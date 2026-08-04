@@ -49,7 +49,11 @@
 .rec-controls__dots {
     display: flex;
     align-items: center;
-    gap: var(--space-2);
+    /* O espaçamento define o alvo horizontal: as áreas ampliadas de
+       dois pontos vizinhos se sobrepõem, e a de cima rouba o clique.
+       Com ponto de 8px, este intervalo dá 24px de passo — a área
+       exclusiva que o 2.5.8 exige. Antes o passo era 16px. */
+    gap: var(--space-4);
 }
 
 .rec-controls__dot {
@@ -58,6 +62,11 @@
     border: none;
     padding: 0;
     cursor: pointer;
+    /* O ponto tem 8px de propósito — é um indicador, não um botão
+       grande. A área de toque cresce por baixo, num pseudo-elemento
+       centrado, sem mexer no visual nem no espaçamento da fileira.
+       Antes o alvo era 8×8px, muito abaixo do 2.5.8. */
+    position: relative;
     background: var(
         --color-border-3,
         color-mix(in srgb, var(--color-brand) 25%, transparent)
@@ -70,6 +79,31 @@
         width 0.25s var(--ease-out),
         background var(--transition-fast),
         transform var(--transition-fast);
+}
+
+.rec-controls__dot::after {
+    content: "";
+    position: absolute;
+    /* Centrado no ponto, independente da largura que ele assume ao
+       ficar ativo. */
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: var(--tap-min);
+    height: var(--tap-min);
+}
+
+/* No toque, a fileira ganha respiro e o alvo vai ao conforto do 2.5.5 —
+   passo de 48px, para caber os 44px sem os vizinhos se sobreporem. */
+@media (pointer: coarse) {
+    .rec-controls__dots {
+        gap: var(--space-10);
+    }
+
+    .rec-controls__dot::after {
+        width: var(--tap-comfort);
+        height: var(--tap-comfort);
+    }
 }
 
 .rec-controls__dot:hover {

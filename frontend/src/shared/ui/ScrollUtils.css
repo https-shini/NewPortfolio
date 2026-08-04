@@ -38,8 +38,8 @@
     bottom: var(--space-6);
     z-index: var(--z-overlay, 100);
 
-    width: 44px;
-    height: 44px;
+    width: var(--tap-comfort);
+    height: var(--tap-comfort);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -105,8 +105,8 @@
         right: var(--space-4);
         bottom: var(--space-4);
         /* Mantém ≥44px para toque confortável (WCAG 2.5.5) */
-        width: 44px;
-        height: 44px;
+        width: var(--tap-comfort);
+        height: var(--tap-comfort);
     }
 }
 

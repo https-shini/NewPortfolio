@@ -576,11 +576,18 @@ body.light-mode .social-link:hover {
     box-shadow: var(--shadow-sm);
 }
 
-/* Alvo de toque ≥ 44px em dispositivos touch e telas estreitas (WCAG 2.5.5) */
+/* Alvo confortável em ponteiro grosso e telas estreitas (WCAG 2.5.5).
+   Vale para os controles de AÇÃO; link dentro de frase fica no mínimo
+   do 2.5.8, que é a exceção prevista pela norma. */
 @media (pointer: coarse), (max-width: 640px) {
     .social-link {
-        width: 44px;
-        height: 44px;
+        width: var(--tap-comfort);
+        height: var(--tap-comfort);
+    }
+
+    /* Botões mediam 37px de altura no toque. */
+    .btn {
+        min-height: var(--tap-comfort);
     }
 }
 

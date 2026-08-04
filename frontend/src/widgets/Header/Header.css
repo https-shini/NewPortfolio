@@ -611,15 +611,15 @@
 @media (pointer: coarse), (max-width: 900px) {
     .header__ctrl,
     .header__hamburger {
-        width: 44px;
-        height: 44px;
+        width: var(--tap-comfort);
+        height: var(--tap-comfort);
     }
 
     .header__lang {
-        min-height: 44px;
+        min-height: var(--tap-comfort);
     }
 
     .header__logo {
-        min-height: 44px;
+        min-height: var(--tap-comfort);
     }
 }

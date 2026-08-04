@@ -389,6 +389,9 @@
     color: var(--color-brand);
 }
 .linktree__foot-brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap-min);
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
     letter-spacing: var(--ls-wider);
@@ -416,13 +419,13 @@
    telas estreitas contam mesmo quando o ponteiro é fino. */
 @media (pointer: coarse), (max-width: 640px) {
     .linktree__ctrl {
-        height: 44px;
+        height: var(--tap-comfort);
     }
     .linktree__ctrl--icon {
-        width: 44px;
+        width: var(--tap-comfort);
     }
     .linktree__actions .btn {
-        min-height: 44px;
+        min-height: var(--tap-comfort);
     }
 }
 

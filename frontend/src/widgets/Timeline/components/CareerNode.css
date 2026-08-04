@@ -153,6 +153,8 @@
 .career-company__name-link {
     display: inline-flex;
     align-items: center;
+    /* 18px de caixa não alcançavam o mínimo do 2.5.8. */
+    min-height: var(--tap-min);
     gap: var(--space-2);
     color: inherit;
     text-decoration: none;
