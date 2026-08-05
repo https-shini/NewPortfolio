@@ -73,8 +73,8 @@
 /* ── Layout principal ────────────────────────────────────────────────────── */
 .contact__layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-8);
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
     align-items: start;
 }
 
@@ -83,7 +83,7 @@
 ───────────────────────────────────────────────────────────────────────────── */
 .contact__cta-card {
     position: relative;
-    padding: var(--space-10) var(--space-8);
+    padding: var(--space-7) var(--space-5);
     background: var(--color-surface-1);
     border: 1px solid var(--color-border-2);
     border-radius: var(--radius-2xl);
@@ -257,7 +257,7 @@
 
 .contact__email-btn-value {
     font-family: var(--font-mono);
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
@@ -297,7 +297,7 @@
 /* Links alternativos (LinkedIn, GitHub) */
 .contact__alt-links {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: var(--space-3);
 }
 
@@ -381,7 +381,7 @@
 
 /* Bloco de perfil ATS */
 .contact__profile {
-    padding: var(--space-8);
+    padding: var(--space-6) var(--space-5);
     background: var(--color-surface-1);
     border: 1px solid var(--color-border-2);
     border-radius: var(--radius-2xl);
@@ -623,28 +623,30 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    RESPONSIVO
 ───────────────────────────────────────────────────────────────────────────── */
-@media (max-width: 1024px) {
-    .contact__layout {
-        grid-template-columns: 1fr;
-        gap: var(--space-6);
-    }
-}
-
-@media (max-width: 640px) {
+/* ── A partir de --bp-md (640px) ─────────────────────────────────────────── */
+@media (min-width: 641px) {
     .contact__cta-card {
-        padding: var(--space-7) var(--space-5);
+        padding: var(--space-10) var(--space-8);
     }
 
     .contact__alt-links {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
     }
 
     .contact__email-btn-value {
-        font-size: var(--text-xs);
+        font-size: var(--text-sm);
     }
 
     .contact__profile {
-        padding: var(--space-6) var(--space-5);
+        padding: var(--space-8);
+    }
+}
+
+/* ── A partir de --bp-2xl (1024px): as duas colunas ──────────────────────── */
+@media (min-width: 1025px) {
+    .contact__layout {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-8);
     }
 }
 

@@ -34,7 +34,7 @@
 
 .about__layout {
     display: grid;
-    grid-template-columns: 1fr 360px;
+    grid-template-columns: 1fr;
     gap: var(--space-16);
     margin-top: var(--space-5);
     align-items: start;
@@ -81,7 +81,7 @@
 
 .about__specs-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: var(--space-4);
 }
 
@@ -319,12 +319,15 @@
    Sticky: acompanha o scroll até o limite da seção pai
 ═══════════════════════════════════════════════════════════════════════════ */
 
+/* Em coluna única a barra lateral não gruda — não haveria contra o que
+   grudar — e ganha um teto de largura para a linha de texto não esticar.
+   Os dois voltam ao normal a partir de --bp-2xl. */
 .about__sidebar {
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
-    position: sticky;
-    top: calc(var(--header-height) + var(--space-8));
+    position: static;
+    max-width: 480px;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -612,36 +615,29 @@
    11. RESPONSIVIDADE
 ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Tablet (≤1024px): sidebar empilha abaixo da coluna principal ─────────── */
-@media (max-width: 1024px) {
-    .about__layout {
-        grid-template-columns: 1fr;
-    }
+/* Havia aqui um terceiro bloco, em ≤640px, que não fazia nada: pedia
+   2 colunas para os stats e 4 para a grade de tecnologias, que é
+   exatamente o que a regra base já dizia. O comentário falava em "2
+   colunas em vez de 3", de uma versão do layout que não existe mais.
+   Removido — regra morta esconde a regra viva. */
 
-    /* Remove sticky — não faz sentido em coluna única */
-    .about__sidebar {
-        position: static;
-        max-width: 480px;
-    }
-}
-
-/* ── Mobile médio (≤768px): specs-grid em coluna única ───────────────────── */
-@media (max-width: 768px) {
+/* ── A partir de --bp-lg (768px): specs em duas colunas ─────────── */
+@media (min-width: 769px) {
     .about__specs-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* ── Mobile pequeno (≤640px) ─────────────────────────────────────────────── */
-@media (max-width: 640px) {
-    /* Stats: 2 colunas em vez de 3 */
-    .about__stats {
         grid-template-columns: repeat(2, 1fr);
     }
+}
 
-    /* Tech stack: mantém 4 colunas — ícones são pequenos o suficiente */
-    .about__tech-grid {
-        grid-template-columns: repeat(4, 1fr);
+/* ── A partir de --bp-2xl (1024px): barra lateral ao lado ───────── */
+@media (min-width: 1025px) {
+    .about__layout {
+        grid-template-columns: 1fr 360px;
+    }
+
+    .about__sidebar {
+        position: sticky;
+        top: calc(var(--header-height) + var(--space-8));
+        max-width: none;
     }
 }
 
