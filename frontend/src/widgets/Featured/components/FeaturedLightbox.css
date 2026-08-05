@@ -12,7 +12,7 @@
     --fl-radius: var(--radius-2xl);
     --modal-width: 1280px;
     /* dvh: a barra dinâmica do mobile faz `vh` medir a mais. */
-    --modal-max-height: calc(100dvh - var(--space-10));
+    --modal-max-height: calc(100dvh - var(--space-6));
 
     display: flex;
     flex-direction: column;
@@ -25,7 +25,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--space-3);
-    padding: 12px 16px 12px 20px;
+    padding: 10px 12px;
     background: color-mix(
         in srgb,
         var(--color-surface-2) 80%,
@@ -105,9 +105,12 @@
 }
 
 /* ── Main: stage (image) + sidebar (description) ───────────────── */
+/* Empilhado, a imagem fica na linha flexível e a ficha na de baixo; a
+   coluna lateral entra em --bp-lg e engorda em --bp-2xl. */
 .fl-main {
     display: grid;
-    grid-template-columns: minmax(0, 1.6fr) minmax(280px, 360px);
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
     flex: 1 1 auto;
     min-height: 0;
 }
@@ -144,7 +147,7 @@
     position: relative;
     z-index: 1;
     margin: 0;
-    padding: var(--space-6);
+    padding: var(--space-4);
     width: 100%;
     height: 100%;
     display: flex;
@@ -216,8 +219,12 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 2;
-    width: var(--tap-comfort);
-    height: var(--tap-comfort);
+    /* 38px na base e o conforto do 2.5.5 a partir de --bp-lg. A medida
+       estreita é anterior a esta refatoração e segue acima do mínimo de
+       24px do 2.5.8; fica preservada porque mudá-la seria mudança
+       visual, e não inversão. */
+    width: 38px;
+    height: 38px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -236,10 +243,10 @@
 }
 
 .fl-arrow--prev {
-    left: var(--space-4);
+    left: var(--space-3);
 }
 .fl-arrow--next {
-    right: var(--space-4);
+    right: var(--space-3);
 }
 
 .fl-arrow:hover {
@@ -265,10 +272,13 @@
 .fl-sidebar {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
-    padding: var(--space-7) var(--space-6);
+    gap: var(--space-3);
+    padding: var(--space-5);
     background: var(--color-surface-1);
-    border-left: 1px solid var(--color-border-2);
+    /* Empilhada, a ficha é separada por cima e tem teto de altura para
+       não engolir a imagem. Vira coluna com borda à esquerda em --bp-lg. */
+    border-top: 1px solid var(--color-border-2);
+    max-height: 42dvh;
     overflow-y: auto;
     overflow-x: hidden;
     /* Sem isto o gesto continua na página atrás ao fim do conteúdo. */
@@ -328,7 +338,7 @@
 
 .fl-title {
     font-family: var(--font-display);
-    font-size: var(--text-2xl);
+    font-size: var(--text-xl);
     font-weight: 700;
     line-height: 1.15;
     letter-spacing: var(--ls-snug);
@@ -338,7 +348,7 @@
 }
 
 .fl-description {
-    font-size: var(--text-sm);
+    font-size: 13px;
     line-height: 1.7;
     color: var(--color-text-2);
     margin: 0;
@@ -376,8 +386,8 @@
 .fl-thumbs {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
+    gap: 6px;
+    padding: 10px 12px;
     background: color-mix(
         in srgb,
         var(--color-surface-2) 80%,
@@ -395,8 +405,8 @@
 
 .fl-thumb {
     position: relative;
-    flex: 0 0 96px;
-    height: 60px;
+    flex: 0 0 72px;
+    height: 48px;
     padding: 0;
     background: transparent;
     border: 1.5px solid transparent;
@@ -462,76 +472,80 @@
 }
 
 /* ── Responsivo ────────────────────────────────────────────────── */
-@media (max-width: 1024px) {
-    .fl-main {
-        grid-template-columns: minmax(0, 1.4fr) minmax(260px, 320px);
-    }
 
-    .fl-sidebar {
-        padding: var(--space-6) var(--space-5);
-    }
-}
-
-@media (max-width: 768px) {
-    .fl-dialog {
-        --modal-max-height: calc(100dvh - var(--space-6));
-    }
-
-    .fl-main {
-        grid-template-columns: 1fr;
-        grid-template-rows: minmax(0, 1fr) auto;
-    }
-
-    .fl-sidebar {
-        border-left: none;
-        border-top: 1px solid var(--color-border-2);
-        max-height: 38dvh;
-        padding: var(--space-5);
-    }
-
-    .fl-title {
-        font-size: var(--text-xl);
-    }
-
-    .fl-figure {
-        padding: var(--space-4);
-    }
-
-    .fl-arrow {
-        width: 38px;
-        height: 38px;
-    }
-
-    .fl-arrow--prev {
-        left: var(--space-3);
-    }
-    .fl-arrow--next {
-        right: var(--space-3);
-    }
-}
-
-@media (max-width: 480px) {
+/* ── A partir de --bp-sm (480px) ───────────────────────────────── */
+@media (min-width: 481px) {
     .fl-topbar {
-        padding: 10px 12px;
+        padding: 12px 16px 12px 20px;
     }
 
     .fl-thumbs {
-        padding: 10px 12px;
-        gap: 6px;
+        padding: 12px 16px;
+        gap: 8px;
     }
 
     .fl-thumb {
-        flex: 0 0 72px;
-        height: 48px;
+        flex: 0 0 96px;
+        height: 60px;
     }
 
     .fl-sidebar {
-        max-height: 42dvh;
-        gap: var(--space-3);
+        max-height: 38dvh;
+        gap: var(--space-4);
     }
 
     .fl-description {
-        font-size: 13px;
+        font-size: var(--text-sm);
+    }
+}
+
+/* ── A partir de --bp-lg (768px): a ficha vira coluna ──────────── */
+@media (min-width: 769px) {
+    .fl-dialog {
+        --modal-max-height: calc(100dvh - var(--space-10));
+    }
+
+    .fl-main {
+        grid-template-columns: minmax(0, 1.4fr) minmax(260px, 320px);
+        grid-template-rows: none;
+    }
+
+    .fl-sidebar {
+        border-top: none;
+        border-left: 1px solid var(--color-border-2);
+        max-height: none;
+        padding: var(--space-6) var(--space-5);
+    }
+
+    .fl-title {
+        font-size: var(--text-2xl);
+    }
+
+    .fl-figure {
+        padding: var(--space-6);
+    }
+
+    .fl-arrow {
+        width: var(--tap-comfort);
+        height: var(--tap-comfort);
+    }
+
+    .fl-arrow--prev {
+        left: var(--space-4);
+    }
+    .fl-arrow--next {
+        right: var(--space-4);
+    }
+}
+
+/* ── A partir de --bp-2xl (1024px) ─────────────────────────────── */
+@media (min-width: 1025px) {
+    .fl-main {
+        grid-template-columns: minmax(0, 1.6fr) minmax(280px, 360px);
+    }
+
+    .fl-sidebar {
+        padding: var(--space-7) var(--space-6);
     }
 }
 

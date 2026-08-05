@@ -368,7 +368,10 @@
 .linktree__foot-link:hover {
     color: var(--color-brand-light);
 }
+/* Quando os dois links do rodapé quebram em linhas separadas, o "·" fica
+   órfão no fim da primeira — some na base e volta em --bp-sm. */
 .linktree__foot-sep {
+    display: none;
     color: var(--color-text-4);
 }
 .linktree__foot-name {
@@ -407,11 +410,11 @@
     color: var(--color-text-2);
 }
 
-/* Quando os dois links do rodapé quebram em linhas separadas, o "·" fica
-   órfão no fim da primeira. */
-@media (max-width: 480px) {
+/* ── A partir de --bp-sm (480px) ───────────────────────────────── */
+@media (min-width: 481px) {
+    /* É um <span>: `inline` é o valor que ele tinha sem declaração. */
     .linktree__foot-sep {
-        display: none;
+        display: inline;
     }
 }
 
