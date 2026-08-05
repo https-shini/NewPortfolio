@@ -14,6 +14,8 @@ Segunda geração do portfólio: a versão em HTML/CSS/JS puro deu lugar a uma S
 - Arquitetura reorganizada em camadas — `app` → `pages` → `widgets` → `shared`
 - Modal, accordion e cache extraídos para componentes e utilitários compartilhados
 - Datas de carreira em ISO, com período e duração derivados automaticamente
+- **CSS convertido para mobile-first**: o estilo base atende a menor tela e cada `min-width` acrescenta. Nenhuma das consultas de largura usava `min-width`; hoje são 45. As seis que continuam com `max-width` são pares com `pointer: coarse`, mantidas de propósito — o complemento exato de ponteiro grosso não é `pointer: fine`, porque existe `pointer: none`
+- **Escala de breakpoints declarada** em `tokens.css`: dez valores soltos viraram oito nomeados, cinco principais e três de consumidor único. Os pares 768/780 e 880/900 foram fundidos; faixas de 12 px e 20 px são estreitas demais para conter decisão de layout
 
 ## Corrigido
 
@@ -21,11 +23,13 @@ Segunda geração do portfólio: a versão em HTML/CSS/JS puro deu lugar a uma S
 - Contraste do rodapé no tema escuro, que reprovava em todas as páginas
 - Alvos de toque abaixo do mínimo em ponteiro fino
 - Acesso direto por URL às rotas secundárias, que retornava 404
+- Código morto encontrado na conversão do CSS: bloco de grade que repetia a regra base no Sobre, `right`/`top` num elemento sem `position` no Hero e `flex-wrap` duplicado no Destaque
 
 ## Detalhes
 
-- **202 testes** em 25 arquivos, cobrindo também as funções serverless
+- **245 testes** em 29 arquivos, cobrindo também as funções serverless
 - **22/22** combinações limpas no axe-core: 11 perfis de dispositivo, do Galaxy Fold fechado a 4K, em retrato e paisagem, nos dois temas
+- A conversão para mobile-first foi verificada por um diff de geometria que mede a caixa de cada elemento em **288 combinações** de rota, largura e tema — 92.820 caixas, em 36 larguras. O arranjo foi calibrado contra o próprio código sem mudança antes de servir de prova
 - Apenas **duas dependências de runtime**: `react` e `react-dom`
 
 **Site:** https://gcruz.dev.br

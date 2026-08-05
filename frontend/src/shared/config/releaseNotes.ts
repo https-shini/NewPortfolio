@@ -111,8 +111,8 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
             en: "First published version of the full rebuild.",
         },
         body: {
-            pt: "Esta é a primeira versão marcada do portfólio reconstruído. A versão anterior era **HTML, CSS e JavaScript puro**; esta é uma aplicação **React com TypeScript**, organizada em camadas e apoiada num design system próprio.\n\nA decisão que mais moldou o resto foi manter **apenas duas dependências de runtime** — React e ReactDOM. Todo o resto é do projeto: os tokens de estilo, os 65 ícones, o modal acessível, o roteamento e a internacionalização. Isso mantém o bundle previsível e o código sob controle.\n\nCada número exibido no site é **derivado, nunca digitado**: semestre da graduação, anos de experiência e datas de carreira saem de marcos em ISO e se atualizam sozinhos com o tempo.",
-            en: "This is the first tagged version of the rebuilt portfolio. The previous one was **plain HTML, CSS and JavaScript**; this is a **React and TypeScript** application, organized in layers and backed by its own design system.\n\nThe decision that shaped everything else was keeping **only two runtime dependencies** — React and ReactDOM. Everything else belongs to the project: the style tokens, the 65 icons, the accessible modal, the routing and the internationalization. That keeps the bundle predictable and the code under control.\n\nEvery number the site shows is **derived, never typed**: current semester, years of experience and career dates all come from ISO milestones and keep themselves up to date.",
+            pt: "Esta é a primeira versão marcada do portfólio reconstruído. A versão anterior era **HTML, CSS e JavaScript puro**; esta é uma aplicação **React com TypeScript**, organizada em camadas e apoiada num design system próprio.\n\nA decisão que mais moldou o resto foi manter **apenas duas dependências de runtime** — React e ReactDOM. Todo o resto é do projeto: os tokens de estilo, os 65 ícones, o modal acessível, o roteamento e a internacionalização. Isso mantém o bundle previsível e o código sob controle.\n\nCada número exibido no site é **derivado, nunca digitado**: semestre da graduação, anos de experiência e datas de carreira saem de marcos em ISO e se atualizam sozinhos com o tempo.\n\nO CSS nasceu desktop-first e foi convertido por inteiro: **nenhuma** das consultas de largura usava min-width, e hoje são 45. Uma refatoração de aparência não tem teste que a cubra, então a garantia veio de um **diff de geometria** — um arranjo que mede a caixa de cada elemento em 288 combinações de rota, largura e tema, calibrado contra o próprio código sem mudança antes de servir de prova. As únicas diferenças que apareceram foram as duas faixas de breakpoint fundidas de propósito.",
+            en: "This is the first tagged version of the rebuilt portfolio. The previous one was **plain HTML, CSS and JavaScript**; this is a **React and TypeScript** application, organized in layers and backed by its own design system.\n\nThe decision that shaped everything else was keeping **only two runtime dependencies** — React and ReactDOM. Everything else belongs to the project: the style tokens, the 65 icons, the accessible modal, the routing and the internationalization. That keeps the bundle predictable and the code under control.\n\nEvery number the site shows is **derived, never typed**: current semester, years of experience and career dates all come from ISO milestones and keep themselves up to date.\n\nThe CSS started out desktop-first and was converted end to end: **none** of the width queries used min-width, and today 45 do. A refactor of appearance has no test that covers it, so the guarantee came from a **geometry diff** — a harness that measures every element's box across 288 combinations of route, width and theme, calibrated against the unchanged code before it was trusted as proof. The only differences it reported were the two breakpoint ranges merged on purpose.",
         },
         changes: {
             added: [
@@ -150,6 +150,14 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
                     pt: "Bundle dividido: vendor separado e modais sob demanda",
                     en: "Split bundle: separate vendor chunk and on-demand modals",
                 },
+                {
+                    pt: "CSS convertido para mobile-first: 45 consultas por min-width",
+                    en: "CSS converted to mobile-first: 45 min-width queries",
+                },
+                {
+                    pt: "Escala de breakpoints declarada: dez valores soltos viraram oito",
+                    en: "Declared breakpoint scale: ten loose values became eight",
+                },
             ],
             fixed: [
                 {
@@ -159,6 +167,10 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
                 {
                     pt: "Alvos de toque de 44 px em dispositivos sem mouse",
                     en: "44 px touch targets on pointer-coarse devices",
+                },
+                {
+                    pt: "Código morto no CSS: grade repetida, regra sem efeito e declaração duplicada",
+                    en: "Dead CSS: repeated grid, no-op rule and duplicated declaration",
                 },
             ],
         },
