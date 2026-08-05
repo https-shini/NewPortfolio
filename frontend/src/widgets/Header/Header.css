@@ -33,12 +33,12 @@
     width: 100%;
     max-width: var(--layout-max);
     margin-inline: auto;
-    padding-inline: var(--gutter);
+    padding-inline: var(--gutter-sm);
     gap: var(--space-6);
 }
-@media (max-width: 768px) {
+@media (min-width: 769px) {
     .header__inner {
-        padding-inline: var(--gutter-sm);
+        padding-inline: var(--gutter);
     }
 }
 
@@ -107,14 +107,17 @@
 }
 
 /* ── Nav desktop ────────────────────────────────────────────────────────────── */
+/* A navegação horizontal e o hambúrguer são um par: exatamente um dos
+   dois aparece, e a troca acontece em --bp-xl. Mexer num sem o outro
+   deixa a página com dois menus ou com nenhum. */
 .header__nav {
-    display: flex;
+    display: none;
     align-items: center;
     gap: var(--space-1);
 }
-@media (max-width: 900px) {
+@media (min-width: 901px) {
     .header__nav {
-        display: none;
+        display: flex;
     }
 }
 
@@ -423,7 +426,7 @@
 
 /* ── Hamburger ──────────────────────────────────────────────────────────────── */
 .header__hamburger {
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -436,9 +439,9 @@
     cursor: pointer;
     transition: all var(--transition-fast);
 }
-@media (max-width: 900px) {
+@media (min-width: 901px) {
     .header__hamburger {
-        display: flex;
+        display: none;
     }
 }
 

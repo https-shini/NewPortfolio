@@ -42,13 +42,17 @@
     position: relative;
     z-index: 2;
     display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: var(--space-16);
+    /* Empilhado e centrado é a base; a coluna do retrato entra só em
+       --bp-2xl. Os três blocos estão no fim do arquivo. */
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: var(--space-8);
     align-items: center;
     width: 100%;
     max-width: var(--layout-max);
     margin-inline: auto;
-    padding-inline: var(--gutter);
+    padding-inline: var(--gutter-sm);
+    padding-block: var(--space-12);
 }
 
 /* ── Content ─────────────────────────────────────────────────────────────────── */
@@ -56,6 +60,7 @@
 .hero__content {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: clamp(var(--space-4), 2vw, var(--space-6));
     max-width: 650px;
     padding-block: var(--space-4);
@@ -134,7 +139,7 @@
 
 .hero__name {
     font-family: var(--font-display);
-    font-size: clamp(var(--text-5xl), 7.5vw, var(--text-7xl));
+    font-size: clamp(var(--text-4xl), 11vw, var(--text-5xl));
     font-weight: 700;
     letter-spacing: var(--ls-tight);
     color: var(--color-text-1);
@@ -143,7 +148,7 @@
 
 .hero__role {
     font-family: var(--font-display);
-    font-size: clamp(var(--text-3xl), 4.5vw, var(--text-5xl));
+    font-size: clamp(var(--text-2xl), 7vw, var(--text-3xl));
     font-weight: 700;
     letter-spacing: var(--ls-tight);
     line-height: 1.1;
@@ -186,6 +191,7 @@
     flex-direction: column;
     gap: var(--space-3);
     max-width: 650px;
+    margin-inline: auto;
 }
 
 .hero__desc-text {
@@ -201,6 +207,7 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     row-gap: var(--space-2);
     margin: 0;
     padding: 0;
@@ -223,10 +230,18 @@
     font-weight: 700;
 }
 
+/* Empilhados e esticados na base: dois botões lado a lado não cabem
+   em 320px sem quebrar o rótulo. */
 .hero__actions {
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
     flex-wrap: wrap;
     gap: var(--space-3);
+}
+
+.hero__actions .btn {
+    justify-content: center;
 }
 
 .hero__social {
@@ -252,18 +267,20 @@
    VISUAL / FOTO (UPGRADE MODERNO)
 ════════════════════════════════════════════════════════════════════════════ */
 
+/* Empilhado, o retrato vem antes do texto. */
 .hero__visual {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    order: -1;
 }
 
 /* Container */
 .hero__avatar-wrap {
     position: relative;
-    width: 380px;
-    height: 420px;
+    width: 200px;
+    height: 240px;
     flex-shrink: 0;
 
     transition: transform 0.5s ease;
@@ -396,7 +413,9 @@
     left: 50%;
     transform: translateX(-50%);
 
-    display: flex;
+    /* Só aparece a partir de --bp-md: em tela curta ele cobriria o
+       conteúdo em vez de convidar a rolar. */
+    display: none;
     flex-direction: column;
     align-items: center;
     gap: var(--space-3);
@@ -486,28 +505,33 @@
 
 /* ── Responsive ──────────────────────────────────────────────────────────────── */
 
-@media (max-width: 1024px) {
+/* O bloco de ≤1024px trazia `.hero__glow { right: -30%; top: 0 }`, e essa
+   regra nunca fez nada: `.hero__glow` não tem outra declaração em lugar
+   nenhum do projeto, então é estático, e `right`/`top` não valem para
+   elemento estático. Removida junto com a inversão. */
+
+/* ── A partir de --bp-md (640px) ─────────────────────────────────────────── */
+@media (min-width: 641px) {
     .hero__inner {
-        grid-template-columns: 1fr;
-        text-align: center;
+        padding-inline: var(--gutter);
         gap: var(--space-12);
-        padding-block: var(--space-12);
     }
 
-    .hero__content {
-        align-items: center;
+    .hero__name {
+        font-size: clamp(var(--text-5xl), 7.5vw, var(--text-7xl));
     }
 
-    .hero__desc {
-        margin-inline: auto;
+    .hero__role {
+        font-size: clamp(var(--text-3xl), 4.5vw, var(--text-5xl));
     }
 
-    .hero__stack {
-        justify-content: center;
+    .hero__actions {
+        flex-direction: row;
+        align-items: normal;
     }
 
-    .hero__visual {
-        order: -1;
+    .hero__actions .btn {
+        justify-content: normal;
     }
 
     .hero__avatar-wrap {
@@ -515,42 +539,41 @@
         height: 280px;
     }
 
-    .hero__glow {
-        right: -30%;
-        top: 0;
+    .hero__scroll {
+        display: flex;
     }
 }
 
-@media (max-width: 640px) {
+/* ── A partir de --bp-2xl (1024px): texto e retrato lado a lado ──────────── */
+@media (min-width: 1025px) {
     .hero__inner {
-        padding-inline: var(--gutter-sm);
-        gap: var(--space-8);
+        grid-template-columns: 1fr 400px;
+        /* `inherit` é o que "sem declaração" significa para uma
+           propriedade herdada como text-align. */
+        text-align: inherit;
+        gap: var(--space-16);
+        padding-block: 0;
     }
 
-    .hero__name {
-        font-size: clamp(var(--text-4xl), 11vw, var(--text-5xl));
+    .hero__content {
+        align-items: normal;
     }
 
-    .hero__role {
-        font-size: clamp(var(--text-2xl), 7vw, var(--text-3xl));
+    .hero__desc {
+        margin-inline: 0;
     }
 
-    .hero__actions {
-        flex-direction: column;
-        align-items: stretch;
+    .hero__stack {
+        justify-content: normal;
     }
 
-    .hero__actions .btn {
-        justify-content: center;
+    .hero__visual {
+        order: 0;
     }
 
     .hero__avatar-wrap {
-        width: 200px;
-        height: 240px;
-    }
-
-    .hero__scroll {
-        display: none;
+        width: 380px;
+        height: 420px;
     }
 }
 

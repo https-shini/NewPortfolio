@@ -20,13 +20,16 @@
 ═══════════════════════════════════════════════════════════════════════════ */
 
 .footer__main {
-    padding: var(--space-14) 0 var(--space-12);
+    padding: var(--space-10) 0 var(--space-8);
 }
 
+/* A grade do rodapé tem três arranjos: uma coluna na base, duas a
+   partir de --bp-md e as quatro a partir de --bp-footer-grid. Os
+   blocos ficam no fim do arquivo. */
 .footer__grid {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1.5fr;
-    gap: var(--space-10);
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
     align-items: start;
 }
 
@@ -40,6 +43,7 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-5);
+    grid-column: 1 / -1;
 }
 
 /* Logo tipográfico */
@@ -80,7 +84,7 @@
 
 .footer__logo-name {
     font-family: var(--font-mono);
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1;
@@ -111,7 +115,7 @@
     font-size: var(--text-sm);
     line-height: var(--lh-relaxed);
     color: var(--color-text-3);
-    max-width: 280px;
+    max-width: 100%;
 }
 
 /* Lista de ícones sociais — reutiliza .social-link do globals.css */
@@ -294,10 +298,11 @@
 
 .footer__bottom {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: var(--space-4);
+    gap: var(--space-3);
 }
 
 /* Copyright */
@@ -314,8 +319,9 @@
 /* Grupo direito da barra inferior */
 .footer__bottom-end {
     display: flex;
-    align-items: center;
-    gap: var(--space-5);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
 }
 
 /* Link de CV — pill discreta */
@@ -382,54 +388,52 @@
 
 /* ═══════════════════════════════════════════════════════════════════════════
    8. RESPONSIVIDADE
-   Breakpoints: 1100px · 640px · 480px
+   Escala: --bp-sm 480 · --bp-md 640 · --bp-footer-grid 1100
 ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Tablet largo (≤1100px): 4 colunas → 2 colunas, brand em linha cheia */
-@media (max-width: 1100px) {
-    .footer__grid {
-        grid-template-columns: 1fr 1fr;
-        gap: var(--space-8);
-    }
-
-    .footer__brand {
-        grid-column: 1 / -1;
-    }
-
-    .footer__brand-tagline {
-        max-width: 100%;
+/* ── A partir de --bp-sm (480px): logo cheio ───────────────────────────── */
+@media (min-width: 481px) {
+    .footer__logo-name {
+        font-size: var(--text-xl);
     }
 }
 
-/* Mobile (≤640px): coluna única em todo o grid */
-@media (max-width: 640px) {
+/* ── A partir de --bp-md (640px): duas colunas, barra em linha ─────────── */
+@media (min-width: 641px) {
     .footer__main {
-        padding: var(--space-10) 0 var(--space-8);
+        padding: var(--space-14) 0 var(--space-12);
     }
 
     .footer__grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-8);
+        grid-template-columns: 1fr 1fr;
     }
 
-    /* Barra inferior empilha verticalmente */
     .footer__bottom {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-3);
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space-4);
     }
 
     .footer__bottom-end {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-3);
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space-5);
     }
 }
 
-/* Mobile pequeno (≤480px): logo menor */
-@media (max-width: 480px) {
-    .footer__logo-name {
-        font-size: var(--text-lg);
+/* ── A partir de --bp-footer-grid (1100px): as quatro colunas ──────────── */
+@media (min-width: 1101px) {
+    .footer__grid {
+        grid-template-columns: 2fr 1fr 1fr 1.5fr;
+        gap: var(--space-10);
+    }
+
+    .footer__brand {
+        grid-column: auto;
+    }
+
+    .footer__brand-tagline {
+        max-width: 280px;
     }
 }
 
@@ -501,17 +505,18 @@
     color: var(--color-brand-text);
 }
 
+/* Em telas estreitas o rótulo sai; o número já identifica o botão
+   (o nome acessível vem do aria-label, que permanece completo). */
 .footer__version-label {
+    display: none;
     letter-spacing: var(--ls-wide);
     text-transform: uppercase;
     font-size: var(--text-2xs);
 }
 
-/* Em telas estreitas o rótulo sai; o número já identifica o botão
-   (o nome acessível vem do aria-label, que permanece completo). */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
     .footer__version-label {
-        display: none;
+        display: inline;
     }
 }
 
