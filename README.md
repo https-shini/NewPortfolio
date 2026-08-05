@@ -533,7 +533,7 @@ Este é um projeto pessoal, mas sugestões são bem-vindas:
 ### Autoria dos commits
 
 Todo o histórico deste repositório é assinado exclusivamente por
-**Guilherme de Souza Cruz**, com a sua própria conta do Git. Não há
+**Guilherme Cruz**, com a sua própria conta do Git. Não há
 coautoria de terceiros no histórico, e commits enviados às branches do
 repositório não devem declarar coautor, cocriador ou qualquer outra
 atribuição além do autor.
@@ -547,7 +547,7 @@ preservando a autoria de quem as escreveu no commit do PR.
 
 <div align="center">
 
-**Guilherme de Souza Cruz**
+**Guilherme Cruz**
 Desenvolvedor de Software · Estudante de Ciência da Computação
 São Paulo, SP — Brasil
 

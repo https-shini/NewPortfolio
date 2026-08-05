@@ -27,7 +27,7 @@ describe("LinksPage — social tree", () => {
     it("apresenta o perfil com nome, handle e papéis", () => {
         setup();
         expect(
-            screen.getByRole("heading", { level: 1, name: PROFILE.fullName }),
+            screen.getByRole("heading", { level: 1, name: PROFILE.name }),
         ).toBeInTheDocument();
         expect(screen.getByText(PROFILE.handle)).toBeInTheDocument();
         PROFILE.roles.forEach((role) => {
@@ -37,7 +37,7 @@ describe("LinksPage — social tree", () => {
 
     it("usa a mesma foto da seção Sobre (hero.webp)", () => {
         setup();
-        const img = screen.getByAltText(PROFILE.fullName) as HTMLImageElement;
+        const img = screen.getByAltText(PROFILE.name) as HTMLImageElement;
         expect(img.getAttribute("src")).toMatch(/hero/);
     });
 
@@ -124,7 +124,7 @@ describe("LinksPage — social tree", () => {
 
     it("define título e canonical da rota", () => {
         setup();
-        expect(document.title).toContain(PROFILE.fullName);
+        expect(document.title).toContain(PROFILE.name);
         expect(
             document.head
                 .querySelector('link[rel="canonical"]')

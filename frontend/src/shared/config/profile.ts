@@ -18,9 +18,13 @@ export interface SocialProfile {
 }
 
 export const PROFILE = {
-    /** Nome completo (documentos, JSON-LD, ATS). */
-    fullName: "Guilherme de Souza Cruz",
-    /** Nome de exibição na UI. */
+    /**
+     * Nome usado em TODA referência pessoal — UI, JSON-LD, títulos de
+     * página e metadados. Primeiro e último nome, sem nomes do meio.
+     *
+     * Campo único de propósito: havia um `fullName` separado, e manter
+     * duas formas do mesmo nome fazia a variante longa reaparecer.
+     */
     name: "Guilherme Cruz",
     role: {
         pt: "Desenvolvedor de Software",

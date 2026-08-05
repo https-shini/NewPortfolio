@@ -62,7 +62,7 @@ export const LinksPage: React.FC = () => {
     const year = new Date().getFullYear();
 
     useDocumentMeta({
-        title: `${t("links.pageTitle")} — ${PROFILE.fullName}`,
+        title: `${t("links.pageTitle")} — ${PROFILE.name}`,
         description: t("links.meta.description"),
         path: ROUTES.LINKS,
     });
@@ -74,7 +74,7 @@ export const LinksPage: React.FC = () => {
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: PROFILE.fullName,
+                    title: PROFILE.name,
                     url: shareUrl,
                 });
             } catch {
@@ -161,7 +161,7 @@ export const LinksPage: React.FC = () => {
                     <div className="linktree__avatar-frame">
                         <img
                             src={avatarImg}
-                            alt={PROFILE.fullName}
+                            alt={PROFILE.name}
                             className="linktree__avatar-img"
                             width={120}
                             height={120}
@@ -180,7 +180,7 @@ export const LinksPage: React.FC = () => {
                     className="linktree__name reveal-item"
                     style={{ "--reveal-i": 1 } as React.CSSProperties}
                 >
-                    {PROFILE.fullName}
+                    {PROFILE.name}
                 </h1>
 
                 <p
@@ -354,7 +354,7 @@ export const LinksPage: React.FC = () => {
                     </div>
 
                     <p className="linktree__foot-name">
-                        {PROFILE.fullName} <span>· {PROFILE.handle}</span>
+                        {PROFILE.name} <span>· {PROFILE.handle}</span>
                     </p>
 
                     <p className="linktree__foot-text">
