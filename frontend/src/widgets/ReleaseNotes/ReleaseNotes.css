@@ -649,6 +649,17 @@
     margin-inline: auto;
 }
 
+/* Aqui caberia uma container query — o cartão aparece no índice e na
+   página de versão —, e ela foi medida antes de ser descartada. Na
+   mesma janela de 481px o cartão tem 419px no índice e 443px na página
+   de versão: 24px de diferença, um décimo de um degrau. Pior, a relação
+   não é monótona — de 480 para 481 o cartão do índice ENCOLHE, porque o
+   recuo da trilha cresce —, então nenhum limite de contêiner reproduz o
+   comportamento atual nas duas rotas ao mesmo tempo. E a página de
+   versão nem tem elemento que sirva de contêiner: o cartão é filho
+   direto. Trocar teria custo de marcação e mudança visível numa faixa,
+   sem ganho. Fica no viewport. */
+
 /* ── A partir de --bp-sm (480px) ───────────────────────────────── */
 @media (min-width: 481px) {
     .release-notes__timeline {
