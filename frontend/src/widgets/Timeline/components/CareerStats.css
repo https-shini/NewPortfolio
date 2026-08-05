@@ -3,12 +3,19 @@
    Status + métricas + competências, alinhado à timeline.
 ═══════════════════════════════════════════════════════════════ */
 
+/* O painel muda de natureza com a largura, não só de medida:
+     base              faixa empilhada — grade de uma coluna
+     --bp-career-stats  duas colunas, com competências ocupando a linha
+     --bp-xl            coluna lateral grudada, em fluxo vertical
+   Por isso o `display` também troca; os dois blocos ficam no fim do
+   arquivo. */
 .career-aside {
-    position: sticky;
-    top: calc(var(--header-height) + var(--space-4));
+    position: static;
+    top: auto;
     align-self: start;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
     gap: var(--space-4);
 }
 
@@ -18,7 +25,7 @@
     background: var(--color-surface-1);
     border: 1px solid var(--color-border-2);
     border-radius: var(--radius-lg);
-    padding: var(--space-5);
+    padding: var(--space-4);
     overflow: hidden;
     isolation: isolate;
 
@@ -234,16 +241,15 @@
     transform: translateY(-1px);
 }
 
-/* ── Responsivo ────────────────────────────────────────────────── */
-@media (max-width: 900px) {
+/* ── A partir de --bp-career-stats (560px) ─────────────────────── */
+@media (min-width: 561px) {
+    /* Faixa: status + visão geral lado a lado, competências abaixo. */
     .career-aside {
-        position: static;
-        top: auto;
-        /* faixa: status + visão geral lado a lado, competências abaixo */
-        display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: var(--space-4);
-        align-items: start;
+    }
+
+    .career-aside__card {
+        padding: var(--space-5);
     }
 
     .career-aside__card:last-child {
@@ -251,17 +257,16 @@
     }
 }
 
-@media (max-width: 560px) {
+/* ── A partir de --bp-xl (900px) ───────────────────────────────── */
+@media (min-width: 901px) {
     .career-aside {
-        grid-template-columns: 1fr;
-    }
-
-    .career-aside__card {
-        padding: var(--space-4);
-    }
-
-    .career-aside__card:last-child {
-        grid-column: auto;
+        position: sticky;
+        top: calc(var(--header-height) + var(--space-4));
+        display: flex;
+        flex-direction: column;
+        /* `start` é o que a grade pede; em flex-column ele encolheria
+           o cartão à largura do conteúdo, então volta a esticar. */
+        align-items: stretch;
     }
 }
 

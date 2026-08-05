@@ -8,7 +8,9 @@
     background: var(--color-surface-1);
     border: 1px solid var(--color-border-2);
     border-radius: var(--radius-xl);
-    padding: var(--space-6) var(--space-6) var(--space-7);
+    /* Base compacta; cresce em --bp-sm e de novo em --bp-lg — os dois
+       blocos estão no fim do arquivo. */
+    padding: var(--space-5) var(--space-5) var(--space-6);
     overflow: hidden;
     isolation: isolate;
 
@@ -64,7 +66,7 @@
 .career-company__header {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-3);
     padding-bottom: var(--space-5);
     margin-bottom: var(--space-5);
     border-bottom: 1px solid var(--color-border-1);
@@ -73,8 +75,8 @@
 .career-company__avatar {
     position: relative;
     flex-shrink: 0;
-    width: 56px;
-    height: 56px;
+    width: 44px;
+    height: 44px;
     border-radius: var(--radius-lg);
     display: inline-flex;
     align-items: center;
@@ -102,7 +104,7 @@
 
 .career-company__initials {
     font-family: var(--font-display);
-    font-size: var(--text-lg);
+    font-size: var(--text-md);
     font-weight: 700;
     letter-spacing: var(--ls-tight);
     line-height: 1;
@@ -142,7 +144,7 @@
 
 .career-company__name {
     font-family: var(--font-display);
-    font-size: var(--text-2xl);
+    font-size: var(--text-lg);
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: var(--ls-snug);
@@ -229,7 +231,7 @@
     flex-wrap: wrap;
     gap: 8px;
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
+    font-size: 11px;
     color: var(--color-text-3);
     letter-spacing: 0.02em;
 }
@@ -262,16 +264,20 @@
     position: relative;
 }
 
+/* Quatro medidas que andam juntas e não podem ser mexidas em separado:
+   o recuo da linha, a posição do fio vertical, a do nó sobre o fio e o
+   comprimento do traço que liga o nó ao texto. Base estreita; o
+   conjunto abre em --bp-sm, no bloco do fim do arquivo. */
 .career-role-row {
     position: relative;
-    padding-left: 38px;
+    padding-left: 30px;
 }
 
 /* Rail vertical — segmentos por linha (robusto à expansão do acordeão) */
 .career-role-row::before {
     content: "";
     position: absolute;
-    left: 14px;
+    left: 11px;
     top: 0;
     bottom: calc(-1 * var(--space-4));
     width: 2px;
@@ -295,7 +301,7 @@
 /* Nó (dot) sobre a trilha */
 .career-role-row__node {
     position: absolute;
-    left: 8px;
+    left: 5px;
     top: 22px;
     z-index: 1;
     width: 14px;
@@ -316,7 +322,7 @@
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    width: 16px;
+    width: 12px;
     height: 2px;
     background: var(--color-border-2);
     pointer-events: none;
@@ -330,10 +336,10 @@
         0 0 14px color-mix(in srgb, var(--color-brand) 45%, transparent);
 }
 
-/* ── Responsivo ────────────────────────────────────────────────── */
-@media (max-width: 768px) {
-    .career-company {
-        padding: var(--space-5) var(--space-5) var(--space-6);
+/* ── A partir de --bp-sm (480px) ───────────────────────────────── */
+@media (min-width: 481px) {
+    .career-company__header {
+        gap: var(--space-4);
     }
 
     .career-company__avatar {
@@ -341,47 +347,49 @@
         height: 50px;
     }
 
-    .career-company__name {
-        font-size: var(--text-xl);
-    }
-}
-
-@media (max-width: 480px) {
-    .career-company__header {
-        gap: var(--space-3);
-    }
-
-    .career-company__avatar {
-        width: 44px;
-        height: 44px;
-    }
-
     .career-company__initials {
-        font-size: var(--text-md);
-    }
-
-    .career-company__name {
         font-size: var(--text-lg);
     }
 
-    .career-company__meta {
-        font-size: 11px;
+    .career-company__name {
+        font-size: var(--text-xl);
     }
 
+    .career-company__meta {
+        font-size: var(--text-xs);
+    }
+
+    /* As quatro medidas da linha de cargo abrem juntas. */
     .career-role-row {
-        padding-left: 30px;
+        padding-left: 38px;
     }
 
     .career-role-row::before {
-        left: 11px;
+        left: 14px;
     }
 
     .career-role-row__node {
-        left: 5px;
+        left: 8px;
     }
 
     .career-role-row__node::after {
-        width: 12px;
+        width: 16px;
+    }
+}
+
+/* ── A partir de --bp-lg (768px) ───────────────────────────────── */
+@media (min-width: 769px) {
+    .career-company {
+        padding: var(--space-6) var(--space-6) var(--space-7);
+    }
+
+    .career-company__avatar {
+        width: 56px;
+        height: 56px;
+    }
+
+    .career-company__name {
+        font-size: var(--text-2xl);
     }
 }
 

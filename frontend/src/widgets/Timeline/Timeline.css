@@ -24,37 +24,45 @@
 }
 
 /* ── Layout: timeline (esquerda) + painel dashboard (direita) ───── */
+/* Base: empilhado, com o painel de resumo ANTES da lista de empresas —
+   quem chega por celular vê a visão geral primeiro. As duas colunas
+   entram a partir de --bp-xl (ver o bloco no fim do arquivo). */
 .career__layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
-    gap: var(--space-6);
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
     align-items: start;
-    margin-top: var(--space-8);
+    margin-top: var(--space-6);
+}
+
+.career-aside {
+    order: -1;
 }
 
 .career__companies {
     display: flex;
     flex-direction: column;
-    gap: var(--space-6);
+    gap: var(--space-5);
     min-width: 0;
 }
 
-/* Tablet/mobile: empilha — painel acima da timeline (overview primeiro) */
-@media (max-width: 900px) {
-    .career__layout {
-        grid-template-columns: 1fr;
-        gap: var(--space-7);
-        margin-top: var(--space-6);
-    }
-
-    .career-aside {
-        order: -1;
+/* ── A partir de --bp-md (640px) ───────────────────────────────── */
+@media (min-width: 641px) {
+    .career__companies {
+        gap: var(--space-6);
     }
 }
 
-@media (max-width: 640px) {
-    .career__companies {
-        gap: var(--space-5);
+/* ── A partir de --bp-xl (900px) ───────────────────────────────── */
+@media (min-width: 901px) {
+    .career__layout {
+        grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+        gap: var(--space-6);
+        margin-top: var(--space-8);
+    }
+
+    .career-aside {
+        order: 0;
     }
 }
 
