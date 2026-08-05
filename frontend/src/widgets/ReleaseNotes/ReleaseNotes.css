@@ -116,9 +116,12 @@
 }
 
 /* ── Trilha ────────────────────────────────────────────────────── */
+/* O recuo da linha do tempo e a posição do ponto andam juntos: o ponto
+   fica sobre a linha, em `-recuo + 1px`. Base estreita; ambos crescem a
+   partir de --bp-sm (ver o bloco no fim do arquivo). */
 .release-notes__timeline {
     position: relative;
-    padding-inline-start: var(--space-6);
+    padding-inline-start: var(--space-5);
 }
 
 .release-notes__rail {
@@ -155,7 +158,7 @@
 .release-item__wrapper::before {
     content: "";
     position: absolute;
-    inset-inline-start: calc(var(--space-6) * -1 + 1px);
+    inset-inline-start: calc(var(--space-5) * -1 + 1px);
     top: var(--space-5);
     width: 10px;
     height: 10px;
@@ -178,7 +181,7 @@
     flex-direction: column;
     gap: var(--space-4);
 
-    padding: var(--space-5);
+    padding: var(--space-4);
     background: linear-gradient(
         160deg,
         var(--color-brand-subtle) 0%,
@@ -646,19 +649,19 @@
     margin-inline: auto;
 }
 
-/* ── Telas estreitas ───────────────────────────────────────────── */
-@media (max-width: 480px) {
+/* ── A partir de --bp-sm (480px) ───────────────────────────────── */
+@media (min-width: 481px) {
     .release-notes__timeline {
-        padding-inline-start: var(--space-5);
+        padding-inline-start: var(--space-6);
     }
 
     .release-notes__entry::before,
     .release-item__wrapper::before {
-        inset-inline-start: calc(var(--space-5) * -1 + 1px);
+        inset-inline-start: calc(var(--space-6) * -1 + 1px);
     }
 
     .release-card {
-        padding: var(--space-4);
+        padding: var(--space-5);
     }
 }
 

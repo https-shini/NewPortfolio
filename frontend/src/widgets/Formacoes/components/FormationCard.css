@@ -14,8 +14,9 @@
 
     background: var(--color-surface-1);
     border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-xl);
-    padding: var(--space-6);
+    /* Base compacta; o cartão cresce a partir de --bp-md (fim do arquivo). */
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
     overflow: hidden;
     isolation: isolate;
 
@@ -245,7 +246,7 @@
 /* ── Title & institution ───────────────────────────────────────── */
 .formation-card__title {
     font-family: var(--font-display);
-    font-size: var(--text-lg);
+    font-size: var(--text-md);
     font-weight: 700;
     line-height: var(--lh-snug);
     letter-spacing: var(--ls-snug);
@@ -375,9 +376,12 @@
 }
 
 /* ── Footer ────────────────────────────────────────────────────── */
+/* Empilhado na base: o selo do certificado não cabe ao lado do rodapé
+   em tela estreita. Volta a ser linha a partir de --bp-md. */
 .formation-card__footer {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: var(--space-2);
@@ -415,7 +419,7 @@
         background var(--transition-fast),
         border-color var(--transition-fast),
         transform var(--transition-fast);
-    margin-left: auto;
+    margin-left: 0;
 }
 
 .formation-card__cert-link:hover {
@@ -448,24 +452,24 @@
     color: var(--color-accent-light);
 }
 
-/* ── Responsivo ────────────────────────────────────────────────── */
-@media (max-width: 640px) {
+/* ── A partir de --bp-md (640px) ───────────────────────────────── */
+@media (min-width: 641px) {
     .formation-card {
-        padding: var(--space-5);
-        border-radius: var(--radius-lg);
+        padding: var(--space-6);
+        border-radius: var(--radius-xl);
     }
 
     .formation-card__title {
-        font-size: var(--text-md);
+        font-size: var(--text-lg);
     }
 
     .formation-card__footer {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
     }
 
     .formation-card__cert-link {
-        margin-left: 0;
+        margin-left: auto;
     }
 }
 

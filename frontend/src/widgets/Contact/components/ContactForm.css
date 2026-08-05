@@ -28,9 +28,12 @@
     pointer-events: none;
 }
 
+/* Uma coluna é a base; as duas entram a partir de --bp-md (ver o fim
+   do arquivo). Empilhado, o campo ocupa a largura toda — que é o que
+   um formulário precisa em tela estreita. */
 .contact-form__row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: var(--space-4);
 }
 
@@ -112,9 +115,9 @@
     color: var(--color-error);
 }
 
-/* ── Responsivo ── */
-@media (max-width: 640px) {
+/* ── A partir de --bp-md (640px) ── */
+@media (min-width: 641px) {
     .contact-form__row {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
     }
 }
