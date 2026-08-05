@@ -530,6 +530,17 @@ Este é um projeto pessoal, mas sugestões são bem-vindas:
 3. Commits no padrão Conventional Commits (validados pelo commitlint)
 4. Abra um PR — o CI precisa passar (lint, tipos, testes, build)
 
+### Autoria dos commits
+
+Todo o histórico deste repositório é assinado exclusivamente por
+**Guilherme de Souza Cruz**, com a sua própria conta do Git. Não há
+coautoria de terceiros no histórico, e commits enviados às branches do
+repositório não devem declarar coautor, cocriador ou qualquer outra
+atribuição além do autor.
+
+Contribuições externas entram por pull request a partir de um fork,
+preservando a autoria de quem as escreveu no commit do PR.
+
 ---
 
 ## 👤 Autor
