@@ -486,18 +486,31 @@ body.light-mode {
    PostCSS, e o projeto não adiciona dependência) ou container queries.
 
    Então a fonte única é esta tabela: o literal continua escrito na media
-   query, mas SÓ com um destes cinco valores, e a intenção mora aqui.
+   query, mas SÓ com um destes oito valores, e a intenção mora aqui.
 
+   ── Escala principal — cada ponto tem vários consumidores ──────────
      --bp-sm    480px   celular grande / fim do layout de uma coluna
      --bp-md    640px   phablet; é onde o toque deixa de ser a regra
      --bp-lg    768px   tablet retrato
-     --bp-xl   1024px   tablet paisagem / notebook pequeno
-     --bp-2xl  1280px   desktop
+     --bp-xl    900px   tablet paisagem
+     --bp-2xl  1024px   notebook
+
+   ── Pontos locais — um consumidor cada ─────────────────────────────
+     --bp-career-stats  560px   grade de estatísticas da carreira
+     --bp-work-grid     600px   grade de cartões de experiência
+     --bp-footer-grid  1100px   colunas do rodapé
+
+   Havia dez valores soltos, com 768/780 e 880/900 dizendo a mesma coisa
+   de dois jeitos. Esses dois pares foram fundidos — as faixas eram de
+   12px e 20px, estreitas demais para conter decisão de layout. Os três
+   pontos locais NÃO foram fundidos: aproximá-los do vizinho mudaria o
+   layout numa faixa larga o bastante para se ver. Ficam como estão,
+   mas declarados, que é o que faltava.
 
    O CSS é mobile-first: o estilo base vale para a menor tela e cada
-   `min-width` acrescenta. Antes desta escala havia dez valores soltos,
-   com 560/600/640, 768/780 e 880/900 dizendo a mesma coisa de três
-   jeitos diferentes.
+   `min-width` acrescenta. Na inversão o limite vira `valor + 1`
+   (`max-width: 640px` → `min-width: 641px`), porque a escala guarda o
+   ÚLTIMO pixel da faixa menor — é o que preserva o comportamento.
 
    As custom properties abaixo existem para quem precisa do valor em
    `clamp()`, `min()` ou container query — não para a media query.
@@ -506,8 +519,12 @@ body.light-mode {
     --bp-sm: 480px;
     --bp-md: 640px;
     --bp-lg: 768px;
-    --bp-xl: 1024px;
-    --bp-2xl: 1280px;
+    --bp-xl: 900px;
+    --bp-2xl: 1024px;
+
+    --bp-career-stats: 560px;
+    --bp-work-grid: 600px;
+    --bp-footer-grid: 1100px;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
