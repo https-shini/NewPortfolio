@@ -3,7 +3,10 @@ import "./ReleaseNotes.css";
 import { useLang } from "@/shared/hooks/useLang";
 import { useRoute } from "@/shared/hooks/useRoute";
 import { useReleaseNotes } from "@/shared/hooks/useReleaseNotes";
-import { releaseNotesPagePath } from "@/shared/config/routes";
+import {
+    releaseNotesPagePath,
+    RELEASE_NOTES_PAGE_SIZE,
+} from "@/shared/config/routes";
 import { RELEASE_NOTES, getUsedTags } from "@/shared/config/releaseNotes";
 import {
     mergeReleaseNotes,
@@ -23,7 +26,7 @@ import type { ReleaseFilter } from "./ReleaseNotes.types";
  * Com o histórico curto de hoje a paginação nem aparece — o número
  * existe para quando aparecer.
  */
-export const PAGE_SIZE = 50;
+export const PAGE_SIZE = RELEASE_NOTES_PAGE_SIZE;
 
 interface ReleaseNotesProps {
     /**

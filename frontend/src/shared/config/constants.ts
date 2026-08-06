@@ -36,22 +36,12 @@ export const FORM_ENDPOINT: string | undefined =
     import.meta.env.VITE_FORM_ENDPOINT || undefined;
 
 /**
- * SECTION_IDS — identificadores semânticos das seções do site em português.
- * Fonte única de verdade: usado em Hero/About/..., Header (nav/observer),
- * Footer (links) e scrollToSection().
+ * SECTION_IDS — reexportado de routes.ts por ergonomia dos consumidores.
+ * A definição mudou de lugar porque o gerador de sitemap precisa dela no
+ * build, e este módulo lê import.meta.env — o que só existe dentro do
+ * Vite. routes.ts não importa nada e serve aos dois mundos.
  */
-export const SECTION_IDS = {
-    HOME: "inicio",
-    ABOUT: "sobre",
-    CAREER: "carreira",
-    EDUCATION: "formacoes",
-    FEATURED: "destaque",
-    WORK: "projetos",
-    RECOMMENDATIONS: "recomendacoes",
-    CONTACT: "contato",
-} as const;
-
-export type SectionId = (typeof SECTION_IDS)[keyof typeof SECTION_IDS];
+export { SECTION_IDS, type SectionId } from "@/shared/config/routes";
 
 /**
  * ROUTES — reexportado de routes.ts por ergonomia dos consumidores,

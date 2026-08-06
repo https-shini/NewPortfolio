@@ -17,6 +17,24 @@ export const ROUTES = {
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
 
+/**
+ * SECTION_IDS — identificadores semânticos das seções da home.
+ * Fonte única de verdade: usado em Hero/About/..., Header (nav/observer),
+ * Footer (links), scrollToSection() e o gerador de sitemap do build.
+ */
+export const SECTION_IDS = {
+    HOME: "inicio",
+    ABOUT: "sobre",
+    CAREER: "carreira",
+    EDUCATION: "formacoes",
+    FEATURED: "destaque",
+    WORK: "projetos",
+    RECOMMENDATIONS: "recomendacoes",
+    CONTACT: "contato",
+} as const;
+
+export type SectionId = (typeof SECTION_IDS)[keyof typeof SECTION_IDS];
+
 /* ─────────────────────────────────────────────────────────
    Rotas com parâmetro
    ─────────────────────────────────────────────────────────
@@ -27,6 +45,11 @@ export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
 
 /** Segmento que distingue o índice paginado de uma versão. */
 export const RELEASE_NOTES_PAGE_SEGMENT = "page";
+
+/** Versões por página do índice. Mora aqui, e não no widget, porque o
+    gerador de sitemap precisa do mesmo número para saber quantas páginas
+    existem — e não pode importar um .tsx sem arrastar o React junto. */
+export const RELEASE_NOTES_PAGE_SIZE = 50;
 
 /** `/release-notes/v2.0.0` — o `v` espelha a tag do Git. */
 export function releaseNotePath(version: string): string {

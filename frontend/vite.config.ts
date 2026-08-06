@@ -4,7 +4,8 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import { readFile, writeFile } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,38 +34,180 @@ function siteUrlHtmlPlugin() {
     };
 }
 
-/**
- * Acrescenta ao sitemap uma URL por versão publicada.
+/* ── Sitemap e robots ────────────────────────────────────────────────────
  *
- * O `public/sitemap.xml` continua sendo a fonte das rotas fixas e das
- * âncoras da home, escritas à mão. As notas de versão, não: cada entrada
- * nova em `RELEASE_NOTES` viraria uma linha a lembrar de copiar. Aqui elas
- * saem da própria lista, no build — acrescentar uma versão continua sendo
- * mexer num arquivo só.
+ * Antes o `public/sitemap.xml` era escrito à mão e só as páginas de versão
+ * saíam do código. As datas envelheciam sozinhas: a home ficou parada em
+ * 2026-07-17 enquanto mudava dezenas de vezes, e as oito âncoras repetiam
+ * `SECTION_IDS` letra por letra. Agora o arquivo inteiro nasce do build, e
+ * o `<lastmod>` vem do git — a única fonte que não depende de alguém
+ * lembrar de atualizar.
  */
-function releaseNotesSitemapPlugin() {
+
+/** Data do último commit que tocou qualquer um dos caminhos (YYYY-MM-DD). */
+function lastModified(paths: string[]): string | null {
+    try {
+        const out = execFileSync(
+            "git",
+            ["log", "-1", "--format=%cs", "--", ...paths],
+            {
+                cwd: path.resolve(__dirname, ".."),
+                encoding: "utf8",
+                /* Fora de um clone o git reclama no stderr; o build já
+                   trata a ausência, então o aviso só polui o log. */
+                stdio: ["ignore", "pipe", "ignore"],
+            },
+        ).trim();
+        return /^\d{4}-\d{2}-\d{2}$/.test(out) ? out : null;
+    } catch {
+        /* Sem git: repositório raso no CI (`fetch-depth: 1`), tarball, ou
+           build fora de um clone. Quem chama decide o que fazer. */
+        return null;
+    }
+}
+
+/** `&`, `<` e `>` quebram o XML; versões e caminhos passam por aqui. */
+function escapeXml(value: string): string {
+    return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+}
+
+interface SitemapEntry {
+    loc: string;
+    lastmod: string | null;
+    changefreq: string;
+    priority: string;
+}
+
+function renderUrl({ loc, lastmod, changefreq, priority }: SitemapEntry) {
+    /* <lastmod> é opcional na especificação. Sem data confiável, omitir é
+       melhor do que inventar: um valor errado desorienta o rastreador mais
+       do que a ausência. */
+    return [
+        "    <url>",
+        `        <loc>${escapeXml(loc)}</loc>`,
+        ...(lastmod ? [`        <lastmod>${lastmod}</lastmod>`] : []),
+        `        <changefreq>${changefreq}</changefreq>`,
+        `        <priority>${priority}</priority>`,
+        "    </url>",
+    ].join("\n");
+}
+
+function sitemapPlugin() {
     return {
-        name: "release-notes-sitemap",
+        name: "sitemap",
         async closeBundle() {
             const { RELEASE_NOTES } =
                 await import("./src/shared/config/releaseNotes");
-            const file = path.resolve(__dirname, "./dist/sitemap.xml");
+            const {
+                SECTION_IDS,
+                releaseNotePath,
+                releaseNotesPagePath,
+                RELEASE_NOTES_PAGE_SIZE,
+            } = await import("./src/shared/config/routes");
 
-            const xml = await readFile(file, "utf8").catch(() => null);
-            if (!xml) return;
+            /* Data de cada rota: o commit mais recente entre os caminhos que
+               a compõem. Widgets entram na home porque é lá que aparecem. */
+            const homeDate = lastModified([
+                "frontend/src/pages/Home",
+                "frontend/src/widgets",
+                "frontend/src/shared/lib/translations.ts",
+            ]);
 
-            const urls = RELEASE_NOTES.map(
-                (entry) => `    <url>
-        <loc>${SITE_URL}/release-notes/v${entry.version}</loc>
-        <lastmod>${entry.date}</lastmod>
-        <changefreq>yearly</changefreq>
-        <priority>0.6</priority>
-    </url>`,
-            ).join("\n");
+            const entries: SitemapEntry[] = [
+                {
+                    loc: `${SITE_URL}/`,
+                    lastmod: homeDate,
+                    changefreq: "monthly",
+                    priority: "1.0",
+                },
+                {
+                    loc: `${SITE_URL}/links`,
+                    lastmod: lastModified([
+                        "frontend/src/pages/Links",
+                        "frontend/src/shared/config/links.ts",
+                    ]),
+                    changefreq: "monthly",
+                    priority: "0.9",
+                },
+                {
+                    loc: `${SITE_URL}/release-notes`,
+                    lastmod: lastModified([
+                        "frontend/src/pages/ReleaseNotes",
+                        "frontend/src/shared/config/releaseNotes.ts",
+                    ]),
+                    changefreq: "weekly",
+                    priority: "0.7",
+                },
+            ];
+
+            /* Âncoras da home — geradas de SECTION_IDS, não copiadas. */
+            for (const id of Object.values(SECTION_IDS)) {
+                entries.push({
+                    loc: `${SITE_URL}/#${id}`,
+                    lastmod: homeDate,
+                    changefreq: "monthly",
+                    priority: "0.8",
+                });
+            }
+
+            /* Índice paginado: a página 1 é o próprio /release-notes, já
+               listado acima, então o laço começa na 2. Com o histórico
+               atual não há página 2 — o laço simplesmente não roda. */
+            const totalPages = Math.ceil(
+                RELEASE_NOTES.length / RELEASE_NOTES_PAGE_SIZE,
+            );
+            for (let page = 2; page <= totalPages; page++) {
+                entries.push({
+                    loc: `${SITE_URL}${releaseNotesPagePath(page)}`,
+                    lastmod: lastModified([
+                        "frontend/src/shared/config/releaseNotes.ts",
+                    ]),
+                    changefreq: "weekly",
+                    priority: "0.5",
+                });
+            }
+
+            for (const entry of RELEASE_NOTES) {
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.date)) {
+                    throw new Error(
+                        `[sitemap] a versão ${entry.version} tem data "${entry.date}", ` +
+                            `fora do formato YYYY-MM-DD exigido por <lastmod>.`,
+                    );
+                }
+                entries.push({
+                    loc: `${SITE_URL}${releaseNotePath(entry.version)}`,
+                    lastmod: entry.date,
+                    changefreq: "yearly",
+                    priority: "0.6",
+                });
+            }
+
+            const xml = [
+                '<?xml version="1.0" encoding="UTF-8"?>',
+                "<!--",
+                `    Gerado no build por vite.config.ts — não editar à mão.`,
+                `    As datas vêm do git; as âncoras, de SECTION_IDS.`,
+                "-->",
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                ...entries.map(renderUrl),
+                "</urlset>",
+                "",
+            ].join("\n");
 
             await writeFile(
-                file,
-                xml.replace("</urlset>", `${urls}\n</urlset>`),
+                path.resolve(__dirname, "./dist/sitemap.xml"),
+                xml,
+                "utf8",
+            );
+
+            /* O robots.txt trazia o domínio fixo e não passa pelo
+               transformIndexHtml, que só alcança HTML. */
+            await writeFile(
+                path.resolve(__dirname, "./dist/robots.txt"),
+                `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`,
                 "utf8",
             );
         },
@@ -77,7 +220,7 @@ export default defineConfig({
             jsxRuntime: "automatic",
         }),
         siteUrlHtmlPlugin(),
-        releaseNotesSitemapPlugin(),
+        sitemapPlugin(),
     ],
 
     /* Constante de build — ver a declaração em src/vite-env.d.ts. */
