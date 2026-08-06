@@ -20,17 +20,13 @@ export type TranslationKey =
     | "hero.status"
     | "hero.cta.work"
     | "hero.cta.cv"
-    | "hero.badge"
     | "hero.scroll"
 
     /* ── ABOUT ─────────────────────────────────────── */
     | "about.title"
-    | "about.bio.p1"
     | "about.bio.p2"
     | "about.bio.p3"
-    | "about.bio.p4"
     | "about.goal.title"
-    | "about.goal.text"
 
     /* ── TIMELINE (Carreira) ───────────────────────── */
     | "timeline.title"
@@ -275,22 +271,15 @@ const pt: Translations = {
     "hero.status": "Disponível para oportunidades",
     "hero.cta.work": "Ver projetos",
     "hero.cta.cv": "Baixar CV",
-    "hero.badge": "Em transição para desenvolvimento",
     "hero.scroll": "Explorar",
 
     /* ABOUT */
     "about.title": "Sobre Mim",
-    "about.bio.p1":
-        "Sou Guilherme Cruz, estudante de Ciência da Computação com formação técnica em Desenvolvimento de Sistemas. Possuo base sólida em lógica de programação, estruturas de dados e fundamentos de software.",
     "about.bio.p2":
         "Tenho experiência prática no desenvolvimento de aplicações web utilizando React, JavaScript/TypeScript, Node.js e MySQL, com foco em interfaces modernas, responsivas e integração com APIs.",
     "about.bio.p3":
         "Aplico boas práticas como código limpo, organização de projetos e versionamento com Git, desenvolvendo soluções eficientes, escaláveis e de fácil manutenção.",
-    "about.bio.p4":
-        "Busco minha primeira oportunidade como Desenvolvedor Júnior ou Estagiário, onde eu possa evoluir tecnicamente, atuar em projetos reais e contribuir com o time.",
     "about.goal.title": "Objetivo Profissional",
-    "about.goal.text":
-        "Atuar como desenvolvedor júnior ou estagiário, contribuindo com projetos reais, evoluindo minhas habilidades técnicas e adquirindo experiência prática no mercado.",
 
     /* TIMELINE (Carreira) */
     "timeline.title": "Carreira",
@@ -328,7 +317,7 @@ const pt: Translations = {
     "career.aside.label": "Painel profissional",
     "career.aside.overview": "Visão geral",
     "career.aside.level": "Nível",
-    "career.aside.seniority": "Júnior",
+    "career.aside.seniority": "Full Stack",
 
     /* EDUCATION (Formações) */
     "education.title": "Formações",
@@ -353,9 +342,9 @@ const pt: Translations = {
     "education.skills.label": "Competências",
     "education.progress": "concluído",
     "about.bio":
-        "Sou Guilherme Cruz, **Desenvolvedor Júnior** em transição de carreira, hoje atuando como **Analista de Suporte Técnico (Helpdesk)** na Wise System. Fui efetivado de estágio a CLT em menos de um ano, dando suporte ao **SIGO**, plataforma de **SST (Saúde e Segurança do Trabalho)** e eSocial, com foco nos módulos **Financeiro** e **Faturamento**: homologação bancária, arquivos **CNAB** (remessa/retorno), conciliação e homologação de **notas fiscais/RPS**. É vivência real de sistema em produção, não só teoria de sala de aula.\n\nDo lado do desenvolvimento, domino **JavaScript**, **TypeScript**, **Java**, **Python** e **PHP**, com foco em **front-end** (**React**, **React Router**, **Vite**, **HTML5**, **CSS3**, SPA e design responsivo) e **back-end** (**Node.js**, **APIs REST/RESTful**, **WebSocket**, **autenticação JWT**, **POO**). Trabalho com **MySQL** e **Oracle**, modelagem de banco de dados relacional, e uso **Git**, **GitHub** e **CI/CD** com deploy contínuo em **Vercel** e **Render**.\n\nAplico **metodologias ágeis (Scrum/Kanban)**, **Clean Code**, testes de software e boas práticas de **qualidade de software**. Tenho perfil **analítico** e **investigativo**, aprendo rápido, colaboro bem em equipe e busco minha próxima oportunidade como **Desenvolvedor** para aplicar essa base técnica em projetos reais, com autonomia crescente.",
+        "Sou Guilherme Cruz, **Desenvolvedor Full Stack**. Construo aplicações de ponta a ponta, da interface ao banco de dados, com atenção a **acessibilidade**, **desempenho** e código que outra pessoa consiga manter depois. Trago vivência real de sistema em produção, não só teoria de sala de aula.\n\nDomino **JavaScript**, **TypeScript**, **Java**, **Python** e **PHP**, com foco em **front-end** (**React**, **React Router**, **Vite**, **HTML5**, **CSS3**, SPA e design responsivo) e **back-end** (**Node.js**, **APIs REST/RESTful**, **WebSocket**, **autenticação JWT**, **POO**). Trabalho com **MySQL** e **Oracle**, modelagem de banco de dados relacional, e uso **Git**, **GitHub** e **CI/CD** com deploy contínuo em **Vercel** e **Render**.\n\nAplico **metodologias ágeis (Scrum/Kanban)**, **Clean Code**, testes de software e boas práticas de **qualidade de software**. Tenho perfil **analítico** e **investigativo**, aprendo rápido, colaboro bem em equipe e busco oportunidades como **Desenvolvedor Full Stack** para aplicar essa base técnica em projetos reais, com autonomia crescente.",
     "about.goal.body":
-        "Busco minha primeira oportunidade como **Desenvolvedor Júnior** ou **Estagiário em Desenvolvimento**, para aplicar na prática o que venho construindo com **React**, **Node.js**, **TypeScript**, **APIs REST** e **autenticação JWT**, além da experiência com **Java**, **Python** e **PHP**. Um inglês intermediário me ajuda a acompanhar documentação técnica e times internacionais, e trago também a vivência real de sistema em produção dando suporte ao **SIGO** (plataforma de **SST**), nas rotinas de **Financeiro e Faturamento**. Quero evoluir tecnicamente, atuar em projetos reais e contribuir ativamente com o time.\n\nTenho interesse em **arquitetura de software**, **segurança da informação** e **testes de software**, e busco crescer usando **metodologias ágeis (Scrum/Kanban)**, **CI/CD** e boas práticas de **Clean Code**, em um ambiente que valorize aprendizado contínuo, resolução de problemas e entrega de qualidade.",
+        "Busco uma posição como **Desenvolvedor Full Stack**, para aplicar o que venho construindo com **React**, **Node.js**, **TypeScript**, **APIs REST** e **autenticação JWT**, além da experiência com **Java**, **Python** e **PHP**. Um inglês intermediário me ajuda a acompanhar documentação técnica e times internacionais. Quero evoluir tecnicamente, atuar em projetos reais e contribuir ativamente com o time.\n\nTenho interesse em **arquitetura de software**, **segurança da informação** e **testes de software**, e busco crescer usando **metodologias ágeis (Scrum/Kanban)**, **CI/CD** e boas práticas de **Clean Code**, em um ambiente que valorize aprendizado contínuo, resolução de problemas e entrega de qualidade.",
     "about.specs.title": "Áreas de especialização",
     "about.stats.techEdu.label": "Formação Técnica",
     "about.stats.techEdu.sublabel": "ETEC Vila Formosa",
@@ -370,7 +359,7 @@ const pt: Translations = {
     "about.stats.gradDone": "Concluído",
     "contact.cta.heading": "Vamos **construir algo** juntos?",
     "contact.cta.lead":
-        "Estou pronto para iniciar minha trajetória como **Desenvolvedor Júnior** ou **Estagiário**, contribuindo com **aplicações modernas**, **bem estruturadas** e voltadas para **performance** e **experiência do usuário**, somando a vivência de sistema em produção no suporte ao **SIGO** (plataforma de **SST**). Também estou disponível para **projetos avulsos** e **freelances**.\n\nSe você procura alguém **dedicado**, com **vontade de evoluir** e prontidão para **contribuir de forma prática em projetos reais**, me chama, vamos conversar e construir **soluções juntos**!",
+        "Estou pronto para contribuir como **Desenvolvedor Full Stack**, com **aplicações modernas**, **bem estruturadas** e voltadas para **performance** e **experiência do usuário**. Também estou disponível para **projetos avulsos** e **freelances**.\n\nSe você procura alguém **dedicado**, com **vontade de evoluir** e prontidão para **contribuir de forma prática em projetos reais**, me chama, vamos conversar e construir **soluções juntos**!",
 
     /* FEATURED */
     "featured.eyebrow": "Destaque",
@@ -516,7 +505,7 @@ const pt: Translations = {
 
     /* FOOTER */
     "footer.tagline":
-        "Desenvolvedor Júnior em transição, com prática real em React, Node.js e sistemas em produção.",
+        "Desenvolvedor Full Stack, com prática real em React, Node.js e sistemas em produção.",
     "footer.nav": "Navegação",
     "footer.projects": "Projetos",
     "footer.contact": "Contato",
@@ -552,22 +541,15 @@ const en: Translations = {
     "hero.status": "Open to opportunities",
     "hero.cta.work": "View projects",
     "hero.cta.cv": "Download CV",
-    "hero.badge": "Transitioning into development",
     "hero.scroll": "Explore",
 
     /* ABOUT */
     "about.title": "About Me",
-    "about.bio.p1":
-        "I'm Guilherme Cruz, a Computer Science student with a technical background in Systems Development. I have a solid foundation in programming logic, data structures and software fundamentals.",
     "about.bio.p2":
         "I have hands-on experience building web applications using React, JavaScript/TypeScript, Node.js and MySQL, focusing on modern, responsive interfaces and API integration.",
     "about.bio.p3":
         "I apply best practices such as clean code, project organization and Git version control, aiming to build efficient, scalable and maintainable solutions.",
-    "about.bio.p4":
-        "I am seeking my first opportunity as a Junior Developer or Intern, where I can grow technically, work on real projects and contribute to the team.",
     "about.goal.title": "Professional Goal",
-    "about.goal.text":
-        "To work as a junior developer or intern, contributing to real projects, improving my technical skills and gaining industry experience.",
 
     /* TIMELINE (Career) */
     "timeline.title": "Career",
@@ -605,7 +587,7 @@ const en: Translations = {
     "career.aside.label": "Professional panel",
     "career.aside.overview": "Overview",
     "career.aside.level": "Level",
-    "career.aside.seniority": "Junior",
+    "career.aside.seniority": "Full Stack",
 
     /* EDUCATION */
     "education.title": "Education",
@@ -630,9 +612,9 @@ const en: Translations = {
     "education.skills.label": "Skills",
     "education.progress": "completed",
     "about.bio":
-        "I'm Guilherme Cruz, a **Junior Developer** transitioning careers, currently working as a **Technical Support Analyst (Helpdesk)** at Wise System. I was promoted from intern to full-time employee in under a year, supporting **SIGO**, Wise System's **occupational health & safety (SST)** and eSocial platform, focused on the **Finance** and **Billing** modules: bank homologation, **CNAB** files (outbound/return), reconciliation and **invoice/RPS** approval. That's real production-system experience, not just classroom theory.\n\nOn the development side, I work with **JavaScript**, **TypeScript**, **Java**, **Python** and **PHP**, focused on **front-end** (**React**, **React Router**, **Vite**, **HTML5**, **CSS3**, SPA and responsive design) and **back-end** (**Node.js**, **REST/RESTful APIs**, **WebSocket**, **JWT authentication**, **OOP**). I work with **MySQL** and **Oracle**, relational database modeling, and use **Git**, **GitHub** and **CI/CD** with continuous deployment on **Vercel** and **Render**.\n\nI apply **agile methodologies (Scrum/Kanban)**, **Clean Code**, software testing and solid **software quality** practices. I have an **analytical**, **investigative** mindset, learn fast, collaborate well on teams, and I'm looking for my next opportunity as a **Developer** to apply this technical foundation to real projects, with growing autonomy.",
+        "I'm Guilherme Cruz, a **Full Stack Developer**. I build applications end to end, from the interface to the database, with attention to **accessibility**, **performance** and code someone else can maintain later. I bring real production-system experience, not just classroom theory.\n\nI work with **JavaScript**, **TypeScript**, **Java**, **Python** and **PHP**, focused on **front-end** (**React**, **React Router**, **Vite**, **HTML5**, **CSS3**, SPA and responsive design) and **back-end** (**Node.js**, **REST/RESTful APIs**, **WebSocket**, **JWT authentication**, **OOP**). I work with **MySQL** and **Oracle**, relational database modeling, and use **Git**, **GitHub** and **CI/CD** with continuous deployment on **Vercel** and **Render**.\n\nI apply **agile methodologies (Scrum/Kanban)**, **Clean Code**, software testing and solid **software quality** practices. I have an **analytical**, **investigative** mindset, learn fast, collaborate well on teams, and I'm looking for opportunities as a **Full Stack Developer** to apply this technical foundation to real projects, with growing autonomy.",
     "about.goal.body":
-        "I'm looking for my first opportunity as a **Junior Developer** or **Development Intern**, to put into practice what I've been building with **React**, **Node.js**, **TypeScript**, **REST APIs** and **JWT authentication**, along with experience in **Java**, **Python** and **PHP**. Intermediate English helps me follow technical documentation and work with international teams, and I also bring real production-systems experience supporting **SIGO** (an **SST** platform), across the **Finance and Billing** routines. I want to grow technically, work on real projects and actively contribute to the team.\n\nI'm interested in **software architecture**, **information security** and **software testing**, and I want to grow using **agile methodologies (Scrum/Kanban)**, **CI/CD** and solid **Clean Code** practices, in an environment that values continuous learning, problem-solving and quality delivery.",
+        "I'm looking for a position as a **Full Stack Developer**, to put into practice what I've been building with **React**, **Node.js**, **TypeScript**, **REST APIs** and **JWT authentication**, along with experience in **Java**, **Python** and **PHP**. Intermediate English helps me follow technical documentation and work with international teams. I want to grow technically, work on real projects and actively contribute to the team.\n\nI'm interested in **software architecture**, **information security** and **software testing**, and I want to grow using **agile methodologies (Scrum/Kanban)**, **CI/CD** and solid **Clean Code** practices, in an environment that values continuous learning, problem-solving and quality delivery.",
     "about.specs.title": "Areas of expertise",
     "about.stats.techEdu.label": "Technical Education",
     "about.stats.techEdu.sublabel": "ETEC Vila Formosa",
@@ -647,7 +629,7 @@ const en: Translations = {
     "about.stats.gradDone": "Completed",
     "contact.cta.heading": "Let's **build something** together?",
     "contact.cta.lead":
-        "I'm ready to contribute as a **Junior Developer**, with real practice in **React**, **TypeScript**, **Node.js**, **REST APIs** and **JWT authentication**, combined with production-systems experience supporting **SIGO**, an occupational health & safety (SST) platform. I apply **Clean Code**, **Git** and **agile methodologies** in my day to day.\n\nIf you're looking for someone with an **analytical mindset**, a knack for **problem-solving**, and readiness to **contribute to real projects**, reach out, let's talk about the role.",
+        "I'm ready to contribute as a **Full Stack Developer**, with real practice in **React**, **TypeScript**, **Node.js**, **REST APIs** and **JWT authentication**. I apply **Clean Code**, **Git** and **agile methodologies** in my day to day.\n\nIf you're looking for someone with an **analytical mindset**, a knack for **problem-solving**, and readiness to **contribute to real projects**, reach out, let's talk about the role.",
 
     /* FEATURED */
     "featured.eyebrow": "Featured",
@@ -793,7 +775,7 @@ const en: Translations = {
 
     /* FOOTER */
     "footer.tagline":
-        "Junior Developer in transition, with real-world practice in React, Node.js and production systems.",
+        "Full Stack Developer, with real-world practice in React, Node.js and production systems.",
     "footer.nav": "Navigation",
     "footer.projects": "Projects",
     "footer.contact": "Contact",
