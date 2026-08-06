@@ -263,7 +263,9 @@ body.light-mode ::-webkit-scrollbar-thumb:hover {
     font-weight: 700;
     letter-spacing: var(--ls-wider);
     text-transform: uppercase;
-    color: var(--color-brand);
+    /* Marca em texto pede --color-brand-text; --color-brand é para
+       preenchimento. Ver a nota do token em tokens.css. */
+    color: var(--color-brand-text);
 }
 
 .section-eyebrow::before {

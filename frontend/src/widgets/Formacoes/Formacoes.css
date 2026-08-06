@@ -133,16 +133,19 @@
     background: var(--color-surface-3);
 }
 
+/* O par era --color-text-inverse sobre --color-brand: 4.13:1 no tema
+   escuro, abaixo do AA. Branco sobre o crimson mais fundo dá 6.29:1 nos
+   dois temas, e o tom mais cheio ainda lê como "selecionado". */
 .formations__filter.is-active {
-    background: var(--color-brand);
-    color: var(--color-text-inverse);
+    background: var(--color-brand-hover);
+    color: #fff;
     box-shadow:
         0 4px 14px color-mix(in srgb, var(--color-brand) 35%, transparent),
         0 0 0 1px color-mix(in srgb, var(--color-brand) 60%, transparent);
 }
 
 .formations__filter.is-active:hover {
-    background: var(--color-brand-hover);
+    background: var(--color-brand);
 }
 
 .formations__filter-icon {

@@ -546,11 +546,12 @@
     border-top: 1px solid var(--color-border-2);
 }
 
+/* --color-brand-light vira crimson-600 no tema claro e reprova em texto. */
 .featured__counter {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
     font-weight: 700;
-    color: var(--color-brand-light);
+    color: var(--color-brand-text);
     letter-spacing: var(--ls-wide);
     font-variant-numeric: tabular-nums;
 }

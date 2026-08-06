@@ -437,7 +437,7 @@ body.light-mode .about__objective:hover {
 }
 
 body.light-mode .about__objective-title {
-    color: var(--color-brand);
+    color: var(--color-brand-text);
 }
 
 body.light-mode .about__objective-text {

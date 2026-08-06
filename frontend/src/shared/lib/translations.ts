@@ -126,6 +126,7 @@ export type TranslationKey =
     | "featured.lightbox.close"
     | "featured.lightbox.thumbnails"
     | "featured.thumbs.label"
+    | "featured.progress.label"
 
     /* ── DETAILS ───────────────────────────────────── */
     | "detail.challenge"
@@ -391,6 +392,7 @@ const pt: Translations = {
     "featured.lightbox.close": "Fechar visualização",
     "featured.lightbox.thumbnails": "Miniaturas dos slides",
     "featured.thumbs.label": "Navegação por miniaturas",
+    "featured.progress.label": "Progresso da galeria",
 
     /* DETAILS */
     "detail.challenge": "Desafio",
@@ -667,6 +669,7 @@ const en: Translations = {
     "featured.lightbox.close": "Close viewer",
     "featured.lightbox.thumbnails": "Slide thumbnails",
     "featured.thumbs.label": "Thumbnail navigation",
+    "featured.progress.label": "Gallery progress",
 
     /* DETAILS */
     "detail.challenge": "Challenge",

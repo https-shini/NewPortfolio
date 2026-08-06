@@ -157,9 +157,16 @@ export const FormationCard: React.FC<FormationCardProps> = ({
 
             {/* ─── Tech icons ─── */}
             {item.techIcons && item.techIcons.length > 0 && (
+                /* Um div sem papel não aceita aria-label, e os ícones dentro
+                   são todos decorativos — o leitor de tela recebia um rótulo
+                   sobre nada. Como grupo de imagem, o rótulo enumera as
+                   tecnologias e passa a informar de fato. */
                 <div
                     className="formation-card__tech"
-                    aria-label={t("education.tech.label")}
+                    role="img"
+                    aria-label={`${t("education.tech.label")}: ${item.techIcons
+                        .slice(0, 8)
+                        .join(", ")}`}
                 >
                     {item.techIcons.slice(0, 8).map((icon) => (
                         <span

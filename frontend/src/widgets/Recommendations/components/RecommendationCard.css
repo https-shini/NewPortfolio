@@ -169,7 +169,7 @@
 
 .rec-card__tag--more {
     background: var(--color-brand-subtle);
-    color: var(--color-brand-light);
+    color: var(--color-brand-text);
     border-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
     font-weight: 700;
 }

@@ -293,7 +293,7 @@
     font-weight: 700;
     letter-spacing: var(--ls-wider);
     text-transform: uppercase;
-    color: var(--color-brand);
+    color: var(--color-brand-text);
 }
 
 .about__objective-content {

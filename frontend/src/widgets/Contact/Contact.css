@@ -437,12 +437,14 @@
     gap: var(--space-3);
 }
 
+/* O ícone sai do fluxo e a linha reserva a calha dele no padding — assim
+   dt e dd continuam sendo os únicos filhos do agrupador, como a
+   especificação de <dl> exige, sem perder o desenho de duas colunas. */
 .contact__data-row {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--space-3);
-    padding: var(--space-3) 0;
+    position: relative;
+    padding: var(--space-3) 0 var(--space-3) calc(48px + var(--space-3));
     border-bottom: 1px solid var(--color-border-1);
+    min-width: 0;
 }
 
 .contact__data-row:last-child {
@@ -451,6 +453,9 @@
 }
 
 .contact__data-icon {
+    position: absolute;
+    top: calc(var(--space-3) + 1px);
+    left: 0;
     width: 48px;
     height: 48px;
     border-radius: var(--radius-md);
@@ -459,21 +464,12 @@
     align-items: center;
     justify-content: center;
     color: var(--color-brand-light);
-    flex-shrink: 0;
-    margin-top: 1px;
 }
 
 .contact__data-icon svg {
     width: 22px;
     height: 22px;
     fill: currentColor;
-}
-
-.contact__data-content {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
 }
 
 .contact__data-label {
@@ -505,7 +501,9 @@
     color: var(--color-brand-light);
 }
 
+/* Dentro do <dd> agora — precisa de bloco próprio para manter a linha. */
 .contact__data-note {
+    display: block;
     font-size: var(--text-2xs);
     color: var(--color-text-4);
     font-style: italic;

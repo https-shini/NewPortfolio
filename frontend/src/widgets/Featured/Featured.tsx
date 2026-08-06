@@ -203,17 +203,23 @@ export const Featured: React.FC = () => {
                             onTouchEnd={onTouchEnd}
                             tabIndex={0}
                         >
-                            {/* Browser chrome */}
-                            <div
-                                className="featured__browser-chrome"
-                                aria-hidden="true"
-                            >
-                                <div className="featured__browser-dots">
+                            {/* Browser chrome — a moldura é decorativa, mas o
+                                botão de autoplay dentro dela é um controle de
+                                verdade: esconder o conjunto tirava do leitor de
+                                tela um botão que o teclado ainda alcançava. */}
+                            <div className="featured__browser-chrome">
+                                <div
+                                    className="featured__browser-dots"
+                                    aria-hidden="true"
+                                >
                                     <span className="featured__browser-dot featured__browser-dot--red" />
                                     <span className="featured__browser-dot featured__browser-dot--amber" />
                                     <span className="featured__browser-dot featured__browser-dot--green" />
                                 </div>
-                                <div className="featured__browser-url">
+                                <div
+                                    className="featured__browser-url"
+                                    aria-hidden="true"
+                                >
                                     <span className="featured__browser-url-protocol">
                                         https://
                                     </span>
@@ -348,6 +354,9 @@ export const Featured: React.FC = () => {
                                     <div
                                         className="featured__progress"
                                         role="progressbar"
+                                        aria-label={t(
+                                            "featured.progress.label",
+                                        )}
                                         aria-valuemin={1}
                                         aria-valuemax={slides.length}
                                         aria-valuenow={current + 1}
@@ -554,8 +563,14 @@ export const Featured: React.FC = () => {
                                                 {ep.path}
                                             </code>
                                             {ep.protected && (
+                                                /* Um <span> sem papel não
+                                                   aceita aria-label. Como
+                                                   imagem, o cadeado passa a
+                                                   ter nome acessível de
+                                                   verdade. */
                                                 <span
                                                     className="featured__protected"
+                                                    role="img"
                                                     title={t(
                                                         "featured.endpoint.protected",
                                                     )}

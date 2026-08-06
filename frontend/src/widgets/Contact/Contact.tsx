@@ -295,42 +295,40 @@ export const Contact: React.FC = () => {
 
                             {/* Links */}
                             <dl className="contact__profile-data">
+                                {/* Um <div> agrupador dentro de <dl> só pode
+                                    conter <dt> e <dd> diretamente. Havia dois
+                                    níveis de <div> aqui, e a nota ficava fora
+                                    do par — o ícone virou filho do <dt>,
+                                    posicionado por CSS, e a nota entrou no
+                                    <dd>, a que ela descreve. */}
                                 {PROFILE_DATA.map((item) => (
                                     <div
                                         className="contact__data-row"
                                         key={resolve(item.label, "pt")}
                                     >
-                                        <div
-                                            className="contact__data-icon"
-                                            aria-hidden="true"
-                                        >
-                                            {item.icon}
-                                        </div>
+                                        <dt className="contact__data-label">
+                                            <span
+                                                className="contact__data-icon"
+                                                aria-hidden="true"
+                                            >
+                                                {item.icon}
+                                            </span>
+                                            {resolve(item.label, lang)}
+                                        </dt>
 
-                                        <div className="contact__data-content">
-                                            <dt className="contact__data-label">
-                                                {resolve(item.label, lang)}
-                                            </dt>
-
-                                            <dd className="contact__data-value">
-                                                {item.href ? (
-                                                    <ProfileLink
-                                                        href={item.href}
-                                                    >
-                                                        {resolve(
-                                                            item.value,
-                                                            lang,
-                                                        )}
-                                                    </ProfileLink>
-                                                ) : (
-                                                    resolve(item.value, lang)
-                                                )}
-                                            </dd>
+                                        <dd className="contact__data-value">
+                                            {item.href ? (
+                                                <ProfileLink href={item.href}>
+                                                    {resolve(item.value, lang)}
+                                                </ProfileLink>
+                                            ) : (
+                                                resolve(item.value, lang)
+                                            )}
 
                                             <small className="contact__data-note">
                                                 {t(item.noteKey)}
                                             </small>
-                                        </div>
+                                        </dd>
                                     </div>
                                 ))}
                             </dl>

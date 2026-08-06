@@ -49,7 +49,13 @@
     --_slate-200: #e2e8f0;
     --_slate-300: #cbd5e1;
     --_slate-400: #94a3b8;
+    /* 450 e 550 existem para o quarto nível de texto. A escala original
+       pulava de 400 para 500 e de 500 para 600, e nos dois casos o degrau
+       seguinte já reprovava o AA sobre o fundo do próprio tema — sem um
+       meio-termo, o nível 4 teria de repetir o nível 3. */
+    --_slate-450: #8593a9;
     --_slate-500: #64748b;
+    --_slate-550: #5b6a80;
     --_slate-600: #475569;
     --_slate-700: #334155;
     --_slate-750: #243044;
@@ -152,7 +158,10 @@
     --color-text-1: var(--_slate-50);
     --color-text-2: var(--_slate-200);
     --color-text-3: var(--_slate-400);
-    --color-text-4: var(--_slate-600);
+    /* slate-600 rendia 2.31:1 sobre o fundo dos cartões — texto ilegível
+       num token cujo nome promete texto. slate-450 sobe para 5.63:1 e
+       continua visivelmente mais apagado que o nível 3. */
+    --color-text-4: var(--_slate-450);
     --color-text-inverse: var(--_slate-950);
 
     /* ╌╌ Status ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
@@ -293,7 +302,9 @@ body.light-mode {
     --color-text-1: var(--_slate-900);
     --color-text-2: var(--_slate-800);
     --color-text-3: var(--_slate-600);
-    --color-text-4: var(--_slate-500);
+    /* slate-500 ficava em 4.32:1 sobre o cinza mais escuro do tema claro,
+       logo abaixo do AA. slate-550 sobe para 4.99:1. */
+    --color-text-4: var(--_slate-550);
     --color-text-inverse: var(--_slate-0);
 
     /* ╌╌ Status light ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
