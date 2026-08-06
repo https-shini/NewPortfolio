@@ -75,6 +75,27 @@ O peso é consequência. A causa — a contagem de dependências de runtime —
 falha se `package.json` ganhar qualquer coisa além de `react` e
 `react-dom`.
 
+## `e2e-modals.mjs`
+
+Trava de rolagem, restauração de posição, fundo inerte e o diálogo em
+tela deitada.
+
+```bash
+node scripts/e2e-modals.mjs      # ou npm run audit:modals
+```
+
+### Sobre a "intermitência de 2px"
+
+Ela não existe no `useScrollLock`. Foram 71 ciclos de abrir e fechar em
+cinco condições — com e sem animação, em densidade de pixel 1, 1.5 e 2, e
+a partir de posição fracionária — e a restauração deu exata em todas.
+
+O desvio vinha da medição: o arranjo antigo lia `Math.round(scrollY)`
+entre timeouts fixos e comparava referências que não eram a mesma. Um
+teste que erra por conta própria é pior que teste nenhum, porque ensina a
+desconfiar do código certo. Aqui a posição é lida com precisão total e
+comparada sem arredondar.
+
 ## No CI
 
 O job `audit` do `.github/workflows/ci.yml` roda os três contra o
