@@ -24,6 +24,9 @@
         "format:check": "npm run format:check --prefix frontend",
         "test": "npm run test --prefix frontend",
         "test:watch": "npm run test:watch --prefix frontend",
+        "audit:a11y": "node scripts/a11y.mjs",
+        "audit:overflow": "node scripts/overflow.mjs",
+        "audit:bundle": "node scripts/bundle-budget.mjs",
         "prepare": "husky"
     },
     "lint-staged": {

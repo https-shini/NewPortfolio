@@ -43,6 +43,44 @@ reduzido, mede-se o estado assentado — que é o que a pessoa de fato lê.
 O efeito colateral é bom: como nada fica meio transparente, o axe enxerga
 mais elementos e a cobertura sobe.
 
+## `overflow.mjs`
+
+Quatro rotas em cinco larguras (320 a 1440), procurando conteúdo que
+escape da janela. Sai com código 1 se algo passar, e nomeia os cinco
+primeiros culpados.
+
+```bash
+node scripts/overflow.mjs      # ou npm run audit:overflow
+```
+
+Escolhido no lugar do diff de geometria completo para rodar no CI. O diff
+compara 92.820 caixas contra uma base gravada, e exige regravar essa base
+a cada mudança visual proposital — sem essa disciplina, o job falha por
+construção e vira ruído. Esta verificação não tem base, não tem falso
+positivo, e cobre o defeito que mais dói.
+
+## `bundle-budget.mjs`
+
+Tetos de tamanho sobre o `dist/`, com folga de cerca de 15% sobre o
+medido. Um orçamento colado no valor atual dispara a cada oscilação do
+minificador e ensina a ser ignorado; o que ele precisa pegar é tendência.
+
+```bash
+npm run build && node scripts/bundle-budget.mjs   # ou npm run audit:bundle
+node scripts/bundle-budget.mjs --print            # mostra sem julgar
+```
+
+O peso é consequência. A causa — a contagem de dependências de runtime —
+é vigiada por `frontend/src/shared/config/dependencies.test.ts`, que
+falha se `package.json` ganhar qualquer coisa além de `react` e
+`react-dom`.
+
+## No CI
+
+O job `audit` do `.github/workflows/ci.yml` roda os três contra o
+artefato de build que o job de qualidade publica — o que se mede é
+exatamente o que seria publicado, sem construir duas vezes.
+
 ## `docs/a11y-baseline.json`
 
 O estado que se quer preservar, não um alvo a perseguir. Hoje é zero

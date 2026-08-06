@@ -53,3 +53,70 @@ jobs:
           name: dist
           path: frontend/dist
           retention-days: 7
+
+  # As auditorias consomem o dist/ que o job acima publicou, em vez de
+  # construir de novo: o que se mede passa a ser exatamente o artefato que
+  # seria publicado.
+  audit:
+    name: Acessibilidade · Rolagem · Orçamento
+    needs: quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install root dependencies
+        # Só a raiz: os arranjos precisam de playwright e axe-core, não do
+        # frontend inteiro. O postinstall da raiz instalaria frontend/
+        # junto, e aqui isso é minuto gasto à toa.
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Chromium
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install system deps for cached Chromium
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: frontend/dist
+
+      - name: Serve the build
+        # O vite preview exige o frontend instalado; um servidor estático
+        # entrega o mesmo dist/ sem esse custo. O SPA precisa que toda rota
+        # desconhecida caia no index.html.
+        run: npx --yes serve@14 -s frontend/dist -l 4173 &
+
+      - name: Wait for the server
+        run: npx --yes wait-on@7 http://localhost:4173 --timeout 60000
+
+      - name: Accessibility (axe-core)
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:a11y
+
+      - name: Horizontal overflow
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:overflow
+
+      - name: Bundle budget
+        run: npm run audit:bundle
