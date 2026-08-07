@@ -1,5 +1,33 @@
 # Roadmap das 15 melhorias
 
+> **Estado: 14 de 15 entregues.** Só o item 3 segue aberto, e por
+> impedimento de ambiente, não de código — ver a seção logo abaixo.
+>
+> Verificação atual: **277 testes**, **16/16** combinações do axe sem
+> violação, **20/20** sem rolagem horizontal, orçamento de bundle dentro
+> do teto (108,9 KB de JS e 30,7 KB de CSS).
+
+## O que só apareceu ao executar
+
+Cinco coisas que este documento afirmava e a medição desmentiu. Ficam
+registradas porque mudaram o trabalho:
+
+1. **As violações de acessibilidade não eram as previstas.** `aria-allowed-role`
+   não existia. Existiam `aria-hidden-focus` — que escondia do leitor de tela
+   um botão que o teclado alcançava — e `aria-progressbar-name`.
+2. **O contraste tinha duas causas, não seis.** `--color-text-4` valia 2.31:1
+   num token cujo nome promete texto, e `--color-brand` pintava texto em cinco
+   lugares embora `--color-brand-text` existisse para isso.
+3. **A intermitência de 2px do scrolllock não existe.** 71 ciclos em cinco
+   condições, desvio zero em todas. O defeito estava no arranjo de medição,
+   que arredondava e comparava referências diferentes.
+4. **Forçar `prefers-reduced-motion` na auditoria revelou mais superfície.**
+   Sem elementos meio transparentes, o axe passou a enxergar 29 nós que pulava.
+5. **O teste de dependências barrou o próprio item 14.** `@vercel/og` é
+   dependência de runtime; a saída foi separar cliente de servidor na regra,
+   com justificativa escrita, e não contorná-la.
+
+
 Três fases encadeadas. A fase 1 cria o arranjo de auditoria, a fase 2 o
 transforma em regra automática, e a fase 3 constrói coisa nova sobre uma base
 que já se defende sozinha.
@@ -12,19 +40,20 @@ que já se defende sozinha.
 
 ---
 
-## ⚠ Decisões pendentes — bloqueiam parte da execução
+## Decisões tomadas
 
-Assumo os padrões abaixo, **exceto o nº 2**: como você quer ser descrito
-profissionalmente é fato sobre você, não decisão técnica.
-
-| # | Decisão | Padrão assumido |
+| # | Decisão | Escolha |
 | --- | --- | --- |
-| 1 | Escopo do texto: 5 chaves vivas ou só o rodapé? | 5 chaves |
-| 2 | **Como se posicionar** — a bio diz "Júnior em transição, hoje Analista de Suporte"; o hero diz "Full Stack" | **nenhum — bloqueia o item 2** |
-| 3 | Remover as 4 chaves de tradução mortas? | remover |
-| 4 | Versionar axe-core + Playwright como devDeps? | versionar |
+| 1 | Escopo do texto | as 5 chaves vivas |
+| 2 | Posicionamento | **Full Stack, sem citar o cargo atual** |
+| 3 | Chaves de tradução mortas | removidas |
+| 4 | Ferramental de auditoria | versionado em `scripts/` |
+| 5 | Geometria no CI | só a asserção de zero-overflow |
+| 6 | OG image | completo — imagem e meta por rota |
 
-Os itens 1, 3, 4 e 5 podem começar sem essas respostas. O item 2 não.
+A decisão 5 dispensou o diff completo de propósito: ele exige regravar a
+base a cada mudança visual proposital, e sem essa disciplina o job falha
+por construção e vira ruído que todo mundo ignora.
 
 ---
 
@@ -136,7 +165,34 @@ Fora de escopo: o cargo de quem escreveu as recomendações
 
 ---
 
-## Item 3 · Publicar a `v2.0.0` — destravou
+## Item 3 · Publicar a `v2.0.0` — ⛔ o único item aberto
+
+**Não é possível concluir a partir deste ambiente**, e o impedimento não é
+de código:
+
+- O servidor MCP do GitHub expõe só ferramentas de **leitura** para
+  releases — não há como criar uma daqui.
+- `git push origin v2.0.0` responde **403**: o proxy libera push de
+  branch, não de tag. Branches seguem funcionando normalmente.
+
+**Para publicar, na sua máquina:**
+
+```bash
+git fetch origin
+git tag -a v2.0.0 60e3377 -m "v2.0.0 — Segunda geração do portfólio"
+git push origin v2.0.0
+gh release create v2.0.0 --notes-file docs/release-v2.0.0.md
+```
+
+A tag aponta para `60e3377` de propósito, e não para o HEAD: todo o
+trabalho das três fases é posterior ao que as notas da v2.0.0 descrevem,
+e mereceria uma v2.1.0 própria.
+
+Assim que a release existir, o feed Atom, o cartão de compartilhamento e
+o selo de sincronização passam a refleti-la sem nenhuma mudança de
+código — os três já leem da fusão das duas fontes.
+
+### O contexto que levantei ao investigar
 
 As ferramentas do GitHub voltaram a responder: o repositório está com **zero
 releases e zero tags**.
