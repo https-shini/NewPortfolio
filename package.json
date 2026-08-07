@@ -28,6 +28,8 @@
         "audit:overflow": "node scripts/overflow.mjs",
         "audit:bundle": "node scripts/bundle-budget.mjs",
         "audit:modals": "node scripts/e2e-modals.mjs",
+        "changelog": "node --experimental-strip-types --no-warnings scripts/changelog.mjs",
+        "changelog:check": "node --experimental-strip-types --no-warnings scripts/changelog.mjs --check",
         "prepare": "husky"
     },
     "lint-staged": {
