@@ -13,6 +13,33 @@ describe("renderRich", () => {
         render(<p data-testid="plain">{renderRich("sem destaque")}</p>);
         expect(screen.getByTestId("plain")).toHaveTextContent("sem destaque");
     });
+
+    it("converte `texto` em <code>", () => {
+        render(<p>{renderRich("use o `min-width` aqui")}</p>);
+        expect(screen.getByText("min-width").tagName).toBe("CODE");
+    });
+
+    it("aceita código dentro de negrito", () => {
+        render(<p data-testid="w">{renderRich("**veja o `gap` agora**")}</p>);
+        const strong = screen.getByTestId("w").querySelector("strong");
+        expect(strong).toHaveTextContent("veja o gap agora");
+        expect(strong?.querySelector("code")).toHaveTextContent("gap");
+    });
+
+    it("não interpreta ênfase dentro de crases", () => {
+        render(<p data-testid="w">{renderRich("literal: `**dois**`")}</p>);
+        const code = screen.getByTestId("w").querySelector("code");
+        expect(code).toHaveTextContent("**dois**");
+        expect(screen.getByTestId("w").querySelector("strong")).toBeNull();
+    });
+
+    it("trata delimitador sem par como texto comum", () => {
+        render(<p data-testid="w">{renderRich("2 * 3 ** 4 e uma ` solta")}</p>);
+        const w = screen.getByTestId("w");
+        expect(w).toHaveTextContent("2 * 3 ** 4 e uma ` solta");
+        expect(w.querySelector("strong")).toBeNull();
+        expect(w.querySelector("code")).toBeNull();
+    });
 });
 
 describe("renderRichParagraphs", () => {

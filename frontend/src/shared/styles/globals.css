@@ -255,6 +255,19 @@ body.light-mode ::-webkit-scrollbar-thumb:hover {
 ══════════════════════════════════════════════════════════════════════════════ */
 
 /* ── Eyebrow: linha decorativa + label uppercase ── */
+/* Trechos de código em texto corrido — vindos de `crase` no renderRich.
+   Discreto de propósito: marca o termo como literal sem competir com o
+   negrito ao redor. */
+code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-2);
+    color: var(--color-text-2);
+    word-break: break-word;
+}
+
 .section-eyebrow {
     display: inline-flex;
     align-items: center;
