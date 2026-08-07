@@ -2,6 +2,19 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     { "source": "/feed.xml", "destination": "/api/feed" },
+
+    {
+      "source": "/:path(links|links/|release-notes|release-notes/.*)",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+        }
+      ],
+      "destination": "/api/crawler?path=/:path"
+    },
+
     { "source": "/links", "destination": "/index.html" },
     { "source": "/links/", "destination": "/index.html" },
     { "source": "/release-notes", "destination": "/index.html" },

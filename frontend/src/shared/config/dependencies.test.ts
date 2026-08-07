@@ -18,7 +18,20 @@ import { resolve } from "node:path";
  * orçamento no CI. Aqui se vigia a contagem.
  */
 
-const ESPERADAS = ["react", "react-dom"];
+/** O que o navegador baixa. Esta lista não deveria crescer. */
+const CLIENTE = ["react", "react-dom"];
+
+/**
+ * O que roda só no servidor da Vercel, dentro de api/. Nada daqui chega
+ * ao navegador, então o peso é invisível para quem visita — mas some do
+ * radar de quem lê apenas o package.json do frontend, e por isso fica
+ * enumerado, com o motivo ao lado.
+ */
+const SERVIDOR: Record<string, string> = {
+    "@vercel/og":
+        "gera a imagem de compartilhamento por versão; os rastreadores não " +
+        "executam JavaScript, então a imagem precisa sair pronta do servidor",
+};
 
 /* O vitest roda com a raiz em frontend/. */
 function lerPackageJson(caminho: string) {
@@ -32,16 +45,22 @@ function lerPackageJson(caminho: string) {
 describe("dependências de runtime", () => {
     it("o frontend depende de react e react-dom, e de mais nada", () => {
         const { dependencies } = lerPackageJson("package.json");
-        expect(Object.keys(dependencies ?? {}).sort()).toEqual(ESPERADAS);
+        expect(Object.keys(dependencies ?? {}).sort()).toEqual(CLIENTE);
     });
 
-    it("a raiz não declara dependência de runtime", () => {
-        /* A raiz orquestra scripts e hospeda os arranjos de auditoria; as
-           funções em api/ também resolvem daqui. Nada disso chega ao
-           navegador, mas uma dependência aqui vai para o servidor da
-           Vercel — e some do radar de quem lê só o package.json do
-           frontend. */
+    it("a raiz só declara o que roda no servidor, e cada uma justificada", () => {
         const { dependencies } = lerPackageJson("../package.json");
-        expect(dependencies ?? {}).toEqual({});
+        expect(Object.keys(dependencies ?? {}).sort()).toEqual(
+            Object.keys(SERVIDOR).sort(),
+        );
+    });
+
+    it("nenhuma dependência de servidor vazou para o cliente", () => {
+        /* O erro que essa separação convida: instalar no lugar errado e
+           mandar para o navegador algo que devia ficar na função. */
+        const { dependencies } = lerPackageJson("package.json");
+        for (const nome of Object.keys(SERVIDOR)) {
+            expect(dependencies ?? {}).not.toHaveProperty(nome);
+        }
     });
 });
