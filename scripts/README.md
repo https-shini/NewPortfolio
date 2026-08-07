@@ -96,11 +96,73 @@ teste que erra por conta própria é pior que teste nenhum, porque ensina a
 desconfiar do código certo. Aqui a posição é lida com precisão total e
 comparada sem arredondar.
 
+## `e2e-release-notes.mjs`
+
+28 verificações sobre o índice e a página de cada versão: status, título,
+canonical, timeline sustentada pela camada local, selo de sincronização,
+permalink, navegação entre versões, versão inexistente, selo do rodapé, e
+tradução do `h1` nos dois idiomas.
+
+```bash
+node scripts/e2e-release-notes.mjs      # ou npm run audit:release-notes
+```
+
+Junta os dois roteiros que antes viviam separados. Separados, repetiam o
+mesmo arranque e as mesmas asserções de rodapé — e divergiam sempre que
+só um dos dois era corrigido.
+
+A API responde lista vazia de propósito: o que se verifica é que a camada
+local sustenta as páginas sozinha, que é o que acontece na prática
+enquanto não há release publicada no GitHub.
+
+## `geometry.mjs`
+
+O diff que provou que a conversão para mobile-first não mudou o layout:
+288 cenários (4 rotas × 36 larguras × 2 temas), cerca de 93 mil caixas.
+
+```bash
+node scripts/geometry.mjs captura antes.json
+# ...mexe no CSS...
+node scripts/geometry.mjs captura depois.json
+node scripts/geometry.mjs diff antes.json depois.json
+```
+
+**Ferramenta manual, de propósito.** No CI quem roda é a asserção de
+zero-overflow: o diff exige regravar a base a cada mudança visual
+proposital, e sem essa disciplina o job falha por construção e vira ruído.
+
+Não compara capturas de tela porque duas capturas do **mesmo** código já
+diferiram em 41 quadros — o autoplay do carrossel e os contadores do Sobre
+tornam o pixel instável. Compara a caixa de cada elemento, que não depende
+de qual slide está ativo. A tolerância de meio pixel está uma ordem de
+grandeza acima do maior ruído medido e uma ordem abaixo do que um
+breakpoint trocado causaria.
+
+## `changelog.mjs`
+
+Gera o `CHANGELOG.md` da raiz a partir de `RELEASE_NOTES`.
+
+```bash
+npm run changelog          # escreve
+npm run changelog:check    # confere; sai 1 se divergir
+```
+
+O arquivo é derivado, não uma segunda fonte de verdade. Mas derivado só
+continua derivado enquanto alguém regenera, então
+`frontend/src/shared/config/changelog.test.ts` roda o modo de conferência
+na suíte de sempre: acrescentar versão sem regenerar falha ali, e não
+meses depois quando alguém reparar que o arquivo mente.
+
+Roda em Node puro com `--experimental-strip-types`, sem o Vite no caminho.
+
 ## No CI
 
-O job `audit` do `.github/workflows/ci.yml` roda os três contra o
-artefato de build que o job de qualidade publica — o que se mede é
-exatamente o que seria publicado, sem construir duas vezes.
+O job `audit` do `.github/workflows/ci.yml` roda a acessibilidade, a
+rolagem horizontal, o roteiro das notas de versão, os overlays e o
+orçamento contra o artefato de build que o job de qualidade publica — o
+que se mede é exatamente o que seria publicado, sem construir duas vezes.
+
+O `geometry.mjs` fica de fora, pelo motivo descrito acima.
 
 ## `docs/a11y-baseline.json`
 

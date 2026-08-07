@@ -63,6 +63,22 @@ O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/`
 | `/release-notes`  | `ReleaseNotesPage` | Linha do tempo das versões (ver *Como publicar uma versão*)      |
 | `/release-notes/page/2` | `ReleaseNotesPage` | Páginas seguintes do histórico, de 50 em 50                |
 | `/release-notes/v2.0.0` | `ReleaseNotePage`  | Uma versão, com endereço próprio e conteúdo completo       |
+| `/feed.xml`       | `api/feed`         | Atom das notas de versão (função, não arquivo de build)         |
+
+Qualquer rota aceita `?lang=en` para abrir em inglês — é o que permite
+compartilhar um link no idioma de quem compartilha. O padrão (português)
+fica implícito: a URL limpa é a canônica, e o sitemap declara as duas
+formas com `hreflang`.
+
+O feed é servido por função porque a lista é a **fusão** de duas fontes —
+as releases do GitHub e a camada editorial local. Um arquivo estático
+congelaria no último deploy e perderia justamente as releases publicadas
+depois dele.
+
+Rastreadores de rede social não executam JavaScript, então `/links` e
+`/release-notes/*` são roteados por user-agent (`vercel.json`) para
+`api/crawler`, que devolve HTML com as meta tags certas de cada rota. A
+imagem do cartão de cada versão sai de `api/og`.
 
 O roteamento é próprio, sobre a History API (`app/RouterContext.tsx`), sem
 `react-router-dom` — o projeto mantém apenas `react` e `react-dom` em runtime.
@@ -312,6 +328,25 @@ Todos os scripts funcionam na raiz (delegam ao frontend):
 | `npm run format:check` | Prettier (check — usado no CI)     |
 | `npm run test`         | Vitest (run único)                 |
 | `npm run test:watch`   | Vitest em watch mode               |
+
+### Auditorias
+
+Rodam contra o `dist/`, então exigem `npm run build` antes. Sobem o
+preview sozinhas; aponte `BASE_URL` para reaproveitar um servidor de pé.
+Detalhes e o porquê de cada uma em [`scripts/README.md`](scripts/README.md).
+
+| Script                       | O que verifica                                              |
+| ---------------------------- | ----------------------------------------------------------- |
+| `npm run audit:a11y`         | axe-core em 4 rotas × 2 temas × 2 idiomas                    |
+| `npm run audit:overflow`     | rolagem horizontal em 4 rotas × 5 larguras                   |
+| `npm run audit:release-notes`| 28 verificações do índice e da página de versão              |
+| `npm run audit:modals`       | trava de rolagem, fundo inerte, diálogo em tela deitada      |
+| `npm run audit:bundle`       | tetos de tamanho do bundle                                   |
+| `npm run changelog`          | regenera o `CHANGELOG.md` a partir de `RELEASE_NOTES`        |
+
+O `scripts/geometry.mjs` fica fora do CI de propósito: compara a caixa de
+~93 mil elementos contra uma base gravada, o que exige regravá-la a cada
+mudança visual proposital. É ferramenta manual, para refatoração de CSS.
 
 ---
 
