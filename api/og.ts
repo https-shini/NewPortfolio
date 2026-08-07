@@ -22,6 +22,20 @@ const MARCA = "#f43f5e";
 const TEXTO = "#f8fafc";
 const APAGADO = "#8593a9";
 
+/* Mesma forma das outras funções de api/. Node, e não edge: assim a
+   variante do rasterizador usada aqui é a mesma que o teste exercita —
+   o build edge do @vercel/og troca o resvg nativo por WebAssembly, e
+   validar um caminho enquanto se publica o outro não é validação. */
+interface VercelRequest {
+    url?: string;
+    headers: Record<string, string | string[] | undefined>;
+}
+interface VercelResponse {
+    setHeader(name: string, value: string): void;
+    status(code: number): VercelResponse;
+    send(body: Buffer): void;
+}
+
 type Estilo = Record<string, string | number>;
 interface Elemento {
     type: string;
@@ -41,8 +55,13 @@ function caixa(style: Estilo, children?: unknown): Elemento {
     };
 }
 
-export default function handler(req: Request): Response {
-    const { searchParams } = new URL(req.url);
+export default async function handler(
+    req: VercelRequest,
+    res: VercelResponse,
+): Promise<void> {
+    /* No runtime Node o `url` chega relativo; a base é descartável, serve
+       só para o parser aceitar. */
+    const { searchParams } = new URL(req.url ?? "/", "http://localhost");
     const pedida = searchParams.get("v")?.replace(/^v/i, "") ?? "";
 
     const entrada = RELEASE_NOTES.find((r) => r.version === pedida);
@@ -117,12 +136,15 @@ export default function handler(req: Request): Response {
         ],
     );
 
-    return new ImageResponse(arvore as never, {
+    const imagem = new ImageResponse(arvore as never, {
         width: 1200,
         height: 630,
-        headers: {
-            "Cache-Control":
-                "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
-        },
     });
+
+    res.setHeader("Content-Type", "image/png");
+    res.setHeader(
+        "Cache-Control",
+        "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800",
+    );
+    res.status(200).send(Buffer.from(await imagem.arrayBuffer()));
 }

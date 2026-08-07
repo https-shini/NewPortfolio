@@ -126,10 +126,15 @@ export default async function handler(
     req: VercelRequest,
     res: VercelResponse,
 ): Promise<void> {
-    const bruto = Array.isArray(req.query.path)
+    /* A rota chega pelo `path` que a reescrita monta. Se por algum motivo
+       ela não vier — regra alterada, chamada direta em teste manual — o
+       próprio `req.url` serve de reserva, e é melhor responder o cartão
+       padrão do que estourar. */
+    const daQuery = Array.isArray(req.query.path)
         ? req.query.path[0]
         : req.query.path;
-    const pathname = (bruto || "/").split("?")[0] || "/";
+    const daUrl = req.url ? new URL(req.url, "http://localhost").pathname : "";
+    const pathname = (daQuery || daUrl || "/").split("?")[0] || "/";
 
     const m = await resolverMeta(pathname);
 

@@ -4,7 +4,7 @@
     { "source": "/feed.xml", "destination": "/api/feed" },
 
     {
-      "source": "/:path(links|links/|release-notes|release-notes/.*)",
+      "source": "/links",
       "has": [
         {
           "type": "header",
@@ -12,7 +12,29 @@
           "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
         }
       ],
-      "destination": "/api/crawler?path=/:path"
+      "destination": "/api/crawler?path=/links"
+    },
+    {
+      "source": "/release-notes",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+        }
+      ],
+      "destination": "/api/crawler?path=/release-notes"
+    },
+    {
+      "source": "/release-notes/:rest*",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+        }
+      ],
+      "destination": "/api/crawler?path=/release-notes/:rest*"
     },
 
     { "source": "/links", "destination": "/index.html" },
