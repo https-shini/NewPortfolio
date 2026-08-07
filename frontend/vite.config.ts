@@ -81,7 +81,10 @@ interface SitemapEntry {
     priority: string;
 }
 
-function renderUrl({ loc, lastmod, changefreq, priority }: SitemapEntry) {
+function renderUrl(
+    { loc, lastmod, changefreq, priority }: SitemapEntry,
+    alternativas: { hreflang: string; href: string }[],
+) {
     /* <lastmod> é opcional na especificação. Sem data confiável, omitir é
        melhor do que inventar: um valor errado desorienta o rastreador mais
        do que a ausência. */
@@ -91,6 +94,13 @@ function renderUrl({ loc, lastmod, changefreq, priority }: SitemapEntry) {
         ...(lastmod ? [`        <lastmod>${lastmod}</lastmod>`] : []),
         `        <changefreq>${changefreq}</changefreq>`,
         `        <priority>${priority}</priority>`,
+        /* Sem isto, as duas formas da mesma página competem entre si nos
+           resultados em vez de se declararem equivalentes. O x-default
+           aponta para a URL limpa, que é a canônica. */
+        ...alternativas.map(
+            (a) =>
+                `        <xhtml:link rel="alternate" hreflang="${a.hreflang}" href="${escapeXml(a.href)}"/>`,
+        ),
         "    </url>",
     ].join("\n");
 }
@@ -106,6 +116,8 @@ function sitemapPlugin() {
                 releaseNotePath,
                 releaseNotesPagePath,
                 RELEASE_NOTES_PAGE_SIZE,
+                HREFLANG,
+                withLang,
             } = await import("./src/shared/config/routes");
 
             /* Data de cada rota: o commit mais recente entre os caminhos que
@@ -191,8 +203,15 @@ function sitemapPlugin() {
                 `    Gerado no build por vite.config.ts — não editar à mão.`,
                 `    As datas vêm do git; as âncoras, de SECTION_IDS.`,
                 "-->",
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-                ...entries.map(renderUrl),
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+                '        xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+                ...entries.map((e) =>
+                    renderUrl(e, [
+                        { hreflang: HREFLANG.pt, href: e.loc },
+                        { hreflang: HREFLANG.en, href: withLang(e.loc, "en") },
+                        { hreflang: "x-default", href: e.loc },
+                    ]),
+                ),
                 "</urlset>",
                 "",
             ].join("\n");

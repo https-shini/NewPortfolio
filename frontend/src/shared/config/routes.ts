@@ -17,6 +17,29 @@ export const ROUTES = {
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
 
+/* ─────────────────────────────────────────────────────────
+   Idioma na URL
+   ─────────────────────────────────────────────────────────
+   Parâmetro de busca, não prefixo de caminho: vale para toda
+   rota sem tocar no roteador nem multiplicar as reescritas.
+
+   O padrão fica implícito — `/links` é português, `/links?lang=en`
+   é inglês. Uma URL sem parâmetro é a canônica; emitir também
+   `?lang=pt` daria duas formas para a mesma página.
+───────────────────────────────────────────────────────── */
+
+export const LANG_PARAM = "lang";
+export const DEFAULT_LANG = "pt";
+
+/** Etiquetas BCP 47 para o atributo lang e para o hreflang. */
+export const HREFLANG = { pt: "pt-BR", en: "en" } as const;
+
+/** Acrescenta o idioma a uma URL, omitindo-o quando for o padrão. */
+export function withLang(url: string, lang: "pt" | "en"): string {
+    if (lang === DEFAULT_LANG) return url;
+    return `${url}${url.includes("?") ? "&" : "?"}${LANG_PARAM}=${lang}`;
+}
+
 /**
  * SECTION_IDS — identificadores semânticos das seções da home.
  * Fonte única de verdade: usado em Hero/About/..., Header (nav/observer),
