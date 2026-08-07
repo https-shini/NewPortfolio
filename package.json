@@ -26,6 +26,7 @@
         "test:watch": "npm run test:watch --prefix frontend",
         "audit:a11y": "node scripts/a11y.mjs",
         "audit:overflow": "node scripts/overflow.mjs",
+        "audit:release-notes": "node scripts/e2e-release-notes.mjs",
         "audit:bundle": "node scripts/bundle-budget.mjs",
         "audit:modals": "node scripts/e2e-modals.mjs",
         "changelog": "node --experimental-strip-types --no-warnings scripts/changelog.mjs",

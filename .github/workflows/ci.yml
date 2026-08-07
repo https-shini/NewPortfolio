@@ -118,5 +118,15 @@ jobs:
           BASE_URL: http://localhost:4173
         run: npm run audit:overflow
 
+      - name: Release notes end-to-end
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:release-notes
+
+      - name: Overlays (scroll lock, inert background)
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:modals
+
       - name: Bundle budget
         run: npm run audit:bundle

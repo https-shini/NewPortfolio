@@ -1,0 +1,284 @@
+/**
+ * Notas de versão, ponta a ponta — índice e página por versão.
+ *
+ *   node scripts/e2e-release-notes.mjs      # ou npm run audit:release-notes
+ *
+ * Junta os dois roteiros que antes viviam separados no scratchpad: o do
+ * índice (`/release-notes`) e o da página de cada versão. Separados eles
+ * repetiam o mesmo arranque, o mesmo bloqueio de rede e as mesmas
+ * asserções de rodapé — e divergiam sempre que só um dos dois era
+ * corrigido.
+ *
+ * A rota da versão é a única do site que depende de dado externo. Aqui a
+ * API responde lista vazia de propósito: o que se verifica é que a camada
+ * local sustenta a página sozinha, que é o que acontece na prática
+ * enquanto não há release publicada.
+ */
+
+import { launchBrowser, newContext, startPreview, visit } from "./lib/browser.mjs";
+
+const resultados = [];
+const check = (nome, ok, detalhe = "") => {
+    resultados.push({ nome, ok, detalhe });
+    console.log(
+        `${ok ? "  ok " : "FALHA"}  ${nome}${detalhe ? `  (${detalhe})` : ""}`,
+    );
+};
+
+const preview = await startPreview();
+const browser = await launchBrowser();
+
+/** Erros de console que importam — ruído de rede bloqueada não conta. */
+function coletarErros(page) {
+    const erros = [];
+    page.on("console", (m) => {
+        if (m.type() !== "error") return;
+        const t = m.text();
+        if (/net::ERR_FAILED|Failed to load resource/i.test(t)) return;
+        erros.push(t);
+    });
+    return erros;
+}
+
+try {
+    /* ══ Índice ══════════════════════════════════════════════════ */
+    {
+        const { ctx, page } = await newContext(browser, {
+            baseUrl: preview.url,
+            theme: "dark",
+            lang: "pt",
+            viewport: { width: 1280, height: 900 },
+        });
+        const erros = coletarErros(page);
+
+        const r = await page.goto(`${preview.url}/release-notes`, {
+            waitUntil: "domcontentloaded",
+        });
+        check("GET /release-notes responde 200", r.status() === 200, r.status());
+
+        await page.waitForSelector(".release-page, main", { timeout: 25_000 });
+        await page.waitForTimeout(500);
+
+        check(
+            "título da aba identifica a rota",
+            /notas de vers|release notes/i.test(await page.title()),
+            await page.title(),
+        );
+
+        const canonical = await page
+            .locator('link[rel="canonical"]')
+            .getAttribute("href")
+            .catch(() => "");
+        check(
+            "canonical aponta para a rota",
+            /\/release-notes$/.test(canonical ?? ""),
+            canonical ?? "ausente",
+        );
+
+        check("índice tem um h1", (await page.locator("h1").count()) === 1);
+
+        /* A mais recente fica aberta no topo (.release-notes__entry) e o
+           resto vira acordeão (.release-item) — contar só a primeira daria
+           1 e esconderia o histórico inteiro. */
+        const cartoes = await page
+            .locator(".release-notes__entry, .release-item")
+            .count();
+        check(
+            "a camada local sustenta a timeline sem o GitHub",
+            cartoes >= 4,
+            `${cartoes} entradas`,
+        );
+
+        check(
+            "selo de sincronização presente",
+            (await page.locator(".release-notes__sync").count()) > 0,
+        );
+
+        const chips = page.locator('[role="group"] button, .tag-filter button');
+        check(
+            "chips de filtro renderizam",
+            (await chips.count()) >= 2,
+            `${await chips.count()} chips`,
+        );
+
+        check(
+            "histórico curto não pagina",
+            (await page.locator('[class*="pagination"]').count()) === 0,
+        );
+
+        /* O permalink precisa levar à versão certa, não só existir. Os
+           ids trocam ponto por traço, porque ponto tem significado em
+           seletor CSS e quebraria querySelector. */
+        await page.goto(`${preview.url}/release-notes#v2-0-0-rc-1`, {
+            waitUntil: "domcontentloaded",
+        });
+        await page.waitForTimeout(800);
+        const alvoVisivel = await page
+            .locator("#v2-0-0-rc-1")
+            .isVisible()
+            .catch(() => false);
+        check("permalink alcança a versão", alvoVisivel);
+
+        check("console sem erros no índice", erros.length === 0, erros.join(" | "));
+        await ctx.close();
+    }
+
+    /* ══ Página de versão ════════════════════════════════════════ */
+    {
+        const { ctx, page } = await newContext(browser, {
+            baseUrl: preview.url,
+            theme: "dark",
+            lang: "pt",
+            viewport: { width: 1280, height: 900 },
+        });
+        const erros = coletarErros(page);
+
+        await visit(page, preview.url, "/release-notes/v2.0.0");
+
+        const h1 = page.locator("h1").first();
+        check("a versão monta com h1", await h1.isVisible());
+        check(
+            "o h1 é o título da versão",
+            /geração|generation/i.test(await h1.innerText()),
+            (await h1.innerText()).slice(0, 40),
+        );
+        check(
+            "título da aba traz a versão",
+            /v2\.0\.0/.test(await page.title()),
+            await page.title(),
+        );
+
+        const canonical = await page
+            .locator('link[rel="canonical"]')
+            .getAttribute("href")
+            .catch(() => "");
+        check(
+            "canonical é o da versão",
+            /\/release-notes\/v2\.0\.0$/.test(canonical ?? ""),
+            canonical ?? "ausente",
+        );
+
+        check(
+            "cabeçalho do site presente",
+            (await page.locator("#site-header, header").count()) > 0,
+        );
+        check("rodapé do site presente", (await page.locator("footer").count()) > 0);
+
+        /* Navegação entre versões: a mais recente não tem "mais nova". */
+        check(
+            "a mais recente não oferece versão mais nova",
+            (await page.locator('[class*="nav-link--next"]').count()) === 0,
+        );
+
+        const anterior = page.locator('[class*="nav-link--prev"]');
+        check("aponta para a versão anterior", (await anterior.count()) > 0);
+
+        if (await anterior.count()) {
+            await anterior.first().click();
+            await page.waitForTimeout(600);
+            check(
+                "navegar entre versões troca a URL",
+                new URL(page.url()).pathname === "/release-notes/v2.0.0-rc.1",
+                new URL(page.url()).pathname,
+            );
+            check(
+                "a versão do meio tem os dois vizinhos",
+                (await page.locator('[class*="nav-link--prev"]').count()) > 0 &&
+                    (await page.locator('[class*="nav-link--next"]').count()) > 0,
+            );
+        }
+
+        /* Versão inexistente informa, em vez de quebrar. */
+        await page.goto(`${preview.url}/release-notes/v0.0.0-nao-existe`, {
+            waitUntil: "domcontentloaded",
+        });
+        await page.waitForTimeout(600);
+        /* O h1, e não o corpo inteiro: procurar no body deixava o teste
+           passar por causa de qualquer texto solto da página. */
+        const h1NaoEncontrada = await page
+            .locator("h1")
+            .first()
+            .innerText()
+            .catch(() => "");
+        check(
+            "versão inexistente informa no h1, sem quebrar",
+            /não encontrad|not found/i.test(h1NaoEncontrada),
+            h1NaoEncontrada,
+        );
+
+        check("console sem erros na versão", erros.length === 0, erros.join(" | "));
+        await ctx.close();
+    }
+
+    /* ══ Rodapé: o selo de versão leva ao índice ═════════════════ */
+    {
+        const { ctx, page } = await newContext(browser, {
+            baseUrl: preview.url,
+            theme: "dark",
+            viewport: { width: 1280, height: 900 },
+        });
+        await visit(page, preview.url, "/");
+
+        const selo = page.locator('footer a[href="/release-notes"]');
+        check("o selo de versão do rodapé é link", (await selo.count()) >= 1);
+
+        if (await selo.count()) {
+            await selo.first().click();
+            await page.waitForTimeout(600);
+            check(
+                "o selo navega para o índice",
+                new URL(page.url()).pathname === "/release-notes",
+                new URL(page.url()).pathname,
+            );
+        }
+        await ctx.close();
+    }
+
+    /* ══ Idioma e tema nas duas rotas ════════════════════════════ */
+    {
+        for (const rota of ["/release-notes", "/release-notes/v2.0.0"]) {
+            const pt = await newContext(browser, {
+                baseUrl: preview.url,
+                theme: "dark",
+                lang: "pt",
+                viewport: { width: 1280, height: 900 },
+            });
+            await visit(pt.page, preview.url, rota);
+            const emPt = await pt.page.locator("h1").first().innerText();
+            await pt.ctx.close();
+
+            const en = await newContext(browser, {
+                baseUrl: preview.url,
+                theme: "dark",
+                lang: "en",
+                viewport: { width: 1280, height: 900 },
+            });
+            await visit(en.page, preview.url, rota);
+            const emEn = await en.page.locator("h1").first().innerText();
+            const langDoc = await en.page.evaluate(
+                () => document.documentElement.lang,
+            );
+            await en.ctx.close();
+
+            check(
+                `${rota} traduz o h1`,
+                emPt !== emEn,
+                `"${emPt.slice(0, 24)}" → "${emEn.slice(0, 24)}"`,
+            );
+            check(
+                `${rota} declara o idioma renderizado`,
+                langDoc.toLowerCase().startsWith("en"),
+                langDoc,
+            );
+        }
+    }
+} finally {
+    await browser.close();
+    await preview.stop();
+}
+
+const falhas = resultados.filter((r) => !r.ok);
+console.log(
+    `\n${resultados.length - falhas.length}/${resultados.length} verificações passaram`,
+);
+process.exit(falhas.length ? 1 : 0);
