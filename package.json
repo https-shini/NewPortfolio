@@ -1,6 +1,7 @@
 {
     "name": "NewPortfolio",
     "private": true,
+    "type": "module",
     "version": "2.0.0",
     "description": "Portfolio pessoal de Guilherme Cruz",
     "author": "Guilherme Cruz",

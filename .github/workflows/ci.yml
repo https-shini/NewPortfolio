@@ -29,6 +29,14 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
+      # As funções em api/ resolvem as dependências pela raiz, e a suíte do
+      # frontend inclui os testes delas. Sem este passo, `@vercel/og` não
+      # existe para o vitest e o arquivo inteiro falha a carregar — que foi
+      # exatamente o que quebrou este job.
+      - name: Install root dependencies
+        working-directory: .
+        run: npm ci --ignore-scripts
+
       - name: Install dependencies
         run: npm ci
 
