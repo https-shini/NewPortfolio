@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import "./Links.css";
 import { LinkCard } from "./components/LinkCard";
-import { ParticleField } from "./components/ParticleField";
+import { AmbientBackground } from "@/shared/ui/AmbientBackground/AmbientBackground";
 import { useLang } from "@/shared/hooks/useLang";
 import { useTheme } from "@/shared/hooks/useTheme";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
@@ -108,9 +108,7 @@ export const LinksPage: React.FC = () => {
             </a>
 
             {/* ── Fundos ambientes ── */}
-            <div className="linktree__grid" aria-hidden="true" />
-            <div className="linktree__overlay" aria-hidden="true" />
-            <ParticleField />
+            <AmbientBackground variant="links" count={26} />
 
             {/* ── Controles ── */}
             <div className="linktree__controls">

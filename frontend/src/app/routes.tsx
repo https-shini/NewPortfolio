@@ -3,6 +3,7 @@ import { HomePage } from "@/pages/Home";
 import { useRoute } from "@/shared/hooks/useRoute";
 import { ROUTES } from "@/shared/config/constants";
 import { RELEASE_NOTES_PAGE_SEGMENT } from "@/shared/config/routes";
+import { AmbientBackground } from "@/shared/ui/AmbientBackground/AmbientBackground";
 
 /**
  * Routes — mapeia pathname → página.
@@ -71,6 +72,8 @@ export function matchReleaseNotes(path: string): ReleaseNotesMatch {
 export const Routes: React.FC = () => {
     const { path } = useRoute();
 
+    /* A /links é autônoma: traz a própria atmosfera, mais densa, junto
+       com os próprios controles de tema e idioma. */
     if (path === ROUTES.LINKS) {
         return (
             <Suspense fallback={null}>
@@ -80,18 +83,25 @@ export const Routes: React.FC = () => {
     }
 
     const releaseNotes = matchReleaseNotes(path);
-    if (releaseNotes) {
-        return (
-            <Suspense fallback={null}>
-                {releaseNotes.kind === "index" ? (
-                    <ReleaseNotesPage page={releaseNotes.page} />
-                ) : (
-                    <ReleaseNotePage version={releaseNotes.version} />
-                )}
-            </Suspense>
-        );
-    }
 
-    /* Rota desconhecida cai na home — o site não tem página 404 própria. */
-    return <HomePage />;
+    /* As demais são páginas do site e dividem a mesma atmosfera. Montada
+       aqui, e não em cada página, ela sobrevive à troca de rota — as
+       partículas não reiniciam o ciclo a cada navegação. */
+    return (
+        <>
+            <AmbientBackground />
+            {releaseNotes ? (
+                <Suspense fallback={null}>
+                    {releaseNotes.kind === "index" ? (
+                        <ReleaseNotesPage page={releaseNotes.page} />
+                    ) : (
+                        <ReleaseNotePage version={releaseNotes.version} />
+                    )}
+                </Suspense>
+            ) : (
+                /* Rota desconhecida cai na home — não há 404 própria. */
+                <HomePage />
+            )}
+        </>
+    );
 };

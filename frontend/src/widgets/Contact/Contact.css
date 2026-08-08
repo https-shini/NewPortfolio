@@ -5,7 +5,7 @@
 
 /* ── Seção base ──────────────────────────────────────────────────────────── */
 .contact {
-    background: var(--color-surface-1);
+    background: var(--color-veil-1);
     position: relative;
     overflow: hidden;
 }

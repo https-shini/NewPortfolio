@@ -8,34 +8,16 @@
     display: flex;
     align-items: center;
     overflow: hidden;
-    background: var(--color-bg);
+    /* Véu, e não cor cheia: a atmosfera do site passa por baixo. */
+    background: var(--color-veil-bg);
     padding-top: var(--header-height);
 }
 
 /* ── Atmosfera ───────────────────────────────────────────────────────────────── */
 
-.hero__grid-bg {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(
-        circle,
-        color-mix(in srgb, var(--color-brand) 20%, transparent) 2px,
-        transparent 2px
-    );
-    background-size: 28px 28px;
-    -webkit-mask-image: radial-gradient(
-        ellipse 80% 60% at 50% 40%,
-        black,
-        transparent 90%
-    );
-    mask-image: radial-gradient(
-        ellipse 80% 60% at 50% 40%,
-        black,
-        transparent 90%
-    );
-    pointer-events: none;
-}
-
+/* A malha de pontos saiu daqui: o AmbientBackground do site já a
+   desenha, e duas malhas de passos diferentes (28px e 26px) criavam
+   moiré onde se sobrepunham. O brilho abaixo continua sendo do Hero. */
 /* ── Layout ──────────────────────────────────────────────────────────────────── */
 
 .hero__inner {

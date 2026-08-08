@@ -132,6 +132,14 @@
     --color-surface-3: var(--_slate-850);
     --color-surface-4: var(--_slate-800);
 
+    /* Véus — a mesma superfície, deixando a atmosfera passar.
+       As seções eram opacas e escondiam o fundo animado por completo.
+       É o véu que decide quanto passa, e 88% não passava o suficiente
+       para o efeito existir: a malha já é tênue, e 12% de tênue é nada.
+       Em 82% a atmosfera aparece e o contraste segue medido em 16/16. */
+    --color-veil-bg: color-mix(in srgb, var(--color-bg) 82%, transparent);
+    --color-veil-1: color-mix(in srgb, var(--color-surface-1) 82%, transparent);
+
     /* ╌╌ Bordas ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --color-border-1: rgba(255, 255, 255, 0.04);
     --color-border-2: rgba(255, 255, 255, 0.08);
@@ -275,6 +283,11 @@ body.light-mode {
     --color-surface-2: var(--_slate-50);
     --color-surface-3: var(--_slate-100);
     --color-surface-4: var(--_slate-150);
+
+    /* No claro o véu fecha um pouco mais: o fundo é quase branco e a
+       partícula, colorida, salta mais sobre ele do que sobre o escuro. */
+    --color-veil-bg: color-mix(in srgb, var(--color-bg) 88%, transparent);
+    --color-veil-1: color-mix(in srgb, var(--color-surface-1) 88%, transparent);
 
     /* ╌╌ Bordas light — visíveis, estruturadas, sem ruído ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌ */
     --color-border-1: rgba(0, 0, 0, 0.05);

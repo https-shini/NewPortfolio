@@ -5,59 +5,9 @@
    .social-link, .skip-link (definidos em globals.css).
    ══════════════════════════════════════════════════════════════════ */
 
-/* ── Fundos ambientes (fixos, atrás de tudo) ───────────────────── */
-.linktree__grid,
-.linktree__overlay,
-.linktree__particles {
-    position: fixed;
-    inset: 0;
-    z-index: var(--z-base);
-    pointer-events: none;
-}
-.linktree__grid {
-    background-image: radial-gradient(var(--dots-color) 1px, transparent 1px);
-    background-size: 26px 26px;
-    -webkit-mask-image: radial-gradient(
-        ellipse 70% 60% at 50% 30%,
-        #000 40%,
-        transparent 100%
-    );
-    mask-image: radial-gradient(
-        ellipse 70% 60% at 50% 30%,
-        #000 40%,
-        transparent 100%
-    );
-}
-.linktree__overlay {
-    background: var(--section-gradient-overlay);
-}
-.linktree__particles {
-    overflow: hidden;
-}
-.linktree__particle {
-    position: absolute;
-    border-radius: 50%;
-    opacity: 0;
-    animation: linktree-float var(--dur, 24s) linear infinite;
-    animation-delay: var(--delay, 0s);
-}
-@keyframes linktree-float {
-    0%,
-    100% {
-        transform: translate(0, 0) scale(1);
-        opacity: 0;
-    }
-    10% {
-        opacity: 0.5;
-    }
-    50% {
-        transform: translate(var(--dx, 0), var(--dy, -140px)) scale(1.15);
-        opacity: 0.7;
-    }
-    90% {
-        opacity: 0.3;
-    }
-}
+/* Os fundos ambientes moraram aqui até virarem
+   shared/ui/AmbientBackground, usado também pelo portfólio. A /links
+   pede a variante mais densa; o site, a discreta. */
 
 /* ── Controles (topo direito) ──────────────────────────────────── */
 .linktree__controls {

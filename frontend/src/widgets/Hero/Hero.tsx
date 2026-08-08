@@ -37,7 +37,6 @@ export const Hero: React.FC = () => {
             className="hero"
             aria-labelledby="hero-name"
         >
-            <div className="hero__grid-bg" aria-hidden="true" />
             <div className="hero__glow" aria-hidden="true" />
 
             <div className="hero__inner">

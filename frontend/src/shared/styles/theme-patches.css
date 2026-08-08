@@ -166,17 +166,7 @@ body.light-mode .mobile-nav__cta:hover {
 
 /* ── Fundo ── */
 body.light-mode .hero {
-    background: var(--color-bg);
-}
-
-/* ── Grid dots — mais suave no light ── */
-body.light-mode .hero__grid-bg {
-    background-image: radial-gradient(
-        circle,
-        var(--dots-color) 1px,
-        transparent 1px
-    );
-    opacity: 0.65;
+    background: var(--color-veil-bg);
 }
 
 /* ── Status badge de disponibilidade ── */
@@ -281,7 +271,7 @@ body.light-mode .hero__social-label {
 
 /* ── Fundo da seção (elevada em relação ao hero/timeline) ── */
 body.light-mode .about {
-    background: var(--color-surface-1);
+    background: var(--color-veil-1);
 }
 
 /* ── Bio paragraphs ── */
@@ -549,7 +539,7 @@ body.light-mode .timeline__cert-link:hover {
 
 /* ── Fundo da seção ── */
 body.light-mode .featured {
-    background: var(--color-surface-1);
+    background: var(--color-veil-1);
 }
 
 /* ── Card do projeto ── */
@@ -646,7 +636,7 @@ body.light-mode .detail-card__text {
 
 /* ── Fundo ── */
 body.light-mode .work {
-    background: var(--color-bg);
+    background: var(--color-veil-bg);
 }
 
 /* ── Cards ── */
@@ -704,7 +694,7 @@ body.light-mode .work-btn--outline:hover {
 
 /* ── Fundo ── */
 body.light-mode .contact {
-    background: var(--color-bg);
+    background: var(--color-veil-bg);
 }
 
 /* ── Badge de disponibilidade ── */
