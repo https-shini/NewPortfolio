@@ -1,6 +1,6 @@
-import { RELEASE_NOTES } from "../frontend/src/shared/config/releaseNotes";
-import { fetchGithubReleases } from "./_releases";
-import { mergeReleaseNotes } from "../frontend/src/shared/lib/mergeReleaseNotes";
+import { RELEASE_NOTES } from "../frontend/src/shared/config/releaseNotes.js";
+import { fetchGithubReleases } from "./_releases.js";
+import { mergeReleaseNotes } from "../frontend/src/shared/lib/mergeReleaseNotes.js";
 
 /* ─────────────────────────────────────────────────────────
    /api/crawler — HTML com as meta tags certas por rota

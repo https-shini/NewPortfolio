@@ -1,6 +1,6 @@
-import { fetchGithubReleases } from "./_releases";
-import { RELEASE_NOTES } from "../frontend/src/shared/config/releaseNotes";
-import { mergeReleaseNotes } from "../frontend/src/shared/lib/mergeReleaseNotes";
+import { fetchGithubReleases } from "./_releases.js";
+import { RELEASE_NOTES } from "../frontend/src/shared/config/releaseNotes.js";
+import { mergeReleaseNotes } from "../frontend/src/shared/lib/mergeReleaseNotes.js";
 
 /* ─────────────────────────────────────────────────────────
    /api/feed — Atom das notas de versão

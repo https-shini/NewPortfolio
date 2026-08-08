@@ -1,4 +1,4 @@
-import { renderMarkdown } from "./_markdown";
+import { renderMarkdown } from "./_markdown.js";
 
 /* ─────────────────────────────────────────────────────────
    _releases — a busca das releases, compartilhada

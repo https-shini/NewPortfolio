@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { renderMarkdown } from "./_markdown";
+import { renderMarkdown } from "./_markdown.js";
 
 describe("renderMarkdown — segurança", () => {
     it("não deixa nenhuma tag escrita pelo autor sobreviver", () => {

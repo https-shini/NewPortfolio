@@ -1,4 +1,4 @@
-import { fetchGithubReleases, type ReleasePayload } from "./_releases";
+import { fetchGithubReleases, type ReleasePayload } from "./_releases.js";
 
 /* ─────────────────────────────────────────────────────────
    /api/release-notes — Vercel Serverless Function
