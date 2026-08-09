@@ -7,3 +7,7 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
+
+# Artefatos de empacotamento do desktop — vão para a GitHub Release,
+# nunca para o repositório (o AppImage sozinho tem 106 MB).
+apps/desktop/release/

@@ -1,0 +1,173 @@
+/**
+ * Processo principal do aplicativo desktop.
+ *
+ * ── Por que um protocolo próprio, e não `file://` ────────────────────
+ *
+ * O site roteia pela History API: `/links`, `/release-notes`,
+ * `/downloads`. Carregado por `file://`, isso quebra de duas formas ao
+ * mesmo tempo — `location.pathname` passa a ser um caminho de disco, e o
+ * roteador cai na home achando que está em `/home/.../index.html`; e um
+ * `pushState` para `/links` tenta empurrar `file:///links`, que não
+ * existe. O app abriria sempre na home e nenhum link interno funcionaria.
+ *
+ * A saída óbvia seria subir um servidor HTTP local, e é o que muita gente
+ * faz. Custa uma porta aberta em 127.0.0.1 — que o firewall do Windows
+ * pergunta sobre, que outro processo pode ocupar, e que é superfície de
+ * rede que este app não precisa ter.
+ *
+ * `protocol.handle` resolve sem nada disso: um esquema próprio, servido
+ * de dentro do processo, com o mesmo fallback para `index.html` que a
+ * Vercel faz com as reescritas do `vercel.json`. Sem porta, sem servidor,
+ * sem pergunta de firewall — e o roteador enxerga caminhos de verdade.
+ */
+
+const { app, BrowserWindow, shell, protocol, net } = require("electron");
+const path = require("node:path");
+const { pathToFileURL } = require("node:url");
+
+const ESQUEMA = "app";
+const ORIGEM = `${ESQUEMA}://local`;
+
+/* O build do site. Em desenvolvimento vem do repositório; empacotado,
+   electron-builder copia o dist para dentro dos recursos. */
+const RAIZ_WEB = app.isPackaged
+    ? path.join(process.resourcesPath, "web")
+    : path.join(__dirname, "../../web/dist");
+
+/* Privilégios pedidos ANTES do app ficar pronto — depois disso o
+   registro é ignorado em silêncio. `standard` é o que faz o esquema ter
+   origem e caminho como um http normal, que é do que a History API
+   precisa; `secure` o coloca no mesmo patamar de https, sem o qual
+   `localStorage` e `fetch` ficariam restritos. */
+protocol.registerSchemesAsPrivileged([
+    {
+        scheme: ESQUEMA,
+        privileges: {
+            standard: true,
+            secure: true,
+            supportFetchAPI: true,
+            stream: true,
+        },
+    },
+]);
+
+/**
+ * Serve um arquivo do dist, com fallback de SPA.
+ *
+ * A regra é a mesma do site: caminho que corresponde a arquivo existente
+ * vira aquele arquivo; qualquer outro vira `index.html` e deixa o
+ * roteador do React decidir. É por isso que `/downloads` funciona aqui
+ * sem precisar de uma lista de rotas duplicada neste arquivo — duplicar
+ * seria criar uma segunda fonte da verdade que um dia diverge.
+ */
+function servir(request) {
+    const { pathname } = new URL(request.url);
+    const relativo = decodeURIComponent(pathname).replace(/^\/+/, "");
+
+    /* `path.resolve` normaliza `..` — sem isto, `app://local/../../etc`
+       sairia da pasta do site e leria qualquer arquivo do disco. */
+    const alvo = path.resolve(RAIZ_WEB, relativo);
+    const dentro = alvo === RAIZ_WEB || alvo.startsWith(RAIZ_WEB + path.sep);
+
+    const temExtensao = path.extname(alvo) !== "";
+    const arquivo = dentro && temExtensao ? alvo : path.join(RAIZ_WEB, "index.html");
+
+    return net.fetch(pathToFileURL(arquivo).toString());
+}
+
+function criarJanela() {
+    const janela = new BrowserWindow({
+        width: 1280,
+        height: 860,
+        minWidth: 360,
+        minHeight: 560,
+        /* A cor do tema escuro do site. Sem isto a janela pisca branco
+           entre abrir e a primeira pintura. */
+        backgroundColor: "#040710",
+        title: "Guilherme Cruz — Portfólio",
+        show: false,
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+            /* Os dois que importam: a página não alcança o Node, e o
+               contexto dela é isolado do preload. O site é estático e não
+               precisa de nada do sistema — deixar aberto seria dar acesso
+               ao disco a um conteúdo que não pede nada disso. */
+            contextIsolation: true,
+            nodeIntegration: false,
+            sandbox: true,
+        },
+    });
+
+    /* Só aparece quando há o que mostrar. */
+    janela.once("ready-to-show", () => janela.show());
+
+    /* Link externo abre no navegador do sistema, não numa janela do app
+       sem barra de endereço — de onde a pessoa não teria como saber para
+       onde foi nem como voltar. */
+    janela.webContents.setWindowOpenHandler(({ url }) => {
+        if (url.startsWith("http:") || url.startsWith("https:")) {
+            shell.openExternal(url);
+        }
+        return { action: "deny" };
+    });
+
+    /* Navegação para fora da origem do app também vai para o navegador. */
+    janela.webContents.on("will-navigate", (evento, url) => {
+        if (!url.startsWith(ORIGEM)) {
+            evento.preventDefault();
+            if (url.startsWith("http:") || url.startsWith("https:")) {
+                shell.openExternal(url);
+            }
+        }
+    });
+
+    janela.loadURL(`${ORIGEM}/`);
+    return janela;
+}
+
+/* Uma instância só: abrir o atalho de novo foca a janela que já existe,
+   em vez de subir um segundo app com o mesmo estado. */
+if (!app.requestSingleInstanceLock()) {
+    app.quit();
+} else {
+    let janela = null;
+
+    app.on("second-instance", () => {
+        if (!janela) return;
+        if (janela.isMinimized()) janela.restore();
+        janela.focus();
+    });
+
+    app.whenReady().then(() => {
+        protocol.handle(ESQUEMA, servir);
+        janela = criarJanela();
+
+        /* No macOS o app segue vivo sem janela; clicar no ícone do dock
+           precisa recriar uma. */
+        app.on("activate", () => {
+            if (BrowserWindow.getAllWindows().length === 0) {
+                janela = criarJanela();
+            }
+        });
+
+        /* A atualização automática só existe no app empacotado: em
+           desenvolvimento não há assinatura nem versão publicada com que
+           comparar, e o updater apenas registraria erro a cada abertura. */
+        if (app.isPackaged) {
+            import("electron-updater")
+                .then(({ autoUpdater }) => {
+                    autoUpdater.autoDownload = true;
+                    autoUpdater.checkForUpdatesAndNotify();
+                })
+                .catch(() => {
+                    /* Sem rede, ou release ainda não publicada. Não é
+                       motivo para atrapalhar quem só quer abrir o app. */
+                });
+        }
+    });
+
+    /* No macOS a convenção é o app continuar aberto sem janelas. */
+    app.on("window-all-closed", () => {
+        if (process.platform !== "darwin") app.quit();
+    });
+}

@@ -1,0 +1,70 @@
+# Empacotamento do app desktop.
+#
+# O `dist/` do site NÃO mora dentro deste pacote: ele é produzido por
+# `apps/web` e copiado para os recursos do app no empacotamento. Uma
+# fonte só para a interface, nas três plataformas e na web.
+
+# Com npm workspaces o pacote do electron fica içado para o node_modules
+# da RAIZ, e o electron-builder o procura em apps/desktop/node_modules.
+# Declarar a versão aqui é o que o desacopla de onde o pacote foi parar.
+electronVersion: 33.4.11
+
+appId: br.dev.gcruz.portfolio
+productName: Portfolio Guilherme Cruz
+copyright: Copyright © 2026 Guilherme Cruz
+
+# Não há dependência nativa aqui: o app é HTML servido de um protocolo
+# próprio. Sem isto o builder dispara um `npm install` só para recompilar
+# binários que não existem, e esse install esbarra no `prepare: husky` da
+# raiz, que não resolve dentro do subprocesso dele.
+npmRebuild: false
+
+directories:
+    output: release
+    buildResources: build
+
+# Só o que o app executa. Sem isto o electron-builder arrastaria o
+# workspace inteiro — incluindo o node_modules do site, que não roda aqui.
+files:
+    - src/**/*
+    - package.json
+
+# O build do site entra como recurso, e é de lá que o protocolo `app://`
+# serve os arquivos (ver RAIZ_WEB em src/main.js).
+extraResources:
+    - from: ../web/dist
+      to: web
+
+# A atualização automática lê as releases do GitHub. É o mesmo lugar de
+# onde a página /downloads tira os links — uma fonte, não duas.
+publish:
+    provider: github
+    owner: https-shini
+    repo: NewPortfolio
+
+linux:
+    target:
+        - AppImage
+        - deb
+    category: Development
+    synopsis: Portfólio de Guilherme Cruz
+    desktop:
+        StartupWMClass: portfolio-desktop
+
+win:
+    target:
+        - target: nsis
+          arch: [x64]
+
+nsis:
+    oneClick: false
+    perMachine: false
+    allowToChangeInstallationDirectory: true
+    # Sem certificado de assinatura, o SmartScreen avisa no primeiro uso.
+    # Não bloqueia a instalação; é o item que depende de compra.
+
+mac:
+    target:
+        - target: dmg
+          arch: [x64, arm64]
+    category: public.app-category.developer-tools
