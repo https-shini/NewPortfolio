@@ -30,6 +30,7 @@
         "audit:release-notes": "node scripts/e2e-release-notes.mjs",
         "audit:bundle": "node scripts/bundle-budget.mjs",
         "audit:modals": "node scripts/e2e-modals.mjs",
+        "audit:perf": "node scripts/perf.mjs",
         "changelog": "node --experimental-strip-types --no-warnings scripts/changelog.mjs",
         "changelog:check": "node --experimental-strip-types --no-warnings scripts/changelog.mjs --check",
         "prepare": "husky"

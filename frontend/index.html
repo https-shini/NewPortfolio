@@ -68,18 +68,50 @@
         <link rel="manifest" href="/manifest.webmanifest" />
 
         <!-- ── Fontes ───────────────────────────────────────────────── -->
+        <!--
+          Fora do caminho crítico, de propósito.
+
+          Como <link rel="stylesheet"> comum, estas duas folhas seguravam a
+          PRIMEIRA PINTURA até dois hosts de terceiros responderem — dois DNS,
+          dois TLS, antes de qualquer pixel. Medido: com 1,2s de atraso nos
+          CDNs, a tela ficava branca por 1.576ms; sem esperá-los, pinta em
+          400ms. O atraso do terceiro entrava um a um no tempo de tela branca.
+
+          `media="print"` faz o navegador buscar sem bloquear a pintura; o
+          onload devolve para `all` assim que chega. O <noscript> cobre quem
+          não roda JavaScript, e aí bloquear é o comportamento correto.
+
+          A troca de fonte aparece — mas já aparecia: as três famílias usam
+          `display=swap` e todas têm pilha de sistema em tokens.css. A escolha
+          é entre ver o texto na fonte de sistema por um instante ou não ver
+          texto nenhum.
+        -->
         <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
         <link
             href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,600,700&f[]=general-sans@400,500,600&display=swap"
             rel="stylesheet"
+            media="print"
+            onload="this.media = 'all'"
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
             href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
             rel="stylesheet"
+            media="print"
+            onload="this.media = 'all'"
         />
+        <noscript>
+            <link
+                href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,600,700&f[]=general-sans@400,500,600&display=swap"
+                rel="stylesheet"
+            />
+            <link
+                href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+                rel="stylesheet"
+            />
+        </noscript>
 
         <!-- ── CDN externo usado nos ícones de tecnologia ───────────── -->
         <link rel="preconnect" href="https://skillicons.dev" crossorigin />

@@ -138,6 +138,51 @@ de qual slide está ativo. A tolerância de meio pixel está uma ordem de
 grandeza acima do maior ruído medido e uma ordem abaixo do que um
 breakpoint trocado causaria.
 
+## `perf.mjs`
+
+Carga e rolagem nas três rotas, com a CPU normal e quatro vezes mais
+lenta.
+
+```bash
+node scripts/perf.mjs                  # ou npm run audit:perf
+node scripts/perf.mjs --atraso=1200    # simula CDN de terceiro lento
+node scripts/perf.mjs --json
+```
+
+### Por que mede thread principal e não quadros por segundo
+
+Em contêiner não há GPU: o Chromium rasteriza por software (SwiftShader,
+confirmado pelo `WEBGL_debug_renderer_info`). Contar quadros ali mede o
+rasterizador, não a página — um `backdrop-filter` que na máquina de quem
+visita é trabalho de compositor aparece como se derrubasse a página pela
+metade. Foi o que aconteceu: a `/links` marcava 30 fps e o número não
+reagia a nenhum nível de throttling de CPU, porque não era CPU.
+
+`script`, `estilo`, `layout` e ocupação da thread principal são a mesma
+coisa em qualquer máquina. E o leitor de quadros ainda é ruim de outro
+jeito: ele só devolve 16,7, 33,3 ou 50ms, então uma melhora de 20% ou não
+aparece ou vira o dobro.
+
+### `--atraso` e o que ele revelou
+
+As duas folhas de estilo de fonte (Fontshare e Google Fonts) eram
+`<link rel="stylesheet">` comuns — e portanto seguravam a primeira
+pintura até dois hosts de terceiros responderem. O atraso entrava um a um
+no tempo de tela branca: com 1,2s de CDN lento, a home levava 1.576ms
+para pintar; sem esperá-los, 400ms.
+
+Hoje as duas carregam com `media="print"` e voltam para `all` no
+`onload`, com `<noscript>` para quem não roda JavaScript. Com o mesmo
+1,2s de atraso a home pinta em 388ms — a espera pelo terceiro saiu do
+caminho crítico.
+
+### Fora do CI
+
+Falta base para julgar: o tempo de carga depende do runner, e um teto que
+oscila com a máquina ensina a ignorar o job. Aqui o que serve é comparar
+duas execuções na mesma máquina, antes e depois de uma mudança — como o
+`geometry.mjs`.
+
 ## `changelog.mjs`
 
 Gera o `CHANGELOG.md` da raiz a partir de `RELEASE_NOTES`.
