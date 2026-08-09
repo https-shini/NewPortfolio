@@ -86,14 +86,14 @@ body.light-mode .header__lang {
     background: var(--color-surface-1);
     border-color: var(--color-border-2);
     color: var(--color-text-3);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--surface-edge), var(--shadow-xs);
 }
 
 body.light-mode .header__lang:hover {
     border-color: var(--color-brand);
     color: var(--color-brand);
     background: var(--color-brand-subtle);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--surface-edge), var(--shadow-sm);
     transform: translateY(-1px);
 }
 
@@ -102,14 +102,14 @@ body.light-mode .header__ctrl {
     background: var(--color-surface-1);
     border-color: var(--color-border-2);
     color: var(--color-text-3);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--surface-edge), var(--shadow-xs);
 }
 
 body.light-mode .header__ctrl:hover {
     border-color: var(--color-brand);
     color: var(--color-brand);
     background: var(--color-brand-subtle);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--surface-edge), var(--shadow-sm);
     transform: translateY(-1px);
 }
 
@@ -323,7 +323,7 @@ body.light-mode .spec-card:hover {
 body.light-mode .spec-card__icon {
     background: color-mix(in srgb, var(--_crimson-600) 8%, transparent);
     border-color: color-mix(in srgb, var(--_crimson-600) 18%, transparent);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--surface-edge), var(--shadow-xs);
     color: var(--_crimson-700);
     /* Remove backdrop-filter no light — não agrega valor */
     backdrop-filter: none;
@@ -558,6 +558,10 @@ body.light-mode .featured__project:hover {
 /* Galeria */
 body.light-mode .featured__gallery {
     background: var(--color-surface-3);
+    /* A sombra literal do tema escuro — preto a 22% e 28% — continuava
+       ativa aqui, porque este bloco só trocava o `background`. Sobre um
+       fundo quase branco ela lia como borrão sujo. */
+    box-shadow: var(--surface-edge), var(--shadow-sm), var(--surface-lift);
 }
 
 /* Placeholder de slide */
@@ -584,7 +588,7 @@ body.light-mode .featured__arrow {
     background: rgba(255, 255, 255, 0.85);
     border-color: var(--color-border-2);
     color: var(--color-text-2);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--surface-edge), var(--shadow-sm);
 }
 
 body.light-mode .featured__arrow:hover {

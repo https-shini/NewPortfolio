@@ -65,6 +65,9 @@
         visibility 0s linear 0.4s,
         background 0.25s ease-out,
         border-color 0.25s ease-out,
+        /* Faltava aqui: a sombra do hover trocava de uma vez, enquanto
+           cor e borda faziam a travessia. */
+        box-shadow 0.25s ease-out,
         color 0.25s ease-out;
 }
 

@@ -181,10 +181,12 @@
     backdrop-filter: blur(6px);
     border: 1px solid rgba(255, 255, 255, 0.08);
 
-    /* sombra suave */
+    /* A aresta era literal aqui e se perdia no hover, porque a lista
+       inteira era reescrita sem repeti-la. Agora vem do token, e o hover
+       a repete. */
     box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        var(--surface-edge),
+        0 4px 12px rgba(0, 0, 0, 0.25);
 
     color: var(--color-brand-light);
 
@@ -220,6 +222,7 @@
     color: var(--color-accent);
 
     box-shadow:
+        var(--surface-edge),
         0 8px 20px rgba(0, 0, 0, 0.35),
         0 0 12px rgba(var(--color-accent-rgb), 0.25);
 }
