@@ -24,6 +24,7 @@ import {
     ROUTES,
 } from "@/shared/config/constants";
 import { PROJECT_URLS, TREE_LINKS, linkKind } from "@/shared/config/links";
+import { NewsletterForm } from "./components/NewsletterForm";
 import {
     IconGmail,
     IconHeart,
@@ -311,6 +312,11 @@ const FooterContact = memo<FooterContactProps>(
                     <span>{location}</span>
                 </span>
             </address>
+
+            {/* Fica fora do <address>: uma caixa de inscrição não é dado
+                de contato do autor, e um ATS que lê o elemento não deve
+                confundir as duas coisas. */}
+            <NewsletterForm />
         </div>
     ),
 );

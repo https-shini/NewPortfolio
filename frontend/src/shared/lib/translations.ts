@@ -244,6 +244,15 @@ export type TranslationKey =
     | "footer.tagline"
     | "footer.pages"
     | "footer.downloads"
+    | "footer.newsletter.label"
+    | "footer.newsletter.hint"
+    | "footer.newsletter.placeholder"
+    | "footer.newsletter.submit"
+    | "footer.newsletter.sending"
+    | "footer.newsletter.success"
+    | "footer.newsletter.duplicate"
+    | "footer.newsletter.error"
+    | "footer.newsletter.consent"
     | "footer.nav"
     | "footer.projects"
     | "footer.contact"
@@ -525,6 +534,19 @@ const pt: Translations = {
     "footer.nav": "Navegação",
     "footer.pages": "Páginas",
     "footer.downloads": "Downloads",
+    "footer.newsletter.label": "Novidades por e-mail",
+    "footer.newsletter.hint":
+        "Aviso quando sai projeto novo ou uma versão importante. Sem frequência fixa.",
+    "footer.newsletter.placeholder": "seu@email.com",
+    "footer.newsletter.submit": "Inscrever",
+    "footer.newsletter.sending": "Enviando…",
+    "footer.newsletter.success":
+        "Quase lá — confirme a inscrição no e-mail que acabamos de enviar.",
+    "footer.newsletter.duplicate": "Esse e-mail já está inscrito.",
+    "footer.newsletter.error":
+        "Não deu para inscrever agora. Confira o endereço e tente de novo.",
+    "footer.newsletter.consent":
+        "Só isso, e dá para sair a qualquer momento pelo link no rodapé de cada e-mail.",
     "footer.projects": "Projetos",
     "footer.contact": "Contato",
     "footer.location": "São Paulo, Brasil",
@@ -805,6 +827,19 @@ const en: Translations = {
     "footer.nav": "Navigation",
     "footer.pages": "Pages",
     "footer.downloads": "Downloads",
+    "footer.newsletter.label": "Updates by email",
+    "footer.newsletter.hint":
+        "A note when a new project or a meaningful release ships. No fixed schedule.",
+    "footer.newsletter.placeholder": "you@email.com",
+    "footer.newsletter.submit": "Subscribe",
+    "footer.newsletter.sending": "Sending…",
+    "footer.newsletter.success":
+        "Almost there — confirm your subscription in the email we just sent.",
+    "footer.newsletter.duplicate": "That email is already subscribed.",
+    "footer.newsletter.error":
+        "Couldn't subscribe right now. Check the address and try again.",
+    "footer.newsletter.consent":
+        "That's all, and you can leave any time through the link at the bottom of every email.",
     "footer.projects": "Projects",
     "footer.contact": "Contact",
     "footer.location": "São Paulo, Brazil",

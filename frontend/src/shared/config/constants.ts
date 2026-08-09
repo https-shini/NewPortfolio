@@ -36,6 +36,25 @@ export const FORM_ENDPOINT: string | undefined =
     import.meta.env.VITE_FORM_ENDPOINT || undefined;
 
 /**
+ * Endpoint da inscrição na newsletter.
+ *
+ * Mesmo padrão do FORM_ENDPOINT, e pela mesma razão: sem a variável
+ * configurada o campo não é renderizado. Isso é o que permite o contrato
+ * existir no código antes de o backend existir, sem nada meio-pronto ir
+ * ao ar — o campo passa a existir no dia em que a variável for
+ * configurada, sem novo deploy de código.
+ *
+ * Contrato esperado do outro lado:
+ *
+ *   POST <endpoint>
+ *   { "email": "...", "lang": "pt" | "en", "source": "footer" }
+ *
+ *   2xx → inscrito · 409 → já inscrito · resto → erro
+ */
+export const NEWSLETTER_ENDPOINT: string | undefined =
+    import.meta.env.VITE_NEWSLETTER_ENDPOINT || undefined;
+
+/**
  * SECTION_IDS — reexportado de routes.ts por ergonomia dos consumidores.
  * A definição mudou de lugar porque o gerador de sitemap precisa dela no
  * build, e este módulo lê import.meta.env — o que só existe dentro do

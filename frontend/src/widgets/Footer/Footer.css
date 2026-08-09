@@ -303,6 +303,102 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   5B. NEWSLETTER
+   Mora na coluna de contato, mas fora do <address>: uma caixa de
+   inscrição não é dado de contato do autor.
+═══════════════════════════════════════════════════════════════════════════ */
+
+.footer__news {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border);
+}
+
+.footer__news-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-2);
+}
+
+.footer__news-hint,
+.footer__news-consent {
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--color-text-3);
+    text-wrap: pretty;
+}
+
+.footer__news-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+}
+
+.footer__news-input {
+    /* `flex: 1 1 0` com min-width zero: sem isso a largura mínima
+       intrínseca do campo impede a linha de encolher, e a 320px o botão
+       é empurrado para fora do container. */
+    flex: 1 1 0;
+    min-width: 0;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    font-family: inherit;
+    color: var(--color-text-1);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition:
+        border-color var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.footer__news-input::placeholder {
+    color: var(--color-text-3);
+}
+
+.footer__news-input:focus-visible {
+    border-color: var(--color-brand);
+    background: var(--color-surface-1);
+}
+
+.footer__news-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.footer__news-btn {
+    flex: 0 0 auto;
+}
+
+.footer__news-status {
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--color-text-2);
+}
+
+/* Sem altura reservada no estado idle: uma faixa em branco permanente
+   sob o campo sugere que falta alguma coisa ali. */
+.footer__news-status:empty {
+    display: none;
+}
+
+.footer__news-status.is-success {
+    color: var(--color-success);
+}
+
+.footer__news-status.is-error {
+    color: var(--color-error);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    6. DIVISOR DECORATIVO
    Gradiente transparent → brand → border → accent → transparent.
    Separação visual entre o grid e a barra inferior sem linha sólida.

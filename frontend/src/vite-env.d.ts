@@ -6,6 +6,12 @@ interface ImportMetaEnv {
      * Opcional — sem ele, a seção Contato mantém apenas o fluxo de mailto.
      */
     readonly VITE_FORM_ENDPOINT?: string;
+
+    /**
+     * Endpoint da inscrição na newsletter. Opcional — sem ele, o campo
+     * não é renderizado no rodapé.
+     */
+    readonly VITE_NEWSLETTER_ENDPOINT?: string;
 }
 
 interface ImportMeta {
