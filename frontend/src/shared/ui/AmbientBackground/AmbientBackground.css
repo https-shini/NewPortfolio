@@ -1,5 +1,15 @@
 /* ══════════════════════════════════════════════════════════════════
    AmbientBackground — atmosfera fixa, atrás de todo o conteúdo
+
+   Quatro camadas, da mais funda para a mais próxima:
+     aurora    → manchas largas de cor, movimento muito lento
+     grid      → malha de pontos, deriva quase imperceptível
+     overlay   → véu de gradiente que assenta o conjunto
+     partícula → os pontos de luz que se movem de verdade
+
+   A profundidade vem do contraste de ritmo entre elas: a aurora leva
+   minutos, a malha leva um minuto, as partículas levam segundos. Fosse
+   tudo na mesma velocidade, o olho leria uma camada só.
    ══════════════════════════════════════════════════════════════════ */
 
 /* `fixed` e não `absolute`: a atmosfera acompanha a janela em vez de
@@ -18,6 +28,72 @@
     /* Isola a composição: as animações de dentro não forçam o resto da
        página a recalcular camadas. */
     contain: strict;
+    overflow: hidden;
+}
+
+/* ── Aurora ────────────────────────────────────────────────────── */
+/* Manchas grandes e difusas que atravessam a tela em ciclos de
+   minutos. Sozinhas não se percebem; o que fazem é impedir que o fundo
+   pareça cor chapada quando nenhuma partícula está por perto. */
+.ambient__aurora {
+    filter: blur(70px);
+    opacity: 0.5;
+}
+
+.ambient__aurora::before,
+.ambient__aurora::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    will-change: transform;
+}
+
+.ambient__aurora::before {
+    width: 46vw;
+    height: 46vw;
+    top: -12vw;
+    left: -8vw;
+    background: radial-gradient(
+        circle,
+        color-mix(in srgb, var(--color-brand) 22%, transparent),
+        transparent 70%
+    );
+    animation: ambient-aurora-a 96s ease-in-out infinite;
+}
+
+.ambient__aurora::after {
+    width: 38vw;
+    height: 38vw;
+    bottom: -10vw;
+    right: -6vw;
+    background: radial-gradient(
+        circle,
+        color-mix(in srgb, var(--color-accent) 20%, transparent),
+        transparent 70%
+    );
+    animation: ambient-aurora-b 124s ease-in-out infinite;
+}
+
+/* Períodos que não se dividem (96s e 124s) para as duas manchas nunca
+   caírem no mesmo compasso — é o que evita a sensação de repetição. */
+@keyframes ambient-aurora-a {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        transform: translate(12vw, 8vh) scale(1.25);
+    }
+}
+
+@keyframes ambient-aurora-b {
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1.1);
+    }
+    50% {
+        transform: translate(-10vw, -9vh) scale(0.9);
+    }
 }
 
 /* ── Malha de pontos ───────────────────────────────────────────── */
@@ -36,6 +112,19 @@
         #000 40%,
         transparent 100%
     );
+    /* Deriva de um passo inteiro da malha em 60s: lenta o bastante para
+       não ser lida como movimento, contínua o bastante para o fundo
+       nunca ficar exatamente igual a si mesmo. */
+    animation: ambient-grid-drift 60s linear infinite;
+}
+
+@keyframes ambient-grid-drift {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 26px 26px;
+    }
 }
 
 /* ── Véu de gradiente ──────────────────────────────────────────── */
@@ -52,42 +141,80 @@
     position: absolute;
     border-radius: 50%;
     opacity: 0;
-    animation: ambient-float var(--dur, 36s) linear infinite;
+    animation-name: ambient-float;
+    animation-duration: var(--dur, 26s);
     animation-delay: var(--delay, 0s);
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
+    animation-iteration-count: infinite;
     /* Promove a partícula a camada própria: o navegador anima a
        transformação sem repintar o que está atrás. */
     will-change: transform, opacity;
 }
 
+/* O percurso é uma curva, não uma reta: o ponto intermediário desloca
+   para um lado antes de o final puxar para o outro. Reta com fade lê
+   como elemento de interface; a curva lê como algo que flutua. */
 @keyframes ambient-float {
-    0%,
-    100% {
-        transform: translate(0, 0) scale(1);
+    0% {
+        transform: translate(0, 0) scale(0.85);
         opacity: 0;
     }
-    10% {
-        opacity: 0.45;
+    12% {
+        opacity: var(--peak, 0.5);
     }
     50% {
-        transform: translate(var(--dx, 0), var(--dy, -140px)) scale(1.15);
-        opacity: 0.6;
+        transform: translate(var(--mx, 30px), calc(var(--dy, -140px) * 0.55))
+            scale(1.2);
+        opacity: var(--peak, 0.5);
     }
-    90% {
-        opacity: 0.25;
+    88% {
+        opacity: calc(var(--peak, 0.5) * 0.35);
+    }
+    100% {
+        transform: translate(var(--dx, 0), var(--dy, -140px)) scale(0.9);
+        opacity: 0;
     }
 }
 
-/* Sem variante amortecida. Tentei uma para o site — malha mais apagada,
-   partículas mais opacas — e o efeito sumiu: somada ao fundo das seções,
-   sobrava cerca de 1% de crimson efetivo. A atmosfera é a mesma nas duas
-   páginas, e quem decide o quanto dela aparece é o fundo por cima. */
+/* Um punhado de partículas maiores e mais lentas, atrás das outras — é
+   a diferença de tamanho e de ritmo que cria a leitura de profundidade,
+   não a quantidade. */
+.ambient__particle--orb {
+    animation-name: ambient-orb;
+}
+
+@keyframes ambient-orb {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0;
+    }
+    20%,
+    80% {
+        opacity: var(--peak, 0.28);
+    }
+    50% {
+        transform: translate(var(--mx, 20px), calc(var(--dy, -90px) * 0.6))
+            scale(1.4);
+    }
+    100% {
+        transform: translate(var(--dx, 0), var(--dy, -90px)) scale(1.1);
+        opacity: 0;
+    }
+}
 
 /* ── Movimento reduzido ────────────────────────────────────────── */
-/* O componente já não cria partícula nenhuma nesse modo; a regra cobre
-   quem chegar aqui com o DOM montado e trocar a preferência depois. */
+/* O componente não cria partícula nenhuma nesse modo; estas regras
+   cobrem quem já estiver com a página montada e trocar a preferência, e
+   param também as camadas que não dependem do JavaScript. */
 @media (prefers-reduced-motion: reduce) {
-    .ambient__particle {
+    .ambient__particle,
+    .ambient__grid,
+    .ambient__aurora::before,
+    .ambient__aurora::after {
         animation: none;
-        opacity: 0.3;
+    }
+
+    .ambient__particle {
+        opacity: 0.25;
     }
 }
