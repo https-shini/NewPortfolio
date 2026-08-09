@@ -5,12 +5,21 @@ import { useEffect } from "react";
    ─────────────────────────────────────────────────────────
    Duas reações, um laço só.
 
-   A deriva move os planos conforme a rolagem, e o que o olho
-   lê como profundidade é a DIFERENÇA de velocidade entre o
-   conteúdo e o fundo — não a velocidade do fundo em si. É por
-   isso que ela pode oscilar em vez de subir sem parar. As
-   camadas são `fixed`, então sem isto ficariam paradas
-   enquanto a página desliza.
+   A deriva move UM plano conforme a rolagem — o das partículas
+   — e o que o olho lê como profundidade é a DIFERENÇA de
+   velocidade entre o conteúdo e ele, não a velocidade dele em
+   si. É por isso que ela pode oscilar em vez de subir sem
+   parar. As camadas são `fixed`, então sem isto ficariam
+   paradas enquanto a página desliza.
+
+   Aurora, bokeh e malha NÃO derivam mais. Antes os quatro
+   planos andavam com a rolagem, cada um no seu período, e o
+   resultado era movimento demais para quem só queria descer a
+   página: a cena inteira reagia ao gesto. Agora o fundo e a
+   iluminação ficam parados e as partículas são o que se move.
+   As animações próprias da aurora e do bokeh continuam — elas
+   levam minutos, não respondem à rolagem, e são o que mantém a
+   atmosfera viva sem competir com a leitura.
 
    O desvio empurra de leve as partículas próximas ao cursor.
    O empurrão decai com a distância, então a mão parece abrir
@@ -34,10 +43,12 @@ import { useEffect } from "react";
  * tamanho da janela tem um fim previsível: a camada sai da janela. Na
  * home, de 9.517px, a atmosfera esvaziava por completo antes do rodapé.
  *
- * Dois planos, não três: a malha e as partículas são a mesma grade — os
- * pontos acesos nascem em interseções dela — então recebem o MESMO valor,
- * não frações diferentes. Com valores diferentes o alinhamento duraria
- * até a primeira rolagem.
+ * Um plano só, agora: o das partículas. A malha continua sendo a grade de
+ * onde elas nascem, mas parou de derivar junto — então o alinhamento
+ * entre ponto aceso e ponto da malha vale no topo da página e se perde ao
+ * rolar. Foi escolha consciente: a malha é fundo, e fundo devia ficar
+ * parado. Os pontos da malha têm 13% de alfa no escuro e 8% no claro, em
+ * 1px, e a diferença não se lê.
  *
  * Abaixo deste limiar a escrita não muda nada que se veja, e perto dos
  * extremos do seno a variação por quadro fica bem abaixo dele.
@@ -81,9 +92,6 @@ export function useAmbientMotion(
         ).matches;
         if (semMovimento) return;
 
-        const aurora = raiz.querySelector<HTMLElement>(".ambient__aurora");
-        const bokeh = raiz.querySelector<HTMLElement>(".ambient__bokeh");
-        const grid = raiz.querySelector<HTMLElement>(".ambient__grid");
         const particulas = raiz.querySelector<HTMLElement>(
             ".ambient__particles",
         );
@@ -100,10 +108,6 @@ export function useAmbientMotion(
             parseFloat(css.getPropertyValue(nome)) || padrao;
         const ampPerto = num("--ambient-drift-near", 7);
         const cicloPerto = num("--ambient-cycle-near", 2.2);
-        const ampLonge = num("--ambient-drift-far", 2.7);
-        const cicloLonge = num("--ambient-cycle-far", 4.7);
-        const ampBokeh = num("--ambient-drift-bokeh", 4.3);
-        const cicloBokeh = num("--ambient-cycle-bokeh", 3.1);
 
         /* Amplitude em % da altura da janela, período em número de telas.
            As duas dependem da janela, então mudam com ela — é o que faz a
@@ -122,8 +126,6 @@ export function useAmbientMotion(
            depois de descer meia tela nenhuma partícula parece estar por
            perto — foi exatamente o que quebrou a primeira versão. */
         let deslocamento = 0;
-        let auroraAplicada = 0;
-        let bokehAplicado = 0;
         let quadro = 0;
         let medidoEm = 0;
 
@@ -164,27 +166,8 @@ export function useAmbientMotion(
                 const perto = deriva(ampPerto, cicloPerto, rolagem);
                 if (Math.abs(perto - deslocamento) > LIMIAR_ESCRITA) {
                     deslocamento = perto;
-                    const v = `0 ${perto.toFixed(2)}px`;
-                    if (grid) grid.style.translate = v;
-                    if (particulas) particulas.style.translate = v;
-                }
-
-                const longe = deriva(ampLonge, cicloLonge, rolagem);
-                if (
-                    aurora &&
-                    Math.abs(longe - auroraAplicada) > LIMIAR_ESCRITA
-                ) {
-                    auroraAplicada = longe;
-                    aurora.style.translate = `0 ${longe.toFixed(2)}px`;
-                }
-
-                /* O bokeh fica entre os dois planos, com período próprio:
-                   três valores que não se dividem entre si é o que impede
-                   a cena de ter um compasso perceptível. */
-                const meio = deriva(ampBokeh, cicloBokeh, rolagem);
-                if (bokeh && Math.abs(meio - bokehAplicado) > LIMIAR_ESCRITA) {
-                    bokehAplicado = meio;
-                    bokeh.style.translate = `0 ${meio.toFixed(2)}px`;
+                    if (particulas)
+                        particulas.style.translate = `0 ${perto.toFixed(2)}px`;
                 }
             }
 
@@ -297,8 +280,7 @@ export function useAmbientMotion(
             window.removeEventListener("pointermove", aoMover);
             document.removeEventListener("pointerleave", aoSair);
             for (const a of alvos) a.el.style.translate = "";
-            for (const el of [aurora, bokeh, grid, particulas])
-                if (el) el.style.translate = "";
+            if (particulas) particulas.style.translate = "";
         };
         /* `quantidade` entra como dependência porque trocá-la recria as
            partículas: sem isto o laço continuaria mirando nós que já

@@ -7,14 +7,23 @@
      véu      overlay → assenta a aurora sob o conteúdo
      frente   malha + partículas → a MESMA grade, o mesmo passo
 
-   A malha e as partículas compartilham `--ambient-step`, a deriva e o
-   alinhamento: as partículas nascem em interseções da grade e andam um
-   número inteiro de células. Não são pontos flutuando sobre uma malha de
-   pontos — são pontos da malha que acenderam.
+   A malha e as partículas compartilham `--ambient-step`: as partículas
+   nascem em interseções da grade. Não são pontos flutuando sobre uma
+   malha de pontos — são pontos da malha que acenderam.
 
-   A profundidade vem do contraste de ritmo entre os dois planos: a
-   aurora leva minutos e deriva 52px, os pontos levam segundos e derivam
-   88px, em períodos que não se dividem entre si.
+   ROLAR MOVE SÓ AS PARTÍCULAS. Aurora, bokeh e malha ficam parados: eram
+   quatro planos reagindo ao gesto de descer a página, e o efeito somado
+   era de cena inteira balançando — cansa e parece travamento. O fundo e
+   a iluminação agora são estáveis, e o movimento fica com as partículas.
+
+   A aurora e o bokeh mantêm as animações PRÓPRIAS, de 96s e 124s: elas
+   não respondem à rolagem, levam minutos e são o que impede o fundo de
+   virar imagem parada.
+
+   Uma consequência assumida: com a malha parada e as partículas
+   derivando, o alinhamento entre as duas vale no topo e se perde ao
+   rolar. Os pontos da malha têm 13% de alfa no escuro e 8% no claro, em
+   1px — não se lê.
    ══════════════════════════════════════════════════════════════════ */
 
 /* `fixed` e não `absolute`: a atmosfera acompanha a janela em vez de
@@ -76,10 +85,6 @@
        janela de 1600px de altura sobram 18px de folga. */
     --ambient-drift-near: 7;
     --ambient-cycle-near: 2.2;
-    --ambient-drift-far: 2.7;
-    --ambient-cycle-far: 4.7;
-    --ambient-drift-bokeh: 4.3;
-    --ambient-cycle-bokeh: 3.1;
 
     --ambient-dot-a: var(--color-brand);
     --ambient-dot-b: var(--color-accent);
