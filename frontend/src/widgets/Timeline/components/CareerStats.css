@@ -38,6 +38,10 @@
         border-color 0.3s ease-out,
         box-shadow 0.3s ease-out;
     transition-delay: calc(var(--card-i, 0) * 100ms);
+
+    /* Vidro por aresta — somado, não substitutivo: fundo, borda, raio
+       e espaçamento seguem intocados. Ver tokens.css. */
+    box-shadow: var(--surface-edge), var(--surface-lift);
 }
 
 .career-aside.is-visible .career-aside__card {
@@ -47,7 +51,7 @@
 
 .career-aside__card:hover {
     border-color: var(--color-border-brand);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--surface-edge), var(--shadow-md);
 }
 
 /* ── Título de seção (mono label) ──────────────────────────────── */

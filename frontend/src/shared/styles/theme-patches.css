@@ -287,19 +287,20 @@ body.light-mode .about__text strong {
 /* ── Foto ── */
 body.light-mode .about__photo-wrap {
     border-color: var(--color-border-2);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--surface-edge), var(--shadow-sm), var(--surface-lift);
 }
 
 body.light-mode .about__photo-wrap:hover {
     border-color: var(--color-border-brand);
-    box-shadow: var(--shadow-card-hover);
+    box-shadow:
+        var(--surface-edge), var(--shadow-card-hover), var(--surface-lift);
 }
 
 /* ── Spec cards ── */
 body.light-mode .spec-card {
     background: var(--color-surface-1);
     border-color: var(--color-border-2);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--surface-edge), var(--shadow-xs), var(--surface-lift);
     /* Sem gradiente dark — fundo limpo no light */
     background-image: none;
 }
@@ -314,7 +315,7 @@ body.light-mode .spec-card::before {
 
 body.light-mode .spec-card:hover {
     border-color: var(--color-border-brand);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--surface-edge), var(--shadow-md), var(--surface-lift);
     transform: translate3d(0, -4px, 0);
 }
 
@@ -347,7 +348,7 @@ body.light-mode .spec-card__desc {
 body.light-mode .stat-card {
     background: var(--color-surface-1);
     border-color: var(--color-border-2);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--surface-edge), var(--shadow-xs), var(--surface-lift);
 }
 
 body.light-mode .stat-card--brand {
@@ -418,12 +419,12 @@ body.light-mode .about__objective {
     background: var(--color-surface-2);
     border-color: var(--color-border-2);
     border-left-color: var(--color-brand);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--surface-edge), var(--shadow-xs), var(--surface-lift);
 }
 
 body.light-mode .about__objective:hover {
     border-left-color: var(--color-accent);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--surface-edge), var(--shadow-md), var(--surface-lift);
 }
 
 body.light-mode .about__objective-title {
@@ -643,12 +644,13 @@ body.light-mode .work {
 body.light-mode .work-card {
     background: var(--color-surface-1);
     border-color: var(--color-border-2);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--surface-edge), var(--shadow-xs), var(--surface-lift);
 }
 
 body.light-mode .work-card:hover {
     border-color: var(--color-border-brand);
-    box-shadow: var(--shadow-card-hover);
+    box-shadow:
+        var(--surface-edge), var(--shadow-card-hover), var(--surface-lift);
 }
 
 /* Tipografia */
@@ -712,7 +714,7 @@ body.light-mode .contact__availability-dot {
 body.light-mode .contact__cta-card {
     background: var(--color-surface-1);
     border-color: var(--color-border-2);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--surface-edge), var(--shadow-sm), var(--surface-lift);
 }
 
 /* ── Info card (coluna direita) ── */

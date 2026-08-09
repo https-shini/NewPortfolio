@@ -200,6 +200,30 @@
     --shadow-md: 0 4px 18px rgba(0, 0, 0, 0.55);
     --shadow-lg: 0 8px 34px rgba(0, 0, 0, 0.6);
     --shadow-xl: 0 16px 52px rgba(0, 0, 0, 0.65);
+    /* ── Vidro por aresta ───────────────────────────────────────────
+       O tratamento de "liquid glass" das superfícies é SOMADO, nunca
+       substitutivo: fundo, borda, raio e espaçamento de todo componente
+       ficam exatamente como estão, e o que entra é uma linha de sombra.
+
+       Foi medição que levou a isto. A ideia anterior era deixar os
+       cartões translúcidos para a atmosfera aparecer através deles —
+       e o que efetivamente atravessa, em qualquer opacidade que preserve
+       a paleta, são 0,1 a 2 níveis de 255. Invisível. A atmosfera atrás
+       de um cartão é quase da mesma cor que ele: 15 níveis de diferença
+       no escuro, 25 no claro.
+
+       O que funciona é CONTRASTE LOCALIZADO. Dois níveis espalhados por
+       um cartão inteiro somem; a mesma diferença numa linha de 1px lê
+       como luz batendo na quina.
+
+       A alfa também é medida, não escolhida: o delta que a linha produz
+       é `alfa × (255 − L_superfície)`, e o limiar de percepção de uma
+       hairline contra um campo grande fica em 8 a 10 níveis. 0,04 dá 9 —
+       no limiar. 0,14 dá 32 e começa a ler como segunda borda. 0,09 dá
+       20, meio da faixa confiante. */
+    --surface-edge: inset 0 1px 0 rgb(255 255 255 / 0.09);
+    --surface-lift: 0 18px 40px -28px rgb(0 0 0 / 0.5);
+
     --shadow-card: inset 0 0 0 1px var(--color-border-2), var(--shadow-md);
     --shadow-card-hover:
         inset 0 0 0 1px var(--color-border-brand), var(--shadow-lg),
@@ -345,6 +369,14 @@ body.light-mode {
     --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.07);
     --shadow-xl:
         0 16px 44px rgba(0, 0, 0, 0.13), 0 4px 12px rgba(0, 0, 0, 0.08);
+    /* No claro a superfície é BRANCO PURO — uma linha branca sobre
+       branco não existe. Aqui quem dá espessura é a sombra na aresta de
+       BAIXO, e o volume vem do lift. É a definição de recalibrar em vez
+       de inverter: o mesmo princípio (contraste localizado) realizado
+       pelo recurso que aquele fundo comporta. */
+    --surface-edge: inset 0 -1px 0 rgb(15 23 42 / 0.065);
+    --surface-lift: 0 14px 30px -24px rgb(15 23 42 / 0.14);
+
     --shadow-card:
         0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--color-border-2);
     --shadow-card-hover:

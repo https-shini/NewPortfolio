@@ -29,6 +29,10 @@
         border-color var(--transition-base),
         box-shadow var(--transition-base),
         transform var(--transition-base);
+
+    /* Vidro por aresta — somado, não substitutivo: fundo, borda, raio
+       e espaçamento seguem intocados. Ver tokens.css. */
+    box-shadow: var(--surface-edge), var(--surface-lift);
 }
 
 @keyframes formation-card-enter {
@@ -40,7 +44,7 @@
 
 .formation-card:hover {
     border-color: var(--color-border-brand);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--surface-edge), var(--shadow-md);
     transform: translateY(-2px);
 }
 

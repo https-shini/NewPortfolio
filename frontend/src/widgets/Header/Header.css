@@ -191,6 +191,10 @@
         background 0.25s ease,
         transform 0.15s ease,
         box-shadow 0.25s ease;
+
+    /* Só a aresta, sem profundidade: volume em elemento pequeno vira
+       botão de sistema operacional dos anos 2000. */
+    box-shadow: var(--surface-edge);
 }
 
 /* Conteúdo sempre acima do glow */
@@ -335,6 +339,10 @@
         background 0.25s ease,
         transform 0.15s ease,
         box-shadow 0.25s ease;
+
+    /* Só a aresta, sem profundidade: volume em elemento pequeno vira
+       botão de sistema operacional dos anos 2000. */
+    box-shadow: var(--surface-edge);
 }
 
 /* Conteúdo acima do glow */
@@ -584,6 +592,10 @@
         border-color var(--transition-fast),
         color var(--transition-fast),
         transform var(--transition-fast);
+
+    /* Só a aresta, sem profundidade: volume em elemento pequeno vira
+       botão de sistema operacional dos anos 2000. */
+    box-shadow: var(--surface-edge);
 }
 .mobile-nav__cta:hover {
     background: var(--color-brand);

@@ -36,6 +36,10 @@
     font-weight: 600;
     letter-spacing: var(--ls-wide);
     transition: var(--transition-base);
+
+    /* Só a aresta, sem profundidade: volume em elemento pequeno vira
+       botão de sistema operacional dos anos 2000. */
+    box-shadow: var(--surface-edge);
 }
 .linktree__ctrl:hover {
     color: var(--color-text-1);

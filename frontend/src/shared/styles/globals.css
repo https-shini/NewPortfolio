@@ -390,6 +390,10 @@ body.light-mode .section-subtitle {
     background: var(--color-brand);
     border-color: var(--color-brand);
     color: #fff;
+
+    /* Só a aresta, sem profundidade: volume em elemento pequeno vira
+       botão de sistema operacional dos anos 2000. */
+    box-shadow: var(--surface-edge);
 }
 
 .btn--primary:hover:not(:disabled) {
@@ -458,11 +462,15 @@ body.light-mode .btn--ghost:hover:not(:disabled) {
         border-color var(--transition-base),
         box-shadow var(--transition-base),
         transform var(--transition-base);
+
+    /* Vidro por aresta — somado, não substitutivo: fundo, borda, raio
+       e espaçamento seguem intocados. Ver tokens.css. */
+    box-shadow: var(--surface-edge), var(--surface-lift);
 }
 
 .card--interactive:hover {
     border-color: var(--color-border-brand);
-    box-shadow: var(--shadow-card-hover);
+    box-shadow: var(--surface-edge), var(--shadow-card-hover);
     transform: translateY(-3px);
 }
 

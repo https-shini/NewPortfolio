@@ -34,6 +34,10 @@
         border-color 0.3s var(--ease-out),
         box-shadow 0.3s var(--ease-out),
         transform 0.3s var(--ease-out);
+
+    /* Vidro por aresta — somado, não substitutivo: fundo, borda, raio
+       e espaçamento seguem intocados. Ver tokens.css. */
+    box-shadow: var(--surface-edge), var(--surface-lift);
 }
 
 @keyframes work-card-enter {
@@ -45,7 +49,7 @@
 
 .work-card:hover {
     border-color: var(--color-border-brand);
-    box-shadow: var(--shadow-card-hover);
+    box-shadow: var(--surface-edge), var(--shadow-card-hover);
     transform: translateY(-6px);
 }
 
@@ -129,7 +133,9 @@
     border: 1px solid rgba(255, 255, 255, 0.14);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.32);
+    box-shadow:
+        var(--surface-edge),
+        0 4px 14px rgba(0, 0, 0, 0.32);
     transition: transform 0.3s var(--ease-out);
 }
 

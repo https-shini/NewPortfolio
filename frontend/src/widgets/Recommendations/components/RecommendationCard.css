@@ -34,6 +34,10 @@
         border-color 0.3s ease-out,
         box-shadow 0.3s ease-out,
         background 0.3s ease-out;
+
+    /* Vidro por aresta — somado, não substitutivo: fundo, borda, raio
+       e espaçamento seguem intocados. Ver tokens.css. */
+    box-shadow: var(--surface-edge), var(--surface-lift);
 }
 
 .rec-card.is-visible {
@@ -45,6 +49,7 @@
 .rec-card:focus-visible {
     border-color: var(--color-border-brand);
     box-shadow:
+        var(--surface-edge),
         0 1px 0 color-mix(in srgb, var(--color-text-1) 3%, transparent) inset,
         var(--shadow-md);
     transform: translateY(-3px);

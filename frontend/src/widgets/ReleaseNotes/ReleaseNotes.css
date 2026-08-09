@@ -189,6 +189,10 @@
     );
     border: 1px solid var(--color-border-brand);
     border-radius: var(--radius-xl);
+
+    /* Vidro por aresta — somado, não substitutivo: fundo, borda, raio
+       e espaçamento seguem intocados. Ver tokens.css. */
+    box-shadow: var(--surface-edge), var(--surface-lift);
 }
 
 .release-card__cover {

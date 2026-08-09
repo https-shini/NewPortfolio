@@ -504,6 +504,10 @@
         background 0.25s,
         border-color 0.25s,
         transform 0.25s;
+
+    /* Só a aresta, sem profundidade: volume em elemento pequeno vira
+       botão de sistema operacional dos anos 2000. */
+    box-shadow: var(--surface-edge);
 }
 
 .featured__arrow--prev {
@@ -918,6 +922,10 @@
         border-color 0.3s ease-out,
         box-shadow 0.3s ease-out,
         transform 0.3s ease-out;
+
+    /* Vidro por aresta — somado, não substitutivo: fundo, borda, raio
+       e espaçamento seguem intocados. Ver tokens.css. */
+    box-shadow: var(--surface-edge), var(--surface-lift);
 }
 
 @keyframes arch-card-enter {
@@ -929,7 +937,7 @@
 
 .arch-card:hover {
     border-color: var(--color-border-brand);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--surface-edge), var(--shadow-md);
     transform: translateY(-2px);
 }
 
