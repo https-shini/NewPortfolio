@@ -36,8 +36,9 @@ interface AmbientBackgroundProps {
      * Teto de partículas, antes dos cortes por tela e por aparelho.
      *
      * Baixou de 26 para 18 quando elas ganharam halo e tamanho: um ponto
-     * que se vê vale por três que não se viam, e cada partícula a menos é
-     * uma camada composta a menos para o navegador manter.
+     * que se vê vale por três que não se viam. Subiu para 24 quando a
+     * correção da deriva deu à caixa uma sangria de 130px em cada extremo
+     * — a área a povoar cresceu junto.
      */
     count?: number;
     /** Marca a variante no CSS, para ajustes pontuais por página. */
@@ -91,7 +92,7 @@ function fracaoDeDensidade(): number {
 }
 
 export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
-    count = 18,
+    count = 24,
     variant = "site",
 }) => {
     const boxRef = useRef<HTMLDivElement>(null);
@@ -103,80 +104,107 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
             return;
 
-        const total = Math.max(4, Math.round(count * fracaoDeDensidade()));
+        const semear = () => {
+            const total = Math.max(8, Math.round(count * fracaoDeDensidade()));
 
-        /* O passo da grade vem do CSS, não de um número repetido aqui: é a
-           mesma medida que desenha a malha, e duplicá-la seria garantir que
-           um dia as duas divergissem. */
-        const passo =
-            parseFloat(
-                getComputedStyle(box).getPropertyValue("--ambient-step"),
-            ) || 26;
+            /* O passo da grade vem do CSS, não de um número repetido aqui: é a
+               mesma medida que desenha a malha, e duplicá-la seria garantir que
+               um dia as duas divergissem. */
+            const estilo = getComputedStyle(box);
+            const passo =
+                parseFloat(estilo.getPropertyValue("--ambient-step")) || 26;
 
-        /* A malha desenha o ponto no centro de cada célula, então as
-           interseções ficam em meio-passo + n·passo. */
-        const naGrade = (n: number) => passo / 2 + n * passo;
-        const colunas = Math.floor(window.innerWidth / passo);
-        const linhas = Math.floor(window.innerHeight / passo);
+            /* As dimensões vêm da CAIXA, não da janela. Com a sangria da
+               deriva a caixa é bem mais alta que a janela, e semear pela
+               janela deixaria justamente a faixa de sangria vazia — que é a
+               faixa que a deriva traz para dentro da tela. */
+            const caixa = box.getBoundingClientRect();
+            const L = caixa.width || window.innerWidth;
+            const H = caixa.height || window.innerHeight;
 
-        /* Amostragem estratificada: uma partícula por faixa vertical, com
-           sorteio dentro da faixa. Sorteio uniforme puro se agrupa — a
-           versão anterior deixava metade da tela vazia e amontoava o resto
-           num canto, e isso lê como descuido, não como acaso. */
-        const faixa = colunas / total;
+            /* A malha desenha o ponto no centro de cada célula, então as
+               interseções ficam em meio-passo + n·passo. */
+            const naGrade = (n: number) => passo / 2 + n * passo;
+            const colunas = Math.max(1, Math.floor(L / passo));
+            const linhas = Math.max(1, Math.floor(H / passo));
 
-        const frag = document.createDocumentFragment();
+            /* Amostragem estratificada em DUAS dimensões: a caixa é dividida
+               numa grade de estratos e cada partícula sorteia dentro do seu.
+               Estratificar só por coluna, como antes, ainda deixava o
+               agrupamento vertical acontecer — e agrupamento lê como
+               descuido, não como acaso. */
+            const estCol = Math.max(
+                1,
+                Math.round(Math.sqrt((total * L) / Math.max(1, H))),
+            );
+            const estLin = Math.max(1, Math.ceil(total / estCol));
 
-        for (let i = 0; i < total; i++) {
-            /* Uma em cada cinco é um orbe: maior, mais lento, mais
+            const frag = document.createDocumentFragment();
+
+            for (let i = 0; i < total; i++) {
+                /* Uma em cada cinco é um orbe: maior, mais lento, mais
                apagado. São eles que dão a camada de fundo — sem essa
                diferença de porte, pontos iguais leem como ruído. */
-            const orbe = chance(0.2);
-            const size = orbe ? rand(12, 20) : rand(3, 5);
+                const orbe = chance(0.2);
+                const size = orbe ? rand(12, 20) : rand(3, 5);
+                const dur = orbe ? rand(38, 62) : rand(16, 32);
 
-            const col = Math.min(
-                colunas - 1,
-                Math.max(0, Math.round(i * faixa + rand(0, faixa))),
-            );
-            /* Concentra onde a máscara ainda deixa a malha visível: é lá
-               que a partícula lê como "ponto da grade aceso" em vez de
-               ponto solto. */
-            const lin = randInt(0, Math.round(linhas * 0.82));
+                /* Estrato desta partícula, com sorteio dentro dele. */
+                const ec = i % estCol;
+                const el = Math.floor(i / estCol) % estLin;
+                const col = Math.min(
+                    colunas - 1,
+                    Math.max(
+                        0,
+                        Math.round(((ec + Math.random()) * colunas) / estCol),
+                    ),
+                );
+                const lin = Math.min(
+                    linhas - 1,
+                    Math.max(
+                        0,
+                        Math.round(((el + Math.random()) * linhas) / estLin),
+                    ),
+                );
 
-            /* Sobe ou desce um número INTEIRO de células, então parte de
+                /* Sobe ou desce um número INTEIRO de células, então parte de
                uma interseção e chega em outra. */
-            const sobe = chance(0.75);
-            const celulas = orbe ? randInt(3, 6) : randInt(4, 9);
-            const dy = (sobe ? -1 : 1) * celulas * passo;
-            /* O desvio lateral também fecha na grade; o do meio do
+                const sobe = chance(0.75);
+                const celulas = orbe ? randInt(3, 6) : randInt(4, 9);
+                const dy = (sobe ? -1 : 1) * celulas * passo;
+                /* O desvio lateral também fecha na grade; o do meio do
                percurso cai para o lado oposto, o que curva a trajetória
                em vez de inclinar a reta. */
-            const dx = randInt(-2, 2) * passo;
-            const mx = -dx * rand(0.4, 0.9);
+                const dx = randInt(-2, 2) * passo;
+                const mx = -dx * rand(0.4, 0.9);
 
-            /* Quatro para uma: a cor de apoio manda, o destaque pontua.
+                /* Quatro para uma: a cor de apoio manda, o destaque pontua.
                Meio a meio entre duas cortes fortes lê como confete. */
-            const cor = chance(0.22)
-                ? "var(--ambient-dot-b)"
-                : "var(--ambient-dot-a)";
+                const cor = chance(0.22)
+                    ? "var(--ambient-dot-b)"
+                    : "var(--ambient-dot-a)";
 
-            const p = document.createElement("span");
-            p.className = orbe
-                ? "ambient__particle ambient__particle--orb"
-                : "ambient__particle";
+                const p = document.createElement("span");
+                p.className = orbe
+                    ? "ambient__particle ambient__particle--orb"
+                    : "ambient__particle";
 
-            p.style.cssText = [
-                `left:${naGrade(col) - size / 2}px`,
-                `top:${naGrade(lin) - size / 2}px`,
-                `width:${size}px`,
-                `height:${size}px`,
-                `--dx:${dx}px`,
-                `--mx:${mx}px`,
-                `--dy:${dy}px`,
-                `--dur:${orbe ? rand(38, 62) : rand(16, 32)}s`,
-                `--delay:${rand(0, 14)}s`,
-                `--peak:${orbe ? rand(0.14, 0.24) : rand(0.34, 0.55)}`,
-                /* O halo é `box-shadow`, e a escolha da propriedade é a
+                p.style.cssText = [
+                    `left:${naGrade(col) - size / 2}px`,
+                    `top:${naGrade(lin) - size / 2}px`,
+                    `width:${size}px`,
+                    `height:${size}px`,
+                    `--dx:${dx}px`,
+                    `--mx:${mx}px`,
+                    `--dy:${dy}px`,
+                    `--dur:${dur}s`,
+                    /* Atraso NEGATIVO: a animação entra já no meio do ciclo e
+                   o campo nasce povoado. Com atraso positivo — o que este
+                   arquivo fazia — a primeira impressão era um céu quase
+                   vazio que levava 14 SEGUNDOS para encher. */
+                    `--delay:${-rand(0, dur)}s`,
+                    `--peak:${orbe ? rand(0.14, 0.24) : rand(0.34, 0.55)}`,
+                    /* O halo é `box-shadow`, e a escolha da propriedade é a
                    parte que importa.
 
                    `filter: blur()` está fora: foi ele que custou 83ms por
@@ -190,25 +218,50 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
                    partícula e depois viaja junto com o `transform`. Custo
                    por quadro: zero. E o halo tem três vezes o diâmetro do
                    núcleo, que é a proporção em que o olho lê brilho. */
-                orbe
-                    ? `background:radial-gradient(circle,color-mix(in srgb,${cor} 52%,transparent) 0%,color-mix(in srgb,${cor} 20%,transparent) 45%,transparent 72%)`
-                    : `background:${cor}`,
-                orbe
-                    ? ""
-                    : `box-shadow:0 0 ${(size * 2.4).toFixed(1)}px ${(
-                          size * 0.4
-                      ).toFixed(
-                          1,
-                      )}px color-mix(in srgb,${cor} 42%,transparent)`,
-            ].join(";");
+                    orbe
+                        ? `background:radial-gradient(circle,color-mix(in srgb,${cor} 52%,transparent) 0%,color-mix(in srgb,${cor} 20%,transparent) 45%,transparent 72%)`
+                        : `background:${cor}`,
+                    orbe
+                        ? ""
+                        : `box-shadow:0 0 ${(size * 2.4).toFixed(1)}px ${(
+                              size * 0.4
+                          ).toFixed(
+                              1,
+                          )}px color-mix(in srgb,${cor} 42%,transparent)`,
+                ].join(";");
 
-            frag.appendChild(p);
-        }
+                frag.appendChild(p);
+            }
 
-        /* Um append só: N inserções separadas provocam N recálculos. */
-        box.appendChild(frag);
+            /* Um append só: N inserções separadas provocam N recálculos. */
+            box.replaceChildren(frag);
+        };
+
+        semear();
+
+        /* Re-semeadura com guarda. Girar o telefone muda tudo e precisa
+           re-semear; a barra de URL do navegador móvel, que mexe 60 a 100px
+           na altura durante a própria rolagem, não pode disparar nada — ali
+           re-semear seria pior que o defeito. */
+        let larguraAnterior = window.innerWidth;
+        let alturaAnterior = window.innerHeight;
+        let agendado = 0;
+        const aoRedimensionar = () => {
+            const dl = window.innerWidth !== larguraAnterior;
+            const dh =
+                Math.abs(window.innerHeight - alturaAnterior) / alturaAnterior >
+                0.25;
+            if (!dl && !dh) return;
+            larguraAnterior = window.innerWidth;
+            alturaAnterior = window.innerHeight;
+            clearTimeout(agendado);
+            agendado = window.setTimeout(semear, 200);
+        };
+        window.addEventListener("resize", aoRedimensionar, { passive: true });
 
         return () => {
+            clearTimeout(agendado);
+            window.removeEventListener("resize", aoRedimensionar);
             box.replaceChildren();
         };
     }, [count]);

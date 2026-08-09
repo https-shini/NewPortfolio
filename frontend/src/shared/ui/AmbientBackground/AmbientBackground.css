@@ -43,6 +43,36 @@
        `--ambient-step` é lido pelo componente para posicionar cada
        partícula na grade: uma medida só, não duas que um dia divergem. */
     --ambient-step: 26px;
+
+    /* ── Deriva ─────────────────────────────────────────────────────
+       A paralaxe era uma rampa linear e sem limite, e as camadas têm
+       exatamente a altura da janela: elas simplesmente saíam dela. Medido
+       na home, que tem 9.517px — no rodapé a caixa das partículas ocupava
+       79px do topo da tela e restavam ZERO partículas.
+
+       Agora o deslocamento é um oscilador: `−A · sin(2π · s / L)`.
+
+       As amplitudes não são gosto, são derivadas. O pico da taxa de um
+       seno é `2πA/L`, então manter a sensação de hoje é resolver
+       `A = k·L / 2π` para as frações que já existiam (0,16 e 0,06).
+
+       Com isso a diferença de velocidade entre o conteúdo (k=1) e o plano
+       próximo oscila entre 0,84 e 1,16 — sempre ≈1, em qualquer ponto de
+       qualquer página. Nenhuma zona morta. E os períodos são
+       incomensuráveis de propósito (razão 1,559), então a relação entre
+       os planos evolui sem se repetir — a mesma escolha que já sustenta
+       os 96s/124s da aurora.
+
+       A sangria é múltipla INTEIRA do passo. Se não fosse, a origem do
+       `background-image` da malha e a do reticulado que o JavaScript
+       calcula deixariam de coincidir, e as partículas parariam de nascer
+       em cima dos pontos da grade. */
+    --ambient-bleed: calc(var(--ambient-step) * 5);
+    --ambient-drift-near: 88;
+    --ambient-cycle-near: 3400;
+    --ambient-drift-far: 52;
+    --ambient-cycle-far: 5300;
+
     --ambient-dot-a: var(--color-brand);
     --ambient-dot-b: var(--color-accent);
     /* Multiplicador de brilho por tema — ver o bloco do tema claro. */
@@ -182,18 +212,26 @@
    desloca conforme a rolagem, na mesma fração das partículas, para que
    o alinhamento entre as duas se mantenha enquanto a página desce. */
 .ambient__grid {
+    /* Mais alta que a janela pela amplitude da deriva, para nunca expor
+       faixa vazia ao oscilar. */
+    inset-block: calc(-1 * var(--ambient-bleed));
     background-image: radial-gradient(var(--dots-color) 1px, transparent 1px);
     background-size: var(--ambient-step) var(--ambient-step);
-    /* Sem a máscara a malha vira papel quadriculado e briga com o texto;
-       com ela, adensa no alto e some antes de chegar à leitura. */
+    /* A máscara é ancorada em unidades de JANELA, não da caixa: com a
+       sangria a caixa ficou 260px mais alta, e uma porcentagem vertical
+       aqui passaria a significar outra coisa.
+       Ela também abriu — antes era `70% 60% at 50% 30%`, que concentrava
+       tudo no terço superior e deixava a metade de baixo de toda tela
+       vazia. Agora a malha existe na janela inteira, e a alfa dos pontos
+       desceu junto para ela não virar papel quadriculado. */
     -webkit-mask-image: radial-gradient(
-        ellipse 70% 60% at 50% 30%,
-        #000 40%,
+        ellipse 92% 78vh at 50% calc(var(--ambient-bleed) + 42vh),
+        #000 46%,
         transparent 100%
     );
     mask-image: radial-gradient(
-        ellipse 70% 60% at 50% 30%,
-        #000 40%,
+        ellipse 92% 78vh at 50% calc(var(--ambient-bleed) + 42vh),
+        #000 46%,
         transparent 100%
     );
 }
@@ -205,6 +243,7 @@
 
 /* ── Partículas ────────────────────────────────────────────────── */
 .ambient__particles {
+    inset-block: calc(-1 * var(--ambient-bleed));
     overflow: hidden;
 }
 

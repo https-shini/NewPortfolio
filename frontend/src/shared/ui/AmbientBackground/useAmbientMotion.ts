@@ -1,15 +1,16 @@
 import { useEffect } from "react";
 
 /* ─────────────────────────────────────────────────────────
-   useAmbientMotion — paralaxe de rolagem e desvio ao ponteiro
+   useAmbientMotion — deriva de rolagem e desvio ao ponteiro
    ─────────────────────────────────────────────────────────
    Duas reações, um laço só.
 
-   A paralaxe move cada camada por uma fração da rolagem. As
-   frações são diferentes de propósito: o que está mais fundo
-   anda menos, e é essa discrepância que o olho lê como
-   distância. As camadas são `fixed`, então sem isto elas
-   ficariam absolutamente paradas enquanto a página desliza.
+   A deriva move os planos conforme a rolagem, e o que o olho
+   lê como profundidade é a DIFERENÇA de velocidade entre o
+   conteúdo e o fundo — não a velocidade do fundo em si. É por
+   isso que ela pode oscilar em vez de subir sem parar. As
+   camadas são `fixed`, então sem isto ficariam paradas
+   enquanto a página desliza.
 
    O desvio empurra de leve as partículas próximas ao cursor.
    O empurrão decai com a distância, então a mão parece abrir
@@ -27,19 +28,21 @@ import { useEffect } from "react";
 ───────────────────────────────────────────────────────── */
 
 /**
- * Fração da rolagem que cada PLANO acompanha.
+ * Deriva: `−A · sin(2π · s / L)`, com A e L vindos do CSS.
+ *
+ * Era uma rampa linear, e uma rampa sem limite sobre uma camada do
+ * tamanho da janela tem um fim previsível: a camada sai da janela. Na
+ * home, de 9.517px, a atmosfera esvaziava por completo antes do rodapé.
  *
  * Dois planos, não três: a malha e as partículas são a mesma grade — os
- * pontos acesos nascem em interseções dela — então precisam andar juntos.
- * Com frações diferentes o alinhamento durava até a primeira rolagem, e
- * depois virava dois efeitos de pontinhos deslizando um sobre o outro,
- * que é exatamente o que este desenho existe para não ser.
+ * pontos acesos nascem em interseções dela — então recebem o MESMO valor,
+ * não frações diferentes. Com valores diferentes o alinhamento duraria
+ * até a primeira rolagem.
+ *
+ * Abaixo deste limiar a escrita não muda nada que se veja, e perto dos
+ * extremos do seno a variação por quadro fica bem abaixo dele.
  */
-const PARALAXE = {
-    aurora: 0.06,
-    grid: 0.16,
-    particulas: 0.16,
-} as const;
+const LIMIAR_ESCRITA = 0.25;
 
 /** Alcance do empurrão, em pixels. */
 const RAIO = 180;
@@ -88,6 +91,20 @@ export function useAmbientMotion(
            desvio viraria um salto no momento do toque. */
         const temPonteiroFino = window.matchMedia("(pointer: fine)").matches;
 
+        /* Amplitudes e períodos moram no CSS, junto da sangria que os
+           acomoda — são a mesma decisão e não podem divergir. Lidos uma
+           vez, no mount, nunca por quadro. */
+        const css = getComputedStyle(raiz);
+        const num = (nome: string, padrao: number) =>
+            parseFloat(css.getPropertyValue(nome)) || padrao;
+        const ampPerto = num("--ambient-drift-near", 88);
+        const cicloPerto = num("--ambient-cycle-near", 3400);
+        const ampLonge = num("--ambient-drift-far", 52);
+        const cicloLonge = num("--ambient-cycle-far", 5300);
+
+        const deriva = (A: number, L: number, s: number) =>
+            -A * Math.sin((2 * Math.PI * s) / L);
+
         let mouseX = -9999;
         let mouseY = -9999;
         let rolagem = window.scrollY;
@@ -97,6 +114,7 @@ export function useAmbientMotion(
            depois de descer meia tela nenhuma partícula parece estar por
            perto — foi exatamente o que quebrou a primeira versão. */
         let deslocamento = 0;
+        let auroraAplicada = 0;
         let quadro = 0;
         let medidoEm = 0;
 
@@ -129,16 +147,27 @@ export function useAmbientMotion(
         const passo = () => {
             quadro = 0;
 
-            /* Paralaxe — só escreve quando a rolagem mudou de fato. */
+            /* Deriva — só escreve quando o valor mudou o suficiente para
+               alguém ver. */
             if (rolagem !== rolagemAplicada) {
                 rolagemAplicada = rolagem;
-                deslocamento = -rolagem * PARALAXE.particulas;
-                if (aurora)
-                    aurora.style.translate = `0 ${-rolagem * PARALAXE.aurora}px`;
-                if (grid)
-                    grid.style.translate = `0 ${-rolagem * PARALAXE.grid}px`;
-                if (particulas)
-                    particulas.style.translate = `0 ${deslocamento}px`;
+
+                const perto = deriva(ampPerto, cicloPerto, rolagem);
+                if (Math.abs(perto - deslocamento) > LIMIAR_ESCRITA) {
+                    deslocamento = perto;
+                    const v = `0 ${perto.toFixed(2)}px`;
+                    if (grid) grid.style.translate = v;
+                    if (particulas) particulas.style.translate = v;
+                }
+
+                const longe = deriva(ampLonge, cicloLonge, rolagem);
+                if (
+                    aurora &&
+                    Math.abs(longe - auroraAplicada) > LIMIAR_ESCRITA
+                ) {
+                    auroraAplicada = longe;
+                    aurora.style.translate = `0 ${longe.toFixed(2)}px`;
+                }
             }
 
             /* Desvio — caminha para o alvo e continua enquanto não
@@ -220,6 +249,18 @@ export function useAmbientMotion(
             agendar();
         };
 
+        /* O componente re-semeia o campo quando a janela muda de forma, e
+           essa re-semeadura é atrasada de propósito. Um `resize` aqui
+           mediria os nós antigos. Observar a lista de filhos resolve sem
+           os dois efeitos precisarem combinar tempo entre si. */
+        const observador = particulas
+            ? new MutationObserver(() => {
+                  montar();
+                  agendar();
+              })
+            : null;
+        observador?.observe(particulas!, { childList: true });
+
         window.addEventListener("scroll", aoRolar, { passive: true });
         window.addEventListener("resize", aoRedimensionar, { passive: true });
         if (temPonteiroFino) {
@@ -230,6 +271,7 @@ export function useAmbientMotion(
         agendar();
 
         return () => {
+            observador?.disconnect();
             if (quadro) cancelAnimationFrame(quadro);
             window.removeEventListener("scroll", aoRolar);
             window.removeEventListener("resize", aoRedimensionar);
