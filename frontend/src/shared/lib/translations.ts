@@ -521,7 +521,7 @@ const pt: Translations = {
 
     /* FOOTER */
     "footer.tagline":
-        "Desenvolvedor Full Stack, com prática real em React, Node.js e sistemas em produção.",
+        "Desenvolvendo soluções digitais que transformam desafios em oportunidades.",
     "footer.nav": "Navegação",
     "footer.pages": "Páginas",
     "footer.downloads": "Downloads",
@@ -801,7 +801,7 @@ const en: Translations = {
 
     /* FOOTER */
     "footer.tagline":
-        "Full Stack Developer, with real-world practice in React, Node.js and production systems.",
+        "Building digital solutions that turn challenges into opportunities.",
     "footer.nav": "Navigation",
     "footer.pages": "Pages",
     "footer.downloads": "Downloads",

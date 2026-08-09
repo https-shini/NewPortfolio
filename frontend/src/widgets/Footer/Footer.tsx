@@ -125,70 +125,101 @@ const PROJECT_ITEMS: ProjectItem[] = [
 interface FooterBrandProps {
     tagline: string;
     onLogoClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+    onQrClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
     lang: "pt" | "en";
 }
 
-const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
-    <div className="footer__brand">
-        {/* Logo — mesma identidade visual do Header */}
-        <a
-            href={`#${SECTION_IDS.HOME}`}
-            className="footer__logo"
-            aria-label={
-                lang === "pt"
-                    ? "Guilherme Cruz — voltar ao início da página"
-                    : "Guilherme Cruz — back to top"
-            }
-            onClick={onLogoClick}
-        >
-            <span className="footer__logo-dot" />
-            <span className="footer__logo-name">
-                <span className="footer__logo-prefix">GCruz</span>
-                <span className="footer__logo-suffix">.dev</span>
-            </span>
-        </a>
+const FooterBrand = memo<FooterBrandProps>(
+    ({ tagline, onLogoClick, onQrClick, lang }) => (
+        <div className="footer__brand">
+            {/* Logo — mesma identidade visual do Header */}
+            <a
+                href={`#${SECTION_IDS.HOME}`}
+                className="footer__logo"
+                aria-label={
+                    lang === "pt"
+                        ? "Guilherme Cruz — voltar ao início da página"
+                        : "Guilherme Cruz — back to top"
+                }
+                onClick={onLogoClick}
+            >
+                <span className="footer__logo-dot" />
+                <span className="footer__logo-name">
+                    <span className="footer__logo-prefix">GCruz</span>
+                    <span className="footer__logo-suffix">.dev</span>
+                </span>
+            </a>
 
-        {/* Tagline */}
-        <p className="footer__brand-tagline">{tagline}</p>
+            {/* Tagline */}
+            <p className="footer__brand-tagline">{tagline}</p>
 
-        {/* Redes sociais — a lista vem de TREE_LINKS, a mesma que
+            {/* Redes sociais — a lista vem de TREE_LINKS, a mesma que
             alimenta a /links. Antes eram três <a> escritos à mão, cada um
             repetindo a decisão de target e rel; um perfil novo entrava em
             dois lugares e saía torto de um deles. */}
-        <nav
-            aria-label={
-                lang === "pt"
-                    ? "Redes sociais de Guilherme Cruz"
-                    : "Guilherme Cruz's social media"
-            }
-        >
-            <ul className="footer__social">
-                {SOCIAIS.map(({ id, label, href, icon: Icone }) => {
-                    const externo = linkKind(href) === "external";
-                    return (
-                        <li key={id}>
-                            <a
-                                href={href}
-                                className="social-link"
-                                target={externo ? "_blank" : undefined}
-                                rel={
-                                    externo ? "noopener noreferrer" : undefined
-                                }
-                                aria-label={rotuloSocial(
-                                    label[lang],
-                                    href,
-                                    lang,
-                                )}
-                            >
-                                <Icone width={16} height={16} />
-                            </a>
-                        </li>
-                    );
-                })}
-            </ul>
-        </nav>
-    </div>
-));
+            <nav
+                aria-label={
+                    lang === "pt"
+                        ? "Redes sociais de Guilherme Cruz"
+                        : "Guilherme Cruz's social media"
+                }
+            >
+                <ul className="footer__social">
+                    {SOCIAIS.map(({ id, label, href, icon: Icone }) => {
+                        const externo = linkKind(href) === "external";
+                        return (
+                            <li key={id}>
+                                <a
+                                    href={href}
+                                    className="social-link"
+                                    target={externo ? "_blank" : undefined}
+                                    rel={
+                                        externo
+                                            ? "noopener noreferrer"
+                                            : undefined
+                                    }
+                                    aria-label={rotuloSocial(
+                                        label[lang],
+                                        href,
+                                        lang,
+                                    )}
+                                >
+                                    <Icone width={16} height={16} />
+                                </a>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </nav>
+
+            {/* QR para /downloads. Dentro de um link porque o mesmo desenho
+            serve a duas situações: no celular a câmera aponta, no desktop
+            o ponteiro clica — e um QR que não clica é um beco para quem
+            está lendo isto na própria tela.
+
+            O alt descreve o DESTINO, não a figura: "QR code" não diz nada
+            a quem não vê a imagem, e o que interessa é para onde leva. */}
+            <a
+                href={ROUTES.DOWNLOADS}
+                className="footer__qr"
+                onClick={onQrClick}
+            >
+                <img
+                    src="/qr-downloads.svg"
+                    width={96}
+                    height={96}
+                    loading="lazy"
+                    decoding="async"
+                    alt={
+                        lang === "pt"
+                            ? "Abrir a página de downloads — aponte a câmera ou clique"
+                            : "Open the downloads page — point your camera or click"
+                    }
+                />
+            </a>
+        </div>
+    ),
+);
 FooterBrand.displayName = "FooterBrand";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -411,6 +442,9 @@ export const Footer: React.FC = () => {
                             tagline={t("footer.tagline")}
                             onLogoClick={(e) =>
                                 handleInternalNav(e, SECTION_IDS.HOME)
+                            }
+                            onQrClick={(e) =>
+                                handleRouteNav(e, ROUTES.DOWNLOADS)
                             }
                             lang={lang}
                         />
