@@ -7,6 +7,11 @@
  * ③ <address> semântico no bloco de contato — ATS-friendly.
  * ④ Zero dados hardcoded: e-mail/urls via constants, textos via t() (i18n).
  * ⑤ Ícones exclusivamente do design system Icons.tsx — sem SVG inline.
+ * ⑥ As âncoras da home e as páginas próprias ficam em colunas separadas:
+ *   uma rola a página, a outra troca de página, e misturá-las numa lista
+ *   só deixou de caber quando as rotas passaram de uma.
+ * ⑦ A newsletter só é renderizada com VITE_NEWSLETTER_ENDPOINT
+ *   configurado — ver components/NewsletterForm.tsx.
  */
 
 import React, { memo, useCallback } from "react";
@@ -120,7 +125,8 @@ const PROJECT_ITEMS: ProjectItem[] = [
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SUB-COMPONENTE — FooterBrand
-   Logo tipográfico · tagline i18n · ícones de redes sociais.
+   Logo tipográfico · tagline i18n · ícones de redes sociais · QR para
+   a página de downloads.
 ═══════════════════════════════════════════════════════════════════════════ */
 
 interface FooterBrandProps {
@@ -226,7 +232,7 @@ FooterBrand.displayName = "FooterBrand";
 /* ═══════════════════════════════════════════════════════════════════════════
    SUB-COMPONENTE — FooterNavCol
    Coluna genérica reutilizável: título eyebrow + lista de links.
-   Usada tanto para "Navegação" quanto para "Projetos".
+   Usada por "Navegação", "Páginas" e "Projetos".
 ═══════════════════════════════════════════════════════════════════════════ */
 
 interface FooterNavColProps {

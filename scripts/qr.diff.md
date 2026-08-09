@@ -24,7 +24,7 @@ pip install segno opencv-python-headless numpy
 As duas são necessárias. A `segno` sozinha não prova que o símbolo lê; o OpenCV sozinho não
 diz onde consertar.
 
-## As quatro provas
+## As cinco provas
 
 Rodadas sobre 71 entradas (versões 1 a 10 × níveis L/M/Q/H × tamanhos de 1 a 120 bytes):
 

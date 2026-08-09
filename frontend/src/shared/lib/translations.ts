@@ -251,6 +251,7 @@ export type TranslationKey =
     | "footer.newsletter.sending"
     | "footer.newsletter.success"
     | "footer.newsletter.duplicate"
+    | "footer.newsletter.invalid"
     | "footer.newsletter.error"
     | "footer.newsletter.consent"
     | "footer.nav"
@@ -543,8 +544,9 @@ const pt: Translations = {
     "footer.newsletter.success":
         "Quase lá — confirme a inscrição no e-mail que acabamos de enviar.",
     "footer.newsletter.duplicate": "Esse e-mail já está inscrito.",
+    "footer.newsletter.invalid": "Confira o endereço — não parece um e-mail.",
     "footer.newsletter.error":
-        "Não deu para inscrever agora. Confira o endereço e tente de novo.",
+        "Não deu para inscrever agora. Tente de novo em instantes.",
     "footer.newsletter.consent":
         "Só isso, e dá para sair a qualquer momento pelo link no rodapé de cada e-mail.",
     "footer.projects": "Projetos",
@@ -836,8 +838,10 @@ const en: Translations = {
     "footer.newsletter.success":
         "Almost there — confirm your subscription in the email we just sent.",
     "footer.newsletter.duplicate": "That email is already subscribed.",
+    "footer.newsletter.invalid":
+        "Check the address — that doesn't look like an email.",
     "footer.newsletter.error":
-        "Couldn't subscribe right now. Check the address and try again.",
+        "Couldn't subscribe right now. Please try again in a moment.",
     "footer.newsletter.consent":
         "That's all, and you can leave any time through the link at the bottom of every email.",
     "footer.projects": "Projects",

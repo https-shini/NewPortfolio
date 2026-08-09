@@ -20,7 +20,15 @@ import { IconSend } from "@/shared/ui/Icons";
    rejeita endereços válidos. Quem decide de verdade é o servidor. */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-type Estado = "idle" | "sending" | "success" | "duplicate" | "error";
+type Estado =
+    | "idle"
+    | "sending"
+    | "success"
+    | "duplicate"
+    /** Reprovado aqui, antes de sair: o endereço não parece um e-mail. */
+    | "invalid"
+    /** Falhou do outro lado — servidor fora, rede caída, 4xx/5xx. */
+    | "error";
 
 export const NewsletterForm: React.FC = () => {
     const { lang, t } = useLang();
@@ -36,7 +44,11 @@ export const NewsletterForm: React.FC = () => {
     if (!endpoint) return null;
 
     const enviando = estado === "sending";
-    const concluido = estado === "success" || estado === "duplicate";
+    /* Só o sucesso trava o campo. Em "já inscrito" a pessoa pode querer
+       usar outro endereço, e travar seria impedi-la de fazer justamente
+       o que a mensagem sugere. */
+    const travado = enviando || estado === "success";
+    const problema = estado === "invalid" || estado === "error";
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -50,7 +62,7 @@ export const NewsletterForm: React.FC = () => {
         }
 
         if (!EMAIL_RE.test(email.trim())) {
-            setEstado("error");
+            setEstado("invalid");
             return;
         }
 
@@ -100,7 +112,7 @@ export const NewsletterForm: React.FC = () => {
                 name="_gotcha"
                 tabIndex={-1}
                 autoComplete="off"
-                className="contact-form__honeypot"
+                className="footer__news-honeypot"
                 aria-hidden="true"
             />
 
@@ -117,16 +129,17 @@ export const NewsletterForm: React.FC = () => {
                         /* Corrigir o campo limpa o erro anterior: manter a
                            mensagem antiga na tela enquanto a pessoa digita
                            é dizer que ainda está errado sem ter olhado. */
-                        if (estado === "error") setEstado("idle");
+                        if (estado === "invalid" || estado === "error")
+                            setEstado("idle");
                     }}
                     autoComplete="email"
                     required
-                    disabled={enviando || concluido}
+                    disabled={travado}
                 />
                 <button
                     type="submit"
                     className="btn btn--primary btn--sm footer__news-btn"
-                    disabled={enviando || concluido}
+                    disabled={travado}
                 >
                     <IconSend width={14} height={14} aria-hidden="true" />
                     <span>
@@ -140,9 +153,9 @@ export const NewsletterForm: React.FC = () => {
             {/* Um leitor de tela não vê a cor mudar — precisa ouvir. */}
             <p
                 className={`footer__news-status${
-                    concluido
+                    estado === "success" || estado === "duplicate"
                         ? " is-success"
-                        : estado === "error"
+                        : problema
                           ? " is-error"
                           : ""
                 }`}
@@ -151,6 +164,7 @@ export const NewsletterForm: React.FC = () => {
             >
                 {estado === "success" && t("footer.newsletter.success")}
                 {estado === "duplicate" && t("footer.newsletter.duplicate")}
+                {estado === "invalid" && t("footer.newsletter.invalid")}
                 {estado === "error" && t("footer.newsletter.error")}
             </p>
 

@@ -317,6 +317,20 @@
     border-top: 1px solid var(--color-border);
 }
 
+/* Honeypot com classe própria. Antes o campo usava
+   `.contact-form__honeypot`, definida em ContactForm.css — que só é
+   carregada porque o Contact é síncrono e o Vite junta todo o CSS num
+   arquivo só. No dia em que o Contact virar lazy, como já são os modais,
+   o honeypot vira um campo de texto VISÍVEL no rodapé de todas as
+   páginas. Depender disso é sorte, não projeto. */
+.footer__news-honeypot {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    opacity: 0;
+    pointer-events: none;
+}
+
 .footer__news-label {
     font-size: var(--text-xs);
     font-weight: 600;
@@ -377,17 +391,16 @@
     flex: 0 0 auto;
 }
 
+/* `min-height` em vez de esconder quando vazia: um `display: none`
+   tira a região da árvore de acessibilidade, e um leitor de tela pode
+   não anunciar nada quando ela reaparece com texto — que é justamente o
+   momento em que ela existe para falar. É o mesmo que o ContactForm faz. */
 .footer__news-status {
     margin: 0;
+    min-height: 1.25em;
     font-size: var(--text-xs);
     line-height: 1.5;
     color: var(--color-text-2);
-}
-
-/* Sem altura reservada no estado idle: uma faixa em branco permanente
-   sob o campo sugere que falta alguma coisa ali. */
-.footer__news-status:empty {
-    display: none;
 }
 
 .footer__news-status.is-success {
