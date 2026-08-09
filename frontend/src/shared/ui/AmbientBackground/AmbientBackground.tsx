@@ -96,10 +96,14 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
     variant = "site",
 }) => {
     const boxRef = useRef<HTMLDivElement>(null);
+    const bokehRef = useRef<HTMLDivElement>(null);
     const raizRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const box = boxRef.current;
+        /* Copiada aqui, e não lida na limpeza: até lá o React já pode ter
+           trocado o nó, e a limpeza esvaziaria o elemento errado. */
+        const bokeh = bokehRef.current;
         if (!box) return;
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
             return;
@@ -236,6 +240,40 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
 
             /* Um append só: N inserções separadas provocam N recálculos. */
             box.replaceChildren(frag);
+
+            /* ── Bokeh ────────────────────────────────────────────────
+               Poucas elipses grandes, muito translúcidas, girando devagar.
+               Elas não seguem a grade: são volume de fundo, e alinhar
+               massa difusa a um reticulado de 26px seria precisão que
+               ninguém vê. */
+            if (bokeh) {
+                const quantos = Math.max(
+                    3,
+                    Math.round(5 * fracaoDeDensidade()),
+                );
+                const maior = Math.max(L, H);
+                const fb = document.createDocumentFragment();
+                for (let i = 0; i < quantos; i++) {
+                    const d = maior * rand(0.2, 0.34);
+                    const cor = chance(0.45)
+                        ? "var(--ambient-dot-b)"
+                        : "var(--ambient-dot-a)";
+                    const b = document.createElement("b");
+                    b.style.cssText = [
+                        `left:${rand(-12, 84)}%`,
+                        `top:${rand(-8, 86)}%`,
+                        `width:${d.toFixed(0)}px`,
+                        /* Elipse, não círculo: um círculo girando é
+                           indistinguível de um círculo parado. */
+                        `height:${(d * rand(0.6, 0.95)).toFixed(0)}px`,
+                        `--dur:${rand(70, 130).toFixed(0)}s`,
+                        `animation-delay:${-rand(0, 60).toFixed(0)}s`,
+                        `background:radial-gradient(circle,color-mix(in srgb,${cor} 9%,transparent) 0%,color-mix(in srgb,${cor} 6%,transparent) 34%,color-mix(in srgb,${cor} 2%,transparent) 62%,transparent 84%)`,
+                    ].join(";");
+                    fb.appendChild(b);
+                }
+                bokeh.replaceChildren(fb);
+            }
         };
 
         semear();
@@ -264,6 +302,7 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
             clearTimeout(agendado);
             window.removeEventListener("resize", aoRedimensionar);
             box.replaceChildren();
+            bokeh?.replaceChildren();
         };
     }, [count]);
 
@@ -281,6 +320,7 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
             aria-hidden="true"
         >
             <div className="ambient__aurora" />
+            <div ref={bokehRef} className="ambient__bokeh" />
             <div className="ambient__grid" />
             {/* O véu fica ENTRE a malha e as partículas de propósito: ele
                 assenta a aurora e a grade, e deixa os pontos acesos por

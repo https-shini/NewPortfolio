@@ -149,11 +149,19 @@
     will-change: transform;
 }
 
+/* Dimensionada pela soma das duas dimensões, não por uma delas.
+   Em `vw` a mancha cobria 27% da tela no desktop e apenas 8% num celular
+   de 390px — numa tela retrato a lavagem de cor não existia. Em `vmax`
+   passei do ponto na direção contrária: 103% da tela, que é fundo chapado.
+
+   `vw + vh` acompanha a média geométrica da janela de perto, e é isso que
+   mantém a mancha na mesma FRAÇÃO da tela em qualquer proporção — que é
+   o que se quer quando o assunto é presença visual. */
 .ambient__aurora::before {
-    width: 46vw;
-    height: 46vw;
-    top: -12vw;
-    left: -8vw;
+    width: clamp(300px, calc(28vw + 28vh), 780px);
+    height: clamp(300px, calc(28vw + 28vh), 780px);
+    top: calc(-7vw - 7vh);
+    left: calc(-5vw - 5vh);
     background: radial-gradient(
         circle,
         color-mix(in srgb, var(--color-brand) 16%, transparent) 0%,
@@ -166,10 +174,10 @@
 }
 
 .ambient__aurora::after {
-    width: 38vw;
-    height: 38vw;
-    bottom: -10vw;
-    right: -6vw;
+    width: clamp(250px, calc(23vw + 23vh), 640px);
+    height: clamp(250px, calc(23vw + 23vh), 640px);
+    bottom: calc(-6vw - 6vh);
+    right: calc(-4vw - 4vh);
     background: radial-gradient(
         circle,
         color-mix(in srgb, var(--color-accent) 15%, transparent) 0%,
@@ -189,7 +197,7 @@
         transform: translate(0, 0) scale(1);
     }
     50% {
-        transform: translate(12vw, 8vh) scale(1.25);
+        transform: translate(calc(6vw + 6vh), calc(4vw + 4vh)) scale(1.25);
     }
 }
 
@@ -199,7 +207,42 @@
         transform: translate(0, 0) scale(1.1);
     }
     50% {
-        transform: translate(-10vw, -9vh) scale(0.9);
+        transform: translate(calc(-5vw - 5vh), calc(-4vw - 4vh)) scale(0.9);
+    }
+}
+
+/* ── Bokeh ─────────────────────────────────────────────────────── */
+/* A camada que carrega o "líquido". Elipses muito translúcidas que GIRAM
+   e ESCALAM devagar — e girar uma elipse é trabalho de compositor, custo
+   por quadro zero, que lê como massa se deformando.
+
+   É o que dá morfologia sem pagar `filter`, sem animar `border-radius` e
+   sem canvas. As três alternativas foram medidas neste projeto e custam
+   entre 33 e 83ms por quadro; esta custa nada.
+
+   Fica atrás da malha e do véu de propósito: é volume de fundo, não
+   detalhe. */
+.ambient__bokeh {
+    inset-block: calc(-1 * var(--ambient-bleed));
+}
+
+.ambient__bokeh b {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    will-change: transform;
+    animation: ambient-bokeh var(--dur, 90s) linear infinite;
+}
+
+@keyframes ambient-bokeh {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.18);
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
     }
 }
 
@@ -336,14 +379,17 @@
    Antes disto o tema claro mostrava pontos vermelhos e azuis chapados
    sobre #f2f4f8. Pareciam pixels queimados, não atmosfera. */
 [data-theme="light"] .ambient {
-    --ambient-peak: 0.42;
+    --ambient-peak: 0.34;
     --ambient-dither: 0.09;
     --ambient-dot-a: color-mix(in srgb, var(--color-brand) 62%, #64748b);
     --ambient-dot-b: color-mix(in srgb, var(--color-accent) 58%, #64748b);
 }
 
+/* Mais presença, não menos: o vidro das superfícies só tem o que revelar
+   se houver algo atrás. E o brilho das partículas desceu junto, porque a
+   correção da deriva deixou muito mais delas visíveis por instante. */
 [data-theme="light"] .ambient__aurora {
-    opacity: 0.7;
+    opacity: 0.8;
 }
 
 /* ── Movimento reduzido ────────────────────────────────────────── */
@@ -353,6 +399,7 @@
 @media (prefers-reduced-motion: reduce) {
     .ambient__particle,
     .ambient__grid,
+    .ambient__bokeh b,
     .ambient__aurora::before,
     .ambient__aurora::after {
         animation: none;

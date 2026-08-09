@@ -241,7 +241,10 @@
     );
 
     /* Dots pattern hero */
-    --dots-color: color-mix(in srgb, var(--_crimson-600) 18%, transparent);
+    /* Desceu de 18% quando a máscara da atmosfera abriu: a malha passou
+       a existir na janela inteira em vez de só no terço superior, e na
+       alfa antiga isso viraria papel quadriculado. */
+    --dots-color: color-mix(in srgb, var(--_crimson-600) 13%, transparent);
 
     /* Gradiente de fundo sutil (algumas seções) */
     --section-gradient-overlay: radial-gradient(
@@ -390,7 +393,7 @@ body.light-mode {
 
     --header-bg-scrolled: color-mix(in srgb, var(--_slate-0) 92%, transparent);
 
-    --dots-color: color-mix(in srgb, var(--_crimson-600) 12%, transparent);
+    --dots-color: color-mix(in srgb, var(--_crimson-600) 8%, transparent);
 
     --section-gradient-overlay: radial-gradient(
         ellipse 80% 50% at 50% 0%,
