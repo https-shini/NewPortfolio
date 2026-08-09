@@ -78,7 +78,7 @@
 
 .header__logo-name {
     font-family: var(--font-mono, "JetBrains Mono", "Fira Code", monospace);
-    font-size: var(--text-base);
+    font-size: var(--text-md);
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1;
