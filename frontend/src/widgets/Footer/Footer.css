@@ -23,9 +23,13 @@
     padding: var(--space-10) 0 var(--space-8);
 }
 
-/* A grade do rodapé tem três arranjos: uma coluna na base, duas a
-   partir de --bp-md e as quatro a partir de --bp-footer-grid. Os
-   blocos ficam no fim do arquivo. */
+/* A grade do rodapé tem quatro arranjos: uma coluna na base, duas a
+   partir de --bp-md, três num degrau intermediário e as cinco a partir
+   de --bp-footer-grid. Os blocos ficam no fim do arquivo.
+
+   O degrau de três existe porque a coluna Páginas fez a grade passar de
+   quatro para cinco: saltar de duas direto para cinco espremia a coluna
+   de contato, que é a mais larga das cinco. */
 .footer__grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -421,11 +425,28 @@
     }
 }
 
-/* ── A partir de --bp-footer-grid (1100px): as quatro colunas ──────────── */
-@media (min-width: 1101px) {
+/* ── Degrau intermediário (900px): brand em cima, quatro colunas ───────── */
+@media (min-width: 901px) {
+    /* Quatro e não três: com três, sobra uma coluna e Contato cai sozinho
+       numa terceira linha, deixando dois terços da largura vazios. */
     .footer__grid {
-        grid-template-columns: 2fr 1fr 1fr 1.5fr;
-        gap: var(--space-10);
+        grid-template-columns: 1fr 1fr 1fr 1.6fr;
+    }
+
+    /* A Brand ocupa a linha inteira: numa fração só, a tagline e o QR
+       não cabem lado a lado nesta largura. */
+    .footer__brand {
+        grid-column: 1 / -1;
+    }
+}
+
+/* ── A partir de --bp-footer-grid (1100px): as cinco colunas ───────────── */
+@media (min-width: 1101px) {
+    /* Contato é a mais larga porque carrega o endereço de e-mail inteiro,
+       que não deve quebrar no meio da palavra. */
+    .footer__grid {
+        grid-template-columns: 1.5fr 1fr 0.9fr 1.1fr 1.9fr;
+        gap: var(--space-8);
     }
 
     .footer__brand {

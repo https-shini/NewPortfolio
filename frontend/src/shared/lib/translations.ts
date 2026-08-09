@@ -242,6 +242,8 @@ export type TranslationKey =
 
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
+    | "footer.pages"
+    | "footer.downloads"
     | "footer.nav"
     | "footer.projects"
     | "footer.contact"
@@ -521,6 +523,8 @@ const pt: Translations = {
     "footer.tagline":
         "Desenvolvedor Full Stack, com prática real em React, Node.js e sistemas em produção.",
     "footer.nav": "Navegação",
+    "footer.pages": "Páginas",
+    "footer.downloads": "Downloads",
     "footer.projects": "Projetos",
     "footer.contact": "Contato",
     "footer.location": "São Paulo, Brasil",
@@ -799,6 +803,8 @@ const en: Translations = {
     "footer.tagline":
         "Full Stack Developer, with real-world practice in React, Node.js and production systems.",
     "footer.nav": "Navigation",
+    "footer.pages": "Pages",
+    "footer.downloads": "Downloads",
     "footer.projects": "Projects",
     "footer.contact": "Contact",
     "footer.location": "São Paulo, Brazil",

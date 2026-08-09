@@ -52,6 +52,11 @@ interface ProjectItem {
     external: boolean;
 }
 
+interface PageItem {
+    to: (typeof ROUTES)[keyof typeof ROUTES];
+    key: TranslationKey;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
    Dados estáticos — centralizados para fácil manutenção
 ───────────────────────────────────────────────────────────────────────────── */
@@ -65,6 +70,14 @@ const NAV_ITEMS: NavItem[] = [
     { id: SECTION_IDS.WORK, key: "nav.work" },
     { id: SECTION_IDS.RECOMMENDATIONS, key: "nav.recommendations" },
     { id: SECTION_IDS.CONTACT, key: "nav.contact" },
+];
+
+/* Rotas próprias do site, na ordem em que o rodapé as lista. A home fica
+   de fora: ela já é o logo da coluna Brand e a primeira âncora. */
+const PAGE_ITEMS: PageItem[] = [
+    { to: ROUTES.LINKS, key: "nav.links" },
+    { to: ROUTES.RELEASE_NOTES, key: "releaseNotes.title" },
+    { to: ROUTES.DOWNLOADS, key: "footer.downloads" },
 ];
 
 /* URLs vêm de shared/config/links.ts — fonte única. Aqui só se decide
@@ -364,7 +377,10 @@ export const Footer: React.FC = () => {
 
     /** Navegação entre páginas (rota), não entre seções da home. */
     const handleRouteNav = useCallback(
-        (e: React.MouseEvent<HTMLAnchorElement>, to: typeof ROUTES.LINKS) => {
+        (
+            e: React.MouseEvent<HTMLAnchorElement>,
+            to: (typeof ROUTES)[keyof typeof ROUTES],
+        ) => {
             if (e.metaKey || e.ctrlKey || e.shiftKey) return;
             e.preventDefault();
             navigate(to);
@@ -420,22 +436,37 @@ export const Footer: React.FC = () => {
                                     </a>
                                 </li>
                             ))}
-
-                            {/* Página própria — navega pela rota */}
-                            <li>
-                                <a
-                                    href={ROUTES.LINKS}
-                                    className="footer__link"
-                                    onClick={(e) =>
-                                        handleRouteNav(e, ROUTES.LINKS)
-                                    }
-                                >
-                                    {t("nav.links")}
-                                </a>
-                            </li>
                         </FooterNavCol>
 
-                        {/* Coluna 3 — Projetos */}
+                        {/* Coluna 3 — Páginas
+                            As páginas próprias saíram de dentro de
+                            "Navegação". Ali elas apareciam misturadas às
+                            oito âncoras da home, e as duas coisas não são
+                            iguais: uma rola a página, a outra troca de
+                            página. Com três rotas isso deixou de caber
+                            numa lista só. */}
+                        <FooterNavCol
+                            title={t("footer.pages")}
+                            navLabel={
+                                lang === "pt"
+                                    ? "Outras páginas do site"
+                                    : "Other pages on this site"
+                            }
+                        >
+                            {PAGE_ITEMS.map(({ to, key }) => (
+                                <li key={to}>
+                                    <a
+                                        href={to}
+                                        className="footer__link"
+                                        onClick={(e) => handleRouteNav(e, to)}
+                                    >
+                                        {t(key)}
+                                    </a>
+                                </li>
+                            ))}
+                        </FooterNavCol>
+
+                        {/* Coluna 4 — Projetos */}
                         <FooterNavCol
                             title={t("footer.projects")}
                             navLabel={
