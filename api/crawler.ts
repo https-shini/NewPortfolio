@@ -84,6 +84,20 @@ async function resolverMeta(pathname: string): Promise<Meta> {
         };
     }
 
+    /* Sem este ramo o cartão de /downloads seria o PADRÃO — que anuncia a
+       home, com `og:url` apontando para `/`. Um cartão que afirma ser
+       outra página é pior que cartão nenhum, e este endereço é justamente
+       o que o QR code do rodapé espalha. */
+    if (pathname === "/downloads" || pathname === "/downloads/") {
+        return {
+            ...PADRAO,
+            titulo: `Downloads — ${AUTHOR}`,
+            descricao:
+                "A área de downloads do portfólio está em construção. Enquanto isso, o portfólio, os links e as notas de versão seguem no ar.",
+            url: `${SITE_URL}/downloads`,
+        };
+    }
+
     if (/^\/release-notes\/?$/.test(pathname)) {
         return {
             ...PADRAO,

@@ -155,6 +155,13 @@ function sitemapPlugin() {
                 },
             ];
 
+            /* `/downloads` fica de fora enquanto for provisória, e a
+               ausência é deliberada: página em construção indexada é
+               conteúdo raso apontando para o domínio, e o custo não fica
+               contido nela. A própria página declara `noindex, follow`.
+               Quando o conteúdo real existir, some o noindex de lá e
+               entra uma entrada aqui. */
+
             /* Âncoras da home — geradas de SECTION_IDS, não copiadas. */
             for (const id of Object.values(SECTION_IDS)) {
                 entries.push({

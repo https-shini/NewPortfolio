@@ -234,6 +234,12 @@ export type TranslationKey =
     | "releaseNotes.tag.a11y"
     | "releaseNotes.tag.fix"
 
+    /* ── EM CONSTRUÇÃO (/downloads) ────────────────── */
+    | "underConstruction.title"
+    | "underConstruction.lead"
+    | "underConstruction.back"
+    | "underConstruction.meta.description"
+
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
     | "footer.nav"
@@ -502,6 +508,14 @@ const pt: Translations = {
     "releaseNotes.tag.perf": "Performance",
     "releaseNotes.tag.a11y": "Acessibilidade",
     "releaseNotes.tag.fix": "Correções",
+
+    /* EM CONSTRUÇÃO */
+    "underConstruction.title": "Em construção",
+    "underConstruction.lead":
+        "A área de downloads está a caminho. Enquanto ela não chega, tudo o que já existe está a um clique daqui.",
+    "underConstruction.back": "Voltar ao início",
+    "underConstruction.meta.description":
+        "A área de downloads do portfólio de Guilherme Cruz está em construção.",
 
     /* FOOTER */
     "footer.tagline":
@@ -772,6 +786,14 @@ const en: Translations = {
     "releaseNotes.tag.perf": "Performance",
     "releaseNotes.tag.a11y": "Accessibility",
     "releaseNotes.tag.fix": "Fixes",
+
+    /* UNDER CONSTRUCTION */
+    "underConstruction.title": "Under construction",
+    "underConstruction.lead":
+        "The downloads area is on its way. Until it lands, everything that already exists is one click from here.",
+    "underConstruction.back": "Back to home",
+    "underConstruction.meta.description":
+        "The downloads area of Guilherme Cruz's portfolio is under construction.",
 
     /* FOOTER */
     "footer.tagline":

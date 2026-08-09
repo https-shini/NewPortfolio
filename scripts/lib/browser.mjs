@@ -21,6 +21,7 @@ export const ROUTES = {
     links: "/links",
     releaseNotes: "/release-notes",
     releaseVersion: "/release-notes/v2.0.0",
+    downloads: "/downloads",
 };
 
 /**
@@ -116,7 +117,10 @@ export async function startPreview({ timeoutMs = 60_000 } = {}) {
  * As chamadas de API respondem lista vazia por padrão: a auditoria mede o
  * layout e a acessibilidade do site, não a disponibilidade do GitHub.
  */
-export async function newContext(browser, { baseUrl, theme, lang, apiBody, ...opts } = {}) {
+export async function newContext(
+    browser,
+    { baseUrl, theme, lang, apiBody, ...opts } = {},
+) {
     /* Sem isto, a auditoria pega o reveal de [data-reveal] no meio do fade e
        mede cores mescladas: o contraste do mesmo botão muda conforme o
        instante da medição, e o resultado deixa de ser reproduzível. O site
@@ -140,7 +144,9 @@ export async function newContext(browser, { baseUrl, theme, lang, apiBody, ...op
     );
     /* Nada sai para a internet: uma auditoria não pode depender de rede. */
     await ctx.route("**/*", (route) =>
-        route.request().url().startsWith(baseUrl) ? route.fallback() : route.abort(),
+        route.request().url().startsWith(baseUrl)
+            ? route.fallback()
+            : route.abort(),
     );
 
     const page = await ctx.newPage();
@@ -152,9 +158,13 @@ export async function newContext(browser, { baseUrl, theme, lang, apiBody, ...op
 /** Navega e espera a rota estar realmente montada, não só respondida. */
 export async function visit(page, baseUrl, route) {
     await page.goto(`${baseUrl}${route}`, { waitUntil: "domcontentloaded" });
-    await page.waitForSelector("main, .links-page, .release-page", { timeout: 25_000 });
+    await page.waitForSelector("main, .links-page, .release-page", {
+        timeout: 25_000,
+    });
     await page
-        .waitForFunction(() => document.fonts?.status === "loaded", null, { timeout: 10_000 })
+        .waitForFunction(() => document.fonts?.status === "loaded", null, {
+            timeout: 10_000,
+        })
         .catch(() => {}); /* fontes são otimização, não requisito */
 
     /* Nada opaco pela metade na hora de medir cor. */
@@ -163,7 +173,8 @@ export async function visit(page, baseUrl, route) {
             () =>
                 [...document.querySelectorAll("[data-reveal]")].every((el) => {
                     const r = el.getBoundingClientRect();
-                    const foraDaTela = r.bottom < 0 || r.top > window.innerHeight;
+                    const foraDaTela =
+                        r.bottom < 0 || r.top > window.innerHeight;
                     return foraDaTela || getComputedStyle(el).opacity === "1";
                 }),
             null,

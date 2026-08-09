@@ -75,15 +75,27 @@ describe("/api/crawler", () => {
         expect(meta(corpo, "article:published_time")).toMatch(/^\d{4}-\d{2}/);
     });
 
+    it("a página de downloads não empresta o cartão da home", async () => {
+        /* É o endereço que o QR code do rodapé espalha, e sem um ramo
+           próprio ele cairia no PADRÃO — cujo og:url aponta para `/`.
+           Um cartão que afirma ser outra página é pior que nenhum. */
+        const { corpo } = await pedir("/downloads");
+        expect(meta(corpo, "og:title")).toContain("Downloads");
+        expect(meta(corpo, "og:url")).toMatch(/\/downloads$/);
+    });
+
     it("cada rota rende um cartão diferente", async () => {
         /* É a razão de o arquivo existir: hoje as três compartilham o
            mesmo título, a mesma descrição e a mesma imagem. */
         const titulos = await Promise.all(
-            ["/links", "/release-notes", "/release-notes/v2.0.0"].map(
-                async (p) => meta((await pedir(p)).corpo, "og:title"),
-            ),
+            [
+                "/links",
+                "/release-notes",
+                "/release-notes/v2.0.0",
+                "/downloads",
+            ].map(async (p) => meta((await pedir(p)).corpo, "og:title")),
         );
-        expect(new Set(titulos).size).toBe(3);
+        expect(new Set(titulos).size).toBe(4);
     });
 
     it("versão inexistente cai no cartão padrão, sem quebrar", async () => {
