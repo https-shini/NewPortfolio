@@ -166,7 +166,7 @@ body.light-mode .mobile-nav__cta:hover {
 
 /* ── Fundo ── */
 body.light-mode .hero {
-    background: var(--color-veil-bg);
+    background: transparent;
 }
 
 /* ── Status badge de disponibilidade ── */
@@ -271,7 +271,7 @@ body.light-mode .hero__social-label {
 
 /* ── Fundo da seção (elevada em relação ao hero/timeline) ── */
 body.light-mode .about {
-    background: var(--color-veil-1);
+    background: transparent;
 }
 
 /* ── Bio paragraphs ── */
@@ -539,7 +539,7 @@ body.light-mode .timeline__cert-link:hover {
 
 /* ── Fundo da seção ── */
 body.light-mode .featured {
-    background: var(--color-veil-1);
+    background: transparent;
 }
 
 /* ── Card do projeto ── */
@@ -636,7 +636,7 @@ body.light-mode .detail-card__text {
 
 /* ── Fundo ── */
 body.light-mode .work {
-    background: var(--color-veil-bg);
+    background: transparent;
 }
 
 /* ── Cards ── */
@@ -694,7 +694,7 @@ body.light-mode .work-btn--outline:hover {
 
 /* ── Fundo ── */
 body.light-mode .contact {
-    background: var(--color-veil-bg);
+    background: transparent;
 }
 
 /* ── Badge de disponibilidade ── */

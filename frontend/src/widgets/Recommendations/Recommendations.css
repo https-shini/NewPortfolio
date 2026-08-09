@@ -3,7 +3,7 @@
 ═══════════════════════════════════════════════════════════════ */
 
 .rec {
-    background: var(--color-veil-bg);
+    background: transparent;
     position: relative;
 }
 

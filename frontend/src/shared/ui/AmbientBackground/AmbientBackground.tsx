@@ -24,9 +24,9 @@ interface AmbientBackgroundProps {
     /**
      * Quantas partículas flutuam.
      *
-     * O portfólio usa menos que a /links de propósito. Lá é uma tela só,
-     * quase um cartão, e o movimento é o assunto; aqui se rola por dez
-     * seções de texto, e o mesmo efeito passa de ambiente a distração.
+     * A mesma densidade nas duas páginas, de propósito: o portfólio pede
+     * a atmosfera da /links, não uma versão contida dela. Tentei conter e
+     * o resultado foi um fundo que não existia na tela.
      */
     count?: number;
     /** Marca a variante de intensidade no CSS. */
@@ -36,7 +36,7 @@ interface AmbientBackgroundProps {
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
 
 export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
-    count = 18,
+    count = 26,
     variant = "site",
 }) => {
     const boxRef = useRef<HTMLDivElement>(null);
@@ -59,8 +59,8 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
                 `height:${size}px`,
                 `--dx:${rand(-60, 60)}px`,
                 `--dy:${rand(-200, -80)}px`,
-                `--dur:${rand(28, 52)}s`,
-                `--delay:${rand(0, 10)}s`,
+                `--dur:${rand(18, 34)}s`,
+                `--delay:${rand(0, 14)}s`,
                 `filter:blur(${rand(0, 1.5)}px)`,
                 `background:radial-gradient(circle,${
                     accent ? "var(--color-accent)" : "var(--color-brand)"

@@ -77,17 +77,10 @@
     }
 }
 
-/* ── Variante do portfólio ─────────────────────────────────────── */
-/* O site é longo e o texto é o protagonista, então a diferença para a
-   /links está na densidade e no ritmo — menos partículas, ciclo mais
-   lento —, não em apagar a camada.
-
-   Abaixar a opacidade da malha aqui foi um erro medido: somada ao véu
-   das seções, sobrava cerca de 1% de crimson efetivo e o fundo
-   simplesmente não existia. Quem regula a presença é o véu. */
-.ambient--site .ambient__particle {
-    filter: blur(0.5px);
-}
+/* Sem variante amortecida. Tentei uma para o site — malha mais apagada,
+   partículas mais opacas — e o efeito sumiu: somada ao fundo das seções,
+   sobrava cerca de 1% de crimson efetivo. A atmosfera é a mesma nas duas
+   páginas, e quem decide o quanto dela aparece é o fundo por cima. */
 
 /* ── Movimento reduzido ────────────────────────────────────────── */
 /* O componente já não cria partícula nenhuma nesse modo; a regra cobre

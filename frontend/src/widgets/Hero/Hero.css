@@ -9,7 +9,7 @@
     align-items: center;
     overflow: hidden;
     /* Véu, e não cor cheia: a atmosfera do site passa por baixo. */
-    background: var(--color-veil-bg);
+    background: transparent;
     padding-top: var(--header-height);
 }
 
