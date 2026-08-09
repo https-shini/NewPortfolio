@@ -221,8 +221,8 @@
        hairline contra um campo grande fica em 8 a 10 níveis. 0,04 dá 9 —
        no limiar. 0,14 dá 32 e começa a ler como segunda borda. 0,09 dá
        20, meio da faixa confiante. */
-    --surface-edge: inset 0 1px 0 rgb(255 255 255 / 0.09);
-    --surface-lift: 0 18px 40px -28px rgb(0 0 0 / 0.5);
+    --surface-edge: inset 0 1px 0 rgb(255 255 255 / 0.07);
+    --surface-lift: 0 18px 40px -24px rgb(0 0 0 / 0.5);
 
     --shadow-card: inset 0 0 0 1px var(--color-border-2), var(--shadow-md);
     --shadow-card-hover:
@@ -243,15 +243,33 @@
     /* Dots pattern hero */
     /* Desceu de 18% quando a máscara da atmosfera abriu: a malha passou
        a existir na janela inteira em vez de só no terço superior, e na
-       alfa antiga isso viraria papel quadriculado. */
-    --dots-color: color-mix(in srgb, var(--_crimson-600) 13%, transparent);
-
-    /* Gradiente de fundo sutil (algumas seções) */
-    --section-gradient-overlay: radial-gradient(
-        ellipse 80% 50% at 50% 0%,
-        color-mix(in srgb, var(--_crimson-950) 30%, transparent),
-        transparent 70%
+       alfa antiga isso viraria papel quadriculado.
+       E o ponto deixou de ser crimson puro: a malha cobre a tela inteira,
+       então ela é a peça que mais empurrava a cena para o vermelho. Agora
+       é o meio-termo entre as duas cores da marca — o neutro da casa. */
+    --dots-color: color-mix(
+        in srgb,
+        color-mix(in srgb, var(--_crimson-600) 52%, var(--_indigo-500)) 13%,
+        transparent
     );
+
+    /* Véu do topo — duas manchas, uma de cada cor da marca.
+       Era uma só, em crimson, centrada. Somada à malha de pontos também
+       em crimson, à mancha maior da aurora e a três quartos das
+       partículas, o resultado era uma cena que puxava para o vermelho
+       inteira. Nenhuma das quatro peças estava errada sozinha; o
+       desequilíbrio era a soma delas. */
+    --section-gradient-overlay:
+        radial-gradient(
+            ellipse 62% 46% at 22% 0%,
+            color-mix(in srgb, var(--_crimson-950) 30%, transparent),
+            transparent 72%
+        ),
+        radial-gradient(
+            ellipse 58% 42% at 80% 0%,
+            color-mix(in srgb, var(--_indigo-900) 26%, transparent),
+            transparent 72%
+        );
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -377,8 +395,8 @@ body.light-mode {
        BAIXO, e o volume vem do lift. É a definição de recalibrar em vez
        de inverter: o mesmo princípio (contraste localizado) realizado
        pelo recurso que aquele fundo comporta. */
-    --surface-edge: inset 0 -1px 0 rgb(15 23 42 / 0.065);
-    --surface-lift: 0 14px 30px -24px rgb(15 23 42 / 0.14);
+    --surface-edge: inset 0 -1px 0 rgb(15 23 42 / 0.05);
+    --surface-lift: 0 14px 30px -20px rgb(15 23 42 / 0.14);
 
     --shadow-card:
         0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--color-border-2);
@@ -393,13 +411,23 @@ body.light-mode {
 
     --header-bg-scrolled: color-mix(in srgb, var(--_slate-0) 92%, transparent);
 
-    --dots-color: color-mix(in srgb, var(--_crimson-600) 8%, transparent);
-
-    --section-gradient-overlay: radial-gradient(
-        ellipse 80% 50% at 50% 0%,
-        color-mix(in srgb, var(--_crimson-50) 40%, transparent),
-        transparent 70%
+    --dots-color: color-mix(
+        in srgb,
+        color-mix(in srgb, var(--_crimson-600) 52%, var(--_indigo-500)) 8%,
+        transparent
     );
+
+    --section-gradient-overlay:
+        radial-gradient(
+            ellipse 62% 46% at 22% 0%,
+            color-mix(in srgb, var(--_crimson-50) 40%, transparent),
+            transparent 72%
+        ),
+        radial-gradient(
+            ellipse 58% 42% at 80% 0%,
+            color-mix(in srgb, var(--_indigo-100) 46%, transparent),
+            transparent 72%
+        );
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

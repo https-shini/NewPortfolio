@@ -82,6 +82,7 @@ export function useAmbientMotion(
         if (semMovimento) return;
 
         const aurora = raiz.querySelector<HTMLElement>(".ambient__aurora");
+        const bokeh = raiz.querySelector<HTMLElement>(".ambient__bokeh");
         const grid = raiz.querySelector<HTMLElement>(".ambient__grid");
         const particulas = raiz.querySelector<HTMLElement>(
             ".ambient__particles",
@@ -97,13 +98,20 @@ export function useAmbientMotion(
         const css = getComputedStyle(raiz);
         const num = (nome: string, padrao: number) =>
             parseFloat(css.getPropertyValue(nome)) || padrao;
-        const ampPerto = num("--ambient-drift-near", 88);
-        const cicloPerto = num("--ambient-cycle-near", 3400);
-        const ampLonge = num("--ambient-drift-far", 52);
-        const cicloLonge = num("--ambient-cycle-far", 5300);
+        const ampPerto = num("--ambient-drift-near", 7);
+        const cicloPerto = num("--ambient-cycle-near", 2.2);
+        const ampLonge = num("--ambient-drift-far", 2.7);
+        const cicloLonge = num("--ambient-cycle-far", 4.7);
+        const ampBokeh = num("--ambient-drift-bokeh", 4.3);
+        const cicloBokeh = num("--ambient-cycle-bokeh", 3.1);
 
-        const deriva = (A: number, L: number, s: number) =>
-            -A * Math.sin((2 * Math.PI * s) / L);
+        /* Amplitude em % da altura da janela, período em número de telas.
+           As duas dependem da janela, então mudam com ela — é o que faz a
+           deriva ser proporcional no celular em vez de fixa em pixels. */
+        let alturaJanela = window.innerHeight || 900;
+        const deriva = (ampPct: number, ciclos: number, s: number) =>
+            -((ampPct / 100) * alturaJanela) *
+            Math.sin((2 * Math.PI * s) / (ciclos * alturaJanela));
 
         let mouseX = -9999;
         let mouseY = -9999;
@@ -115,6 +123,7 @@ export function useAmbientMotion(
            perto — foi exatamente o que quebrou a primeira versão. */
         let deslocamento = 0;
         let auroraAplicada = 0;
+        let bokehAplicado = 0;
         let quadro = 0;
         let medidoEm = 0;
 
@@ -167,6 +176,15 @@ export function useAmbientMotion(
                 ) {
                     auroraAplicada = longe;
                     aurora.style.translate = `0 ${longe.toFixed(2)}px`;
+                }
+
+                /* O bokeh fica entre os dois planos, com período próprio:
+                   três valores que não se dividem entre si é o que impede
+                   a cena de ter um compasso perceptível. */
+                const meio = deriva(ampBokeh, cicloBokeh, rolagem);
+                if (bokeh && Math.abs(meio - bokehAplicado) > LIMIAR_ESCRITA) {
+                    bokehAplicado = meio;
+                    bokeh.style.translate = `0 ${meio.toFixed(2)}px`;
                 }
             }
 
@@ -244,6 +262,7 @@ export function useAmbientMotion(
         };
 
         const aoRedimensionar = () => {
+            alturaJanela = window.innerHeight || alturaJanela;
             medir();
             rolagemAplicada = -1;
             agendar();
@@ -278,7 +297,7 @@ export function useAmbientMotion(
             window.removeEventListener("pointermove", aoMover);
             document.removeEventListener("pointerleave", aoSair);
             for (const a of alvos) a.el.style.translate = "";
-            for (const el of [aurora, grid, particulas])
+            for (const el of [aurora, bokeh, grid, particulas])
                 if (el) el.style.translate = "";
         };
         /* `quantidade` entra como dependência porque trocá-la recria as

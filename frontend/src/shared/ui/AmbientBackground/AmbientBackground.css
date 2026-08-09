@@ -68,17 +68,25 @@
        calcula deixariam de coincidir, e as partículas parariam de nascer
        em cima dos pontos da grade. */
     --ambient-bleed: calc(var(--ambient-step) * 5);
-    --ambient-drift-near: 88;
-    --ambient-cycle-near: 3400;
-    --ambient-drift-far: 52;
-    --ambient-cycle-far: 5300;
+    /* Amplitude em % da ALTURA da janela e período em número de telas —
+       a mesma parametrização do modelo onde estes valores foram
+       calibrados, e que também é a que escala certo: num celular a
+       deriva passa a ser proporcional à tela em vez de fixa em pixels.
+       7% de 900px são 63px, bem dentro dos 130px de sangria; mesmo numa
+       janela de 1600px de altura sobram 18px de folga. */
+    --ambient-drift-near: 7;
+    --ambient-cycle-near: 2.2;
+    --ambient-drift-far: 2.7;
+    --ambient-cycle-far: 4.7;
+    --ambient-drift-bokeh: 4.3;
+    --ambient-cycle-bokeh: 3.1;
 
     --ambient-dot-a: var(--color-brand);
     --ambient-dot-b: var(--color-accent);
     /* Multiplicador de brilho por tema — ver o bloco do tema claro. */
     --ambient-peak: 1;
     /* Multiplicador por VARIANTE, ortogonal ao do tema. */
-    --ambient-gain: 1;
+    --ambient-gain: 1.8;
     /* Intensidade do dithering — ver `.ambient::after`. */
     --ambient-dither: 0.035;
 }
@@ -174,8 +182,10 @@
 }
 
 .ambient__aurora::after {
-    width: clamp(250px, calc(23vw + 23vh), 640px);
-    height: clamp(250px, calc(23vw + 23vh), 640px);
+    /* Perto da mancha crimson, não igual: duas manchas idênticas leem
+       como simetria mecânica. */
+    width: clamp(280px, calc(26vw + 26vh), 720px);
+    height: clamp(280px, calc(26vw + 26vh), 720px);
     bottom: calc(-6vw - 6vh);
     right: calc(-4vw - 4vh);
     background: radial-gradient(
@@ -425,5 +435,5 @@
    Ganho separado de `--ambient-peak` de propósito: o tema já usa aquele,
    e sobrescrevê-lo aqui apagaria a calibragem do tema claro. */
 .ambient--links {
-    --ambient-gain: 1.18;
+    --ambient-gain: 1.9;
 }

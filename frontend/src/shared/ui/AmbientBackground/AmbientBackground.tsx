@@ -37,8 +37,9 @@ interface AmbientBackgroundProps {
      *
      * Baixou de 26 para 18 quando elas ganharam halo e tamanho: um ponto
      * que se vê vale por três que não se viam. Subiu para 24 quando a
-     * correção da deriva deu à caixa uma sangria de 130px em cada extremo
-     * — a área a povoar cresceu junto.
+     * correção da deriva deu à caixa uma sangria de 130px em cada extremo,
+     * e para 39 na calibragem feita no modelo — os cortes por tela e por
+     * aparelho continuam valendo em cima disso.
      */
     count?: number;
     /** Marca a variante no CSS, para ajustes pontuais por página. */
@@ -92,7 +93,7 @@ function fracaoDeDensidade(): number {
 }
 
 export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
-    count = 24,
+    count = 39,
     variant = "site",
 }) => {
     const boxRef = useRef<HTMLDivElement>(null);
@@ -183,9 +184,13 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
                 const dx = randInt(-2, 2) * passo;
                 const mx = -dx * rand(0.4, 0.9);
 
-                /* Quatro para uma: a cor de apoio manda, o destaque pontua.
-               Meio a meio entre duas cortes fortes lê como confete. */
-                const cor = chance(0.22)
+                /* Três para dois. Era quatro para uma, pela ideia de que
+                   meio a meio entre duas cores fortes leria como confete —
+                   o que é verdade, mas o remédio tinha ficado forte demais:
+                   somado à malha, ao véu e à aurora, todos puxando para o
+                   mesmo lado, o conjunto pendia para o vermelho. Aqui a
+                   marca ainda lidera, só que por pouco. */
+                const cor = chance(0.42)
                     ? "var(--ambient-dot-b)"
                     : "var(--ambient-dot-a)";
 
@@ -254,8 +259,8 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
                 const maior = Math.max(L, H);
                 const fb = document.createDocumentFragment();
                 for (let i = 0; i < quantos; i++) {
-                    const d = maior * rand(0.2, 0.34);
-                    const cor = chance(0.45)
+                    const d = maior * rand(0.21, 0.31);
+                    const cor = chance(0.5)
                         ? "var(--ambient-dot-b)"
                         : "var(--ambient-dot-a)";
                     const b = document.createElement("b");
