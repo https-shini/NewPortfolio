@@ -1,15 +1,20 @@
 /* ══════════════════════════════════════════════════════════════════
    AmbientBackground — atmosfera fixa, atrás de todo o conteúdo
 
-   Quatro camadas, da mais funda para a mais próxima:
-     aurora    → manchas largas de cor, movimento muito lento
-     grid      → malha de pontos, deriva quase imperceptível
-     overlay   → véu de gradiente que assenta o conjunto
-     partícula → os pontos de luz que se movem de verdade
+   Duas profundidades, não quatro camadas soltas:
 
-   A profundidade vem do contraste de ritmo entre elas: a aurora leva
-   minutos, a malha leva um minuto, as partículas levam segundos. Fosse
-   tudo na mesma velocidade, o olho leria uma camada só.
+     fundo    aurora  → manchas largas de cor, ciclos de minutos
+     véu      overlay → assenta a aurora sob o conteúdo
+     frente   malha + partículas → a MESMA grade, o mesmo passo
+
+   A malha e as partículas compartilham `--ambient-step`, a fração de
+   paralaxe e o alinhamento: as partículas nascem em interseções da
+   grade e andam um número inteiro de células. Não são pontos flutuando
+   sobre uma malha de pontos — são pontos da malha que acenderam.
+
+   A profundidade vem do contraste de ritmo entre os dois planos: a
+   aurora leva minutos e anda 6% da rolagem, os pontos levam segundos e
+   andam 16%.
    ══════════════════════════════════════════════════════════════════ */
 
 /* `fixed` e não `absolute`: a atmosfera acompanha a janela em vez de
@@ -29,6 +34,55 @@
        página a recalcular camadas. */
     contain: strict;
     overflow: hidden;
+
+    /* ── Contrato da atmosfera ──────────────────────────────────────
+       Estes quatro valores são o que o tema e o JavaScript enxergam.
+       `--ambient-step` é lido pelo componente para posicionar cada
+       partícula na grade: uma medida só, não duas que um dia divergem. */
+    --ambient-step: 26px;
+    --ambient-dot-a: var(--color-brand);
+    --ambient-dot-b: var(--color-accent);
+    /* Multiplicador de brilho por tema — ver o bloco do tema claro. */
+    --ambient-peak: 1;
+    /* Intensidade do dithering — ver `.ambient::after`. */
+    --ambient-dither: 0.035;
+}
+
+/* ── Dithering ─────────────────────────────────────────────────── */
+/* Uma película de ruído estático sobre a atmosfera inteira, e ela
+   conserta um defeito que gradiente nenhum consegue consertar sozinho.
+
+   A aurora varia menos de 1/255 por pixel ao longo de centenas de
+   pixels. Em 8 bits isso não é um degradê, é uma escada: a cor se
+   mantém por faixas largas e o olho lê ANÉIS CONCÊNTRICOS. Tentei
+   resolver por paradas de gradiente e piorei — de 3 para 8 paradas o
+   resultado teve mais anéis, e mais finos, porque o problema nunca foi
+   a curva, foi a profundidade de cor.
+
+   Ruído de ±1 nível quebra a escada: onde havia uma fronteira dura
+   entre dois valores, passa a haver uma mistura dos dois. É a mesma
+   razão de o dithering existir em impressão.
+
+   A intensidade muda por tema porque o que cada fundo absorve muda.
+   Medido: 0.06 no escuro LEVANTA O PRETO de forma visível — o fundo
+   deixa de ser #070d19 e vira cinza-azulado. `mix-blend-mode: overlay`
+   deveria ser neutro no cinza médio e não foi, porque a saída do
+   feTurbulence não é centrada em 128. 0.035 no escuro apaga os anéis e
+   preserva o preto; o claro tem margem para 0.09.
+
+   Custo: uma imagem de 140px pintada uma vez e ladrilhada. Não anima,
+   não recompõe, não aparece em nenhuma medição. */
+.ambient::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: var(--ambient-dither);
+    /* `numOctaves='1'` e frequência alta de propósito: dithering pede
+       ruído fino, quase por pixel. Com 4 oitavas o feTurbulence produz
+       manchas de baixa frequência que borram o anel em vez de quebrá-lo,
+       e ainda leem como textura suja quando a intensidade sobe. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* ── Aurora ────────────────────────────────────────────────────── */
@@ -42,9 +96,12 @@
    é reaplicado a cada quadro enquanto a mancha se move, sobre uma área
    de 46vw.
 
-   A maciez agora vem da própria parada do gradiente, que é calculada na
-   pintura e não a cada quadro. Visualmente é quase o mesmo; em custo,
-   é a diferença entre travar e não travar. */
+   A maciez vem das paradas do gradiente, calculadas na pintura. São
+   CINCO paradas e não três: com três, a queda por uma área tão grande
+   acontecia em degraus visíveis — no tema claro dava para contar os
+   anéis concêntricos no canto inferior direito. Parada de gradiente é
+   de graça; anel concêntrico num fundo é o tipo de coisa que denuncia
+   um efeito mal acabado. */
 .ambient__aurora {
     opacity: 0.85;
 }
@@ -62,13 +119,13 @@
     height: 46vw;
     top: -12vw;
     left: -8vw;
-    /* Três paradas em vez de duas: a queda fica gradual o suficiente
-       para dispensar o desfoque. */
     background: radial-gradient(
         circle,
         color-mix(in srgb, var(--color-brand) 16%, transparent) 0%,
-        color-mix(in srgb, var(--color-brand) 7%, transparent) 40%,
-        transparent 72%
+        color-mix(in srgb, var(--color-brand) 11%, transparent) 26%,
+        color-mix(in srgb, var(--color-brand) 6%, transparent) 48%,
+        color-mix(in srgb, var(--color-brand) 2%, transparent) 66%,
+        transparent 82%
     );
     animation: ambient-aurora-a 96s ease-in-out infinite;
 }
@@ -81,8 +138,10 @@
     background: radial-gradient(
         circle,
         color-mix(in srgb, var(--color-accent) 15%, transparent) 0%,
-        color-mix(in srgb, var(--color-accent) 6%, transparent) 40%,
-        transparent 72%
+        color-mix(in srgb, var(--color-accent) 10%, transparent) 26%,
+        color-mix(in srgb, var(--color-accent) 5%, transparent) 48%,
+        color-mix(in srgb, var(--color-accent) 2%, transparent) 66%,
+        transparent 82%
     );
     animation: ambient-aurora-b 124s ease-in-out infinite;
 }
@@ -117,11 +176,11 @@
    segunda saiu pior que a primeira — 50ms contra 33ms por quadro.
 
    A malha ganha movimento de outro jeito, e de graça: a paralaxe já a
-   desloca conforme a rolagem. Movimento amarrado ao gesto de quem lê
-   vale mais que movimento autônomo, e aqui ainda por cima é o barato. */
+   desloca conforme a rolagem, na mesma fração das partículas, para que
+   o alinhamento entre as duas se mantenha enquanto a página desce. */
 .ambient__grid {
     background-image: radial-gradient(var(--dots-color) 1px, transparent 1px);
-    background-size: 26px 26px;
+    background-size: var(--ambient-step) var(--ambient-step);
     /* Sem a máscara a malha vira papel quadriculado e briga com o texto;
        com ela, adensa no alto e some antes de chegar à leitura. */
     -webkit-mask-image: radial-gradient(
@@ -162,25 +221,29 @@
 
 /* O percurso é uma curva, não uma reta: o ponto intermediário desloca
    para um lado antes de o final puxar para o outro. Reta com fade lê
-   como elemento de interface; a curva lê como algo que flutua. */
+   como elemento de interface; a curva lê como algo que flutua.
+
+   `--peak` sai do componente e `--ambient-peak` do tema: o brilho que
+   funciona no escuro vira sujeira na tela no claro, e multiplicar aqui
+   evita ter duas listas de números para manter em sincronia. */
 @keyframes ambient-float {
     0% {
         transform: translate(0, 0) scale(0.85);
         opacity: 0;
     }
     12% {
-        opacity: var(--peak, 0.5);
+        opacity: calc(var(--peak, 0.45) * var(--ambient-peak));
     }
     50% {
-        transform: translate(var(--mx, 30px), calc(var(--dy, -140px) * 0.55))
+        transform: translate(var(--mx, 26px), calc(var(--dy, -156px) * 0.55))
             scale(1.2);
-        opacity: var(--peak, 0.5);
+        opacity: calc(var(--peak, 0.45) * var(--ambient-peak));
     }
     88% {
-        opacity: calc(var(--peak, 0.5) * 0.35);
+        opacity: calc(var(--peak, 0.45) * var(--ambient-peak) * 0.35);
     }
     100% {
-        transform: translate(var(--dx, 0), var(--dy, -140px)) scale(0.9);
+        transform: translate(var(--dx, 0), var(--dy, -156px)) scale(0.9);
         opacity: 0;
     }
 }
@@ -199,16 +262,36 @@
     }
     20%,
     80% {
-        opacity: var(--peak, 0.28);
+        opacity: calc(var(--peak, 0.2) * var(--ambient-peak));
     }
     50% {
-        transform: translate(var(--mx, 20px), calc(var(--dy, -90px) * 0.6))
+        transform: translate(var(--mx, 26px), calc(var(--dy, -104px) * 0.6))
             scale(1.4);
     }
     100% {
-        transform: translate(var(--dx, 0), var(--dy, -90px)) scale(1.1);
+        transform: translate(var(--dx, 0), var(--dy, -104px)) scale(1.1);
         opacity: 0;
     }
+}
+
+/* ── Tema claro ────────────────────────────────────────────────── */
+/* No escuro a partícula é luz: um ponto aceso sobre o vazio lê como
+   brilho. No claro não existe luz sobre branco — o mesmo ponto vira
+   respingo de tinta, e a tela parece suja. A leitura correta ali é
+   poeira em suspensão: mais apagada, e sem a saturação cheia da marca,
+   que sobre quase-branco grita.
+
+   Antes disto o tema claro mostrava pontos vermelhos e azuis chapados
+   sobre #f2f4f8. Pareciam pixels queimados, não atmosfera. */
+[data-theme="light"] .ambient {
+    --ambient-peak: 0.42;
+    --ambient-dither: 0.09;
+    --ambient-dot-a: color-mix(in srgb, var(--color-brand) 62%, #64748b);
+    --ambient-dot-b: color-mix(in srgb, var(--color-accent) 58%, #64748b);
+}
+
+[data-theme="light"] .ambient__aurora {
+    opacity: 0.7;
 }
 
 /* ── Movimento reduzido ────────────────────────────────────────── */
@@ -224,6 +307,6 @@
     }
 
     .ambient__particle {
-        opacity: 0.25;
+        opacity: calc(0.25 * var(--ambient-peak));
     }
 }

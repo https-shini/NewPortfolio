@@ -5,15 +5,21 @@ import { useAmbientMotion } from "./useAmbientMotion";
 /* ─────────────────────────────────────────────────────────
    AmbientBackground — a atmosfera do site, atrás de tudo
    ─────────────────────────────────────────────────────────
-   Quatro camadas com ritmos deliberadamente diferentes: as
-   manchas de aurora levam minutos, a malha leva um minuto, as
-   partículas levam segundos. É o descompasso entre elas que
-   cria profundidade — na mesma velocidade, o olho leria uma
-   camada só.
+   Duas profundidades, não quatro camadas soltas:
 
-   Nasceu na /links e passou a valer para o portfólio inteiro;
-   extrair foi o que impediu as duas de divergirem na primeira
-   correção feita só de um lado.
+     fundo   aurora — manchas largas, ciclos de minutos
+     frente  malha + partículas — a MESMA grade
+
+   A ideia que sustenta o resto: as partículas não flutuam
+   por cima da malha, elas SÃO pontos da malha que acenderam.
+   Nascem em interseções da grade, andam um número inteiro de
+   células e apagam. Por isso as duas dividem o mesmo passo,
+   a mesma fração de paralaxe e o mesmo plano — o que antes
+   eram dois efeitos de "pontinhos" sobrepostos virou um só.
+
+   É também o que separa isto de um preset: pontos subindo em
+   posições aleatórias existe em qualquer lugar; pontos que
+   respeitam a grade do próprio design, não.
 
    As partículas são criadas no DOM por referência, no mount: o
    render continua puro, sem Math.random, e não há setState
@@ -27,11 +33,11 @@ import { useAmbientMotion } from "./useAmbientMotion";
 
 interface AmbientBackgroundProps {
     /**
-     * Quantas partículas flutuam.
+     * Teto de partículas, antes dos cortes por tela e por aparelho.
      *
-     * A mesma densidade nas duas páginas, de propósito: o portfólio pede
-     * a atmosfera da /links, não uma versão contida dela. Tentei conter e
-     * o resultado foi um fundo que não existia na tela.
+     * Baixou de 26 para 18 quando elas ganharam halo e tamanho: um ponto
+     * que se vê vale por três que não se viam, e cada partícula a menos é
+     * uma camada composta a menos para o navegador manter.
      */
     count?: number;
     /** Marca a variante no CSS, para ajustes pontuais por página. */
@@ -43,8 +49,49 @@ const rand = (min: number, max: number) => min + Math.random() * (max - min);
 /** Sorteio com peso: `p` é a chance de verdadeiro. */
 const chance = (p: number) => Math.random() < p;
 
+/** Inteiro em [min, max]. */
+const randInt = (min: number, max: number) => Math.round(rand(min, max));
+
+/**
+ * Quanto da densidade cheia este aparelho merece.
+ *
+ * Os três sinais são declarativos e estáveis — o navegador responde a
+ * mesma coisa a cada leitura. Já tentei inferir capacidade medindo
+ * quadros e não funciona: o laço dorme quando não há nada a fazer, então
+ * o intervalo entre quadros mede a pausa, não o custo, e a heurística
+ * degradava a atmosfera em máquina de 60fps. Sinal declarado é pior como
+ * estimativa e melhor como decisão.
+ */
+function fracaoDeDensidade(): number {
+    let f = 1;
+
+    const largura = window.innerWidth;
+    /* Tela pequena é quase sempre também a GPU mais fraca, e a área a
+       cobrir é menor de qualquer forma. */
+    if (largura < 700) f *= 0.5;
+    else if (largura < 1100) f *= 0.75;
+
+    /* Quem pediu economia de dados pediu economia de tudo. */
+    const nav = navigator as Navigator & {
+        connection?: { saveData?: boolean };
+        deviceMemory?: number;
+    };
+    if (
+        nav.connection?.saveData ||
+        window.matchMedia("(prefers-reduced-data: reduce)").matches
+    )
+        f *= 0.4;
+
+    /* 4GB ou menos é o território dos aparelhos que engasgam. O valor é
+       arredondado pelo navegador de propósito, então serve de faixa e
+       não de medida — que é exatamente o uso que se faz dele aqui. */
+    if (typeof nav.deviceMemory === "number" && nav.deviceMemory <= 4) f *= 0.6;
+
+    return f;
+}
+
 export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
-    count = 26,
+    count = 18,
     variant = "site",
 }) => {
     const boxRef = useRef<HTMLDivElement>(null);
@@ -56,30 +103,62 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
             return;
 
-        /* Menos partículas onde a tela é pequena: quase sempre é também
-           onde a GPU é mais fraca, e a área a cobrir é menor. */
-        const largura = window.innerWidth;
-        const porTela = largura < 700 ? 0.5 : largura < 1100 ? 0.75 : 1;
-        const total = Math.max(4, Math.round(count * porTela));
+        const total = Math.max(4, Math.round(count * fracaoDeDensidade()));
+
+        /* O passo da grade vem do CSS, não de um número repetido aqui: é a
+           mesma medida que desenha a malha, e duplicá-la seria garantir que
+           um dia as duas divergissem. */
+        const passo =
+            parseFloat(
+                getComputedStyle(box).getPropertyValue("--ambient-step"),
+            ) || 26;
+
+        /* A malha desenha o ponto no centro de cada célula, então as
+           interseções ficam em meio-passo + n·passo. */
+        const naGrade = (n: number) => passo / 2 + n * passo;
+        const colunas = Math.floor(window.innerWidth / passo);
+        const linhas = Math.floor(window.innerHeight / passo);
+
+        /* Amostragem estratificada: uma partícula por faixa vertical, com
+           sorteio dentro da faixa. Sorteio uniforme puro se agrupa — a
+           versão anterior deixava metade da tela vazia e amontoava o resto
+           num canto, e isso lê como descuido, não como acaso. */
+        const faixa = colunas / total;
 
         const frag = document.createDocumentFragment();
 
         for (let i = 0; i < total; i++) {
             /* Uma em cada cinco é um orbe: maior, mais lento, mais
                apagado. São eles que dão a camada de fundo — sem essa
-               diferença de porte, 26 pontos iguais leem como ruído. */
+               diferença de porte, pontos iguais leem como ruído. */
             const orbe = chance(0.2);
-            const size = orbe ? rand(10, 22) : rand(2, 5);
+            const size = orbe ? rand(12, 20) : rand(3, 5);
 
-            /* A direção vertical também varia. Tudo subindo lê como
-               fumaça; uma parte descendo lê como poeira em suspensão. */
+            const col = Math.min(
+                colunas - 1,
+                Math.max(0, Math.round(i * faixa + rand(0, faixa))),
+            );
+            /* Concentra onde a máscara ainda deixa a malha visível: é lá
+               que a partícula lê como "ponto da grade aceso" em vez de
+               ponto solto. */
+            const lin = randInt(0, Math.round(linhas * 0.82));
+
+            /* Sobe ou desce um número INTEIRO de células, então parte de
+               uma interseção e chega em outra. */
             const sobe = chance(0.75);
-            const dy = sobe ? rand(-220, -90) : rand(70, 170);
-
-            /* O desvio do meio do percurso cai para o lado oposto do
-               final, o que curva a trajetória em vez de inclinar a reta. */
-            const dx = rand(-70, 70);
+            const celulas = orbe ? randInt(3, 6) : randInt(4, 9);
+            const dy = (sobe ? -1 : 1) * celulas * passo;
+            /* O desvio lateral também fecha na grade; o do meio do
+               percurso cai para o lado oposto, o que curva a trajetória
+               em vez de inclinar a reta. */
+            const dx = randInt(-2, 2) * passo;
             const mx = -dx * rand(0.4, 0.9);
+
+            /* Quatro para uma: a cor de apoio manda, o destaque pontua.
+               Meio a meio entre duas cortes fortes lê como confete. */
+            const cor = chance(0.22)
+                ? "var(--ambient-dot-b)"
+                : "var(--ambient-dot-a)";
 
             const p = document.createElement("span");
             p.className = orbe
@@ -87,8 +166,8 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
                 : "ambient__particle";
 
             p.style.cssText = [
-                `left:${rand(0, 100)}%`,
-                `top:${rand(0, 100)}%`,
+                `left:${naGrade(col) - size / 2}px`,
+                `top:${naGrade(lin) - size / 2}px`,
                 `width:${size}px`,
                 `height:${size}px`,
                 `--dx:${dx}px`,
@@ -96,19 +175,37 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
                 `--dy:${dy}px`,
                 `--dur:${orbe ? rand(38, 62) : rand(16, 32)}s`,
                 `--delay:${rand(0, 14)}s`,
-                `--peak:${orbe ? rand(0.16, 0.3) : rand(0.4, 0.68)}`,
-                /* Sem `filter: blur()`. A maciez vem das paradas do
-                   gradiente, calculadas na pintura, em vez de um filtro
-                   reaplicado a cada quadro enquanto a partícula se move. */
-                `background:radial-gradient(circle,${
-                    chance(0.5) ? "var(--color-accent)" : "var(--color-brand)"
-                } 0%,transparent ${orbe ? 55 : 68}%)`,
+                `--peak:${orbe ? rand(0.14, 0.24) : rand(0.34, 0.55)}`,
+                /* O halo é `box-shadow`, e a escolha da propriedade é a
+                   parte que importa.
+
+                   `filter: blur()` está fora: foi ele que custou 83ms por
+                   quadro na aurora, porque é reaplicado enquanto o
+                   elemento se move. Paradas de gradiente também não
+                   resolvem — num ponto de 4px a queda inteira cabe em um
+                   pixel e o resultado continua sendo um disco chapado,
+                   que lê como pixel queimado e não como luz.
+
+                   `box-shadow` é rasterizado UMA vez dentro da camada da
+                   partícula e depois viaja junto com o `transform`. Custo
+                   por quadro: zero. E o halo tem três vezes o diâmetro do
+                   núcleo, que é a proporção em que o olho lê brilho. */
+                orbe
+                    ? `background:radial-gradient(circle,color-mix(in srgb,${cor} 52%,transparent) 0%,color-mix(in srgb,${cor} 20%,transparent) 45%,transparent 72%)`
+                    : `background:${cor}`,
+                orbe
+                    ? ""
+                    : `box-shadow:0 0 ${(size * 2.4).toFixed(1)}px ${(
+                          size * 0.4
+                      ).toFixed(
+                          1,
+                      )}px color-mix(in srgb,${cor} 42%,transparent)`,
             ].join(";");
 
             frag.appendChild(p);
         }
 
-        /* Um append só: 26 inserções separadas provocam 26 recálculos. */
+        /* Um append só: N inserções separadas provocam N recálculos. */
         box.appendChild(frag);
 
         return () => {
@@ -131,6 +228,12 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
         >
             <div className="ambient__aurora" />
             <div className="ambient__grid" />
+            {/* O véu fica ENTRE a malha e as partículas de propósito: ele
+                assenta a aurora e a grade, e deixa os pontos acesos por
+                cima, nítidos. Envolver os dois num mesmo elemento os tiraria
+                do `position: fixed` e empurraria o véu para cima deles — o
+                "mesmo plano" das duas camadas é a fração de paralaxe que
+                compartilham, não a árvore do DOM. */}
             <div className="ambient__overlay" />
             <div ref={boxRef} className="ambient__particles" />
         </div>

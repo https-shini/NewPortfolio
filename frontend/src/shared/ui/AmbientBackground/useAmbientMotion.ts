@@ -26,11 +26,19 @@ import { useEffect } from "react";
    quieto significam zero trabalho por quadro.
 ───────────────────────────────────────────────────────── */
 
-/** Fração da rolagem que cada camada acompanha. */
+/**
+ * Fração da rolagem que cada PLANO acompanha.
+ *
+ * Dois planos, não três: a malha e as partículas são a mesma grade — os
+ * pontos acesos nascem em interseções dela — então precisam andar juntos.
+ * Com frações diferentes o alinhamento durava até a primeira rolagem, e
+ * depois virava dois efeitos de pontinhos deslizando um sobre o outro,
+ * que é exatamente o que este desenho existe para não ser.
+ */
 const PARALAXE = {
     aurora: 0.06,
-    grid: 0.12,
-    particulas: 0.2,
+    grid: 0.16,
+    particulas: 0.16,
 } as const;
 
 /** Alcance do empurrão, em pixels. */

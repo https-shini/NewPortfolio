@@ -108,7 +108,12 @@ export const LinksPage: React.FC = () => {
             </a>
 
             {/* ── Fundos ambientes ── */}
-            <AmbientBackground variant="links" count={26} />
+            {/* Sem `count` próprio: o 26 daqui era da época em que a
+                partícula era um disco de 3px que ninguém enxergava, e a
+                resposta para "não aparece" tinha sido colocar mais. Agora
+                que cada uma tem halo, 26 numa coluna estreita vira ruído —
+                e a densidade padrão já se ajusta à tela e ao aparelho. */}
+            <AmbientBackground variant="links" />
 
             {/* ── Controles ── */}
             <div className="linktree__controls">
