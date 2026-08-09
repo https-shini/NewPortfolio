@@ -1,8 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "apps/web/dist",
   "rewrites": [
-    { "source": "/feed.xml", "destination": "/api/feed" },
-
+    {
+      "source": "/feed.xml",
+      "destination": "/api/feed"
+    },
     {
       "source": "/links",
       "has": [
@@ -47,13 +52,33 @@
       ],
       "destination": "/api/crawler?path=/downloads"
     },
-
-    { "source": "/links", "destination": "/index.html" },
-    { "source": "/links/", "destination": "/index.html" },
-    { "source": "/release-notes", "destination": "/index.html" },
-    { "source": "/release-notes/", "destination": "/index.html" },
-    { "source": "/release-notes/(.*)", "destination": "/index.html" },
-    { "source": "/downloads", "destination": "/index.html" },
-    { "source": "/downloads/", "destination": "/index.html" }
+    {
+      "source": "/links",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/links/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/release-notes",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/release-notes/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/release-notes/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/downloads",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/downloads/",
+      "destination": "/index.html"
+    }
   ]
 }

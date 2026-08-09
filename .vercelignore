@@ -1,5 +1,5 @@
 # Testes das funções serverless não vão para o deploy.
 # O prefixo `_` já os tira do roteamento, mas eles importam `vitest`,
-# que só existe em frontend/node_modules — mantê-los fora do envio
+# que só existe em node_modules — mantê-los fora do envio
 # elimina qualquer chance de o builder tentar compilá-los.
 api/*.test.ts

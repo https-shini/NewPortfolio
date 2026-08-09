@@ -1,5 +1,5 @@
 /**
- * Gera o QR code do rodapé — `frontend/public/qr-downloads.svg`.
+ * Gera o QR code do rodapé — `apps/web/public/qr-downloads.svg`.
  *
  *   node scripts/qr.mjs            escreve o arquivo
  *   node scripts/qr.mjs --check    confere o arquivo commitado
@@ -48,7 +48,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SAIDA = path.join(RAIZ, "frontend/public/qr-downloads.svg");
+const SAIDA = path.join(RAIZ, "apps/web/public/qr-downloads.svg");
 
 /* A url é montada aqui a partir das mesmas peças do site. Repetir a
    string seria criar uma segunda fonte para o mesmo endereço. */

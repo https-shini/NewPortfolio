@@ -71,7 +71,7 @@ export async function startPreview({ timeoutMs = 60_000 } = {}) {
     }
 
     const url = "http://localhost:4173";
-    const child = spawn("npm", ["run", "preview", "--prefix", "frontend"], {
+    const child = spawn("npm", ["run", "preview", "--prefix", "apps/web"], {
         stdio: "ignore",
         detached: true,
     });

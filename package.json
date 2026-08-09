@@ -11,20 +11,18 @@
     "npm": ">=9.0.0"
   },
   "scripts": {
-    "dev": "npm run dev --prefix frontend",
-    "build": "npm run build --prefix frontend",
-    "preview": "npm run preview --prefix frontend",
-    "install:all": "npm install && npm install --prefix frontend",
-    "postinstall": "npm install --prefix frontend",
-    "clean": "rm -rf frontend/node_modules frontend/dist",
-    "clean:dist": "rm -rf frontend/dist",
-    "type-check": "npm run type-check --prefix frontend",
-    "lint": "npm run lint --prefix frontend",
-    "lint:fix": "npm run lint:fix --prefix frontend",
-    "format": "npm run format --prefix frontend",
-    "format:check": "npm run format:check --prefix frontend",
-    "test": "npm run test --prefix frontend",
-    "test:watch": "npm run test:watch --prefix frontend",
+    "dev": "npm run dev --workspace apps/web",
+    "build": "npm run build --workspace apps/web",
+    "preview": "npm run preview --workspace apps/web",
+    "clean": "rm -rf node_modules apps/*/node_modules apps/web/dist",
+    "clean:dist": "rm -rf apps/web/dist",
+    "type-check": "npm run type-check --workspace apps/web",
+    "lint": "npm run lint --workspace apps/web",
+    "lint:fix": "npm run lint:fix --workspace apps/web",
+    "format": "npm run format --workspace apps/web",
+    "format:check": "npm run format:check --workspace apps/web",
+    "test": "npm run test --workspace apps/web",
+    "test:watch": "npm run test:watch --workspace apps/web",
     "audit:a11y": "node scripts/a11y.mjs",
     "audit:overflow": "node scripts/overflow.mjs",
     "audit:release-notes": "node scripts/e2e-release-notes.mjs",
@@ -55,5 +53,9 @@
   },
   "dependencies": {
     "@vercel/og": "^0.11.1"
-  }
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }

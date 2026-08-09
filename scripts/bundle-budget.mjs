@@ -18,7 +18,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { gzipSync } from "node:zlib";
 import { join } from "node:path";
 
-const DIST = "frontend/dist/assets";
+const DIST = "apps/web/dist/assets";
 
 const TETOS = [
     { nome: "JS total", limite: 125, alvo: (f) => f.tipo === "js" },

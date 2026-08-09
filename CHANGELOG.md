@@ -5,7 +5,7 @@ Todas as mudanças relevantes deste projeto.
 O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)
 e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 
-> Gerado de `frontend/src/shared/config/releaseNotes.ts` por
+> Gerado de `apps/web/src/shared/config/releaseNotes.ts` por
 > `scripts/changelog.mjs`. Não editar à mão — as alterações se perdem
 > na próxima geração, e há teste conferindo a sincronia.
 

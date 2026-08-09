@@ -27,7 +27,7 @@ const raiz = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DESTINO = resolve(raiz, "CHANGELOG.md");
 
 const { RELEASE_NOTES, CHANGE_TYPES } = await import(
-    resolve(raiz, "frontend/src/shared/config/releaseNotes.ts")
+    resolve(raiz, "apps/web/src/shared/config/releaseNotes.ts")
 );
 
 const TITULO_CATEGORIA = {
@@ -53,7 +53,7 @@ const linhas = [
     "O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/)",
     "e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).",
     "",
-    "> Gerado de `frontend/src/shared/config/releaseNotes.ts` por",
+    "> Gerado de `apps/web/src/shared/config/releaseNotes.ts` por",
     "> `scripts/changelog.mjs`. Não editar à mão — as alterações se perdem",
     "> na próxima geração, e há teste conferindo a sincronia.",
     "",

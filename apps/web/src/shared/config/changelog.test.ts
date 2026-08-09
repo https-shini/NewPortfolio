@@ -13,7 +13,7 @@ import { resolve } from "node:path";
  */
 describe("CHANGELOG.md", () => {
     it("está em dia com RELEASE_NOTES", () => {
-        const raiz = resolve(process.cwd(), "..");
+        const raiz = resolve(process.cwd(), "../..");
         try {
             execFileSync(
                 process.execPath,

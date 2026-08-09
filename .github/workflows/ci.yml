@@ -14,10 +14,6 @@ jobs:
   quality:
     name: Lint · Type-check · Test · Build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,16 +23,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: package-lock.json
 
-      # As funções em api/ resolvem as dependências pela raiz, e a suíte do
-      # frontend inclui os testes delas. Sem este passo, `@vercel/og` não
-      # existe para o vitest e o arquivo inteiro falha a carregar — que foi
-      # exatamente o que quebrou este job.
-      - name: Install root dependencies
-        working-directory: .
-        run: npm ci --ignore-scripts
-
+      # Um `npm ci` só: os workspaces instalam a raiz e apps/web juntos.
+      # As funções em api/ resolvem dependências pela raiz e a suíte inclui
+      # os testes delas, então `@vercel/og` precisa estar presente.
       - name: Install dependencies
         run: npm ci
 
@@ -56,10 +47,6 @@ jobs:
       # url deixaria o símbolo apontando para o endereço antigo em silêncio
       # — e um QR errado continua parecendo um QR.
       - name: QR do rodapé em dia
-        # O job inteiro roda em frontend/ por padrão, e `qr:check` é script
-        # da RAIZ — sem isto o passo morre com "Missing script", que foi o
-        # que aconteceu. Mesmo motivo do passo de dependências da raiz.
-        working-directory: .
         run: npm run qr:check
 
       - name: Build
@@ -69,7 +56,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: frontend/dist
+          path: apps/web/dist
           retention-days: 7
 
   # As auditorias consomem o dist/ que o job acima publicou, em vez de
@@ -91,10 +78,9 @@ jobs:
           cache: npm
 
       - name: Install root dependencies
-        # Só a raiz: os arranjos precisam de playwright e axe-core, não do
-        # frontend inteiro. O postinstall da raiz instalaria frontend/
-        # junto, e aqui isso é minuto gasto à toa.
-        run: npm install --ignore-scripts --no-audit --no-fund
+        # `--workspaces=false` mantém o job enxuto: os arranjos precisam
+        # de playwright e axe-core, não do app inteiro.
+        run: npm install --ignore-scripts --no-audit --no-fund --workspaces=false
 
       - name: Cache Playwright browsers
         id: pw-cache
@@ -115,13 +101,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: dist
-          path: frontend/dist
+          path: apps/web/dist
 
       - name: Serve the build
-        # O vite preview exige o frontend instalado; um servidor estático
+        # O vite preview exige o app instalado; um servidor estático
         # entrega o mesmo dist/ sem esse custo. O SPA precisa que toda rota
         # desconhecida caia no index.html.
-        run: npx --yes serve@14 -s frontend/dist -l 4173 &
+        run: npx --yes serve@14 -s apps/web/dist -l 4173 &
 
       - name: Wait for the server
         run: npx --yes wait-on@7 http://localhost:4173 --timeout 60000

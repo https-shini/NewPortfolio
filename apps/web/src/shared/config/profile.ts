@@ -56,7 +56,7 @@ export const PROFILE = {
      * Sobrescrevível por VITE_SITE_URL para ambientes de preview.
      */
     siteUrl: import.meta.env.VITE_SITE_URL || "https://gcruz.dev.br",
-    /** Currículo em PDF bilíngue servido pelo próprio site (frontend/public/docs). */
+    /** Currículo em PDF bilíngue servido pelo próprio site (apps/web/public/docs). */
     cv: {
         pt: "/docs/Curriculo_PTBR.pdf",
         en: "/docs/Curriculo_EN.pdf",

@@ -17,7 +17,7 @@ export const THEME_KEY = "portfolio-theme";
 export const LANG_KEY = "portfolio-lang";
 
 /**
- * Currículo em PDF bilíngue — servido de frontend/public/docs.
+ * Currículo em PDF bilíngue — servido de apps/web/public/docs.
  * Fonte única em profile.cv; getCvUrl resolve pelo idioma corrente.
  * Usado em Hero e Footer.
  */

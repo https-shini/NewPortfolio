@@ -33,7 +33,7 @@ const SERVIDOR: Record<string, string> = {
         "executam JavaScript, então a imagem precisa sair pronta do servidor",
 };
 
-/* O vitest roda com a raiz em frontend/. */
+/* O vitest roda com a raiz em apps/web/. */
 function lerPackageJson(caminho: string) {
     return JSON.parse(
         readFileSync(resolve(process.cwd(), caminho), "utf8"),
@@ -49,7 +49,7 @@ describe("dependências de runtime", () => {
     });
 
     it("a raiz só declara o que roda no servidor, e cada uma justificada", () => {
-        const { dependencies } = lerPackageJson("../package.json");
+        const { dependencies } = lerPackageJson("../../package.json");
         expect(Object.keys(dependencies ?? {}).sort()).toEqual(
             Object.keys(SERVIDOR).sort(),
         );

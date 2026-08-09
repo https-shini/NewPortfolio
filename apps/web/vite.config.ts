@@ -123,9 +123,9 @@ function sitemapPlugin() {
             /* Data de cada rota: o commit mais recente entre os caminhos que
                a compõem. Widgets entram na home porque é lá que aparecem. */
             const homeDate = lastModified([
-                "frontend/src/pages/Home",
-                "frontend/src/widgets",
-                "frontend/src/shared/lib/translations.ts",
+                "apps/web/src/pages/Home",
+                "apps/web/src/widgets",
+                "apps/web/src/shared/lib/translations.ts",
             ]);
 
             const entries: SitemapEntry[] = [
@@ -138,8 +138,8 @@ function sitemapPlugin() {
                 {
                     loc: `${SITE_URL}/links`,
                     lastmod: lastModified([
-                        "frontend/src/pages/Links",
-                        "frontend/src/shared/config/links.ts",
+                        "apps/web/src/pages/Links",
+                        "apps/web/src/shared/config/links.ts",
                     ]),
                     changefreq: "monthly",
                     priority: "0.9",
@@ -147,8 +147,8 @@ function sitemapPlugin() {
                 {
                     loc: `${SITE_URL}/release-notes`,
                     lastmod: lastModified([
-                        "frontend/src/pages/ReleaseNotes",
-                        "frontend/src/shared/config/releaseNotes.ts",
+                        "apps/web/src/pages/ReleaseNotes",
+                        "apps/web/src/shared/config/releaseNotes.ts",
                     ]),
                     changefreq: "weekly",
                     priority: "0.7",
@@ -182,7 +182,7 @@ function sitemapPlugin() {
                 entries.push({
                     loc: `${SITE_URL}${releaseNotesPagePath(page)}`,
                     lastmod: lastModified([
-                        "frontend/src/shared/config/releaseNotes.ts",
+                        "apps/web/src/shared/config/releaseNotes.ts",
                     ]),
                     changefreq: "weekly",
                     priority: "0.5",
@@ -270,7 +270,7 @@ export default defineConfig({
         strictPort: true,
         /* A raiz do repositório contém a pasta api/, cujo conversor de
            markdown entra na suíte de testes (ver `test.include`). */
-        fs: { allow: [".."] },
+        fs: { allow: ["../.."] },
     },
 
     preview: {
@@ -333,6 +333,6 @@ export default defineConfig({
         /* A pasta api/ mora na raiz do repositório (é de lá que a Vercel
            lê as funções), mas o conversor de markdown é código de
            segurança e precisa da mesma suíte. */
-        include: ["src/**/*.test.{ts,tsx}", "../api/**/*.test.ts"],
+        include: ["src/**/*.test.{ts,tsx}", "../../api/**/*.test.ts"],
     },
 });
