@@ -34,10 +34,19 @@
 /* ── Aurora ────────────────────────────────────────────────────── */
 /* Manchas grandes e difusas que atravessam a tela em ciclos de
    minutos. Sozinhas não se percebem; o que fazem é impedir que o fundo
-   pareça cor chapada quando nenhuma partícula está por perto. */
+   pareça cor chapada quando nenhuma partícula está por perto.
+
+   Sem `filter: blur()`, e isso não é detalhe: medido com a CPU 4x mais
+   lenta, um blur de 70px nestas duas manchas custava 83ms POR QUADRO —
+   derrubava a página de 60 para 9 quadros por segundo sozinho. O filtro
+   é reaplicado a cada quadro enquanto a mancha se move, sobre uma área
+   de 46vw.
+
+   A maciez agora vem da própria parada do gradiente, que é calculada na
+   pintura e não a cada quadro. Visualmente é quase o mesmo; em custo,
+   é a diferença entre travar e não travar. */
 .ambient__aurora {
-    filter: blur(70px);
-    opacity: 0.5;
+    opacity: 0.85;
 }
 
 .ambient__aurora::before,
@@ -53,10 +62,13 @@
     height: 46vw;
     top: -12vw;
     left: -8vw;
+    /* Três paradas em vez de duas: a queda fica gradual o suficiente
+       para dispensar o desfoque. */
     background: radial-gradient(
         circle,
-        color-mix(in srgb, var(--color-brand) 22%, transparent),
-        transparent 70%
+        color-mix(in srgb, var(--color-brand) 16%, transparent) 0%,
+        color-mix(in srgb, var(--color-brand) 7%, transparent) 40%,
+        transparent 72%
     );
     animation: ambient-aurora-a 96s ease-in-out infinite;
 }
@@ -68,8 +80,9 @@
     right: -6vw;
     background: radial-gradient(
         circle,
-        color-mix(in srgb, var(--color-accent) 20%, transparent),
-        transparent 70%
+        color-mix(in srgb, var(--color-accent) 15%, transparent) 0%,
+        color-mix(in srgb, var(--color-accent) 6%, transparent) 40%,
+        transparent 72%
     );
     animation: ambient-aurora-b 124s ease-in-out infinite;
 }
@@ -97,6 +110,15 @@
 }
 
 /* ── Malha de pontos ───────────────────────────────────────────── */
+/* Estática, e isso foi medido. Tentei animá-la de duas formas e as duas
+   custaram caro: por `background-position`, que não é componível e
+   repinta a janela inteira a cada quadro; e por `transform` num pseudo
+   maior que a tela, que criou uma camada enorme para rasterizar. A
+   segunda saiu pior que a primeira — 50ms contra 33ms por quadro.
+
+   A malha ganha movimento de outro jeito, e de graça: a paralaxe já a
+   desloca conforme a rolagem. Movimento amarrado ao gesto de quem lê
+   vale mais que movimento autônomo, e aqui ainda por cima é o barato. */
 .ambient__grid {
     background-image: radial-gradient(var(--dots-color) 1px, transparent 1px);
     background-size: 26px 26px;
@@ -112,19 +134,6 @@
         #000 40%,
         transparent 100%
     );
-    /* Deriva de um passo inteiro da malha em 60s: lenta o bastante para
-       não ser lida como movimento, contínua o bastante para o fundo
-       nunca ficar exatamente igual a si mesmo. */
-    animation: ambient-grid-drift 60s linear infinite;
-}
-
-@keyframes ambient-grid-drift {
-    from {
-        background-position: 0 0;
-    }
-    to {
-        background-position: 26px 26px;
-    }
 }
 
 /* ── Véu de gradiente ──────────────────────────────────────────── */

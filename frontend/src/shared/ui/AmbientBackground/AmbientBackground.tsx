@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import "./AmbientBackground.css";
+import { useAmbientMotion } from "./useAmbientMotion";
 
 /* ─────────────────────────────────────────────────────────
    AmbientBackground — a atmosfera do site, atrás de tudo
@@ -47,6 +48,7 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
     variant = "site",
 }) => {
     const boxRef = useRef<HTMLDivElement>(null);
+    const raizRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const box = boxRef.current;
@@ -54,9 +56,15 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
             return;
 
+        /* Menos partículas onde a tela é pequena: quase sempre é também
+           onde a GPU é mais fraca, e a área a cobrir é menor. */
+        const largura = window.innerWidth;
+        const porTela = largura < 700 ? 0.5 : largura < 1100 ? 0.75 : 1;
+        const total = Math.max(4, Math.round(count * porTela));
+
         const frag = document.createDocumentFragment();
 
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < total; i++) {
             /* Uma em cada cinco é um orbe: maior, mais lento, mais
                apagado. São eles que dão a camada de fundo — sem essa
                diferença de porte, 26 pontos iguais leem como ruído. */
@@ -89,10 +97,12 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
                 `--dur:${orbe ? rand(38, 62) : rand(16, 32)}s`,
                 `--delay:${rand(0, 14)}s`,
                 `--peak:${orbe ? rand(0.16, 0.3) : rand(0.4, 0.68)}`,
-                `filter:blur(${orbe ? rand(3, 7) : rand(0, 1.2)}px)`,
+                /* Sem `filter: blur()`. A maciez vem das paradas do
+                   gradiente, calculadas na pintura, em vez de um filtro
+                   reaplicado a cada quadro enquanto a partícula se move. */
                 `background:radial-gradient(circle,${
                     chance(0.5) ? "var(--color-accent)" : "var(--color-brand)"
-                },transparent 70%)`,
+                } 0%,transparent ${orbe ? 55 : 68}%)`,
             ].join(";");
 
             frag.appendChild(p);
@@ -106,8 +116,19 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
         };
     }, [count]);
 
+    /* Declarado DEPOIS do efeito acima de propósito: efeitos rodam na
+       ordem em que são declarados, então quando este roda as partículas
+       já existem e podem ser medidas. Sinalizar isso por estado seria um
+       setState dentro de efeito — uma renderização a mais para informar
+       o que a ordem já garante. */
+    useAmbientMotion(raizRef, count);
+
     return (
-        <div className={`ambient ambient--${variant}`} aria-hidden="true">
+        <div
+            ref={raizRef}
+            className={`ambient ambient--${variant}`}
+            aria-hidden="true"
+        >
             <div className="ambient__aurora" />
             <div className="ambient__grid" />
             <div className="ambient__overlay" />
