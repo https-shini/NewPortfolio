@@ -126,6 +126,16 @@ jobs:
           BASE_URL: http://localhost:4173
         run: npm run audit:overflow
 
+      - name: Camadas da atmosfera
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:layers
+
+      - name: Identidade visual das superfícies
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:identity
+
       - name: Release notes end-to-end
         env:
           BASE_URL: http://localhost:4173

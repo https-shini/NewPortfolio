@@ -138,6 +138,58 @@ de qual slide está ativo. A tolerância de meio pixel está uma ordem de
 grandeza acima do maior ruído medido e uma ordem abaixo do que um
 breakpoint trocado causaria.
 
+## `layers.mjs`
+
+Três invariantes sobre a atmosfera, sem linha de base.
+
+```bash
+node scripts/layers.mjs      # ou npm run audit:layers
+```
+
+1. **Ordem de pintura** — `.ambient` tem z-index negativo. Com z-index 0 ela
+   era um elemento posicionado, e elemento posicionado pinta depois de bloco
+   em fluxo: toda seção que não declarasse `position` afundava. Eram duas,
+   `.about` e `.work`; as outras seis se salvavam por acidente. O invariante
+   cobra o z-index e não o posicionamento de cada seção, porque negativo
+   resolve para qualquer elemento, presente ou futuro.
+
+2. **Teto de vidro** — no máximo 6 elementos com `backdrop-filter`
+   efetivamente pintando, área somada abaixo de uma janela. Seis é o que
+   existe hoje na `/links`, que é o desenho de referência do conceito. Não é
+   meta, é limite: um sétimo elemento desfocado é decoração. Conta só o que
+   pinta — o `.mobile-nav` está `visibility: hidden` e inflava a medição em
+   1,33 Mpx sem custar nada.
+
+3. **Cobertura de partículas** — seis posições de rolagem por rota, e a
+   contagem nunca cai abaixo de 60% do valor no topo. É a asserção que teria
+   pegado, em qualquer ponto do histórico, o defeito de a atmosfera sair da
+   janela conforme a página descia.
+
+## `identity.mjs`
+
+A trava que transforma "não mexa nisso" em asserção.
+
+```bash
+node scripts/identity.mjs             # confere
+node scripts/identity.mjs --baseline  # regrava a base
+```
+
+Lê os valores **computados** de 66 superfícies em quatro rotas e dois temas —
+fundo, `backdrop-filter`, opacidade, as quatro bordas, os quatro raios, os
+quatro espaçamentos, cor e tipo — e falha nomeando a propriedade que
+divergiu.
+
+Ler o computado, e não o CSS escrito, é o ponto: o defeito que ela existe
+para pegar é o de cascata, em que ninguém editou a regra do cartão e mesmo
+assim a cor dele mudou.
+
+`box-shadow` é a única propriedade fora da comparação, e isso é deliberado.
+O tratamento de vidro dos componentes é somado por sombra; com ela de fora,
+a base prova que todo o resto ficou parado.
+
+Se uma mudança de identidade for intencional, regrave a base **no mesmo
+commit** e explique no corpo dele.
+
 ## `perf.mjs`
 
 Carga e rolagem nas três rotas, com a CPU normal e quatro vezes mais
