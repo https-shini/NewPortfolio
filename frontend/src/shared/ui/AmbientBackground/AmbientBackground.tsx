@@ -55,6 +55,22 @@ const chance = (p: number) => Math.random() < p;
 const randInt = (min: number, max: number) => Math.round(rand(min, max));
 
 /**
+ * Largura da banda em que as duas cores se misturam, em unidades do lado
+ * (ver `lado()`). 0,18 corresponde a cerca de um décimo da tela medido na
+ * perpendicular ao corte: largo o bastante para a fronteira respirar,
+ * estreito o bastante para as metades continuarem lendo como metades.
+ */
+const BANDA = 0.18;
+
+/**
+ * Distância mínima e máxima do corte para o CENTRO de um disco de bokeh.
+ * Eles têm entre 21% e 31% da maior dimensão, então um disco centrado em
+ * cima da linha derrama metade da sua massa no lado errado.
+ */
+const BOKEH_PERTO = 0.16;
+const BOKEH_LONGE = 0.62;
+
+/**
  * Quanto da densidade cheia este aparelho merece.
  *
  * Os três sinais são declarativos e estáveis — o navegador responde a
@@ -128,6 +144,27 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
             const L = caixa.width || window.innerWidth;
             const H = caixa.height || window.innerHeight;
 
+            /* ── O corte diagonal ─────────────────────────────────────
+               A composição tem um eixo só: a reta que liga o canto
+               inferior esquerdo ao canto superior direito da JANELA.
+               Crimson na metade de cima à esquerda, índigo na de baixo à
+               direita — o mesmo eixo que o véu desenha em CSS e ao longo
+               do qual a aurora se move.
+
+               Em coordenadas normalizadas essa reta é `x/L + y/A = 1`, e o
+               LADO de um ponto é o quanto ele sobra disso: negativo na
+               metade crimson, positivo na índigo, zero em cima do corte.
+               A conta é adimensional, então vale igual em 390×844 e em
+               1440×900 sem ângulo nenhum escrito aqui.
+
+               A janela, e não a caixa: a caixa tem 130px de sangria em
+               cada extremo para a deriva, e usar a diagonal dela daria a
+               esta camada uma reta ligeiramente diferente da das outras. */
+            const sangria = Math.max(0, (H - (window.innerHeight || H)) / 2);
+            const alturaVista = Math.max(1, H - 2 * sangria);
+            const lado = (x: number, y: number) =>
+                x / L + (y - sangria) / alturaVista - 1;
+
             /* A malha desenha o ponto no centro de cada célula, então as
                interseções ficam em meio-passo + n·passo. */
             const naGrade = (n: number) => passo / 2 + n * passo;
@@ -184,13 +221,24 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
                 const dx = randInt(-2, 2) * passo;
                 const mx = -dx * rand(0.4, 0.9);
 
-                /* Três para dois. Era quatro para uma, pela ideia de que
-                   meio a meio entre duas cores fortes leria como confete —
-                   o que é verdade, mas o remédio tinha ficado forte demais:
-                   somado à malha, ao véu e à aurora, todos puxando para o
-                   mesmo lado, o conjunto pendia para o vermelho. Aqui a
-                   marca ainda lidera, só que por pouco. */
-                const cor = chance(0.42)
+                /* A cor sai da POSIÇÃO, não de um sorteio. Um sorteio
+                   espalha as duas cores por igual sobre a tela inteira, e
+                   com isso dissolve qualquer separação que as outras
+                   camadas tentem estabelecer — era o que acontecia com o
+                   `chance(0.42)` que estava aqui.
+
+                   Mas o corte não pode ser duro: sobre elementos discretos
+                   ele desenharia uma LINHA de pontos, que é o oposto de
+                   atmosfera. Dentro de uma banda estreita em volta da
+                   diagonal as duas cores se entrelaçam em proporção à
+                   distância; fora dela a cor é determinística.
+
+                   Como a regra é antissimétrica em torno do centro e a
+                   semeadura é estratificada uniforme, o total continua
+                   saindo meio a meio sem ninguém precisar forçar. */
+                const s = lado(naGrade(col), naGrade(lin));
+                const pIndigo = Math.min(1, Math.max(0, 0.5 + s / (2 * BANDA)));
+                const cor = chance(pIndigo)
                     ? "var(--ambient-dot-b)"
                     : "var(--ambient-dot-a)";
 
@@ -258,19 +306,52 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
                 );
                 const maior = Math.max(L, H);
                 const fb = document.createDocumentFragment();
+
+                /* Lados alternados, e o ímpar sorteado: com 5 discos isso
+                   dá 3/2 ora para um lado ora para o outro, em vez de
+                   sempre para o mesmo. */
+                const sobra = chance(0.5);
+
                 for (let i = 0; i < quantos; i++) {
-                    const d = maior * rand(0.21, 0.31);
-                    const cor = chance(0.5)
+                    const w = maior * rand(0.21, 0.31);
+                    const h = w * rand(0.6, 0.95);
+
+                    /* A ORDEM é o que importa aqui: primeiro o lado,
+                       depois a posição dentro dele. Sorteando a cor
+                       depois da posição — o que este bloco fazia — metade
+                       da massa azul caía sobre a metade vermelha, e um
+                       disco de bokeh tem 21 a 31% da tela.
+
+                       `s` é a distância ao corte, com sinal; `t` é o
+                       quanto o disco anda AO LONGO dele. O alcance de `t`
+                       sai da própria distância — com |s| + |t| ≤ 1,2 o
+                       centro fica dentro de [−10%, 110%] nos dois eixos.
+                       É um limite em vez de um clamp de propósito: clamp
+                       depois do sorteio empilharia discos na borda e, pior,
+                       poderia empurrar um deles para o lado errado. */
+                    const paraIndigo = i < quantos - 1 ? i % 2 === 1 : sobra;
+                    const s =
+                        (paraIndigo ? 1 : -1) * rand(BOKEH_PERTO, BOKEH_LONGE);
+                    const t = rand(-1, 1) * (1.2 - Math.abs(s));
+
+                    /* Centro, e daí o canto. O código anterior sorteava o
+                       CANTO: como o disco tem largura de até 31% da tela,
+                       o centro saía deslocado por até 15% e a distribuição
+                       ficava enviesada sem ninguém ter pedido. */
+                    const cx = ((1 + s + t) / 2) * L;
+                    const cy = sangria + ((1 + s - t) / 2) * alturaVista;
+
+                    const cor = paraIndigo
                         ? "var(--ambient-dot-b)"
                         : "var(--ambient-dot-a)";
                     const b = document.createElement("b");
                     b.style.cssText = [
-                        `left:${rand(-12, 84)}%`,
-                        `top:${rand(-8, 86)}%`,
-                        `width:${d.toFixed(0)}px`,
+                        `left:${(cx - w / 2).toFixed(0)}px`,
+                        `top:${(cy - h / 2).toFixed(0)}px`,
+                        `width:${w.toFixed(0)}px`,
                         /* Elipse, não círculo: um círculo girando é
                            indistinguível de um círculo parado. */
-                        `height:${(d * rand(0.6, 0.95)).toFixed(0)}px`,
+                        `height:${h.toFixed(0)}px`,
                         `--dur:${rand(70, 130).toFixed(0)}s`,
                         `animation-delay:${-rand(0, 60).toFixed(0)}s`,
                         `background:radial-gradient(circle,color-mix(in srgb,${cor} 9%,transparent) 0%,color-mix(in srgb,${cor} 6%,transparent) 34%,color-mix(in srgb,${cor} 2%,transparent) 62%,transparent 84%)`,

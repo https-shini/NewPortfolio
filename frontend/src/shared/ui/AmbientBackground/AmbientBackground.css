@@ -164,16 +164,28 @@
 
    `vw + vh` acompanha a média geométrica da janela de perto, e é isso que
    mantém a mancha na mesma FRAÇÃO da tela em qualquer proporção — que é
-   o que se quer quando o assunto é presença visual. */
+   o que se quer quando o assunto é presença visual.
+
+   As duas manchas são espelhadas em torno do centro: mesmo tamanho, mesmo
+   recuo de canto, uma em cada metade do corte diagonal. Elas tinham
+   tamanhos diferentes de propósito, para não lerem como simetria
+   mecânica — a preocupação continua, mas agora é resolvida NO TEMPO e não
+   no espaço: períodos incomensuráveis (96s e 124s) e fases de escala
+   opostas (1→1,22 contra 1,1→0,9) garantem que nunca tenham o mesmo
+   tamanho ao mesmo tempo. Simetria de cor no espaço, assimetria orgânica
+   no tempo. */
 .ambient__aurora::before {
-    width: clamp(300px, calc(28vw + 28vh), 780px);
-    height: clamp(300px, calc(28vw + 28vh), 780px);
+    width: clamp(300px, calc(27vw + 27vh), 760px);
+    height: clamp(300px, calc(27vw + 27vh), 760px);
     top: calc(-7vw - 7vh);
-    left: calc(-5vw - 5vh);
+    left: calc(-7vw - 7vh);
+    /* Um pouco mais forte que a mancha índigo, pelo mesmo motivo que o
+       véu: o chão da página já é azul, então alfas iguais não produzem
+       metades iguais. */
     background: radial-gradient(
         circle,
-        color-mix(in srgb, var(--color-brand) 16%, transparent) 0%,
-        color-mix(in srgb, var(--color-brand) 11%, transparent) 26%,
+        color-mix(in srgb, var(--color-brand) 17%, transparent) 0%,
+        color-mix(in srgb, var(--color-brand) 12%, transparent) 26%,
         color-mix(in srgb, var(--color-brand) 6%, transparent) 48%,
         color-mix(in srgb, var(--color-brand) 2%, transparent) 66%,
         transparent 82%
@@ -182,16 +194,14 @@
 }
 
 .ambient__aurora::after {
-    /* Perto da mancha crimson, não igual: duas manchas idênticas leem
-       como simetria mecânica. */
-    width: clamp(280px, calc(26vw + 26vh), 720px);
-    height: clamp(280px, calc(26vw + 26vh), 720px);
-    bottom: calc(-6vw - 6vh);
-    right: calc(-4vw - 4vh);
+    width: clamp(300px, calc(27vw + 27vh), 760px);
+    height: clamp(300px, calc(27vw + 27vh), 760px);
+    bottom: calc(-7vw - 7vh);
+    right: calc(-7vw - 7vh);
     background: radial-gradient(
         circle,
-        color-mix(in srgb, var(--color-accent) 15%, transparent) 0%,
-        color-mix(in srgb, var(--color-accent) 10%, transparent) 26%,
+        color-mix(in srgb, var(--color-accent) 14%, transparent) 0%,
+        color-mix(in srgb, var(--color-accent) 9%, transparent) 26%,
         color-mix(in srgb, var(--color-accent) 5%, transparent) 48%,
         color-mix(in srgb, var(--color-accent) 2%, transparent) 66%,
         transparent 82%
@@ -199,15 +209,26 @@
     animation: ambient-aurora-b 124s ease-in-out infinite;
 }
 
-/* Períodos que não se dividem (96s e 124s) para as duas manchas nunca
-   caírem no mesmo compasso — é o que evita a sensação de repetição. */
+/* O deslocamento é PARALELO ao corte, e isso é uma garantia e não um
+   ajuste: o vetor diretor da diagonal que liga (0, H) a (W, 0) é
+   (W, −H), então `translate(k·vw, −k·vh)` aponta exatamente na direção
+   dela em qualquer proporção de tela. Uma mancha que só anda assim não
+   consegue atravessar a linha, por maior que seja o deslocamento.
+
+   Antes elas andavam para dentro e para além do centro — a mancha
+   vermelha ia `+6vw, +4vh`, cruzando o corte e levando crimson para a
+   metade índigo, e a azul fazia o mesmo no sentido oposto. Era a maior
+   fonte de mistura entre as metades.
+
+   Períodos que não se dividem (96s e 124s) para as duas nunca caírem no
+   mesmo compasso — é o que evita a sensação de repetição. */
 @keyframes ambient-aurora-a {
     0%,
     100% {
         transform: translate(0, 0) scale(1);
     }
     50% {
-        transform: translate(calc(6vw + 6vh), calc(4vw + 4vh)) scale(1.25);
+        transform: translate(6vw, -6vh) scale(1.22);
     }
 }
 
@@ -217,7 +238,7 @@
         transform: translate(0, 0) scale(1.1);
     }
     50% {
-        transform: translate(calc(-5vw - 5vh), calc(-4vw - 4vh)) scale(0.9);
+        transform: translate(-5vw, 5vh) scale(0.9);
     }
 }
 
