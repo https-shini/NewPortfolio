@@ -56,6 +56,10 @@ jobs:
       # url deixaria o símbolo apontando para o endereço antigo em silêncio
       # — e um QR errado continua parecendo um QR.
       - name: QR do rodapé em dia
+        # O job inteiro roda em frontend/ por padrão, e `qr:check` é script
+        # da RAIZ — sem isto o passo morre com "Missing script", que foi o
+        # que aconteceu. Mesmo motivo do passo de dependências da raiz.
+        working-directory: .
         run: npm run qr:check
 
       - name: Build
