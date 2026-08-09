@@ -52,6 +52,12 @@ jobs:
       - name: Test
         run: npm test
 
+      # Refaz o QR e compara byte a byte com o commitado. Sem isto, mudar a
+      # url deixaria o símbolo apontando para o endereço antigo em silêncio
+      # — e um QR errado continua parecendo um QR.
+      - name: QR do rodapé em dia
+        run: npm run qr:check
+
       - name: Build
         run: npm run build
 

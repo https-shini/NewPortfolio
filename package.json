@@ -1,57 +1,59 @@
 {
-    "name": "NewPortfolio",
-    "private": true,
-    "type": "module",
-    "version": "2.0.0",
-    "description": "Portfolio pessoal de Guilherme Cruz",
-    "author": "Guilherme Cruz",
-    "license": "MIT",
-    "engines": {
-        "node": ">=18.0.0",
-        "npm": ">=9.0.0"
-    },
-    "scripts": {
-        "dev": "npm run dev --prefix frontend",
-        "build": "npm run build --prefix frontend",
-        "preview": "npm run preview --prefix frontend",
-        "install:all": "npm install && npm install --prefix frontend",
-        "postinstall": "npm install --prefix frontend",
-        "clean": "rm -rf frontend/node_modules frontend/dist",
-        "clean:dist": "rm -rf frontend/dist",
-        "type-check": "npm run type-check --prefix frontend",
-        "lint": "npm run lint --prefix frontend",
-        "lint:fix": "npm run lint:fix --prefix frontend",
-        "format": "npm run format --prefix frontend",
-        "format:check": "npm run format:check --prefix frontend",
-        "test": "npm run test --prefix frontend",
-        "test:watch": "npm run test:watch --prefix frontend",
-        "audit:a11y": "node scripts/a11y.mjs",
-        "audit:overflow": "node scripts/overflow.mjs",
-        "audit:release-notes": "node scripts/e2e-release-notes.mjs",
-        "audit:bundle": "node scripts/bundle-budget.mjs",
-        "audit:modals": "node scripts/e2e-modals.mjs",
-        "audit:perf": "node scripts/perf.mjs",
-        "audit:layers": "node scripts/layers.mjs",
-        "audit:identity": "node scripts/identity.mjs",
-        "changelog": "node --experimental-strip-types --no-warnings scripts/changelog.mjs",
-        "changelog:check": "node --experimental-strip-types --no-warnings scripts/changelog.mjs --check",
-        "prepare": "husky"
-    },
-    "lint-staged": {
-        "frontend/src/**/*.{ts,tsx,css}": [
-            "frontend/node_modules/.bin/prettier --write"
-        ]
-    },
-    "devDependencies": {
-        "@commitlint/cli": "^21.2.1",
-        "@commitlint/config-conventional": "^21.2.0",
-        "axe-core": "^4.13.0",
-        "husky": "^9.1.7",
-        "lint-staged": "^17.0.8",
-        "playwright": "^1.62.1",
-        "typescript": "^5.9.3"
-    },
-    "dependencies": {
-        "@vercel/og": "^0.11.1"
-    }
+  "name": "NewPortfolio",
+  "private": true,
+  "type": "module",
+  "version": "2.0.0",
+  "description": "Portfolio pessoal de Guilherme Cruz",
+  "author": "Guilherme Cruz",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "preview": "npm run preview --prefix frontend",
+    "install:all": "npm install && npm install --prefix frontend",
+    "postinstall": "npm install --prefix frontend",
+    "clean": "rm -rf frontend/node_modules frontend/dist",
+    "clean:dist": "rm -rf frontend/dist",
+    "type-check": "npm run type-check --prefix frontend",
+    "lint": "npm run lint --prefix frontend",
+    "lint:fix": "npm run lint:fix --prefix frontend",
+    "format": "npm run format --prefix frontend",
+    "format:check": "npm run format:check --prefix frontend",
+    "test": "npm run test --prefix frontend",
+    "test:watch": "npm run test:watch --prefix frontend",
+    "audit:a11y": "node scripts/a11y.mjs",
+    "audit:overflow": "node scripts/overflow.mjs",
+    "audit:release-notes": "node scripts/e2e-release-notes.mjs",
+    "audit:bundle": "node scripts/bundle-budget.mjs",
+    "audit:modals": "node scripts/e2e-modals.mjs",
+    "audit:perf": "node scripts/perf.mjs",
+    "audit:layers": "node scripts/layers.mjs",
+    "audit:identity": "node scripts/identity.mjs",
+    "qr": "node scripts/qr.mjs",
+    "qr:check": "node scripts/qr.mjs --check",
+    "changelog": "node --experimental-strip-types --no-warnings scripts/changelog.mjs",
+    "changelog:check": "node --experimental-strip-types --no-warnings scripts/changelog.mjs --check",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "frontend/src/**/*.{ts,tsx,css}": [
+      "frontend/node_modules/.bin/prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.1",
+    "@commitlint/config-conventional": "^21.2.0",
+    "axe-core": "^4.13.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
+    "playwright": "^1.62.1",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@vercel/og": "^0.11.1"
+  }
 }
