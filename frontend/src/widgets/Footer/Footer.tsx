@@ -10,8 +10,9 @@
  * ⑥ As âncoras da home e as páginas próprias ficam em colunas separadas:
  *   uma rola a página, a outra troca de página, e misturá-las numa lista
  *   só deixou de caber quando as rotas passaram de uma.
- * ⑦ A newsletter só é renderizada com VITE_NEWSLETTER_ENDPOINT
- *   configurado — ver components/NewsletterForm.tsx.
+ * ⑦ A newsletter fica na coluna de contato e funciona com ou sem
+ *   VITE_NEWSLETTER_ENDPOINT: com, envia por POST; sem, abre um e-mail
+ *   pronto — ver components/NewsletterForm.tsx.
  */
 
 import React, { memo, useCallback } from "react";

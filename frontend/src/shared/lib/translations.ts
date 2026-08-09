@@ -246,6 +246,8 @@ export type TranslationKey =
     | "footer.downloads"
     | "footer.newsletter.label"
     | "footer.newsletter.hint"
+    | "footer.newsletter.hintMailto"
+    | "footer.newsletter.mailto"
     | "footer.newsletter.placeholder"
     | "footer.newsletter.submit"
     | "footer.newsletter.sending"
@@ -538,6 +540,10 @@ const pt: Translations = {
     "footer.newsletter.label": "Novidades por e-mail",
     "footer.newsletter.hint":
         "Aviso quando sai projeto novo ou uma versão importante. Sem frequência fixa.",
+    "footer.newsletter.hintMailto":
+        "Deixe seu e-mail e eu te aviso quando sair projeto novo ou uma versão importante.",
+    "footer.newsletter.mailto":
+        "Abri seu app de e-mail com a mensagem pronta — é só enviar.",
     "footer.newsletter.placeholder": "seu@email.com",
     "footer.newsletter.submit": "Inscrever",
     "footer.newsletter.sending": "Enviando…",
@@ -832,6 +838,10 @@ const en: Translations = {
     "footer.newsletter.label": "Updates by email",
     "footer.newsletter.hint":
         "A note when a new project or a meaningful release ships. No fixed schedule.",
+    "footer.newsletter.hintMailto":
+        "Leave your email and I'll let you know when a new project or release ships.",
+    "footer.newsletter.mailto":
+        "I opened your email app with the message ready — just hit send.",
     "footer.newsletter.placeholder": "you@email.com",
     "footer.newsletter.submit": "Subscribe",
     "footer.newsletter.sending": "Sending…",

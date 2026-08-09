@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLang } from "@/shared/hooks/useLang";
 import { NEWSLETTER_ENDPOINT } from "@/shared/config/constants";
+import { buildNewsletterMailtoHref } from "@/shared/lib/mailto";
 import { IconSend } from "@/shared/ui/Icons";
 
 /* ─────────────────────────────────────────────────────────
@@ -11,9 +12,13 @@ import { IconSend } from "@/shared/ui/Icons";
    entradas de e-mail no mesmo site que se comportam de forma
    diferente é ruído para quem usa e para quem mantém.
 
-   Sem `VITE_NEWSLETTER_ENDPOINT` o componente devolve null —
-   nada meio-pronto vai ao ar, e o campo passa a existir no dia
-   em que a variável for configurada, sem novo deploy.
+   Sem `VITE_NEWSLETTER_ENDPOINT` o campo NÃO some: degrada
+   para mailto, que é o que o formulário de contato já fazia.
+   A primeira versão escondia o campo inteiro — protegia contra
+   um formulário que não envia nada, mas ao preço de não haver
+   inscrição nenhuma e de a página não explicar por quê. O
+   mailto continua sendo inscrição de verdade: chega um e-mail
+   com o endereço dentro.
 ───────────────────────────────────────────────────────── */
 
 /* Mesma expressão do ContactForm: validar e-mail com rigor no cliente
@@ -24,6 +29,8 @@ type Estado =
     | "idle"
     | "sending"
     | "success"
+    /** Sem endpoint: o cliente de e-mail foi aberto com tudo pronto. */
+    | "mailto"
     | "duplicate"
     /** Reprovado aqui, antes de sair: o endereço não parece um e-mail. */
     | "invalid"
@@ -40,14 +47,11 @@ export const NewsletterForm: React.FC = () => {
        `fetch` recebe `string | undefined` mesmo depois da guarda. */
     const endpoint = NEWSLETTER_ENDPOINT;
 
-    /* Sem endpoint o campo não existe. */
-    if (!endpoint) return null;
-
     const enviando = estado === "sending";
     /* Só o sucesso trava o campo. Em "já inscrito" a pessoa pode querer
        usar outro endereço, e travar seria impedi-la de fazer justamente
        o que a mensagem sugere. */
-    const travado = enviando || estado === "success";
+    const travado = enviando || estado === "success" || estado === "mailto";
     const problema = estado === "invalid" || estado === "error";
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -63,6 +67,18 @@ export const NewsletterForm: React.FC = () => {
 
         if (!EMAIL_RE.test(email.trim())) {
             setEstado("invalid");
+            return;
+        }
+
+        /* Sem endpoint, a inscrição vira um e-mail com o endereço dentro.
+           Nada de fetch: não há para onde enviar, e fingir que houve
+           envio seria mentir para quem preencheu. */
+        if (!endpoint) {
+            window.location.href = buildNewsletterMailtoHref(
+                lang,
+                email.trim(),
+            );
+            setEstado("mailto");
             return;
         }
 
@@ -104,7 +120,11 @@ export const NewsletterForm: React.FC = () => {
                 {t("footer.newsletter.label")}
             </label>
 
-            <p className="footer__news-hint">{t("footer.newsletter.hint")}</p>
+            <p className="footer__news-hint">
+                {endpoint
+                    ? t("footer.newsletter.hint")
+                    : t("footer.newsletter.hintMailto")}
+            </p>
 
             {/* Honeypot — invisível para humanos, atrativo para bots. */}
             <input
@@ -153,7 +173,9 @@ export const NewsletterForm: React.FC = () => {
             {/* Um leitor de tela não vê a cor mudar — precisa ouvir. */}
             <p
                 className={`footer__news-status${
-                    estado === "success" || estado === "duplicate"
+                    estado === "success" ||
+                    estado === "duplicate" ||
+                    estado === "mailto"
                         ? " is-success"
                         : problema
                           ? " is-error"
@@ -163,14 +185,17 @@ export const NewsletterForm: React.FC = () => {
                 aria-live="polite"
             >
                 {estado === "success" && t("footer.newsletter.success")}
+                {estado === "mailto" && t("footer.newsletter.mailto")}
                 {estado === "duplicate" && t("footer.newsletter.duplicate")}
                 {estado === "invalid" && t("footer.newsletter.invalid")}
                 {estado === "error" && t("footer.newsletter.error")}
             </p>
 
-            <p className="footer__news-consent">
-                {t("footer.newsletter.consent")}
-            </p>
+            {endpoint && (
+                <p className="footer__news-consent">
+                    {t("footer.newsletter.consent")}
+                </p>
+            )}
         </form>
     );
 };

@@ -64,13 +64,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          # O campo da newsletter só é renderizado quando este endpoint
-          # existe. Sem a variável aqui, o dist que as auditorias medem
-          # não teria o campo — e axe e overflow passariam sem nunca o
-          # terem visto. O valor é de mentira de propósito: este artefato
-          # serve às auditorias, não ao deploy (a Vercel constrói o dela).
-          VITE_NEWSLETTER_ENDPOINT: https://ci.invalido/newsletter
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4

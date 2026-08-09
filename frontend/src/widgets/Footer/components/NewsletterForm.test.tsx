@@ -28,17 +28,49 @@ const campo = () => screen.getByLabelText(/novidades por e-mail/i);
 describe("NewsletterForm", () => {
     beforeEach(() => {
         vi.stubGlobal("fetch", vi.fn());
+        /* jsdom não navega: atribuir href lança "Not implemented". O stub
+           preserva os demais campos porque o LangProvider lê `search`
+           para o parâmetro ?lang= — substituir o objeto inteiro derruba
+           o provider antes de o formulário montar. */
+        vi.stubGlobal("location", {
+            ...window.location,
+            /* A url real do jsdom, não uma inventada: o LangProvider faz
+               `new URL(location.href)` e um `replaceState` com ?lang=, e o
+               jsdom recusa replaceState para outra origem. */
+            href: window.location.href,
+        } as unknown as Location);
     });
     afterEach(() => {
         vi.unstubAllEnvs();
         vi.unstubAllGlobals();
     });
 
-    /* É o que sustenta a decisão de ter o contrato no código antes do
-       backend: sem endpoint, nada meio-pronto aparece na página. */
-    it("não renderiza sem endpoint configurado", async () => {
-        const { container } = await renderForm("");
-        expect(container).toBeEmptyDOMElement();
+    /* A primeira versão escondia o campo inteiro sem endpoint. Protegia
+       contra um formulário que não envia nada — ao preço de não haver
+       inscrição nenhuma, e de a página não dizer por quê. */
+    it("continua visível sem endpoint configurado", async () => {
+        await renderForm("");
+        expect(campo()).toBeInTheDocument();
+        expect(inscrever()).toBeEnabled();
+    });
+
+    it("sem endpoint, degrada para mailto com o endereço no corpo", async () => {
+        const user = userEvent.setup();
+        await renderForm("");
+
+        await user.type(campo(), "alguem@exemplo.com");
+        await user.click(inscrever());
+
+        await waitFor(() =>
+            expect(screen.getByText(/app de e-mail/i)).toBeInTheDocument(),
+        );
+        /* Nada de fetch: não há para onde enviar, e fingir que houve envio
+           seria mentir para quem preencheu. */
+        expect(fetch).not.toHaveBeenCalled();
+
+        const href = decodeURIComponent(window.location.href);
+        expect(href).toMatch(/^mailto:/);
+        expect(href).toContain("alguem@exemplo.com");
     });
 
     it("recusa endereço inválido sem chamar a rede", async () => {

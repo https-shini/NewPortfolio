@@ -38,11 +38,9 @@ export const FORM_ENDPOINT: string | undefined =
 /**
  * Endpoint da inscrição na newsletter.
  *
- * Mesmo padrão do FORM_ENDPOINT, e pela mesma razão: sem a variável
- * configurada o campo não é renderizado. Isso é o que permite o contrato
- * existir no código antes de o backend existir, sem nada meio-pronto ir
- * ao ar — o campo passa a existir no dia em que a variável for
- * configurada, sem novo deploy de código.
+ * Mesmo padrão do FORM_ENDPOINT, e com a mesma degradação: sem a
+ * variável, a UI cai para o fluxo de mailto em vez de sumir. Configurar
+ * a variável troca o mailto por um POST, sem novo deploy de código.
  *
  * Contrato esperado do outro lado:
  *
