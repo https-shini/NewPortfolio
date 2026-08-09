@@ -18,16 +18,13 @@ import { scrollToSection } from "@/shared/lib/smoothScroll";
 import { buildMailtoHref } from "@/shared/lib/mailto";
 import {
     AUTHOR_EMAIL,
-    GITHUB_URL,
     LINKEDIN_URL,
     getCvUrl,
     SECTION_IDS,
     ROUTES,
 } from "@/shared/config/constants";
-import { PROJECT_URLS } from "@/shared/config/links";
+import { PROJECT_URLS, TREE_LINKS, linkKind } from "@/shared/config/links";
 import {
-    IconGitHub,
-    IconLinkedIn,
     IconGmail,
     IconHeart,
     IconLocation,
@@ -71,6 +68,24 @@ const NAV_ITEMS: NavItem[] = [
     { id: SECTION_IDS.RECOMMENDATIONS, key: "nav.recommendations" },
     { id: SECTION_IDS.CONTACT, key: "nav.contact" },
 ];
+
+/* Os ícones sociais saem de TREE_LINKS, sem o item `portfolio`: um link
+   para o próprio site, dentro do rodapé do próprio site, não leva a
+   lugar nenhum. */
+const SOCIAIS = TREE_LINKS.filter((l) => l.id !== "portfolio");
+
+/** Rótulo acessível de um ícone social — o ícone sozinho não tem texto. */
+function rotuloSocial(nome: string, href: string, lang: "pt" | "en"): string {
+    if (linkKind(href) === "mailto") {
+        const endereco = href.replace(/^mailto:/, "");
+        return lang === "pt"
+            ? `Enviar e-mail para ${endereco}`
+            : `Send an email to ${endereco}`;
+    }
+    return lang === "pt"
+        ? `${nome} de Guilherme Cruz (abre em nova aba)`
+        : `Guilherme Cruz on ${nome} (opens in new tab)`;
+}
 
 /* Rotas próprias do site, na ordem em que o rodapé as lista. A home fica
    de fora: ela já é o logo da coluna Brand e a primeira âncora. */
@@ -136,7 +151,10 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
         {/* Tagline */}
         <p className="footer__brand-tagline">{tagline}</p>
 
-        {/* Redes sociais */}
+        {/* Redes sociais — a lista vem de TREE_LINKS, a mesma que
+            alimenta a /links. Antes eram três <a> escritos à mão, cada um
+            repetindo a decisão de target e rel; um perfil novo entrava em
+            dois lugares e saía torto de um deles. */}
         <nav
             aria-label={
                 lang === "pt"
@@ -145,45 +163,28 @@ const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
             }
         >
             <ul className="footer__social">
-                <li>
-                    <a
-                        href={GITHUB_URL}
-                        className="social-link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={
-                            lang === "pt"
-                                ? "GitHub de Guilherme Cruz (abre em nova aba)"
-                                : "Guilherme Cruz on GitHub (opens in new tab)"
-                        }
-                    >
-                        <IconGitHub width={16} height={16} />
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href={LINKEDIN_URL}
-                        className="social-link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={
-                            lang === "pt"
-                                ? "LinkedIn de Guilherme Cruz (abre em nova aba)"
-                                : "Guilherme Cruz on LinkedIn (opens in new tab)"
-                        }
-                    >
-                        <IconLinkedIn width={16} height={16} />
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href={`mailto:${AUTHOR_EMAIL}`}
-                        className="social-link"
-                        aria-label={`Enviar e-mail para ${AUTHOR_EMAIL}`}
-                    >
-                        <IconGmail width={16} height={16} />
-                    </a>
-                </li>
+                {SOCIAIS.map(({ id, label, href, icon: Icone }) => {
+                    const externo = linkKind(href) === "external";
+                    return (
+                        <li key={id}>
+                            <a
+                                href={href}
+                                className="social-link"
+                                target={externo ? "_blank" : undefined}
+                                rel={
+                                    externo ? "noopener noreferrer" : undefined
+                                }
+                                aria-label={rotuloSocial(
+                                    label[lang],
+                                    href,
+                                    lang,
+                                )}
+                            >
+                                <Icone width={16} height={16} />
+                            </a>
+                        </li>
+                    );
+                })}
             </ul>
         </nav>
     </div>
