@@ -29,7 +29,10 @@
 }
 
 .ambient {
-    z-index: var(--z-base);
+    /* Ver a justificativa completa em tokens.css, junto do token. Em
+       resumo: com z-index 0 a atmosfera pintava POR CIMA de toda seção
+       que não declarasse `position` — e duas não declaravam. */
+    z-index: var(--z-ambient);
     /* Isola a composição: as animações de dentro não forçam o resto da
        página a recalcular camadas. */
     contain: strict;

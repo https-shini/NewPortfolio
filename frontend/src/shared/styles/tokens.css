@@ -555,6 +555,19 @@ body.light-mode {
    9. Z-INDEX — escala semântica
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
+    /* Atrás de TUDO, inclusive do que não é posicionado.
+       `--z-base: 0` não servia: elemento posicionado com z-index 0 pinta
+       depois de bloco em fluxo, então qualquer seção que não declarasse
+       `position` afundava na atmosfera — era o caso de `.about` e de
+       `.work`, e as outras seis só se salvavam por já serem `relative`
+       por outro motivo.
+       Negativo é seguro aqui porque `html` não declara `background`: o
+       `background-color` do `body` propaga para o canvas, que é pintado
+       antes de qualquer coisa, inclusive dos z-index negativos. Se um dia
+       `#root` ganhar `isolation`, `transform`, `filter` ou `contain`, o
+       -1 fica preso nesse contexto e a atmosfera some — o invariante 1 do
+       `scripts/layers.mjs` existe para avisar nessa hora. */
+    --z-ambient: -1;
     --z-base: 0;
     --z-raised: 10;
     --z-overlay: 100;
