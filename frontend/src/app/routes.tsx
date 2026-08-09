@@ -72,25 +72,26 @@ export function matchReleaseNotes(path: string): ReleaseNotesMatch {
 export const Routes: React.FC = () => {
     const { path } = useRoute();
 
-    /* A /links é autônoma: traz a própria atmosfera, mais densa, junto
-       com os próprios controles de tema e idioma. */
-    if (path === ROUTES.LINKS) {
-        return (
-            <Suspense fallback={null}>
-                <LinksPage />
-            </Suspense>
-        );
-    }
+    const ehLinks = path === ROUTES.LINKS;
+    const releaseNotes = ehLinks ? null : matchReleaseNotes(path);
 
-    const releaseNotes = matchReleaseNotes(path);
+    /* UMA instância para todas as rotas, montada aqui e não em cada
+       página. É o que faz a atmosfera sobreviver à troca de rota: as
+       partículas não reiniciam o ciclo a cada navegação.
 
-    /* As demais são páginas do site e dividem a mesma atmosfera. Montada
-       aqui, e não em cada página, ela sobrevive à troca de rota — as
-       partículas não reiniciam o ciclo a cada navegação. */
+       A /links trazia a sua própria, e o resultado era o oposto do que o
+       comentário desta função prometia — sair do site para a /links, ou
+       voltar, desmontava uma instância e montava outra, com o campo
+       inteiro recomeçando do zero. A diferença entre as duas cabe na
+       variante, que o CSS usa para adensar. */
     return (
         <>
-            <AmbientBackground />
-            {releaseNotes ? (
+            <AmbientBackground variant={ehLinks ? "links" : "site"} />
+            {ehLinks ? (
+                <Suspense fallback={null}>
+                    <LinksPage />
+                </Suspense>
+            ) : releaseNotes ? (
                 <Suspense fallback={null}>
                     {releaseNotes.kind === "index" ? (
                         <ReleaseNotesPage page={releaseNotes.page} />

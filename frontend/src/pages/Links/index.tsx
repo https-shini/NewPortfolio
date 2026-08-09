@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react";
 import "./Links.css";
 import { LinkCard } from "./components/LinkCard";
-import { AmbientBackground } from "@/shared/ui/AmbientBackground/AmbientBackground";
 import { useLang } from "@/shared/hooks/useLang";
 import { useTheme } from "@/shared/hooks/useTheme";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
@@ -106,14 +105,6 @@ export const LinksPage: React.FC = () => {
             <a href="#linktree-main" className="skip-link">
                 {t("links.skip")}
             </a>
-
-            {/* ── Fundos ambientes ── */}
-            {/* Sem `count` próprio: o 26 daqui era da época em que a
-                partícula era um disco de 3px que ninguém enxergava, e a
-                resposta para "não aparece" tinha sido colocar mais. Agora
-                que cada uma tem halo, 26 numa coluna estreita vira ruído —
-                e a densidade padrão já se ajusta à tela e ao aparelho. */}
-            <AmbientBackground variant="links" />
 
             {/* ── Controles ── */}
             <div className="linktree__controls">

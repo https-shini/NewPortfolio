@@ -110,9 +110,10 @@ export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
             /* O passo da grade vem do CSS, não de um número repetido aqui: é a
                mesma medida que desenha a malha, e duplicá-la seria garantir que
                um dia as duas divergissem. */
-            const estilo = getComputedStyle(box);
             const passo =
-                parseFloat(estilo.getPropertyValue("--ambient-step")) || 26;
+                parseFloat(
+                    getComputedStyle(box).getPropertyValue("--ambient-step"),
+                ) || 26;
 
             /* As dimensões vêm da CAIXA, não da janela. Com a sangria da
                deriva a caixa é bem mais alta que a janela, e semear pela

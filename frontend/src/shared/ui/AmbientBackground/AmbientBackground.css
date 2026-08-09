@@ -7,14 +7,14 @@
      véu      overlay → assenta a aurora sob o conteúdo
      frente   malha + partículas → a MESMA grade, o mesmo passo
 
-   A malha e as partículas compartilham `--ambient-step`, a fração de
-   paralaxe e o alinhamento: as partículas nascem em interseções da
-   grade e andam um número inteiro de células. Não são pontos flutuando
-   sobre uma malha de pontos — são pontos da malha que acenderam.
+   A malha e as partículas compartilham `--ambient-step`, a deriva e o
+   alinhamento: as partículas nascem em interseções da grade e andam um
+   número inteiro de células. Não são pontos flutuando sobre uma malha de
+   pontos — são pontos da malha que acenderam.
 
    A profundidade vem do contraste de ritmo entre os dois planos: a
-   aurora leva minutos e anda 6% da rolagem, os pontos levam segundos e
-   andam 16%.
+   aurora leva minutos e deriva 52px, os pontos levam segundos e derivam
+   88px, em períodos que não se dividem entre si.
    ══════════════════════════════════════════════════════════════════ */
 
 /* `fixed` e não `absolute`: a atmosfera acompanha a janela em vez de
@@ -39,7 +39,7 @@
     overflow: hidden;
 
     /* ── Contrato da atmosfera ──────────────────────────────────────
-       Estes quatro valores são o que o tema e o JavaScript enxergam.
+       Estes valores são o que o tema e o JavaScript enxergam.
        `--ambient-step` é lido pelo componente para posicionar cada
        partícula na grade: uma medida só, não duas que um dia divergem. */
     --ambient-step: 26px;
@@ -77,6 +77,8 @@
     --ambient-dot-b: var(--color-accent);
     /* Multiplicador de brilho por tema — ver o bloco do tema claro. */
     --ambient-peak: 1;
+    /* Multiplicador por VARIANTE, ortogonal ao do tema. */
+    --ambient-gain: 1;
     /* Intensidade do dithering — ver `.ambient::after`. */
     --ambient-dither: 0.035;
 }
@@ -274,15 +276,21 @@
         opacity: 0;
     }
     12% {
-        opacity: calc(var(--peak, 0.45) * var(--ambient-peak));
+        opacity: calc(
+            var(--peak, 0.45) * var(--ambient-peak) * var(--ambient-gain)
+        );
     }
     50% {
         transform: translate(var(--mx, 26px), calc(var(--dy, -156px) * 0.55))
             scale(1.2);
-        opacity: calc(var(--peak, 0.45) * var(--ambient-peak));
+        opacity: calc(
+            var(--peak, 0.45) * var(--ambient-peak) * var(--ambient-gain)
+        );
     }
     88% {
-        opacity: calc(var(--peak, 0.45) * var(--ambient-peak) * 0.35);
+        opacity: calc(
+            var(--peak, 0.45) * var(--ambient-peak) * var(--ambient-gain) * 0.35
+        );
     }
     100% {
         transform: translate(var(--dx, 0), var(--dy, -156px)) scale(0.9);
@@ -304,7 +312,9 @@
     }
     20%,
     80% {
-        opacity: calc(var(--peak, 0.2) * var(--ambient-peak));
+        opacity: calc(
+            var(--peak, 0.2) * var(--ambient-peak) * var(--ambient-gain)
+        );
     }
     50% {
         transform: translate(var(--mx, 26px), calc(var(--dy, -104px) * 0.6))
@@ -351,4 +361,22 @@
     .ambient__particle {
         opacity: calc(0.25 * var(--ambient-peak));
     }
+}
+
+/* ── Variante /links ───────────────────────────────────────────── */
+/* A /links é uma coluna estreita sobre muito espaço vazio, então comporta
+   mais presença que uma página de leitura corrida. Até aqui a variante só
+   imprimia uma classe que regra nenhuma usava.
+
+   O ajuste é de BRILHO e não de densidade, e a razão é o requisito de
+   continuidade: a atmosfera agora é uma instância só para todas as rotas,
+   então mexer na contagem exigiria re-semear na navegação — que é
+   exatamente o reinício que esta unificação existe para eliminar. Brilho
+   é uma variável que os keyframes já leem, então a troca acontece ao
+   vivo, como um leve acender.
+
+   Ganho separado de `--ambient-peak` de propósito: o tema já usa aquele,
+   e sobrescrevê-lo aqui apagaria a calibragem do tema claro. */
+.ambient--links {
+    --ambient-gain: 1.18;
 }
