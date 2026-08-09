@@ -240,6 +240,22 @@ export type TranslationKey =
     | "underConstruction.back"
     | "underConstruction.meta.description"
 
+    /* ── DOWNLOADS ─────────────────────────────────── */
+    | "downloads.title"
+    | "downloads.lead"
+    | "downloads.forYou"
+    | "downloads.others"
+    | "downloads.get"
+    | "downloads.version"
+    | "downloads.notes"
+    | "downloads.empty.title"
+    | "downloads.empty.body"
+    | "downloads.error"
+    | "downloads.allReleases"
+    | "downloads.ios.title"
+    | "downloads.ios.body"
+    | "downloads.unsigned"
+
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
     | "footer.pages"
@@ -530,6 +546,27 @@ const pt: Translations = {
     "underConstruction.back": "Voltar ao início",
     "underConstruction.meta.description":
         "A área de downloads do portfólio de Guilherme Cruz está em construção.",
+
+    /* DOWNLOADS */
+    "downloads.title": "Baixar o aplicativo",
+    "downloads.lead":
+        "O mesmo portfólio, instalado na sua máquina ou no celular. Escolha a versão do seu sistema.",
+    "downloads.forYou": "Para o seu sistema",
+    "downloads.others": "Outras plataformas",
+    "downloads.get": "Baixar",
+    "downloads.version": "Versão",
+    "downloads.notes": "Ver o que mudou",
+    "downloads.empty.title": "Ainda não há instalador publicado",
+    "downloads.empty.body":
+        "A primeira versão empacotada sai junto da próxima release. Enquanto isso, o site funciona por completo no navegador.",
+    "downloads.error":
+        "Não deu para carregar a lista agora. Os arquivos continuam disponíveis direto no GitHub.",
+    "downloads.allReleases": "Todas as versões no GitHub",
+    "downloads.ios.title": "iPhone e iPad",
+    "downloads.ios.body":
+        "A Apple não permite instalar fora da App Store. Está previsto via TestFlight.",
+    "downloads.unsigned":
+        "Os instaladores ainda não são assinados: Windows e macOS mostram um aviso na primeira execução, e o Android pede permissão para instalar de fora da loja.",
 
     /* FOOTER */
     "footer.tagline":
@@ -828,6 +865,27 @@ const en: Translations = {
     "underConstruction.back": "Back to home",
     "underConstruction.meta.description":
         "The downloads area of Guilherme Cruz's portfolio is under construction.",
+
+    /* DOWNLOADS */
+    "downloads.title": "Get the app",
+    "downloads.lead":
+        "The same portfolio, installed on your machine or phone. Pick the build for your system.",
+    "downloads.forYou": "For your system",
+    "downloads.others": "Other platforms",
+    "downloads.get": "Download",
+    "downloads.version": "Version",
+    "downloads.notes": "See what changed",
+    "downloads.empty.title": "No installer published yet",
+    "downloads.empty.body":
+        "The first packaged version ships with the next release. Until then, the site works fully in the browser.",
+    "downloads.error":
+        "Couldn't load the list right now. The files are still available directly on GitHub.",
+    "downloads.allReleases": "All versions on GitHub",
+    "downloads.ios.title": "iPhone and iPad",
+    "downloads.ios.body":
+        "Apple doesn't allow installing outside the App Store. Planned via TestFlight.",
+    "downloads.unsigned":
+        "The installers aren't signed yet: Windows and macOS show a warning on first run, and Android asks permission to install from outside the store.",
 
     /* FOOTER */
     "footer.tagline":

@@ -1,0 +1,239 @@
+/* ═══════════════════════════════════════════════════════════════════
+   /downloads — instaladores por plataforma
+
+   Só tokens já existentes. A página é uma lista de escolhas: o que
+   precisa aparecer é o nome do sistema, o formato e o tamanho — nessa
+   ordem, porque é a ordem em que a pessoa decide.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.dl {
+    padding-top: calc(var(--header-height) + var(--section-pad-y));
+    padding-bottom: var(--section-pad-y);
+    min-height: 100dvh;
+}
+
+.dl__cabecalho {
+    max-width: 640px;
+    margin-bottom: var(--space-10);
+}
+
+.dl__titulo {
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-text-1);
+    text-wrap: balance;
+}
+
+.dl__lead {
+    margin: 0;
+    font-size: var(--text-lg);
+    line-height: 1.7;
+    color: var(--color-text-2);
+    text-wrap: pretty;
+}
+
+.dl__versao {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: var(--space-5) 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.dl__notas {
+    color: var(--color-brand-text);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+}
+
+.dl__notas:hover,
+.dl__notas:focus-visible {
+    border-bottom-color: currentColor;
+}
+
+.dl__secao {
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.dl__grade {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+}
+
+/* ── Cartão de plataforma ─────────────────────────────────────────── */
+
+.dl-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border);
+}
+
+/* O destaque é uma borda, não um tamanho diferente: cartões de alturas
+   distintas fazem a lista parecer desalinhada, e o que se quer dizer
+   ("é este o seu") cabe numa borda de marca. */
+.dl-card--destaque {
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+}
+
+.dl-card__nome {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.dl-card__lista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dl-file {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.dl-file__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    /* Sem isto o bloco de texto impede a linha de encolher e o botão é
+       empurrado para fora nas telas estreitas. */
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.dl-file__formato {
+    font-size: var(--text-sm);
+    color: var(--color-text-1);
+}
+
+.dl-file__detalhe {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.dl-file__btn {
+    flex: 0 0 auto;
+}
+
+/* ── Estados e avisos ─────────────────────────────────────────────── */
+
+.dl__aviso {
+    margin: 0 0 var(--space-6);
+    font-size: var(--text-sm);
+    color: var(--color-error);
+}
+
+.dl__vazio {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-8);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-1);
+    border: 1px dashed var(--color-border);
+    max-width: 560px;
+}
+
+.dl__vazio-marca {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    color: var(--color-brand-text);
+    background: var(--color-brand-subtle);
+    border: 1px solid var(--color-border-brand);
+}
+
+.dl__vazio-titulo {
+    margin: 0;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.dl__vazio-corpo,
+.dl__nota,
+.dl__ios-corpo {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.7;
+    color: var(--color-text-2);
+    text-wrap: pretty;
+}
+
+.dl__nota {
+    margin-top: var(--space-6);
+    max-width: 720px;
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.dl__ios {
+    margin-top: var(--space-10);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    max-width: 640px;
+}
+
+.dl__ios-titulo {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.dl__todas {
+    margin: var(--space-8) 0 0;
+    font-size: var(--text-sm);
+}
+
+.dl__todas a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-brand-text);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+}
+
+.dl__todas a:hover,
+.dl__todas a:focus-visible {
+    border-bottom-color: currentColor;
+}
+
+/* ── A partir de --bp-md (640px): dois cartões por linha ──────────── */
+@media (min-width: 641px) {
+    .dl__grade {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

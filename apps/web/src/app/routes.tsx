@@ -30,10 +30,8 @@ const ReleaseNotePage = lazy(() =>
     })),
 );
 
-const UnderConstructionPage = lazy(() =>
-    import("@/pages/UnderConstruction").then((m) => ({
-        default: m.UnderConstructionPage,
-    })),
+const DownloadsPage = lazy(() =>
+    import("@/pages/Downloads").then((m) => ({ default: m.DownloadsPage })),
 );
 
 /** O que vem depois de `/release-notes`, quando vem alguma coisa. */
@@ -101,7 +99,7 @@ export const Routes: React.FC = () => {
                 </Suspense>
             ) : ehDownloads ? (
                 <Suspense fallback={null}>
-                    <UnderConstructionPage />
+                    <DownloadsPage />
                 </Suspense>
             ) : releaseNotes ? (
                 <Suspense fallback={null}>

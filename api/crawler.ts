@@ -93,7 +93,7 @@ async function resolverMeta(pathname: string): Promise<Meta> {
             ...PADRAO,
             titulo: `Downloads — ${AUTHOR}`,
             descricao:
-                "A área de downloads do portfólio está em construção. Enquanto isso, o portfólio, os links e as notas de versão seguem no ar.",
+                "Baixe o portfólio como aplicativo: Windows, macOS, Linux e Android, sempre na versão mais recente.",
             url: `${SITE_URL}/downloads`,
         };
     }
