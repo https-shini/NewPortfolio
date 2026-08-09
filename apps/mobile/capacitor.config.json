@@ -1,0 +1,11 @@
+{
+    "appId": "br.dev.gcruz.portfolio",
+    "appName": "Portfolio Guilherme Cruz",
+    "webDir": "../web/dist",
+    "android": {
+        "allowMixedContent": false
+    },
+    "server": {
+        "androidScheme": "https"
+    }
+}

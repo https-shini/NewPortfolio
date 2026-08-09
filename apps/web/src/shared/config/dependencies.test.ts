@@ -27,6 +27,32 @@ const CLIENTE = ["react", "react-dom"];
  * radar de quem lê apenas o package.json do frontend, e por isso fica
  * enumerado, com o motivo ao lado.
  */
+/**
+ * O que roda EMPACOTADO nas plataformas nativas. Não chega ao navegador
+ * — nem por bundle, nem por rede —, mas é código que vai na mão de quem
+ * instala, e por isso passa pela mesma exigência: aparecer aqui, com o
+ * motivo ao lado.
+ *
+ * A regra que não se negocia: nada daqui pode virar dependência de
+ * `apps/web`. O dia em que `@capacitor/core` aparecer no cliente, o
+ * navegador passa a baixar um adaptador de app nativo para nada.
+ */
+const NATIVO: Record<string, Record<string, string>> = {
+    "apps/desktop": {
+        "electron-updater":
+            "busca e aplica atualização a partir das GitHub Releases; sem " +
+            "ele, cada versão nova exigiria baixar o instalador à mão",
+    },
+    "apps/mobile": {
+        "@capacitor/core":
+            "a ponte entre o WebView e o Android; é o que faz o build do " +
+            "site rodar como aplicativo",
+        "@capacitor/android":
+            "a plataforma Android do Capacitor, de onde sai o projeto " +
+            "Gradle que gera o .apk",
+    },
+};
+
 const SERVIDOR: Record<string, string> = {
     "@vercel/og":
         "gera a imagem de compartilhamento por versão; os rastreadores não " +
@@ -61,6 +87,31 @@ describe("dependências de runtime", () => {
         const { dependencies } = lerPackageJson("package.json");
         for (const nome of Object.keys(SERVIDOR)) {
             expect(dependencies ?? {}).not.toHaveProperty(nome);
+        }
+    });
+
+    /* Os apps nativos nasceram depois deste arquivo. Sem estes dois casos
+       eles seriam um ponto cego: `npm install` num workspace irmão passaria
+       sem ninguém precisar explicar nada — que é exatamente o descuido que
+       este teste existe para impedir. */
+    it.each(Object.entries(NATIVO))(
+        "%s declara só o que foi justificado",
+        (caminho, esperado) => {
+            const { dependencies } = lerPackageJson(
+                `../../${caminho}/package.json`,
+            );
+            expect(Object.keys(dependencies ?? {}).sort()).toEqual(
+                Object.keys(esperado).sort(),
+            );
+        },
+    );
+
+    it("nada de nativo vazou para o que o navegador baixa", () => {
+        const { dependencies } = lerPackageJson("package.json");
+        for (const pacotes of Object.values(NATIVO)) {
+            for (const nome of Object.keys(pacotes)) {
+                expect(dependencies ?? {}).not.toHaveProperty(nome);
+            }
         }
     });
 });

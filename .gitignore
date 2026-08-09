@@ -11,3 +11,7 @@ Thumbs.db
 # Artefatos de empacotamento do desktop — vão para a GitHub Release,
 # nunca para o repositório (o AppImage sozinho tem 106 MB).
 apps/desktop/release/
+
+# Projeto Android gerado por `cap add android` — grande e derivado.
+apps/mobile/android/
+apps/mobile/ios/

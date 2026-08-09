@@ -1,0 +1,158 @@
+name: Release
+
+# Uma tag produz tudo. Windows e macOS NÃO podem ser gerados em Linux —
+# o NSIS precisa de wine e o .dmg precisa de macOS —, então cada alvo sai
+# do runner correspondente. É a mesma razão de existir uma matriz aqui em
+# vez de um job só.
+on:
+    push:
+        tags: ["v*"]
+    workflow_dispatch:
+
+permissions:
+    contents: write
+
+jobs:
+    web:
+        name: Build do site
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: npm
+            - run: npm ci
+            - run: npm run build
+            # O dist alimenta desktop e mobile: os dois empacotam o MESMO
+            # artefato, em vez de cada um construir o seu e divergirem.
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: web-dist
+                  path: apps/web/dist
+
+    desktop:
+        name: Desktop ${{ matrix.alvo }}
+        needs: web
+        runs-on: ${{ matrix.os }}
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os: ubuntu-latest
+                      alvo: linux
+                    - os: windows-latest
+                      alvo: win
+                    - os: macos-latest
+                      alvo: mac
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: npm
+            - run: npm ci
+
+            - uses: actions/download-artifact@v4
+              with:
+                  name: web-dist
+                  path: apps/web/dist
+
+            - name: Empacotar
+              working-directory: apps/desktop
+              env:
+                  # O electron-builder publica sozinho quando enxerga o
+                  # token; aqui só construímos, e a publicação é do job
+                  # final — assim uma falha no meio não deixa release
+                  # pela metade no GitHub.
+                  GH_TOKEN: ""
+              run: npx electron-builder --${{ matrix.alvo }} --publish never
+
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: desktop-${{ matrix.alvo }}
+                  path: |
+                      apps/desktop/release/*.AppImage
+                      apps/desktop/release/*.deb
+                      apps/desktop/release/*.exe
+                      apps/desktop/release/*.dmg
+                      apps/desktop/release/*.yml
+                  if-no-files-found: error
+
+    android:
+        name: Android APK
+        needs: web
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: npm
+            # O runner do GitHub já traz o Android SDK; só o JDK precisa
+            # ser fixado, porque o Gradle do Capacitor exige o 21.
+            - uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: "21"
+
+            - run: npm ci
+            - uses: actions/download-artifact@v4
+              with:
+                  name: web-dist
+                  path: apps/web/dist
+
+            # A pasta android/ não está versionada: é gerada, grande, e
+            # poluiria o diff sem acrescentar informação.
+            - name: Gerar projeto Android
+              working-directory: apps/mobile
+              run: |
+                  npx cap add android
+                  npx cap sync android
+
+            - name: Montar APK
+              working-directory: apps/mobile/android
+              run: ./gradlew assembleRelease --no-daemon
+
+            # Sem os secrets de keystore o APK sai NÃO ASSINADO: instala
+            # com "fontes desconhecidas" e avisa. Serve para testar, não
+            # para distribuir.
+            - name: Assinar (quando houver keystore)
+              if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
+              env:
+                  ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+                  ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+                  ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+              working-directory: apps/mobile/android
+              run: |
+                  echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > release.keystore
+                  "$ANDROID_HOME/build-tools/34.0.0/apksigner" sign \
+                    --ks release.keystore \
+                    --ks-pass "pass:$ANDROID_KEYSTORE_PASSWORD" \
+                    --ks-key-alias "$ANDROID_KEY_ALIAS" \
+                    app/build/outputs/apk/release/app-release-unsigned.apk
+                  rm -f release.keystore
+
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: android-apk
+                  path: apps/mobile/android/app/build/outputs/apk/release/*.apk
+                  if-no-files-found: error
+
+    publicar:
+        name: Publicar na Release
+        needs: [desktop, android]
+        # Só em tag: um disparo manual serve para conferir que a matriz
+        # constrói, sem criar release de nada.
+        if: startsWith(github.ref, 'refs/tags/v')
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/download-artifact@v4
+              with:
+                  path: artefatos
+            - name: Anexar à Release
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: artefatos/**/*
+                  fail_on_unmatched_files: true
+                  generate_release_notes: true
