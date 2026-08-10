@@ -95,12 +95,24 @@ function rotuloSocial(nome: string, href: string, lang: "pt" | "en"): string {
         : `Guilherme Cruz on ${nome} (opens in new tab)`;
 }
 
+/* Temporário: /downloads sai do rodapé enquanto a versão desktop está
+   sendo melhorada — o link e o QR convidariam para instaladores que
+   ainda vão mudar. A ROTA continua existindo e acessível por URL; o que
+   some é o convite. Para trazer de volta, basta `true` aqui.
+
+   Anotado como bandeira em vez de código apagado justamente por ser
+   temporário: assim o caminho de volta é visível para quem ler o
+   arquivo, e não algo a redescobrir no histórico. */
+const MOSTRAR_DOWNLOADS: boolean = false;
+
 /* Rotas próprias do site, na ordem em que o rodapé as lista. A home fica
    de fora: ela já é o logo da coluna Brand e a primeira âncora. */
 const PAGE_ITEMS: PageItem[] = [
     { to: ROUTES.LINKS, key: "nav.links" },
     { to: ROUTES.RELEASE_NOTES, key: "releaseNotes.title" },
-    { to: ROUTES.DOWNLOADS, key: "footer.downloads" },
+    ...(MOSTRAR_DOWNLOADS
+        ? [{ to: ROUTES.DOWNLOADS, key: "footer.downloads" } as PageItem]
+        : []),
 ];
 
 /* URLs vêm de shared/config/links.ts — fonte única. Aqui só se decide
@@ -197,31 +209,38 @@ const FooterBrand = memo<FooterBrandProps>(
                 </ul>
             </nav>
 
-            {/* QR para /downloads. Dentro de um link porque o mesmo desenho
-            serve a duas situações: no celular a câmera aponta, no desktop
-            o ponteiro clica — e um QR que não clica é um beco para quem
-            está lendo isto na própria tela.
+            {/* O QR leva a /downloads; enquanto a página está fora do
+            rodapé, o desenho também sai — um código que aponta para algo
+            que não estamos divulgando é ruído. Ver MOSTRAR_DOWNLOADS.
 
-            O alt descreve o DESTINO, não a figura: "QR code" não diz nada
-            a quem não vê a imagem, e o que interessa é para onde leva. */}
-            <a
-                href={ROUTES.DOWNLOADS}
-                className="footer__qr"
-                onClick={onQrClick}
-            >
-                <img
-                    src="/qr-downloads.svg"
-                    width={96}
-                    height={96}
-                    loading="lazy"
-                    decoding="async"
-                    alt={
-                        lang === "pt"
-                            ? "Abrir a página de downloads — aponte a câmera ou clique"
-                            : "Open the downloads page — point your camera or click"
-                    }
-                />
-            </a>
+            Dentro de um link porque o mesmo desenho serve a duas
+            situações: no celular a câmera aponta, no desktop o ponteiro
+            clica — e um QR que não clica é um beco para quem está lendo
+            isto na própria tela.
+
+            O alt descreve o DESTINO, não a figura: "QR code" não diz
+            nada a quem não vê a imagem, e o que interessa é para onde
+            leva. */}
+            {MOSTRAR_DOWNLOADS && (
+                <a
+                    href={ROUTES.DOWNLOADS}
+                    className="footer__qr"
+                    onClick={onQrClick}
+                >
+                    <img
+                        src="/qr-downloads.svg"
+                        width={96}
+                        height={96}
+                        loading="lazy"
+                        decoding="async"
+                        alt={
+                            lang === "pt"
+                                ? "Abrir a página de downloads — aponte a câmera ou clique"
+                                : "Open the downloads page — point your camera or click"
+                        }
+                    />
+                </a>
+            )}
         </div>
     ),
 );
