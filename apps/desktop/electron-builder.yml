@@ -42,7 +42,12 @@ publish:
     owner: https-shini
     repo: NewPortfolio
 
+# O mesmo ícone do site, não uma cópia dele. Sem `icon` o electron-builder
+# empacota o ícone padrão do Electron — o app instalado apareceria no menu
+# e na barra de tarefas como "Electron" genérico. O 512x512 é o tamanho de
+# origem que o builder pede para derivar .ico e .icns sozinho.
 linux:
+    icon: ../web/public/icon-512.png
     target:
         - AppImage
         - deb
@@ -52,6 +57,7 @@ linux:
         StartupWMClass: portfolio-desktop
 
 win:
+    icon: ../web/public/icon-512.png
     target:
         - target: nsis
           arch: [x64]
@@ -64,6 +70,7 @@ nsis:
     # Não bloqueia a instalação; é o item que depende de compra.
 
 mac:
+    icon: ../web/public/icon-512.png
     target:
         - target: dmg
           arch: [x64, arm64]

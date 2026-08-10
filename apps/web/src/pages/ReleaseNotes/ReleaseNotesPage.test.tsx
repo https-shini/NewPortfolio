@@ -25,6 +25,20 @@ const setup = (hash = "") => {
 
 const [latest, previous] = RELEASE_NOTES;
 
+/**
+ * O gatilho de uma versão no histórico, pelo nome acessível.
+ *
+ * O espaço final não é enfeite: o nome é `"v2.0.0 — Expandir"`, e sem ele
+ * o padrão de `2.0.0` casaria também com `2.0.0-rc.1` e as duas betas.
+ * A expressão só funcionava enquanto nenhuma versão do histórico fosse
+ * prefixo de outra — o que deixou de valer quando a 2.0.0 saiu do
+ * destaque e desceu para a lista.
+ */
+const gatilhoDaVersao = (versao: string) =>
+    screen.getByRole("button", {
+        name: new RegExp(`^v${versao.replace(/[.\\-]/g, "\\$&")}\\s`),
+    });
+
 describe("ReleaseNotesPage", () => {
     beforeEach(() => {
         sessionStorage.clear();
@@ -94,18 +108,14 @@ describe("ReleaseNotesPage", () => {
     it("com âncora de uma versão do histórico, abre o painel dela", () => {
         setup(`#${versionSlug(previous!.version)}`);
 
-        const trigger = screen.getByRole("button", {
-            name: new RegExp(`^v${previous!.version.replace(/\./g, "\\.")}`),
-        });
+        const trigger = gatilhoDaVersao(previous!.version);
         expect(trigger).toHaveAttribute("aria-expanded", "true");
     });
 
     it("sem âncora, o histórico continua colapsado", () => {
         setup();
 
-        const trigger = screen.getByRole("button", {
-            name: new RegExp(`^v${previous!.version.replace(/\./g, "\\.")}`),
-        });
+        const trigger = gatilhoDaVersao(previous!.version);
         expect(trigger).toHaveAttribute("aria-expanded", "false");
     });
 
@@ -114,9 +124,7 @@ describe("ReleaseNotesPage", () => {
            remonta, então quem responde é o listener de `hashchange`. */
         setup();
 
-        const trigger = screen.getByRole("button", {
-            name: new RegExp(`^v${previous!.version.replace(/\./g, "\\.")}`),
-        });
+        const trigger = gatilhoDaVersao(previous!.version);
         expect(trigger).toHaveAttribute("aria-expanded", "false");
 
         act(() => {

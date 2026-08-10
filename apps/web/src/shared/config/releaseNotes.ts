@@ -98,9 +98,76 @@ export type ReleaseTag = "design" | "feature" | "perf" | "a11y" | "fix";
 ───────────────────────────────────────────────────────── */
 export const RELEASE_NOTES: ReleaseEntry[] = [
     {
+        version: "2.1.0",
+        date: "2026-08-10",
+        featured: true,
+        tags: ["feature"],
+        title: {
+            pt: "O portfólio fora do navegador",
+            en: "The portfolio outside the browser",
+        },
+        summary: {
+            pt: "Primeira versão com instalador para Windows, macOS e Linux.",
+            en: "First version with an installer for Windows, macOS and Linux.",
+        },
+        body: {
+            pt: "Esta versão publica o portfólio como **aplicativo instalável**, no mesmo modelo de distribuição que o Discord usa: o instalador sai de uma release do GitHub e o próprio app cuida da atualização daí em diante.\n\nO desktop é **Electron**, e a interface é exatamente a mesma do site — não há uma segunda base de código. O `dist/` produzido por `apps/web` é copiado para dentro do pacote e servido por um **protocolo próprio, `app://`**. Isso não é detalhe de implementação: servir de `file://` quebraria a History API, que é o roteamento inteiro do site, e abrir uma porta HTTP local só para servir arquivos do próprio disco seria expor um servidor sem necessidade. O protocolo próprio resolve os dois de uma vez, com `contextIsolation` ligado e `nodeIntegration` desligado.\n\nA página **/downloads** foi reorganizada em torno disso. A lista de instaladores não está escrita no código: vem das releases do GitHub por uma função serverless. É o que impede a página de continuar oferecendo a versão passada depois que outra é publicada — link de download velho é pior que link ausente, porque funciona e entrega o errado.\n\nA plataforma detectada pelo navegador ganha um cartão próprio no topo, e as demais seguem logo abaixo. A detecção **promove, nunca esconde**: ela erra, e uma página que oculta as outras opções ao errar deixa a pessoa sem saída.\n\nOs instaladores **ainda não são assinados digitalmente**. O Windows e o macOS vão mostrar um aviso de editor não reconhecido na primeira execução. É esperado, e a página diz isso em vez de deixar a pessoa descobrir sozinha.",
+            en: "This version ships the portfolio as an **installable app**, following the same distribution model Discord uses: the installer comes from a GitHub release, and the app handles updates from there on.\n\nThe desktop build is **Electron**, and the interface is exactly the same as the website — there is no second codebase. The `dist/` produced by `apps/web` is copied into the package and served through a **custom `app://` protocol**. That is not an implementation detail: serving from `file://` would break the History API, which is the site's entire routing, and opening a local HTTP port just to serve files from your own disk would expose a server for no reason. The custom protocol solves both at once, with `contextIsolation` on and `nodeIntegration` off.\n\nThe **/downloads** page was reorganized around it. The installer list is not written in the code: it comes from GitHub releases through a serverless function. That is what stops the page from offering the previous version after a new one ships — a stale download link is worse than a missing one, because it works and hands over the wrong thing.\n\nThe platform detected from the browser gets its own card at the top, with the others right below. Detection **promotes, never hides**: it gets things wrong, and a page that hides the alternatives when it does leaves you with no way out.\n\nThe installers are **not yet digitally signed**. Windows and macOS will show an unrecognized-publisher warning on first run. That is expected, and the page says so instead of letting you find out on your own.",
+        },
+        changes: {
+            added: [
+                {
+                    pt: "Aplicativo desktop em Electron para Windows, macOS e Linux",
+                    en: "Electron desktop app for Windows, macOS and Linux",
+                },
+                {
+                    pt: "Instaladores .exe, .dmg, AppImage e .deb publicados por tag",
+                    en: "Installers .exe, .dmg, AppImage and .deb published by tag",
+                },
+                {
+                    pt: "Atualização automática a partir das releases do GitHub",
+                    en: "Automatic updates from GitHub releases",
+                },
+                {
+                    pt: "Página /downloads com detecção de plataforma e contagem de downloads",
+                    en: "/downloads page with platform detection and download counts",
+                },
+                {
+                    pt: "Monorepo com npm workspaces: apps/web, apps/desktop e apps/mobile",
+                    en: "Monorepo with npm workspaces: apps/web, apps/desktop and apps/mobile",
+                },
+            ],
+            changed: [
+                {
+                    pt: "Rodapé reorganizado: âncoras e páginas em colunas separadas",
+                    en: "Reorganized footer: anchors and pages in separate columns",
+                },
+                {
+                    pt: "Fundo e iluminação fixos na rolagem; só as partículas se movem",
+                    en: "Background and lighting fixed on scroll; only particles move",
+                },
+            ],
+            fixed: [
+                {
+                    pt: "Dois tokens inexistentes deixavam cartões e caixas sem borda nos dois temas",
+                    en: "Two non-existent tokens left cards and boxes with no border in both themes",
+                },
+                {
+                    pt: "Resposta da API de downloads passa a ser normalizada campo a campo",
+                    en: "The downloads API response is now normalized field by field",
+                },
+            ],
+        },
+        links: [
+            {
+                label: { pt: "Baixar o aplicativo", en: "Download the app" },
+                href: "/downloads",
+            },
+        ],
+    },
+    {
         version: "2.0.0",
         date: "2026-08-04",
-        featured: true,
         tags: ["design", "feature"],
         title: {
             pt: "Segunda geração do portfólio",

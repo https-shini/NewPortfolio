@@ -9,6 +9,30 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 > `scripts/changelog.mjs`. Não editar à mão — as alterações se perdem
 > na próxima geração, e há teste conferindo a sincronia.
 
+## [2.1.0](https://gcruz.dev.br/release-notes/v2.1.0) — 2026-08-10
+
+**O portfólio fora do navegador**
+
+Primeira versão com instalador para Windows, macOS e Linux.
+
+### Adicionado
+
+- Aplicativo desktop em Electron para Windows, macOS e Linux
+- Instaladores .exe, .dmg, AppImage e .deb publicados por tag
+- Atualização automática a partir das releases do GitHub
+- Página /downloads com detecção de plataforma e contagem de downloads
+- Monorepo com npm workspaces: apps/web, apps/desktop e apps/mobile
+
+### Modificado
+
+- Rodapé reorganizado: âncoras e páginas em colunas separadas
+- Fundo e iluminação fixos na rolagem; só as partículas se movem
+
+### Corrigido
+
+- Dois tokens inexistentes deixavam cartões e caixas sem borda nos dois temas
+- Resposta da API de downloads passa a ser normalizada campo a campo
+
 ## [2.0.0](https://gcruz.dev.br/release-notes/v2.0.0) — 2026-08-04
 
 **Segunda geração do portfólio**

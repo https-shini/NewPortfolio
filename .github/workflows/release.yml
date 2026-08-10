@@ -83,6 +83,14 @@ jobs:
         name: Android APK
         needs: web
         runs-on: ubuntu-latest
+        # Os secrets ficam no nível do JOB de propósito. No `if` de um
+        # passo o contexto `env` não enxerga o `env` declarado nesse
+        # mesmo passo — a condição de assinatura lia sempre vazio e o
+        # passo era pulado mesmo com o keystore configurado.
+        env:
+            ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+            ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+            ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
@@ -119,10 +127,6 @@ jobs:
             # para distribuir.
             - name: Assinar (quando houver keystore)
               if: ${{ env.ANDROID_KEYSTORE_BASE64 != '' }}
-              env:
-                  ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-                  ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-                  ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
               working-directory: apps/mobile/android
               run: |
                   echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > release.keystore
@@ -144,7 +148,17 @@ jobs:
         needs: [desktop, android]
         # Só em tag: um disparo manual serve para conferir que a matriz
         # constrói, sem criar release de nada.
-        if: startsWith(github.ref, 'refs/tags/v')
+        #
+        # `always()` porque o Android NÃO pode barrar o desktop. Com o
+        # `needs` puro, um `cap add android` que falhe deixa a release
+        # sem NENHUM instalador — inclusive os três de desktop que
+        # ficaram prontos. O desktop é o requisito; o APK entra se tiver
+        # saído. O `desktop.result` continua obrigatório, então uma
+        # release vazia segue impossível.
+        if: >-
+            always() &&
+            startsWith(github.ref, 'refs/tags/v') &&
+            needs.desktop.result == 'success'
         runs-on: ubuntu-latest
         steps:
             - uses: actions/download-artifact@v4
