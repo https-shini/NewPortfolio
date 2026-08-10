@@ -7,7 +7,16 @@ name: Release
 on:
     push:
         tags: ["v*"]
+    # O disparo manual aceita a versão a publicar. Sem ela, a matriz só
+    # constrói — é a checagem barata de "os três alvos ainda empacotam?".
+    # Com ela, a própria action cria a tag no GitHub e anexa os
+    # instaladores, sem exigir um `git push --tags` de quem publica.
     workflow_dispatch:
+        inputs:
+            versao:
+                description: "Tag a publicar (ex.: v2.1.0). Vazio: só constrói."
+                required: false
+                default: ""
 
 permissions:
     contents: write
@@ -157,7 +166,7 @@ jobs:
         # release vazia segue impossível.
         if: >-
             always() &&
-            startsWith(github.ref, 'refs/tags/v') &&
+            (startsWith(github.ref, 'refs/tags/v') || inputs.versao != '') &&
             needs.desktop.result == 'success'
         runs-on: ubuntu-latest
         steps:
@@ -167,6 +176,9 @@ jobs:
             - name: Anexar à Release
               uses: softprops/action-gh-release@v2
               with:
+                  # Numa tag, `ref_name` já é ela. Num disparo manual a
+                  # action cria a tag apontando para o commit do disparo.
+                  tag_name: ${{ inputs.versao || github.ref_name }}
                   files: artefatos/**/*
                   fail_on_unmatched_files: true
                   generate_release_notes: true
