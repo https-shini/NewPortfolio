@@ -678,3 +678,60 @@ export const IconSocial: React.FC<IconProps> = (props) => (
         <line x1="13.8" y1="13.2" x2="17.2" y2="15.2" />
     </S>
 );
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Plataformas — para a página de downloads
+
+   Desenhados aqui, e não trazidos de um pacote de ícones, pela mesma razão
+   que sustenta o resto do projeto: o cliente depende de react e react-dom e
+   de mais nada, e `dependencies.test.ts` reprova quem tentar acrescentar.
+
+   Traço de 2, igual a IconTerminal e IconServer — são ícones "de sistema" e
+   precisam ter o mesmo peso deles quando aparecem lado a lado. Todos são
+   silhuetas simplificadas, não os logotipos oficiais: marca registrada
+   redesenhada em traço fino deixa de ser a marca, e o que a página precisa
+   é que a pessoa RECONHEÇA o próprio sistema de relance.
+───────────────────────────────────────────────────────────────────────────── */
+
+/** Quatro painéis em perspectiva — a janela do Windows. */
+export const IconWindows: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <path d="M3 6.5L10.5 5.2V11.3H3V6.5Z" />
+        <path d="M12.5 4.9L21 3.5V11.3H12.5V4.9Z" />
+        <path d="M3 12.7H10.5V18.8L3 17.5V12.7Z" />
+        <path d="M12.5 12.7H21V20.5L12.5 19.1V12.7Z" />
+    </S>
+);
+
+/** Maçã com a mordida e a folha — silhueta, não o logotipo. */
+export const IconApple: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <path d="M16.3 12.9C16.3 10.6 18.2 9.5 18.3 9.4C17.3 7.9 15.7 7.7 15.1 7.7C13.7 7.5 12.4 8.5 11.7 8.5C11 8.5 9.9 7.7 8.8 7.7C7.3 7.8 5.9 8.6 5.2 10C3.6 12.7 4.8 16.8 6.3 19C7.1 20.1 8 21.3 9.2 21.2C10.3 21.2 10.8 20.5 12.1 20.5C13.4 20.5 13.8 21.2 15 21.2C16.3 21.2 17 20.1 17.8 19C18.7 17.7 19.1 16.5 19.1 16.4C19.1 16.4 16.3 15.3 16.3 12.9Z" />
+        <path d="M14.2 6.2C14.8 5.5 15.2 4.5 15.1 3.5C14.3 3.5 13.2 4.1 12.6 4.8C12.1 5.4 11.6 6.5 11.7 7.4C12.7 7.5 13.6 6.9 14.2 6.2Z" />
+    </S>
+);
+
+/** O pinguim, reduzido a corpo, cabeça e pés. */
+export const IconLinux: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <path d="M12 2.8C10.1 2.8 8.9 4.4 8.9 6.3V8.7C8.9 9.8 8.3 10.6 7.6 11.7C6.6 13.2 6 14.6 6 16.2C6 18.9 8.7 21.2 12 21.2C15.3 21.2 18 18.9 18 16.2C18 14.6 17.4 13.2 16.4 11.7C15.7 10.6 15.1 9.8 15.1 8.7V6.3C15.1 4.4 13.9 2.8 12 2.8Z" />
+        <path d="M10.6 6.6H10.7" />
+        <path d="M13.4 6.6H13.5" />
+        <path d="M10.9 9.2C11.6 9.8 12.4 9.8 13.1 9.2" />
+    </S>
+);
+
+/** O robô do Android: cabeça, antenas, olhos e corpo. */
+export const IconAndroid: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <path d="M6 11.4C6 8.1 8.7 5.8 12 5.8C15.3 5.8 18 8.1 18 11.4" />
+        <path d="M6 11.4H18" />
+        <path d="M7.6 7.1L6.1 4.7" />
+        <path d="M16.4 7.1L17.9 4.7" />
+        <path d="M9.8 9.1H9.9" />
+        <path d="M14.1 9.1H14.2" />
+        <path d="M7.5 13.6H16.5V17.8C16.5 18.6 15.9 19.2 15.1 19.2H8.9C8.1 19.2 7.5 18.6 7.5 17.8V13.6Z" />
+        <path d="M10.3 19.2V21.2" />
+        <path d="M13.7 19.2V21.2" />
+    </S>
+);
