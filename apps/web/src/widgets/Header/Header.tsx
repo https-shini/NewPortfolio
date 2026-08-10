@@ -9,7 +9,7 @@ import { useFocusTrap } from "@/shared/hooks/useFocusTrap";
 import { useInertBackground } from "@/shared/hooks/useInertBackground";
 import { useRoute } from "@/shared/hooks/useRoute";
 import { scrollToSection } from "@/shared/lib/smoothScroll";
-import { IconSun, IconMoon, IconTranslate } from "@/shared/ui/Icons";
+import { IconSun, IconMoon, IconTranslate, IconClose } from "@/shared/ui/Icons";
 import { SECTION_IDS, ROUTES } from "@/shared/config/constants";
 
 const NAV_LINKS = [
@@ -83,10 +83,19 @@ export const Header: React.FC = () => {
 
     const activeSection = isHome ? observedSection : "";
 
-    const closeMenu = useCallback(() => {
-        setIsMenuOpen(false);
-        hamburgerRef.current?.focus();
-    }, []);
+    const closeMenu = useCallback(() => setIsMenuOpen(false), []);
+
+    /* O foco volta ao hambúrguer DEPOIS que o `inert` sai do #root.
+       Fazer isso dentro do closeMenu não funcionava: naquele instante o
+       header ainda está inerte, e `inert` bloqueia foco — a chamada era
+       um no-op silencioso e o foco caía no body. Quem navega por teclado
+       fechava o menu e perdia o lugar na página. Num efeito, roda depois
+       do commit, com o atributo já removido. */
+    const estavaAberto = useRef(false);
+    useEffect(() => {
+        if (estavaAberto.current && !isMenuOpen) hamburgerRef.current?.focus();
+        estavaAberto.current = isMenuOpen;
+    }, [isMenuOpen]);
 
     /* ── Drawer mobile — mesma mecânica do Modal base ──────────────── */
     useScrollLock(isMenuOpen);
@@ -94,7 +103,7 @@ export const Header: React.FC = () => {
     useFocusTrap(mobileNavRef, {
         active: isMenuOpen,
         onEscape: closeMenu,
-        /* closeMenu já devolve o foco ao hambúrguer. */
+        /* O efeito acima devolve o foco, e sabe esperar o inert sair. */
         restoreFocus: false,
     });
 
@@ -154,7 +163,7 @@ export const Header: React.FC = () => {
         <>
             <header
                 id="site-header"
-                className={`header${isScrolled ? " is-scrolled" : ""}`}
+                className={`header${isScrolled ? " is-scrolled" : ""}${isMenuOpen ? " is-menu-open" : ""}`}
                 role="banner"
             >
                 <div className="header__inner">
@@ -250,51 +259,68 @@ export const Header: React.FC = () => {
                         if (e.target === mobileNavRef.current) closeMenu();
                     }}
                 >
-                    <div className="mobile-nav__logo" aria-hidden="true">
-                        <Logo variante="compacta" />
+                    {/* Barra própria do overlay, e não uma decoração.
+                        Com o menu aberto o `useInertBackground` marca o
+                        #root como inerte, e o header inteiro mora lá:
+                        marca, idioma, tema e o próprio X ficavam
+                        VISÍVEIS e mortos — o X não fechava o menu, só
+                        Escape e o clique no fundo. Agora o header some e
+                        estes controles, que estão dentro do overlay,
+                        são os que respondem. */}
+                    <div className="mobile-nav__topo">
+                        <Logo />
+
+                        <div className="mobile-nav__acoes">
+                            <button
+                                className={`header__lang${langSwitching ? " is-switching" : ""}`}
+                                type="button"
+                                onClick={handleLangToggle}
+                                aria-label={currentLang.switchLabel}
+                            >
+                                <IconTranslate className="header__lang-icon" />
+                                <span className="header__lang-code">
+                                    {currentLang.label}
+                                </span>
+                            </button>
+
+                            <button
+                                className="header__ctrl"
+                                type="button"
+                                onClick={toggleTheme}
+                                aria-label={themeLabel}
+                                aria-pressed={theme === "dark"}
+                            >
+                                {theme === "dark" ? <IconSun /> : <IconMoon />}
+                            </button>
+
+                            {/* O X que faltava. O do header está inerte
+                                enquanto o menu existe. */}
+                            <button
+                                className="header__ctrl mobile-nav__fechar"
+                                type="button"
+                                onClick={closeMenu}
+                                aria-label={menuLabel}
+                            >
+                                <IconClose />
+                            </button>
+                        </div>
                     </div>
 
-                    {NAV_LINKS.map(({ href, key }, i) => (
-                        <a
-                            key={href}
-                            href={`#${href}`}
-                            className={`mobile-nav__link${activeSection === href ? " is-active" : ""}`}
-                            style={{ "--i": i } as React.CSSProperties}
-                            onClick={(e) => handleNavClick(e, href)}
-                        >
-                            <span className="mobile-nav__link-num">
-                                {String(i + 1).padStart(2, "0")}
-                            </span>
-                            {t(key)}
-                        </a>
-                    ))}
-
-                    <div className="mobile-nav__controls">
-                        <button
-                            className={`header__lang${langSwitching ? " is-switching" : ""}`}
-                            type="button"
-                            onClick={handleLangToggle}
-                            aria-label={currentLang.switchLabel}
-                        >
-                            <span
-                                className="header__lang-flag"
-                                aria-hidden="true"
+                    <div className="mobile-nav__links">
+                        {NAV_LINKS.map(({ href, key }, i) => (
+                            <a
+                                key={href}
+                                href={`#${href}`}
+                                className={`mobile-nav__link${activeSection === href ? " is-active" : ""}`}
+                                style={{ "--i": i } as React.CSSProperties}
+                                onClick={(e) => handleNavClick(e, href)}
                             >
-                                {currentLang.flag}
-                            </span>
-                            <span className="header__lang-code">
-                                {currentLang.label}
-                            </span>
-                        </button>
-
-                        <button
-                            className="header__ctrl"
-                            type="button"
-                            onClick={toggleTheme}
-                            aria-label={themeLabel}
-                        >
-                            {theme === "dark" ? <IconSun /> : <IconMoon />}
-                        </button>
+                                <span className="mobile-nav__link-num">
+                                    {String(i + 1).padStart(2, "0")}
+                                </span>
+                                {t(key)}
+                            </a>
+                        ))}
                     </div>
 
                     <a

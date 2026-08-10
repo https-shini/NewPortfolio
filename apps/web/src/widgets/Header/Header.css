@@ -19,6 +19,17 @@
         backdrop-filter var(--transition-slow);
 }
 
+/* Com o menu aberto o header está INERTE (ver useInertBackground): os
+   controles continuariam desenhados e não responderiam a clique nenhum.
+   Some por inteiro, e o overlay assume com a barra própria dele — que
+   repete marca, idioma e tema no mesmo lugar, então a troca não pisca.
+   Segue no fluxo (opacity, não display) para o hambúrguer continuar
+   existindo e receber o foco de volta quando o menu fecha. */
+.header.is-menu-open {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .header.is-scrolled {
     background: color-mix(in srgb, var(--color-bg) 82%, transparent);
     backdrop-filter: blur(20px) saturate(1.8);
@@ -430,12 +441,12 @@
     position: fixed;
     inset: 0;
     z-index: var(--z-drawer);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-5);
-    padding-top: var(--header-height);
+    /* Três faixas: a barra do topo, os links no espaço que sobra, e o
+       CTA embaixo. Antes era um flex centralizado onde tudo disputava o
+       mesmo eixo — foi assim que a marca acabou por cima de "Início". */
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding-bottom: var(--space-8);
     background: color-mix(in srgb, var(--color-bg) 96%, transparent);
     backdrop-filter: blur(24px) saturate(1.6);
     -webkit-backdrop-filter: blur(24px) saturate(1.6);
@@ -454,10 +465,41 @@
     transform: none;
 }
 
-/* Ponto decorativo topo do menu mobile */
-.mobile-nav__logo {
-    position: absolute;
-    top: calc(var(--header-height) + var(--space-6));
+/* Barra do overlay, alinhada com a do header para a troca não deslocar
+   nada: mesma altura e mesmo recuo lateral. */
+.mobile-nav__topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    width: 100%;
+    max-width: var(--layout-max);
+    height: var(--header-height);
+    margin-inline: auto;
+    padding-inline: var(--gutter-sm);
+}
+
+.mobile-nav__acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.mobile-nav__fechar {
+    border-color: var(--color-border-brand);
+    color: var(--color-brand-text);
+}
+
+/* Os links ocupam a faixa do meio e se centram nela — não no viewport
+   inteiro, senão a barra do topo os empurraria para baixo. */
+.mobile-nav__links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-5);
+    min-height: 0;
+    padding-block: var(--space-6);
 }
 
 /* Links com número de índice à esquerda */
@@ -510,20 +552,12 @@
     color: var(--color-brand-light);
 }
 
-/* Controles (lang + tema) */
-.mobile-nav__controls {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    margin-top: var(--space-2);
-}
-
 /* CTA mobile — mais robusto que a versão desktop */
 .mobile-nav__cta {
     display: inline-flex;
     align-items: center;
+    justify-self: center;
     gap: var(--space-2);
-    margin-top: var(--space-2);
     padding: var(--space-3) var(--space-6);
     font-size: var(--text-sm);
     font-weight: 600;
@@ -560,6 +594,17 @@
     .hamburger * {
         animation: none !important;
         transition: none !important;
+    }
+
+    /* Sem isto o menu ficava VAZIO para quem pede menos movimento: o
+       estado de repouso do link é `opacity: 0`, e a única coisa que o
+       trazia para 1 era a animação que a regra acima acabou de matar.
+       Oito links invisíveis, e o menu inteiro inutilizável — o axe não
+       pega porque nunca abre o menu. O estado final é declarado aqui em
+       vez de depender de animação. */
+    .mobile-nav__link {
+        opacity: 1 !important;
+        transform: none !important;
     }
 }
 
