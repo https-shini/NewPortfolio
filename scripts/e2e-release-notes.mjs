@@ -15,7 +15,28 @@
  * enquanto não há release publicada.
  */
 
-import { launchBrowser, newContext, startPreview, visit } from "./lib/browser.mjs";
+import { fileURLToPath } from "node:url";
+import { dirname, resolve } from "node:path";
+import {
+    launchBrowser,
+    newContext,
+    startPreview,
+    visit,
+} from "./lib/browser.mjs";
+
+/* As versões saem do RELEASE_NOTES, não do texto deste arquivo. Estavam
+   fixas em v2.0.0 e v2.0.0-rc.1, e a asserção "a mais recente não oferece
+   versão mais nova" passava só enquanto a 2.0.0 fosse o topo — publicar
+   qualquer versão nova quebrava o roteiro sem que nada tivesse quebrado
+   no site. Mesmo import do changelog.mjs, com --experimental-strip-types. */
+const raiz = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const { RELEASE_NOTES } = await import(
+    resolve(raiz, "apps/web/src/shared/config/releaseNotes.ts")
+);
+
+const [MAIS_RECENTE, ANTERIOR] = RELEASE_NOTES;
+const ROTA_RECENTE = `/release-notes/v${MAIS_RECENTE.version}`;
+const ROTA_ANTERIOR = `/release-notes/v${ANTERIOR.version}`;
 
 const resultados = [];
 const check = (nome, ok, detalhe = "") => {
@@ -54,7 +75,11 @@ try {
         const r = await page.goto(`${preview.url}/release-notes`, {
             waitUntil: "domcontentloaded",
         });
-        check("GET /release-notes responde 200", r.status() === 200, r.status());
+        check(
+            "GET /release-notes responde 200",
+            r.status() === 200,
+            r.status(),
+        );
 
         await page.waitForSelector(".release-page, main", { timeout: 25_000 });
         await page.waitForTimeout(500);
@@ -119,7 +144,11 @@ try {
             .catch(() => false);
         check("permalink alcança a versão", alvoVisivel);
 
-        check("console sem erros no índice", erros.length === 0, erros.join(" | "));
+        check(
+            "console sem erros no índice",
+            erros.length === 0,
+            erros.join(" | "),
+        );
         await ctx.close();
     }
 
@@ -133,18 +162,18 @@ try {
         });
         const erros = coletarErros(page);
 
-        await visit(page, preview.url, "/release-notes/v2.0.0");
+        await visit(page, preview.url, ROTA_RECENTE);
 
         const h1 = page.locator("h1").first();
         check("a versão monta com h1", await h1.isVisible());
         check(
             "o h1 é o título da versão",
-            /geração|generation/i.test(await h1.innerText()),
+            (await h1.innerText()).trim() === MAIS_RECENTE.title.pt,
             (await h1.innerText()).slice(0, 40),
         );
         check(
             "título da aba traz a versão",
-            /v2\.0\.0/.test(await page.title()),
+            (await page.title()).includes(`v${MAIS_RECENTE.version}`),
             await page.title(),
         );
 
@@ -154,7 +183,7 @@ try {
             .catch(() => "");
         check(
             "canonical é o da versão",
-            /\/release-notes\/v2\.0\.0$/.test(canonical ?? ""),
+            (canonical ?? "").endsWith(ROTA_RECENTE),
             canonical ?? "ausente",
         );
 
@@ -162,7 +191,10 @@ try {
             "cabeçalho do site presente",
             (await page.locator("#site-header, header").count()) > 0,
         );
-        check("rodapé do site presente", (await page.locator("footer").count()) > 0);
+        check(
+            "rodapé do site presente",
+            (await page.locator("footer").count()) > 0,
+        );
 
         /* Navegação entre versões: a mais recente não tem "mais nova". */
         check(
@@ -178,13 +210,14 @@ try {
             await page.waitForTimeout(600);
             check(
                 "navegar entre versões troca a URL",
-                new URL(page.url()).pathname === "/release-notes/v2.0.0-rc.1",
+                new URL(page.url()).pathname === ROTA_ANTERIOR,
                 new URL(page.url()).pathname,
             );
             check(
                 "a versão do meio tem os dois vizinhos",
                 (await page.locator('[class*="nav-link--prev"]').count()) > 0 &&
-                    (await page.locator('[class*="nav-link--next"]').count()) > 0,
+                    (await page.locator('[class*="nav-link--next"]').count()) >
+                        0,
             );
         }
 
@@ -206,7 +239,11 @@ try {
             h1NaoEncontrada,
         );
 
-        check("console sem erros na versão", erros.length === 0, erros.join(" | "));
+        check(
+            "console sem erros na versão",
+            erros.length === 0,
+            erros.join(" | "),
+        );
         await ctx.close();
     }
 
@@ -236,7 +273,7 @@ try {
 
     /* ══ Idioma e tema nas duas rotas ════════════════════════════ */
     {
-        for (const rota of ["/release-notes", "/release-notes/v2.0.0"]) {
+        for (const rota of ["/release-notes", ROTA_RECENTE]) {
             const pt = await newContext(browser, {
                 baseUrl: preview.url,
                 theme: "dark",

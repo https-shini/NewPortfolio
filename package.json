@@ -25,7 +25,7 @@
     "test:watch": "npm run test:watch --workspace apps/web",
     "audit:a11y": "node scripts/a11y.mjs",
     "audit:overflow": "node scripts/overflow.mjs",
-    "audit:release-notes": "node scripts/e2e-release-notes.mjs",
+    "audit:release-notes": "node --experimental-strip-types --no-warnings scripts/e2e-release-notes.mjs",
     "audit:bundle": "node scripts/bundle-budget.mjs",
     "audit:modals": "node scripts/e2e-modals.mjs",
     "audit:perf": "node scripts/perf.mjs",
