@@ -28,6 +28,7 @@ export interface Arquivo {
     arquitetura: string | null;
     tamanho: number;
     url: string;
+    downloads: number;
 }
 
 export interface Downloads {

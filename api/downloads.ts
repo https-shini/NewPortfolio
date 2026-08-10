@@ -58,6 +58,9 @@ export interface Arquivo {
     /** Bytes. A interface formata; aqui vai o número cru. */
     tamanho: number;
     url: string;
+    /** Quantas vezes o asset já foi baixado — a API sempre devolveu, e
+        até aqui o número era jogado fora dentro da própria função. */
+    downloads: number;
 }
 
 export interface Downloads {
@@ -76,7 +79,9 @@ export interface Downloads {
  * casa com nada é ignorado em silêncio: metadados de atualização
  * (`latest.yml`, `blockmap`) são publicados junto e não são para baixar.
  */
-export function classificar(nome: string): Omit<Arquivo, "tamanho" | "url"> | null {
+export function classificar(
+    nome: string,
+): Omit<Arquivo, "tamanho" | "url" | "downloads"> | null {
     const n = nome.toLowerCase();
 
     /* Estes acompanham a release para o auto-update funcionar; não são
@@ -156,6 +161,7 @@ export async function buscarDownloads(): Promise<Downloads> {
                         ...meta,
                         tamanho: a.size ?? 0,
                         url: a.browser_download_url,
+                        downloads: a.download_count ?? 0,
                     } satisfies Arquivo;
                 })
                 .filter((a): a is Arquivo => a !== null);
