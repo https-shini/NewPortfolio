@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import "./Header.css";
 import { useTheme } from "@/shared/hooks/useTheme";
 import { useLang } from "@/shared/hooks/useLang";
+import { Logo } from "@/shared/ui/Logo/Logo";
 import { useScrollLock } from "@/shared/hooks/useScrollLock";
 import { useFocusTrap } from "@/shared/hooks/useFocusTrap";
 import { useInertBackground } from "@/shared/hooks/useInertBackground";
@@ -164,11 +165,7 @@ export const Header: React.FC = () => {
                         aria-label={logoLabel}
                         onClick={(e) => handleNavClick(e, SECTION_IDS.HOME)}
                     >
-                        <span className="header__logo-dot" aria-hidden="true" />
-                        <span className="header__logo-name">
-                            <span className="header__logo-prefix">GCruz</span>
-                            <span className="header__logo-suffix">.dev</span>
-                        </span>
+                        <Logo />
                     </a>
 
                     {/* ── Nav desktop ───────────────────────────────── */}
@@ -254,7 +251,7 @@ export const Header: React.FC = () => {
                     }}
                 >
                     <div className="mobile-nav__logo" aria-hidden="true">
-                        <span className="header__logo-dot" />
+                        <Logo variante="compacta" />
                     </div>
 
                     {NAV_LINKS.map(({ href, key }, i) => (

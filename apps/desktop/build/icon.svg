@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Marca <gc/> — estritamente tipográfica (JetBrains Mono 700).
+       Os hexas são os tokens do tema escuro do site: crimson-500 nos
+       colchetes, slate-50 no nome, sobre o tile do design system.
+       Regenerar derivados: npm run icones. -->
   <defs>
     <linearGradient id="vidro" x1="0" y1="0" x2="0.4" y2="1">
       <stop offset="0" stop-color="#1b2740"/>
@@ -16,10 +20,7 @@
   <rect x="7" y="7" width="1010" height="1010" rx="217" fill="none"
         stroke="#ffffff" stroke-opacity="0.09" stroke-width="14"/>
 
-  <g fill="none" stroke="#f8fafc" stroke-width="116" stroke-linecap="butt">
-    <path d="M 671.5 351.3 A 250 250 0 1 0 730 512"/>
-    <path d="M 545 512 H 730"/>
-  </g>
-
-  <circle cx="820" cy="772" r="62" fill="#e11d48"/>
+  <text x="512" y="512" text-anchor="middle" dominant-baseline="central"
+        font-family="'JetBrains Mono', monospace" font-weight="700"
+        font-size="300" letter-spacing="-6"><tspan fill="#f43f5e">&lt;</tspan><tspan fill="#f8fafc">gc</tspan><tspan fill="#f43f5e">/&gt;</tspan></text>
 </svg>

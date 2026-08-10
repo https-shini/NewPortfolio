@@ -1,0 +1,53 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Logo <gcruz.dev/> — só tokens, nenhuma cor própria
+
+   O peso 700 não é gosto: foi validado na análise da marca como o
+   mínimo que sustenta a leitura do monospace abaixo de 24px, que é o
+   tamanho de todos os usos atuais (header e rodapé rendem --text-md).
+   Se um dia a marca aparecer grande — um hero, uma capa —, use
+   `logo--lg`, que devolve o peso 600 para o traço não engordar.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.logo {
+    display: inline-flex;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: var(--text-md);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.logo--lg {
+    font-weight: 600;
+}
+
+.logo__colchete {
+    color: var(--color-brand-text);
+    transition: color var(--transition-fast);
+}
+
+.logo__nome {
+    color: var(--color-text-1);
+    transition: color var(--transition-fast);
+}
+
+/* Indigo de acento, que troca sozinho com o tema: indigo-400 no escuro,
+   indigo-600 no claro — os dois passam de 4.5:1 sobre os fundos. */
+.logo__extensao {
+    color: var(--color-accent-light);
+    transition: color var(--transition-fast);
+}
+
+/* O hover pertence a quem envolve o logo num link: um <span> parado não
+   deve reagir. `a:hover .logo` escurece a extensão um passo. */
+a:hover .logo__extensao,
+a:focus-visible .logo__extensao {
+    color: var(--color-accent-hover);
+}
+
+a:hover .logo__colchete,
+a:focus-visible .logo__colchete {
+    color: var(--color-brand-light);
+}

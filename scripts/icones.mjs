@@ -146,6 +146,33 @@ function montarBmp(rgba, largura, altura) {
 
 const svg = readFileSync(FONTE, "utf8");
 
+/* ── Variante mínima para os tamanhos de aba ─────────────────────────
+   A 16px o <gc/> inteiro são cinco glifos em três pixels cada: vira
+   ruído. A análise da marca já previa a degradação — abaixo de um
+   limiar, ficam só as duas letras, no peso 700, ocupando o quadro. O
+   crimson dos colchetes volta a partir de 48px, onde há pixel para ele.
+   O limiar de 32 foi decidido olhando o render, não por palpite. */
+const LIMIAR_COMPACTO = 32;
+const svgMinimo = svg.replace(
+    /<text[\s\S]*?<\/text>/,
+    `<text x="512" y="512" text-anchor="middle" dominant-baseline="central"
+        font-family="'JetBrains Mono', monospace" font-weight="700"
+        font-size="520" letter-spacing="-30"><tspan fill="#f8fafc">gc</tspan></text>`,
+);
+
+/** O desenho certo para um dado tamanho de saída. */
+const svgPara = (tamanho) => (tamanho <= LIMIAR_COMPACTO ? svgMinimo : svg);
+
+/* A marca é texto em JetBrains Mono 700, e a máquina que renderiza não
+   tem a fonte instalada — sem isto o Chromium cairia num monospace de
+   sistema e o ícone commitado dependeria de onde foi gerado. O woff2
+   mora em build/ como ASSET (22 KB, sem entrada em package.json) e
+   entra na página como data URI. */
+const FONTE_MONO = join(BUILD, "JetBrainsMono-700.woff2");
+const ESTILO_FONTE =
+    `@font-face{font-family:'JetBrains Mono';font-weight:700;` +
+    `src:url(data:font/woff2;base64,${readFileSync(FONTE_MONO).toString("base64")}) format('woff2')}`;
+
 /** Renderiza o SVG num quadro de tamanho dado e devolve o PNG. */
 async function png(pagina, largura, altura, conteudo = svg, escala = 1) {
     await pagina.setViewportSize({ width: largura, height: altura });
@@ -154,15 +181,21 @@ async function png(pagina, largura, altura, conteudo = svg, escala = 1) {
            num contêiner (a variante maskable, a lateral do instalador), é
            o contêiner que manda no tamanho, e uma regra solta forçaria o
            SVG de volta ao quadro inteiro. */
-        `<style>html,body{margin:0;background:transparent}` +
+        `<style>${ESTILO_FONTE}html,body{margin:0;background:transparent}` +
             `body>svg{display:block;width:${largura * escala}px;height:${altura * escala}px}` +
             `div svg{display:block;width:100%;height:100%}</style>` +
             conteudo,
     );
+    /* Sem esta espera a captura corre contra o parse do woff2 e o texto
+       sai na fonte reserva — exatamente o que o embed evita. */
+    await pagina.evaluate(() => document.fonts.ready);
     return pagina.screenshot({ omitBackground: true });
 }
 
-const digestSvg = createHash("sha256").update(svg).digest("hex");
+const digestSvg = createHash("sha256")
+    .update(svg)
+    .update(readFileSync(join(BUILD, "JetBrainsMono-700.woff2")))
+    .digest("hex");
 const ASSINATURA = join(BUILD, "icones.lock");
 
 /* ── Conferência ─────────────────────────────────────────────────────
@@ -236,7 +269,10 @@ try {
     /* ── .ico do Windows: executável, instalador e desinstalador ────── */
     const variantes = [];
     for (const t of TAMANHOS_ICO) {
-        variantes.push({ tamanho: t, dados: await png(pagina, t, t) });
+        variantes.push({
+            tamanho: t,
+            dados: await png(pagina, t, t, svgPara(t)),
+        });
     }
     saidas.set("icon.ico", montarIco(variantes));
 
@@ -306,8 +342,10 @@ try {
                         background:linear-gradient(150deg,#131c30 0%,#0a1120 60%,#070d19 100%);
                         font-family:system-ui,sans-serif">
                <div style="position:absolute;left:24px;bottom:18px;
-                           color:#64748b;font-size:12px;letter-spacing:.08em;
-                           text-transform:uppercase">GCruz.dev</div>
+                           font-family:'JetBrains Mono',monospace;
+                           font-weight:700;font-size:13px">
+                 <span style="color:#f43f5e">&lt;</span><span style="color:#f8fafc">gcruz</span><span style="color:#818cf8">.dev</span><span style="color:#f43f5e">/&gt;</span>
+               </div>
              </div>`,
         ),
     );
@@ -338,7 +376,10 @@ try {
 
     const faviconPngs = [];
     for (const t of [16, 32, 48]) {
-        faviconPngs.push({ tamanho: t, dados: await png(pagina, t, t) });
+        faviconPngs.push({
+            tamanho: t,
+            dados: await png(pagina, t, t, svgPara(t)),
+        });
     }
     saidas.set("web:favicon.ico", montarIco(faviconPngs));
 } finally {

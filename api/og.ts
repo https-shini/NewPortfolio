@@ -21,6 +21,8 @@ const FUNDO = "#070d19";
 const MARCA = "#f43f5e";
 const TEXTO = "#f8fafc";
 const APAGADO = "#8593a9";
+/* Indigo-400 do tema escuro — a cor da extensão no logotipo. */
+const EXTENSAO = "#818cf8";
 
 /* Mesma forma das outras funções de api/. Node, e não edge: assim a
    variante do rasterizador usada aqui é a mesma que o teste exercita —
@@ -128,7 +130,18 @@ export default async function handler(
                     fontSize: 28,
                     color: APAGADO,
                 },
-                [caixa({ color: TEXTO }, "gcruz.dev.br"), caixa({}, data)],
+                [
+                    /* O logotipo <gcruz.dev/>, nas mesmas cores do site.
+                       Hexas e não tokens: isto renderiza no edge, fora
+                       de qualquer CSS. */
+                    caixa({ display: "flex", fontWeight: 700 }, [
+                        caixa({ color: MARCA }, "<"),
+                        caixa({ color: TEXTO }, "gcruz"),
+                        caixa({ color: EXTENSAO }, ".dev"),
+                        caixa({ color: MARCA }, "/>"),
+                    ]),
+                    caixa({}, data),
+                ],
             ),
         ],
     );

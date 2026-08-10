@@ -64,16 +64,6 @@
 }
 
 /* Ponto pulsante — identidade visual do Header replicada */
-.footer__logo-dot {
-    display: block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--color-brand);
-    flex-shrink: 0;
-    animation: footer-dot-pulse 3s ease-in-out infinite;
-}
-
 @keyframes footer-dot-pulse {
     0%,
     100% {
@@ -84,34 +74,6 @@
         box-shadow: 0 0 0 5px
             color-mix(in srgb, var(--color-brand) 0%, transparent);
     }
-}
-
-.footer__logo-name {
-    font-family: var(--font-mono);
-    font-size: var(--text-lg);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1;
-}
-
-.footer__logo-prefix {
-    color: var(--color-text-1);
-    transition: color var(--transition-fast);
-}
-
-.footer__logo-suffix {
-    /* Texto de leitura — ver --color-brand-text em tokens.css. */
-    color: var(--color-brand-text);
-    transition:
-        color var(--transition-fast),
-        opacity var(--transition-fast);
-}
-
-.footer__logo:hover .footer__logo-prefix {
-    color: var(--color-brand-light);
-}
-.footer__logo:hover .footer__logo-suffix {
-    opacity: 0.65;
 }
 
 /* Tagline */
@@ -536,9 +498,6 @@
 
 /* ── A partir de --bp-sm (480px): logo cheio ───────────────────────────── */
 @media (min-width: 481px) {
-    .footer__logo-name {
-        font-size: var(--text-xl);
-    }
 }
 
 /* ── A partir de --bp-md (640px): duas colunas, barra em linha ─────────── */
@@ -611,7 +570,6 @@
 
 /* Remove animações para usuários com preferência de movimento reduzido */
 @media (prefers-reduced-motion: reduce) {
-    .footer__logo-dot,
     .footer__heart {
         animation: none;
     }

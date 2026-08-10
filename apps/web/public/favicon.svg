@@ -1,5 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Variante mínima da marca <gcruz.dev/>: nas abas o SVG rende a
+       16-32px, onde os colchetes virariam borrão — ficam as letras, no
+       peso que a análise da marca validou. Fonte de sistema de
+       propósito: favicon SVG não carrega webfont, e o monospace local é
+       o mesmo compromisso do favicon anterior (que usava Arial). -->
   <rect width="64" height="64" rx="14" fill="#070d19"/>
-  <text x="30" y="46" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#f8fafc">G</text>
-  <circle cx="50" cy="44" r="5" fill="#e11d48"/>
+  <text x="32" y="34" text-anchor="middle" dominant-baseline="central"
+        font-family="ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Menlo, monospace"
+        font-weight="700" font-size="34" fill="#f8fafc">gc</text>
 </svg>

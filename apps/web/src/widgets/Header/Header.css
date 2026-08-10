@@ -52,60 +52,6 @@
     outline-offset: 6px;
 }
 
-/* Ponto coral pulsante — assinatura visual do logo */
-.header__logo-dot {
-    display: block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--color-brand);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-brand) 50%, transparent);
-    animation: logo-pulse 2.8s ease-in-out infinite;
-    flex-shrink: 0;
-}
-
-@keyframes logo-pulse {
-    0%,
-    100% {
-        box-shadow: 0 0 0 0
-            color-mix(in srgb, var(--color-brand) 40%, transparent);
-    }
-    50% {
-        box-shadow: 0 0 0 6px
-            color-mix(in srgb, var(--color-brand) 0%, transparent);
-    }
-}
-
-.header__logo-name {
-    font-family: var(--font-mono, "JetBrains Mono", "Fira Code", monospace);
-    font-size: var(--text-md);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1;
-}
-
-.header__logo-prefix {
-    color: var(--color-text-1);
-    transition: color var(--transition-fast);
-}
-
-.header__logo-suffix {
-    /* Texto de leitura sobre o fundo da página: no tema claro o
-       crimson-600 fica em 4.26:1 e reprova o AA. Ver --color-brand-text
-       em tokens.css. */
-    color: var(--color-brand-text);
-    transition:
-        color var(--transition-fast),
-        opacity var(--transition-fast);
-}
-
-.header__logo:hover .header__logo-prefix {
-    color: var(--color-brand-light);
-}
-.header__logo:hover .header__logo-suffix {
-    opacity: 0.7;
-}
-
 /* ── Nav desktop ────────────────────────────────────────────────────────────── */
 /* A navegação horizontal e o hambúrguer são um par: exatamente um dos
    dois aparece, e a troca acontece em --bp-xl. Mexer num sem o outro

@@ -17,6 +17,7 @@
 
 import React, { memo, useCallback } from "react";
 import "./Footer.css";
+import { Logo } from "@/shared/ui/Logo/Logo";
 
 import { useLang } from "@/shared/hooks/useLang";
 import { useRoute } from "@/shared/hooks/useRoute";
@@ -151,11 +152,7 @@ const FooterBrand = memo<FooterBrandProps>(
                 }
                 onClick={onLogoClick}
             >
-                <span className="footer__logo-dot" />
-                <span className="footer__logo-name">
-                    <span className="footer__logo-prefix">GCruz</span>
-                    <span className="footer__logo-suffix">.dev</span>
-                </span>
+                <Logo />
             </a>
 
             {/* Tagline */}

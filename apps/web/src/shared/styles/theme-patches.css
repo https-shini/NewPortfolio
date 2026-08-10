@@ -46,25 +46,6 @@ body.light-mode .header.is-scrolled {
         var(--shadow-sm);
 }
 
-/* ── Logo ── */
-body.light-mode .header__logo-prefix {
-    color: var(--color-text-1);
-}
-
-body.light-mode .header__logo-suffix {
-    /* Ver --color-brand-text em tokens.css: --color-brand puro reprova o
-       AA como texto sobre o off-white da página. */
-    color: var(--color-brand-text);
-}
-
-body.light-mode .header__logo:hover .header__logo-prefix {
-    color: var(--color-brand);
-}
-
-body.light-mode .header__logo:hover .header__logo-suffix {
-    opacity: 0.75;
-}
-
 /* ── Nav desktop ── */
 body.light-mode .header__nav-link {
     color: var(--color-text-3);
@@ -882,23 +863,6 @@ body.light-mode .footer {
 }
 
 /* ── Brand / Logo ── */
-body.light-mode .footer__logo-prefix {
-    color: var(--color-text-1);
-}
-
-body.light-mode .footer__logo-suffix {
-    /* Mesmo caso do logo do header — ver --color-brand-text. */
-    color: var(--color-brand-text);
-}
-
-body.light-mode .footer__logo:hover .footer__logo-prefix {
-    color: var(--color-brand);
-}
-
-body.light-mode .footer__logo-dot {
-    background: var(--color-brand);
-}
-
 body.light-mode .footer__brand-tagline {
     color: var(--color-text-4);
 }
