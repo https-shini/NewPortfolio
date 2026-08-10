@@ -85,7 +85,7 @@ jobs:
                       apps/desktop/release/*.deb
                       apps/desktop/release/*.exe
                       apps/desktop/release/*.dmg
-                      apps/desktop/release/*.yml
+                      apps/desktop/release/latest*.yml
                   if-no-files-found: error
 
     android:
@@ -170,9 +170,27 @@ jobs:
             needs.desktop.result == 'success'
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/download-artifact@v4
+            # Por nome, e NUNCA tudo. Um `download-artifact` sem filtro
+            # traz também o `web-dist` — e a v2.1.0 saiu com o build
+            # inteiro do site anexado à release: index.html, sitemap,
+            # chunks de JS, os PDFs do currículo. A /downloads ignorava
+            # tudo isso (só .exe/.dmg/.AppImage/.deb/.apk viram item),
+            # mas a página da release ficava irreconhecível.
+            - name: Baixar os instaladores de desktop
+              uses: actions/download-artifact@v4
               with:
                   path: artefatos
+                  pattern: desktop-*
+
+            # O APK pode não existir: o job do Android não barra o
+            # desktop, então aqui ele também não pode barrar a publicação.
+            - name: Baixar o APK, se tiver saído
+              uses: actions/download-artifact@v4
+              continue-on-error: true
+              with:
+                  path: artefatos
+                  name: android-apk
+
             - name: Anexar à Release
               uses: softprops/action-gh-release@v2
               with:
