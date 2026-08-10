@@ -1,9 +1,14 @@
 /* ═══════════════════════════════════════════════════════════════════
    /downloads — instaladores por plataforma
 
-   Só tokens já existentes. A página é uma lista de escolhas: o que
-   precisa aparecer é o nome do sistema, o formato e o tamanho — nessa
-   ordem, porque é a ordem em que a pessoa decide.
+   Só tokens já existentes, e a superfície vem de `.card`/`.card--interactive`
+   do globals.css — aqui ficam apenas espaçamento e disposição. Recriar
+   fundo/borda/raio localmente é o que faz a página envelhecer diferente
+   do resto do site quando os tokens mudam.
+
+   A hierarquia da tela é: o que é seu → o que mais existe → o que garante
+   que é confiável. Cada um desses é uma <section> com heading próprio,
+   não um bloco solto.
    ═══════════════════════════════════════════════════════════════════ */
 
 .dl {
@@ -11,6 +16,8 @@
     padding-bottom: var(--section-pad-y);
     min-height: 100dvh;
 }
+
+/* ── Cabeçalho ────────────────────────────────────────────────────── */
 
 .dl__cabecalho {
     max-width: 640px;
@@ -35,15 +42,21 @@
     text-wrap: pretty;
 }
 
-.dl__versao {
+/* Versão · data · notas numa linha só. Envolve em telas estreitas em vez
+   de comprimir, porque a data por extenso não encolhe. */
+.dl__meta {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2) var(--space-3);
     margin: var(--space-5) 0 0;
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-3);
+}
+
+.dl__meta > svg {
+    flex-shrink: 0;
 }
 
 .dl__notas {
@@ -58,6 +71,8 @@
     border-bottom-color: currentColor;
 }
 
+/* ── Títulos de seção ─────────────────────────────────────────────── */
+
 .dl__secao {
     margin: 0 0 var(--space-4);
     font-size: var(--text-xs);
@@ -67,30 +82,94 @@
     color: var(--color-text-3);
 }
 
+.dl__destaque {
+    margin-bottom: var(--space-10);
+}
+
+/* ── Cartão da plataforma detectada ───────────────────────────────── */
+
+/* Uma coluna até --bp-md. Com o ícone de 56px ao lado, numa tela de
+   390px sobram ~220px para o texto, e o hint de detecção quebra em três
+   linhas tendo largura de sobra logo abaixo. */
+.dl-hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: var(--space-4);
+    padding: var(--space-6);
+}
+
+.dl-hero__icone {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-lg);
+    color: var(--color-brand-text);
+    background: var(--color-brand-subtle);
+    border: 1px solid var(--color-border-brand);
+}
+
+.dl-hero__texto {
+    min-width: 0;
+}
+
+.dl-hero__nome {
+    margin: 0 0 var(--space-1);
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-text-1);
+}
+
+/* A detecção por user-agent erra, e a pessoa precisa saber disso antes de
+   concluir que a página não tem a versão dela. */
+.dl-hero__hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--color-text-3);
+    text-wrap: pretty;
+}
+
+.dl-hero__arquivos {
+    grid-column: 1 / -1;
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--color-border-1);
+}
+
+/* ── Grid das demais plataformas ──────────────────────────────────── */
+
 .dl__grade {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-4);
 }
 
-/* ── Cartão de plataforma ─────────────────────────────────────────── */
-
 .dl-card {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
-    padding: var(--space-6);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface-1);
-    border: 1px solid var(--color-border-2);
+    padding: var(--space-5);
 }
 
-/* O destaque é uma borda, não um tamanho diferente: cartões de alturas
-   distintas fazem a lista parecer desalinhada, e o que se quer dizer
-   ("é este o seu") cabe numa borda de marca. */
-.dl-card--destaque {
-    border-color: var(--color-border-brand);
-    background: var(--color-brand-subtle);
+.dl-card__topo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.dl-card__icone {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    color: var(--color-text-2);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-2);
 }
 
 .dl-card__nome {
@@ -100,27 +179,48 @@
     color: var(--color-text-1);
 }
 
-.dl-card__lista {
+/* ── Linha de arquivo ─────────────────────────────────────────────── */
+
+.dl-files {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
+    gap: var(--space-4);
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
+/* Empilhado por padrão. Com `flex-wrap`, quem decide se o botão fica ao
+   lado ou desce é o comprimento do rótulo — e o resultado foi um cartão
+   do Linux com o botão do AppImage numa linha própria e o do .deb ao
+   lado, no mesmo cartão. O ritmo tem que vir da regra, não do texto. */
 .dl-file {
     display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
     gap: var(--space-3);
 }
 
-.dl-file__meta {
+/* Separador entre arquivos: empilhados, dois blocos de três linhas
+   seguidos não deixam claro onde um termina. */
+.dl-file + .dl-file {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-1);
+}
+
+/* No hero há largura para a linha inteira, e aí o botão ancora à
+   direita — é a única superfície da página larga o bastante. */
+.dl-hero__arquivos .dl-file {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dl-file__info {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: var(--space-2);
     /* Sem isto o bloco de texto impede a linha de encolher e o botão é
        empurrado para fora nas telas estreitas. */
     min-width: 0;
@@ -129,25 +229,116 @@
 
 .dl-file__formato {
     font-size: var(--text-sm);
+    font-weight: 500;
     color: var(--color-text-1);
 }
 
-.dl-file__detalhe {
+.dl-file__linha {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.dl-file__tamanho {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-3);
+}
+
+.dl-file__count {
+    font-size: var(--text-2xs);
+    color: var(--color-text-4);
 }
 
 .dl-file__btn {
     flex: 0 0 auto;
 }
 
-/* ── Estados e avisos ─────────────────────────────────────────────── */
+/* ── Segurança ────────────────────────────────────────────────────── */
 
-.dl__aviso {
-    margin: 0 0 var(--space-6);
+/* Superfície neutra de propósito. O par de âmbar (--color-warning) só
+   existe calibrado para o tema escuro e rende 1.95:1 sobre o off-white do
+   claro — ver a nota em ReleaseNotes.css. Isto aqui é informação, não
+   alerta: o texto explica por que o instalador não é assinado. */
+.dl__seguranca {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    max-width: 720px;
+    margin-top: var(--space-10);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-2);
+}
+
+.dl__seguranca-marca {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    color: var(--color-text-2);
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border-2);
+}
+
+.dl__seguranca-titulo {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.dl__seguranca-corpo {
+    margin: 0;
     font-size: var(--text-sm);
-    color: var(--color-error);
+    line-height: 1.7;
+    color: var(--color-text-2);
+    text-wrap: pretty;
+}
+
+.dl__seguranca-link {
+    display: inline-block;
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-brand-text);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+}
+
+.dl__seguranca-link:hover,
+.dl__seguranca-link:focus-visible {
+    border-bottom-color: currentColor;
+}
+
+/* ── Erro e vazio ─────────────────────────────────────────────────── */
+
+/* O erro tem saída: o link para as releases do GitHub é o caminho manual
+   que ainda funciona quando a função não responde. */
+.dl__erro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+    max-width: 720px;
+    margin: 0 0 var(--space-8);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--color-error-subtle);
+    border: 1px solid var(--color-error-border);
+}
+
+.dl__erro-texto {
+    margin: 0;
+    flex: 1 1 240px;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--color-text-1);
+    text-wrap: pretty;
 }
 
 .dl__vazio {
@@ -155,11 +346,11 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-3);
+    max-width: 560px;
     padding: var(--space-8);
     border-radius: var(--radius-lg);
     background: var(--color-surface-1);
     border: 1px dashed var(--color-border-2);
-    max-width: 560px;
 }
 
 .dl__vazio-marca {
@@ -181,7 +372,6 @@
 }
 
 .dl__vazio-corpo,
-.dl__nota,
 .dl__ios-corpo {
     margin: 0;
     font-size: var(--text-sm);
@@ -190,18 +380,19 @@
     text-wrap: pretty;
 }
 
-.dl__nota {
-    margin-top: var(--space-6);
-    max-width: 720px;
-    font-size: var(--text-xs);
-    color: var(--color-text-3);
+/* O botão do card vazio ganha ar: colado no parágrafo ele lê como parte
+   do texto. */
+.dl__vazio .btn {
+    margin-top: var(--space-2);
 }
 
+/* ── iOS e rodapé da página ───────────────────────────────────────── */
+
 .dl__ios {
+    max-width: 640px;
     margin-top: var(--space-10);
     padding-top: var(--space-6);
     border-top: 1px solid var(--color-border-2);
-    max-width: 640px;
 }
 
 .dl__ios-titulo {
@@ -235,5 +426,23 @@
 @media (min-width: 641px) {
     .dl__grade {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Aqui já há largura para o ícone ao lado do texto. A lista de
+       arquivos continua ocupando a linha inteira, abaixo dos dois. */
+    .dl-hero {
+        grid-template-columns: auto 1fr;
+        column-gap: var(--space-5);
+        padding: var(--space-8);
+    }
+}
+
+/* ── A partir de --bp-2xl (1024px): três por linha ────────────────── */
+/* Com duas colunas num container de 1200px cada cartão passa de 560px de
+   largura para uma lista de uma ou duas linhas — espaço morto ao lado do
+   botão. Três colunas é o que devolve densidade sem apertar a linha. */
+@media (min-width: 1025px) {
+    .dl__grade {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }

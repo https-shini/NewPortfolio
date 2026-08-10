@@ -16,6 +16,7 @@ import {
     type Plataforma,
     type PlataformaDetectada,
 } from "@/shared/lib/platform";
+import { formatFullDate } from "@/shared/lib/dateUtils";
 import { ROUTES } from "@/shared/config/routes";
 import { PROFILE } from "@/shared/config/profile";
 import { GITHUB_URL } from "@/shared/config/constants";
@@ -24,6 +25,11 @@ import {
     IconArrowRight,
     IconGitBranch,
     IconPackage,
+    IconShield,
+    IconWindows,
+    IconApple,
+    IconLinux,
+    IconAndroid,
 } from "@/shared/ui/Icons";
 
 /* ─────────────────────────────────────────────────────────
@@ -34,10 +40,10 @@ import {
    passada depois que alguém publica uma nova — link de download velho é
    pior que ausente, porque funciona e entrega o errado.
 
-   A plataforma detectada só decide a ORDEM: o cartão dela sobe para o
-   topo e os outros continuam logo abaixo. Detecção por user-agent erra,
-   e uma página que esconde as outras opções ao errar deixa a pessoa sem
-   saída.
+   A plataforma detectada vira uma SEÇÃO própria, com um cartão grande, e
+   as demais seguem num grid abaixo. Detecção por user-agent erra, e uma
+   página que esconde as outras opções ao errar deixa a pessoa sem saída —
+   por isso promover, nunca ocultar.
 ───────────────────────────────────────────────────────── */
 
 const NOMES: Record<Plataforma, string> = {
@@ -47,52 +53,97 @@ const NOMES: Record<Plataforma, string> = {
     android: "Android",
 };
 
+const ICONES: Record<
+    Plataforma,
+    React.FC<{ width?: number; height?: number }>
+> = {
+    windows: IconWindows,
+    macos: IconApple,
+    linux: IconLinux,
+    android: IconAndroid,
+};
+
 /** A ordem de sempre, quando não há nada detectado para promover. */
 const ORDEM: Plataforma[] = ["windows", "macos", "linux", "android"];
 
-interface CartaoProps {
-    plataforma: Plataforma;
-    arquivos: Arquivo[];
-    destaque: boolean;
-    lang: "pt" | "en";
-    rotuloBaixar: string;
+type ChaveFormato =
+    | "downloads.formatLabel.exe"
+    | "downloads.formatLabel.dmg"
+    | "downloads.formatLabel.appimage"
+    | "downloads.formatLabel.deb"
+    | "downloads.formatLabel.apk";
+
+/**
+ * O rótulo visível vem da tradução, não da API.
+ *
+ * A função continua devolvendo o formato técnico (`Instalador .exe`), que
+ * é o dado; como isso se diz em cada idioma é decisão da apresentação,
+ * como no resto do site. A extensão do nome do arquivo é a chave.
+ */
+function chaveDoFormato(nome: string): ChaveFormato | null {
+    const n = nome.toLowerCase();
+    if (n.endsWith(".exe")) return "downloads.formatLabel.exe";
+    if (n.endsWith(".dmg")) return "downloads.formatLabel.dmg";
+    if (n.endsWith(".appimage")) return "downloads.formatLabel.appimage";
+    if (n.endsWith(".deb")) return "downloads.formatLabel.deb";
+    if (n.endsWith(".apk")) return "downloads.formatLabel.apk";
+    return null;
 }
 
-const Cartao: React.FC<CartaoProps> = ({
-    plataforma,
-    arquivos,
-    destaque,
-    lang,
-    rotuloBaixar,
-}) => (
-    <article
-        className={`dl-card${destaque ? " dl-card--destaque" : ""}`}
-        aria-labelledby={`dl-${plataforma}`}
-    >
-        <h3 className="dl-card__nome" id={`dl-${plataforma}`}>
-            {NOMES[plataforma]}
-        </h3>
+type Tradutor = ReturnType<typeof useLang>["t"];
 
-        <ul className="dl-card__lista">
-            {arquivos.map((a) => (
+interface ListaProps {
+    arquivos: Arquivo[];
+    plataforma: Plataforma;
+    lang: "pt" | "en";
+    t: Tradutor;
+}
+
+const ListaDeArquivos: React.FC<ListaProps> = ({
+    arquivos,
+    plataforma,
+    lang,
+    t,
+}) => (
+    <ul className="dl-files">
+        {arquivos.map((a) => {
+            const chave = chaveDoFormato(a.nome);
+            const rotulo = chave ? t(chave) : a.formato;
+            return (
                 <li key={a.url} className="dl-file">
-                    <span className="dl-file__meta">
-                        <span className="dl-file__formato">{a.formato}</span>
-                        <span className="dl-file__detalhe">
-                            {a.arquitetura ? `${a.arquitetura} · ` : ""}
-                            {formatarTamanho(a.tamanho, lang)}
+                    <div className="dl-file__info">
+                        <span className="dl-file__formato">{rotulo}</span>
+                        <span className="dl-file__linha">
+                            {a.arquitetura && (
+                                <span className="badge badge--neutral">
+                                    {a.arquitetura}
+                                </span>
+                            )}
+                            <span className="dl-file__tamanho">
+                                {formatarTamanho(a.tamanho, lang)}
+                            </span>
                         </span>
-                    </span>
+                        {/* Zero downloads na primeira hora de uma release
+                            lê como abandono, não como novidade. */}
+                        {a.downloads > 0 && (
+                            <span className="dl-file__count">
+                                {a.downloads.toLocaleString(
+                                    lang === "pt" ? "pt-BR" : "en-US",
+                                )}{" "}
+                                {t("downloads.downloadCount")}
+                            </span>
+                        )}
+                    </div>
 
                     {/* `download` pede ao navegador para salvar em vez de
                         navegar; sem ele o .apk abriria como página. O rótulo
-                        acessível diz O QUE se baixa, porque "Baixar" repetido
-                        seis vezes numa lista não distingue nada. */}
+                        acessível diz O QUE se baixa — "Baixar" repetido seis
+                        vezes numa lista não distingue nada. */}
                     <a
                         className="btn btn--primary btn--sm dl-file__btn"
                         href={a.url}
                         download
-                        aria-label={`${rotuloBaixar} ${NOMES[plataforma]} — ${a.formato}${
+                        aria-label={`${t("downloads.get")} ${NOMES[plataforma]} — ${rotulo}${
                             a.arquitetura ? ` ${a.arquitetura}` : ""
                         }`}
                     >
@@ -101,12 +152,12 @@ const Cartao: React.FC<CartaoProps> = ({
                             height={14}
                             aria-hidden="true"
                         />
-                        <span>{rotuloBaixar}</span>
+                        <span>{t("downloads.get")}</span>
                     </a>
                 </li>
-            ))}
-        </ul>
-    </article>
+            );
+        })}
+    </ul>
 );
 
 export const DownloadsPage: React.FC = () => {
@@ -137,18 +188,11 @@ export const DownloadsPage: React.FC = () => {
         return mapa;
     }, [dados.arquivos]);
 
-    /* A detectada primeiro, o resto na ordem de sempre. */
-    const ordenadas = useMemo(() => {
-        const presentes = ORDEM.filter((p) => porPlataforma.has(p));
-        if (detectada === "ios" || detectada === "desconhecida")
-            return presentes;
-        return [
-            ...presentes.filter((p) => p === detectada),
-            ...presentes.filter((p) => p !== detectada),
-        ];
-    }, [porPlataforma, detectada]);
+    const presentes = useMemo(
+        () => ORDEM.filter((p) => porPlataforma.has(p)),
+        [porPlataforma],
+    );
 
-    const temArquivos = ordenadas.length > 0;
     const promovida =
         detectada !== "ios" &&
         detectada !== "desconhecida" &&
@@ -156,7 +200,14 @@ export const DownloadsPage: React.FC = () => {
             ? detectada
             : null;
 
+    const secundarias = presentes.filter((p) => p !== promovida);
+    const temArquivos = presentes.length > 0;
+
+    /* O link vai para a release exata quando ela existe; o índice local é
+       o reserva. Antes ia sempre para o índice, mesmo havendo destino
+       melhor na resposta que a página já tinha em mãos. */
     const irParaNotas = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        if (dados.notasUrl) return; /* externo: deixa o navegador levar */
         if (e.metaKey || e.ctrlKey || e.shiftKey) return;
         e.preventDefault();
         navigate(ROUTES.RELEASE_NOTES);
@@ -172,14 +223,18 @@ export const DownloadsPage: React.FC = () => {
 
             <Header />
 
-            <main id="main-content" className="dl">
+            <main
+                id="main-content"
+                className="dl"
+                aria-busy={status === "loading"}
+            >
                 <div className="container">
                     <header className="dl__cabecalho">
                         <h1 className="dl__titulo">{t("downloads.title")}</h1>
                         <p className="dl__lead">{t("downloads.lead")}</p>
 
                         {dados.versao && (
-                            <p className="dl__versao">
+                            <p className="dl__meta">
                                 <IconGitBranch
                                     width={13}
                                     height={13}
@@ -188,10 +243,28 @@ export const DownloadsPage: React.FC = () => {
                                 <span>
                                     {t("downloads.version")} {dados.versao}
                                 </span>
+                                {dados.publicadoEm && (
+                                    <>
+                                        <span aria-hidden="true">·</span>
+                                        <span>
+                                            {t("downloads.publishedAt")}{" "}
+                                            {formatFullDate(
+                                                dados.publicadoEm,
+                                                lang,
+                                            )}
+                                        </span>
+                                    </>
+                                )}
                                 <a
-                                    href={ROUTES.RELEASE_NOTES}
+                                    href={
+                                        dados.notasUrl ?? ROUTES.RELEASE_NOTES
+                                    }
                                     className="dl__notas"
                                     onClick={irParaNotas}
+                                    {...(dados.notasUrl && {
+                                        target: "_blank",
+                                        rel: "noopener noreferrer",
+                                    })}
                                 >
                                     {t("downloads.notes")}
                                 </a>
@@ -199,13 +272,20 @@ export const DownloadsPage: React.FC = () => {
                         )}
                     </header>
 
-                    {/* Carregando não mostra esqueleto: a lista é curta e a
-                        resposta vem do CDN. Piscar caixas cinzas por 200ms
-                        agita mais do que informa. */}
                     {status === "error" && (
-                        <p className="dl__aviso" role="status">
-                            {t("downloads.error")}
-                        </p>
+                        <div className="dl__erro" role="status">
+                            <p className="dl__erro-texto">
+                                {t("downloads.error")}
+                            </p>
+                            <a
+                                className="btn btn--outline btn--sm"
+                                href={`${GITHUB_URL}/releases`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {t("downloads.allReleases")}
+                            </a>
+                        </div>
                     )}
 
                     {!temArquivos && status !== "loading" && (
@@ -222,37 +302,149 @@ export const DownloadsPage: React.FC = () => {
                             <p className="dl__vazio-corpo">
                                 {t("downloads.empty.body")}
                             </p>
+                            {/* O caminho alternativo dentro do card, e não
+                                só isolado no fim da página, que é onde ele
+                                não faz falta. */}
+                            <a
+                                className="btn btn--outline btn--sm"
+                                href={`${GITHUB_URL}/releases`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {t("downloads.allReleases")}
+                            </a>
                         </div>
                     )}
 
-                    {temArquivos && (
-                        <>
-                            {promovida && (
-                                <h2 className="dl__secao">
-                                    {t("downloads.forYou")}
-                                </h2>
-                            )}
+                    {promovida && (
+                        <section
+                            className="dl__destaque"
+                            aria-labelledby="dl-para-voce"
+                        >
+                            <h2 className="dl__secao" id="dl-para-voce">
+                                {t("downloads.forYou")}
+                            </h2>
+
+                            <article className="card dl-hero">
+                                <span
+                                    className="dl-hero__icone"
+                                    aria-hidden="true"
+                                >
+                                    {React.createElement(ICONES[promovida], {
+                                        width: 30,
+                                        height: 30,
+                                    })}
+                                </span>
+
+                                <div className="dl-hero__texto">
+                                    <h3 className="dl-hero__nome">
+                                        {NOMES[promovida]}
+                                    </h3>
+                                    <p className="dl-hero__hint">
+                                        {t("downloads.forYouHint")}
+                                    </p>
+                                </div>
+
+                                <div className="dl-hero__arquivos">
+                                    <ListaDeArquivos
+                                        arquivos={
+                                            porPlataforma.get(promovida) ?? []
+                                        }
+                                        plataforma={promovida}
+                                        lang={lang}
+                                        t={t}
+                                    />
+                                </div>
+                            </article>
+                        </section>
+                    )}
+
+                    {secundarias.length > 0 && (
+                        <section
+                            className="dl__outras"
+                            aria-labelledby="dl-outras"
+                        >
+                            {/* Só se chama "outras" quando houve uma
+                                primeira; sem destaque, é a lista completa. */}
+                            <h2 className="dl__secao" id="dl-outras">
+                                {promovida
+                                    ? t("downloads.others")
+                                    : t("downloads.title")}
+                            </h2>
 
                             <div className="dl__grade">
-                                {ordenadas.map((p) => (
-                                    <Cartao
-                                        key={p}
-                                        plataforma={p}
-                                        arquivos={porPlataforma.get(p) ?? []}
-                                        destaque={p === promovida}
-                                        lang={lang}
-                                        rotuloBaixar={t("downloads.get")}
-                                    />
-                                ))}
-                            </div>
+                                {secundarias.map((p) => {
+                                    const Icone = ICONES[p];
+                                    return (
+                                        <article
+                                            key={p}
+                                            className="card card--interactive dl-card"
+                                            aria-labelledby={`dl-${p}`}
+                                        >
+                                            <div className="dl-card__topo">
+                                                <span
+                                                    className="dl-card__icone"
+                                                    aria-hidden="true"
+                                                >
+                                                    <Icone
+                                                        width={20}
+                                                        height={20}
+                                                    />
+                                                </span>
+                                                <h3
+                                                    className="dl-card__nome"
+                                                    id={`dl-${p}`}
+                                                >
+                                                    {NOMES[p]}
+                                                </h3>
+                                            </div>
 
-                            {/* Não é rodapé legal: é o que a pessoa precisa
-                                saber ANTES de clicar, para o aviso do sistema
-                                não parecer que o arquivo é malicioso. */}
-                            <p className="dl__nota">
-                                {t("downloads.unsigned")}
-                            </p>
-                        </>
+                                            <ListaDeArquivos
+                                                arquivos={
+                                                    porPlataforma.get(p) ?? []
+                                                }
+                                                plataforma={p}
+                                                lang={lang}
+                                                t={t}
+                                            />
+                                        </article>
+                                    );
+                                })}
+                            </div>
+                        </section>
+                    )}
+
+                    {temArquivos && (
+                        <section
+                            className="dl__seguranca"
+                            aria-labelledby="dl-seguranca"
+                        >
+                            <span
+                                className="dl__seguranca-marca"
+                                aria-hidden="true"
+                            >
+                                <IconShield width={20} height={20} />
+                            </span>
+                            <div>
+                                <h2
+                                    className="dl__seguranca-titulo"
+                                    id="dl-seguranca"
+                                >
+                                    {t("downloads.security.title")}
+                                </h2>
+                                <p className="dl__seguranca-corpo">
+                                    {t("downloads.security.body")}
+                                </p>
+                                <a
+                                    className="dl__seguranca-link"
+                                    href={GITHUB_URL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {t("downloads.security.sourceLink")}
+                                </a>
+                            </div>
+                        </section>
                     )}
 
                     <section className="dl__ios" aria-labelledby="dl-ios">

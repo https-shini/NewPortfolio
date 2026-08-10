@@ -254,7 +254,17 @@ export type TranslationKey =
     | "downloads.allReleases"
     | "downloads.ios.title"
     | "downloads.ios.body"
-    | "downloads.unsigned"
+    | "downloads.publishedAt"
+    | "downloads.forYouHint"
+    | "downloads.downloadCount"
+    | "downloads.security.title"
+    | "downloads.security.body"
+    | "downloads.security.sourceLink"
+    | "downloads.formatLabel.exe"
+    | "downloads.formatLabel.dmg"
+    | "downloads.formatLabel.appimage"
+    | "downloads.formatLabel.deb"
+    | "downloads.formatLabel.apk"
 
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
@@ -550,7 +560,7 @@ const pt: Translations = {
     /* DOWNLOADS */
     "downloads.title": "Baixar o aplicativo",
     "downloads.lead":
-        "O mesmo portfólio, instalado na sua máquina ou no celular. Escolha a versão do seu sistema.",
+        "O mesmo portfólio, fora do navegador — instalado na sua máquina ou no seu celular, com o mesmo conteúdo e atualização automática.",
     "downloads.forYou": "Para o seu sistema",
     "downloads.others": "Outras plataformas",
     "downloads.get": "Baixar",
@@ -565,8 +575,20 @@ const pt: Translations = {
     "downloads.ios.title": "iPhone e iPad",
     "downloads.ios.body":
         "A Apple não permite instalar fora da App Store. Está previsto via TestFlight.",
-    "downloads.unsigned":
-        "Os instaladores ainda não são assinados: Windows e macOS mostram um aviso na primeira execução, e o Android pede permissão para instalar de fora da loja.",
+    "downloads.publishedAt": "Publicada em",
+    "downloads.forYouHint":
+        "Detectamos o seu sistema pelo navegador — se não for esse, escolha abaixo.",
+    "downloads.downloadCount": "downloads",
+    "downloads.security.title": "Sobre o aviso do sistema",
+    "downloads.security.body":
+        "Os instaladores ainda não são assinados digitalmente. O Windows e o macOS vão mostrar um aviso de \u201ceditor não reconhecido\u201d na primeira execução — é esperado, não é malware. No Android, é preciso permitir \u201cinstalar de fontes desconhecidas\u201d nas configurações.",
+    "downloads.security.sourceLink":
+        "Prefere compilar você mesmo? O código-fonte é público.",
+    "downloads.formatLabel.exe": "Instalador Windows",
+    "downloads.formatLabel.dmg": "Imagem de disco macOS",
+    "downloads.formatLabel.appimage": "Executável portátil (AppImage)",
+    "downloads.formatLabel.deb": "Pacote Debian/Ubuntu",
+    "downloads.formatLabel.apk": "Pacote Android",
 
     /* FOOTER */
     "footer.tagline":
@@ -869,7 +891,7 @@ const en: Translations = {
     /* DOWNLOADS */
     "downloads.title": "Get the app",
     "downloads.lead":
-        "The same portfolio, installed on your machine or phone. Pick the build for your system.",
+        "The same portfolio, off the browser — installed on your machine or phone, same content, auto-updating.",
     "downloads.forYou": "For your system",
     "downloads.others": "Other platforms",
     "downloads.get": "Download",
@@ -884,8 +906,20 @@ const en: Translations = {
     "downloads.ios.title": "iPhone and iPad",
     "downloads.ios.body":
         "Apple doesn't allow installing outside the App Store. Planned via TestFlight.",
-    "downloads.unsigned":
-        "The installers aren't signed yet: Windows and macOS show a warning on first run, and Android asks permission to install from outside the store.",
+    "downloads.publishedAt": "Published on",
+    "downloads.forYouHint":
+        "We detected your system from your browser — pick another below if that's not you.",
+    "downloads.downloadCount": "downloads",
+    "downloads.security.title": "About the security warning",
+    "downloads.security.body":
+        "The installers aren't code-signed yet. Windows and macOS will show an \u201cunrecognized publisher\u201d warning on first run — that's expected, not malware. On Android, you'll need to allow \u201cinstall from unknown sources\u201d in settings.",
+    "downloads.security.sourceLink":
+        "Prefer to build it yourself? The source is public.",
+    "downloads.formatLabel.exe": "Windows installer",
+    "downloads.formatLabel.dmg": "macOS disk image",
+    "downloads.formatLabel.appimage": "Portable executable (AppImage)",
+    "downloads.formatLabel.deb": "Debian/Ubuntu package",
+    "downloads.formatLabel.apk": "Android package",
 
     /* FOOTER */
     "footer.tagline":
