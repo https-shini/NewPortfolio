@@ -6,9 +6,10 @@
    fundo/borda/raio localmente é o que faz a página envelhecer diferente
    do resto do site quando os tokens mudam.
 
-   A hierarquia da tela é: o que é seu → o que mais existe → o que garante
-   que é confiável. Cada um desses é uma <section> com heading próprio,
-   não um bloco solto.
+   A tela não tem hierarquia entre sistemas: os quatro cartões são
+   idênticos e a ordem é fixa. Não existe modificador de destaque neste
+   arquivo, e é essa ausência que sustenta a neutralidade — não há como
+   um sistema subir por engano numa mudança futura.
    ═══════════════════════════════════════════════════════════════════ */
 
 .dl {
@@ -82,64 +83,11 @@
     color: var(--color-text-3);
 }
 
-.dl__destaque {
-    margin-bottom: var(--space-10);
+.dl__sistemas {
+    margin-bottom: var(--space-4);
 }
 
-/* ── Cartão da plataforma detectada ───────────────────────────────── */
-
-/* Uma coluna até --bp-md. Com o ícone de 56px ao lado, numa tela de
-   390px sobram ~220px para o texto, e o hint de detecção quebra em três
-   linhas tendo largura de sobra logo abaixo. */
-.dl-hero {
-    display: grid;
-    grid-template-columns: 1fr;
-    align-items: start;
-    gap: var(--space-4);
-    padding: var(--space-6);
-}
-
-.dl-hero__icone {
-    display: grid;
-    place-items: center;
-    width: 56px;
-    height: 56px;
-    border-radius: var(--radius-lg);
-    color: var(--color-brand-text);
-    background: var(--color-brand-subtle);
-    border: 1px solid var(--color-border-brand);
-}
-
-.dl-hero__texto {
-    min-width: 0;
-}
-
-.dl-hero__nome {
-    margin: 0 0 var(--space-1);
-    font-family: var(--font-display);
-    font-size: var(--text-2xl);
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: var(--color-text-1);
-}
-
-/* A detecção por user-agent erra, e a pessoa precisa saber disso antes de
-   concluir que a página não tem a versão dela. */
-.dl-hero__hint {
-    margin: 0;
-    font-size: var(--text-sm);
-    line-height: 1.6;
-    color: var(--color-text-3);
-    text-wrap: pretty;
-}
-
-.dl-hero__arquivos {
-    grid-column: 1 / -1;
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--color-border-1);
-}
-
-/* ── Grid das demais plataformas ──────────────────────────────────── */
+/* ── Grid dos sistemas ──────────────────────────────────────────── */
 
 .dl__grade {
     display: grid;
@@ -206,15 +154,6 @@
 .dl-file + .dl-file {
     padding-top: var(--space-4);
     border-top: 1px solid var(--color-border-1);
-}
-
-/* No hero há largura para a linha inteira, e aí o botão ancora à
-   direita — é a única superfície da página larga o bastante. */
-.dl-hero__arquivos .dl-file {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
 }
 
 .dl-file__info {
@@ -300,25 +239,10 @@
     text-wrap: pretty;
 }
 
-.dl__seguranca-link {
-    display: inline-block;
-    margin-top: var(--space-3);
-    font-size: var(--text-sm);
-    color: var(--color-brand-text);
-    text-decoration: none;
-    border-bottom: 1px solid transparent;
-    transition: border-color var(--transition-fast);
-}
-
-.dl__seguranca-link:hover,
-.dl__seguranca-link:focus-visible {
-    border-bottom-color: currentColor;
-}
-
 /* ── Erro e vazio ─────────────────────────────────────────────────── */
 
-/* O erro tem saída: o link para as releases do GitHub é o caminho manual
-   que ainda funciona quando a função não responde. */
+/* O erro tem saída: um botão que recarrega. O cache do hook só é
+   gravado em sucesso, então recarregar realmente tenta buscar de novo. */
 .dl__erro {
     display: flex;
     flex-wrap: wrap;
@@ -426,14 +350,6 @@
 @media (min-width: 641px) {
     .dl__grade {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    /* Aqui já há largura para o ícone ao lado do texto. A lista de
-       arquivos continua ocupando a linha inteira, abaixo dos dois. */
-    .dl-hero {
-        grid-template-columns: auto 1fr;
-        column-gap: var(--space-5);
-        padding: var(--space-8);
     }
 }
 

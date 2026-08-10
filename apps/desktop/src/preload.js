@@ -1,24 +1,46 @@
 /**
  * Preload — a única ponte entre a página e o processo principal.
  *
- * Está aqui vazio de propósito, e isso é a decisão, não uma pendência.
- *
  * O site é estático: não lê arquivo, não abre porta, não pede permissão
  * de sistema. Expor uma API só porque "aplicativo desktop costuma ter"
  * seria abrir superfície sem ninguém do outro lado precisando dela — e
  * superfície aberta é o que transforma um XSS numa execução no host.
  *
- * O que existe é uma marca de leitura: o site pode querer saber que está
- * rodando dentro do app (para esconder o cartão de download da própria
- * plataforma, por exemplo). Um booleano não dá acesso a nada.
+ * Por isso o que atravessa é o mínimo: uma marca de leitura (a página
+ * pode querer saber que está dentro do app) e a atualização, que é a
+ * única coisa que a interface precisa pedir ao sistema.
  *
- * Quando algo realmente precisar do sistema, entra aqui — um método por
- * necessidade, nomeado pelo que faz, nunca um `ipcRenderer` cru.
+ * Nada de `ipcRenderer` cru do outro lado: cada método é nomeado pelo
+ * que faz e fala num canal fixo. Uma página comprometida consegue
+ * perguntar por atualização — e nada além disso.
  */
 
-const { contextBridge } = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
+
+const CANAL_ESTADO = "atualizacao:estado";
 
 contextBridge.exposeInMainWorld("portfolioDesktop", {
     versao: process.env.npm_package_version ?? null,
     plataforma: process.platform,
+
+    atualizacao: {
+        /** Último estado conhecido — inclusive o que passou antes desta tela existir. */
+        ler: () => ipcRenderer.invoke("atualizacao:ler"),
+        verificar: () => ipcRenderer.invoke("atualizacao:verificar"),
+        baixar: () => ipcRenderer.invoke("atualizacao:baixar"),
+        instalar: () => ipcRenderer.send("atualizacao:instalar"),
+
+        /**
+         * Assina as mudanças e devolve como cancelar.
+         *
+         * O retorno não é cortesia: sem ele, cada montagem do componente
+         * empilharia um ouvinte no mesmo canal e o React avisaria de
+         * atualização em componente desmontado a cada navegação.
+         */
+        ouvir: (aoMudar) => {
+            const ponte = (_evento, estado) => aoMudar(estado);
+            ipcRenderer.on(CANAL_ESTADO, ponte);
+            return () => ipcRenderer.removeListener(CANAL_ESTADO, ponte);
+        },
+    },
 });

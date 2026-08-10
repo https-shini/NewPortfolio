@@ -2,7 +2,7 @@
   "name": "NewPortfolio",
   "private": true,
   "type": "module",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Portfolio pessoal de Guilherme Cruz",
   "author": "Guilherme Cruz",
   "license": "MIT",
@@ -33,6 +33,8 @@
     "audit:identity": "node scripts/identity.mjs",
     "qr": "node scripts/qr.mjs",
     "qr:check": "node scripts/qr.mjs --check",
+    "icones": "node scripts/icones.mjs",
+    "icones:check": "node scripts/icones.mjs --check",
     "changelog": "node --experimental-strip-types --no-warnings scripts/changelog.mjs",
     "changelog:check": "node --experimental-strip-types --no-warnings scripts/changelog.mjs --check",
     "prepare": "husky"

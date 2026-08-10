@@ -243,8 +243,6 @@ export type TranslationKey =
     /* ── DOWNLOADS ─────────────────────────────────── */
     | "downloads.title"
     | "downloads.lead"
-    | "downloads.forYou"
-    | "downloads.others"
     | "downloads.get"
     | "downloads.version"
     | "downloads.notes"
@@ -255,7 +253,20 @@ export type TranslationKey =
     | "downloads.ios.title"
     | "downloads.ios.body"
     | "downloads.publishedAt"
-    | "downloads.forYouHint"
+    | "downloads.platforms"
+    | "downloads.update.title"
+    | "downloads.update.idle"
+    | "downloads.update.checking"
+    | "downloads.update.current"
+    | "downloads.update.available"
+    | "downloads.update.downloading"
+    | "downloads.update.ready"
+    | "downloads.update.error"
+    | "downloads.update.check"
+    | "downloads.update.download"
+    | "downloads.update.install"
+    | "downloads.update.runningVersion"
+    | "downloads.update.unsupported"
     | "downloads.downloadCount"
     | "downloads.security.title"
     | "downloads.security.body"
@@ -561,8 +572,6 @@ const pt: Translations = {
     "downloads.title": "Baixar o aplicativo",
     "downloads.lead":
         "O mesmo portfólio, fora do navegador — instalado na sua máquina ou no seu celular, com o mesmo conteúdo e atualização automática.",
-    "downloads.forYou": "Para o seu sistema",
-    "downloads.others": "Outras plataformas",
     "downloads.get": "Baixar",
     "downloads.version": "Versão",
     "downloads.notes": "Ver o que mudou",
@@ -577,8 +586,23 @@ const pt: Translations = {
     "downloads.ios.body":
         "A Apple não permite instalar fora da App Store. Está previsto via TestFlight.",
     "downloads.publishedAt": "Publicada em",
-    "downloads.forYouHint":
-        "Detectamos o seu sistema pelo navegador — se não for esse, escolha abaixo.",
+    "downloads.platforms": "Sistemas disponíveis",
+    "downloads.update.title": "Atualização do aplicativo",
+    "downloads.update.idle": "Ainda não verificamos se há versão nova.",
+    "downloads.update.checking": "Procurando uma versão mais recente…",
+    "downloads.update.current": "Você já está na versão mais recente.",
+    "downloads.update.available": "Há uma versão nova disponível:",
+    "downloads.update.downloading": "Baixando a atualização —",
+    "downloads.update.ready":
+        "Atualização baixada. Ela é aplicada quando o aplicativo reiniciar.",
+    "downloads.update.error":
+        "Não deu para verificar agora. Costuma ser conexão; tente de novo em instantes.",
+    "downloads.update.check": "Verificar agora",
+    "downloads.update.download": "Baixar atualização",
+    "downloads.update.install": "Reiniciar e instalar",
+    "downloads.update.runningVersion": "Versão instalada:",
+    "downloads.update.unsupported":
+        "Esta instalação não se atualiza sozinha. Para trocar de versão, baixe a mais recente na lista abaixo.",
     "downloads.downloadCount": "downloads",
     "downloads.security.title": "Sobre o aviso do sistema",
     "downloads.security.body":
@@ -891,8 +915,6 @@ const en: Translations = {
     "downloads.title": "Get the app",
     "downloads.lead":
         "The same portfolio, off the browser — installed on your machine or phone, same content, auto-updating.",
-    "downloads.forYou": "For your system",
-    "downloads.others": "Other platforms",
     "downloads.get": "Download",
     "downloads.version": "Version",
     "downloads.notes": "See what changed",
@@ -907,8 +929,23 @@ const en: Translations = {
     "downloads.ios.body":
         "Apple doesn't allow installing outside the App Store. Planned via TestFlight.",
     "downloads.publishedAt": "Published on",
-    "downloads.forYouHint":
-        "We detected your system from your browser — pick another below if that's not you.",
+    "downloads.platforms": "Available systems",
+    "downloads.update.title": "App update",
+    "downloads.update.idle": "We haven't checked for a new version yet.",
+    "downloads.update.checking": "Looking for a newer version…",
+    "downloads.update.current": "You're already on the latest version.",
+    "downloads.update.available": "A new version is available:",
+    "downloads.update.downloading": "Downloading the update —",
+    "downloads.update.ready":
+        "Update downloaded. It is applied when the app restarts.",
+    "downloads.update.error":
+        "Couldn't check right now. It's usually the connection; try again shortly.",
+    "downloads.update.check": "Check now",
+    "downloads.update.download": "Download update",
+    "downloads.update.install": "Restart and install",
+    "downloads.update.runningVersion": "Installed version:",
+    "downloads.update.unsupported":
+        "This install can't update itself. To move to a newer version, download the latest from the list below.",
     "downloads.downloadCount": "downloads",
     "downloads.security.title": "About the security warning",
     "downloads.security.body":

@@ -11,7 +11,13 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { launchBrowser, newContext, startPreview, visit, ROUTES } from "./lib/browser.mjs";
+import {
+    launchBrowser,
+    newContext,
+    startPreview,
+    visit,
+    ROUTES,
+} from "./lib/browser.mjs";
 
 const require = createRequire(import.meta.url);
 const AXE = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
@@ -95,7 +101,9 @@ for (const r of resultados) {
     /* pt renderizado deve declarar pt-*, en deve declarar en-* */
     const esperado = r.lang === "pt" ? "pt" : "en";
     if (!r.langDeclarado?.toLowerCase().startsWith(esperado)) {
-        langErrado.push(`${rotulo} → documento declara "${r.langDeclarado || "vazio"}"`);
+        langErrado.push(
+            `${rotulo} → documento declara "${r.langDeclarado || "vazio"}"`,
+        );
     }
 
     log(
@@ -116,8 +124,13 @@ if (langErrado.length) {
 const totalViolacoes = resultados.reduce((n, r) => n + r.violacoes.length, 0);
 const limpos = resultados.filter((r) => !r.violacoes.length).length;
 
-log(`${limpos}/${resultados.length} combinações sem violação · ${totalViolacoes} violações no total`);
-if (avisos.length) log(`${avisos.length} combinação(ões) com violação moderada — aviso, não barra`);
+log(
+    `${limpos}/${resultados.length} combinações sem violação · ${totalViolacoes} violações no total`,
+);
+if (avisos.length)
+    log(
+        `${avisos.length} combinação(ões) com violação moderada — aviso, não barra`,
+    );
 
 if (asJson) console.log(JSON.stringify(resultados, null, 2));
 
@@ -130,13 +143,19 @@ if (gravarBase) {
         porRegra: Object.entries(
             resultados
                 .flatMap((r) => r.violacoes)
-                .reduce((acc, v) => ({ ...acc, [v.id]: (acc[v.id] ?? 0) + 1 }), {}),
+                .reduce(
+                    (acc, v) => ({ ...acc, [v.id]: (acc[v.id] ?? 0) + 1 }),
+                    {},
+                ),
         )
             .sort((a, b) => b[1] - a[1])
             .map(([id, n]) => ({ id, ocorrencias: n })),
         idiomaDivergente: langErrado.length,
     };
-    writeFileSync("docs/a11y-baseline.json", JSON.stringify(base, null, 2) + "\n");
+    writeFileSync(
+        "docs/a11y-baseline.json",
+        JSON.stringify(base, null, 2) + "\n",
+    );
     log(`\nlinha de base gravada em docs/a11y-baseline.json`);
 }
 

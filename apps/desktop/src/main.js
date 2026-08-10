@@ -25,6 +25,7 @@ const { app, BrowserWindow, shell, protocol, net } = require("electron");
 const path = require("node:path");
 const { pathToFileURL } = require("node:url");
 const { resolver } = require("./rota.js");
+const atualizacao = require("./atualizacao.js");
 
 const ESQUEMA = "app";
 const ORIGEM = `${ESQUEMA}://local`;
@@ -138,6 +139,10 @@ function criarJanela() {
         }
     });
 
+    /* A janela passa a receber o estado da atualização; a inscrição se
+       desfaz sozinha quando ela fecha. */
+    atualizacao.registrarJanela(janela.webContents);
+
     janela.loadURL(`${ORIGEM}/`);
     return janela;
 }
@@ -157,6 +162,17 @@ if (!app.requestSingleInstanceLock()) {
 
     app.whenReady().then(() => {
         protocol.handle(ESQUEMA, servir);
+
+        /* Antes da janela: `iniciar` registra os canais de IPC, e a
+           página pode perguntar pelo estado assim que montar.
+           Verificar, baixar e instalar ficam em atualizacao.js — os
+           eventos do updater viram um estado com nome, que a página lê
+           por uma API nomeada em vez de conhecer o electron-updater. */
+        atualizacao.iniciar({
+            empacotado: app.isPackaged,
+            versao: app.getVersion(),
+        });
+
         janela = criarJanela();
 
         /* No macOS o app segue vivo sem janela; clicar no ícone do dock
@@ -166,21 +182,6 @@ if (!app.requestSingleInstanceLock()) {
                 janela = criarJanela();
             }
         });
-
-        /* A atualização automática só existe no app empacotado: em
-           desenvolvimento não há assinatura nem versão publicada com que
-           comparar, e o updater apenas registraria erro a cada abertura. */
-        if (app.isPackaged) {
-            import("electron-updater")
-                .then(({ autoUpdater }) => {
-                    autoUpdater.autoDownload = true;
-                    autoUpdater.checkForUpdatesAndNotify();
-                })
-                .catch(() => {
-                    /* Sem rede, ou release ainda não publicada. Não é
-                       motivo para atrapalhar quem só quer abrir o app. */
-                });
-        }
     });
 
     /* No macOS a convenção é o app continuar aberto sem janelas. */

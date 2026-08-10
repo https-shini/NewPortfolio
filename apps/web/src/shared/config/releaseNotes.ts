@@ -98,9 +98,76 @@ export type ReleaseTag = "design" | "feature" | "perf" | "a11y" | "fix";
 ───────────────────────────────────────────────────────── */
 export const RELEASE_NOTES: ReleaseEntry[] = [
     {
-        version: "2.2.0",
+        version: "2.3.0",
         date: "2026-08-10",
         featured: true,
+        tags: ["design", "feature", "fix"],
+        title: {
+            pt: "A escolha volta a ser de quem baixa",
+            en: "The choice goes back to whoever downloads",
+        },
+        summary: {
+            pt: "Downloads sem recomendação, atualização dentro do app e identidade própria.",
+            en: "Downloads with no recommendation, in-app updates and an identity of its own.",
+        },
+        body: {
+            pt: "A página de downloads adivinhava o seu sistema pelo navegador e punha um cartão grande no topo dizendo **\u201cpara o seu sistema\u201d**. Parecia atencioso e era presunçoso: a detecção por user-agent erra com frequência, e mesmo quando acerta transfere para a interface uma decisão que é de quem baixa.\n\nAgora os quatro sistemas aparecem em pé de igualdade — mesmo cartão, mesmo tamanho, ordem fixa. Duas pessoas em máquinas diferentes veem exatamente a mesma tela.\n\nDentro do aplicativo, a mesma página passa a mostrar o estado da atualização e a resolvê-la ali: verificar, baixar e reiniciar sem sair para lugar nenhum. O download **não** começa sozinho — baixar mais de cem megabytes sem perguntar é o tipo de coisa que acontece numa rede móvel sem querer.\n\nA revisão do processo de atualização encontrou algo que valia por si: **ela nunca havia funcionado**. O `electron-updater` é CommonJS, e a forma como era carregado devolvia um objeto vazio; a primeira linha a usá-lo falhava. Como o erro caía num tratamento vazio, nada aparecia em lugar nenhum — nem no aplicativo, nem no log de quem publicou. Foi corrigido, e todo caminho de falha passou a virar estado visível em vez de silêncio.\n\nHá ainda um limite honesto: no Linux só a versão AppImage sabe se atualizar sozinha. Quem instala pelo pacote Debian vê isso escrito na própria página, com a lista de downloads logo abaixo, em vez de um \u201cverificando\u201d que nunca termina.\n\nPor fim, o aplicativo deixou de se chamar pelo nome de uma pessoa e de usar uma foto como ícone. O produto tem marca própria — a mesma do site — e ela agora vale do ícone do executável às telas do instalador.",
+            en: "The downloads page used to guess your system from the browser and put a large card at the top saying **\u201cfor your system\u201d**. It looked considerate and was presumptuous: user-agent detection is often wrong, and even when right it hands the interface a decision that belongs to whoever is downloading.\n\nNow the four systems appear as equals — same card, same size, fixed order. Two people on different machines see exactly the same screen.\n\nInside the application, that same page now shows the update state and resolves it right there: check, download and restart without leaving. The download does **not** start on its own — pulling a hundred-plus megabytes unasked is the kind of thing that happens on mobile data by accident.\n\nReviewing the update path turned up something worth the trip on its own: **it had never worked**. `electron-updater` is CommonJS, and the way it was being loaded returned an empty object; the first line to use it failed. Because the error fell into an empty handler, nothing surfaced anywhere — not in the app, not in the publisher's log. It is fixed, and every failure path now becomes visible state instead of silence.\n\nThere is an honest limit left: on Linux only the AppImage build can update itself. Anyone installing the Debian package reads that on the page itself, with the download list right below, instead of a \u201cchecking\u201d that never ends.\n\nFinally, the application stopped going by a person's name and using a photo as its icon. The product has a mark of its own — the same one the site uses — and it now holds from the executable icon through the installer screens.",
+        },
+        changes: {
+            added: [
+                {
+                    pt: "Atualização verificada, baixada e aplicada dentro do aplicativo",
+                    en: "Updates checked, downloaded and applied inside the app",
+                },
+                {
+                    pt: "Aviso claro quando a instalação não sabe se atualizar sozinha",
+                    en: "A clear notice when an install cannot update itself",
+                },
+                {
+                    pt: "Ícones gerados de uma fonte só, para todas as plataformas",
+                    en: "Icons generated from a single source, for every platform",
+                },
+            ],
+            changed: [
+                {
+                    pt: "Downloads sem detecção de sistema: os quatro em pé de igualdade",
+                    en: "Downloads with no system detection: all four presented equally",
+                },
+                {
+                    pt: "Aplicativo e instalador com a marca do projeto, não com foto pessoal",
+                    en: "App and installer carry the project mark, not a personal photo",
+                },
+                {
+                    pt: "Executável renomeado para a identidade do produto",
+                    en: "Executable renamed to the product identity",
+                },
+                {
+                    pt: "Telas do instalador e janela do .dmg no tema do projeto",
+                    en: "Installer screens and .dmg window in the project theme",
+                },
+            ],
+            fixed: [
+                {
+                    pt: "A atualização automática nunca funcionou: o updater era carregado errado",
+                    en: "Auto-update never worked: the updater was being loaded incorrectly",
+                },
+                {
+                    pt: "Falhas de atualização viravam silêncio em vez de mensagem",
+                    en: "Update failures became silence instead of a message",
+                },
+            ],
+        },
+        links: [
+            {
+                label: { pt: "Baixar o aplicativo", en: "Download the app" },
+                href: "/downloads",
+            },
+        ],
+    },
+    {
+        version: "2.2.0",
+        date: "2026-08-10",
         tags: ["feature", "fix"],
         title: {
             pt: "Distribuição que não depende do repositório",

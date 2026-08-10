@@ -14,7 +14,13 @@
  * atualizado quando o layout muda de propósito.
  */
 
-import { launchBrowser, newContext, startPreview, visit, ROUTES } from "./lib/browser.mjs";
+import {
+    launchBrowser,
+    newContext,
+    startPreview,
+    visit,
+    ROUTES,
+} from "./lib/browser.mjs";
 
 /* Da menor largura que vale suportar ao desktop grande, passando pelos
    pontos onde o layout troca de arranjo. */
@@ -82,5 +88,7 @@ try {
 }
 
 const total = Object.keys(ROUTES).length * LARGURAS.length;
-console.log(`\n${total - falhas.length}/${total} combinações sem rolagem horizontal`);
+console.log(
+    `\n${total - falhas.length}/${total} combinações sem rolagem horizontal`,
+);
 process.exit(falhas.length ? 1 : 0);

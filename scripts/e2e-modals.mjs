@@ -17,7 +17,12 @@
  * valor exato — sem arredondar, que é onde o erro se escondia.
  */
 
-import { launchBrowser, newContext, startPreview, visit } from "./lib/browser.mjs";
+import {
+    launchBrowser,
+    newContext,
+    startPreview,
+    visit,
+} from "./lib/browser.mjs";
 
 const CICLOS = 12;
 const preview = await startPreview();
@@ -26,7 +31,9 @@ const falhas = [];
 
 const check = (ok, rotulo, detalhe = "") => {
     if (!ok) falhas.push(rotulo);
-    console.log(`${ok ? "  ok " : "FALHA"}  ${rotulo}${detalhe ? `  — ${detalhe}` : ""}`);
+    console.log(
+        `${ok ? "  ok " : "FALHA"}  ${rotulo}${detalhe ? `  — ${detalhe}` : ""}`,
+    );
 };
 
 try {
@@ -101,7 +108,9 @@ try {
         check(
             exatas === CICLOS,
             `posição restaurada exatamente em ${CICLOS} ciclos`,
-            exatas === CICLOS ? "" : `${exatas}/${CICLOS}; desvios: ${desvios.join(", ")}`,
+            exatas === CICLOS
+                ? ""
+                : `${exatas}/${CICLOS}; desvios: ${desvios.join(", ")}`,
         );
 
         await ctx.close();
@@ -130,7 +139,10 @@ try {
             const cs = getComputedStyle(dlg);
             const rolaveis = [...dlg.querySelectorAll("*")].filter((el) => {
                 const c = getComputedStyle(el);
-                return /auto|scroll/.test(c.overflowY) && el.scrollHeight > el.clientHeight + 2;
+                return (
+                    /auto|scroll/.test(c.overflowY) &&
+                    el.scrollHeight > el.clientHeight + 2
+                );
             });
             return {
                 cabe: b.height <= window.innerHeight + 1 && b.top >= -1,
@@ -142,7 +154,10 @@ try {
         });
 
         check(r.cabe, "o diálogo cabe na tela deitada (667×375)");
-        check(!r.cortado, "conteúdo alcançável — rola por dentro se não couber");
+        check(
+            !r.cortado,
+            "conteúdo alcançável — rola por dentro se não couber",
+        );
 
         await ctx.close();
     }
@@ -151,5 +166,7 @@ try {
     await preview.stop();
 }
 
-console.log(`\n${falhas.length ? `${falhas.length} verificação(ões) falhando` : "tudo certo"}`);
+console.log(
+    `\n${falhas.length ? `${falhas.length} verificação(ões) falhando` : "tudo certo"}`,
+);
 process.exit(falhas.length ? 1 : 0);

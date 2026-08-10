@@ -9,6 +9,30 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 > `scripts/changelog.mjs`. Não editar à mão — as alterações se perdem
 > na próxima geração, e há teste conferindo a sincronia.
 
+## [2.3.0](https://gcruz.dev.br/release-notes/v2.3.0) — 2026-08-10
+
+**A escolha volta a ser de quem baixa**
+
+Downloads sem recomendação, atualização dentro do app e identidade própria.
+
+### Adicionado
+
+- Atualização verificada, baixada e aplicada dentro do aplicativo
+- Aviso claro quando a instalação não sabe se atualizar sozinha
+- Ícones gerados de uma fonte só, para todas as plataformas
+
+### Modificado
+
+- Downloads sem detecção de sistema: os quatro em pé de igualdade
+- Aplicativo e instalador com a marca do projeto, não com foto pessoal
+- Executável renomeado para a identidade do produto
+- Telas do instalador e janela do .dmg no tema do projeto
+
+### Corrigido
+
+- A atualização automática nunca funcionou: o updater era carregado errado
+- Falhas de atualização viravam silêncio em vez de mensagem
+
 ## [2.2.0](https://gcruz.dev.br/release-notes/v2.2.0) — 2026-08-10
 
 **Distribuição que não depende do repositório**

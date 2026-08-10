@@ -49,6 +49,12 @@ jobs:
       - name: QR do rodapé em dia
         run: npm run qr:check
 
+      # Não redesenha nada: confere a assinatura do icon.svg gravada na
+      # última geração. Editar a fonte e esquecer de regenerar deixaria o
+      # executável, o instalador e a aba do site com desenhos diferentes.
+      - name: Ícones em dia com a fonte
+        run: npm run icones:check
+
       - name: Build
         run: npm run build
 

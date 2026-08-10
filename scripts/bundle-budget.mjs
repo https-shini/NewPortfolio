@@ -22,7 +22,11 @@ const DIST = "apps/web/dist/assets";
 
 const TETOS = [
     { nome: "JS total", limite: 125, alvo: (f) => f.tipo === "js" },
-    { nome: "vendor (react + react-dom)", limite: 50, alvo: (f) => f.nome.startsWith("vendor-") },
+    {
+        nome: "vendor (react + react-dom)",
+        limite: 50,
+        alvo: (f) => f.nome.startsWith("vendor-"),
+    },
     { nome: "CSS total", limite: 36, alvo: (f) => f.tipo === "css" },
 ];
 

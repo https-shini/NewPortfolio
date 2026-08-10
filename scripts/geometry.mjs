@@ -23,7 +23,12 @@
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { launchBrowser, newContext, startPreview, ROUTES } from "./lib/browser.mjs";
+import {
+    launchBrowser,
+    newContext,
+    startPreview,
+    ROUTES,
+} from "./lib/browser.mjs";
 
 const ROTAS = Object.values(ROUTES);
 const TEMAS = ["dark", "light"];

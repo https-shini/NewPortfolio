@@ -11,14 +11,11 @@ import {
     formatarTamanho,
     type Arquivo,
 } from "@/shared/hooks/useDownloads";
-import {
-    detectarPlataforma,
-    type Plataforma,
-    type PlataformaDetectada,
-} from "@/shared/lib/platform";
+import type { Plataforma } from "@/shared/lib/platform";
 import { formatFullDate } from "@/shared/lib/dateUtils";
 import { ROUTES, releaseNotePath } from "@/shared/config/routes";
 import { PROFILE } from "@/shared/config/profile";
+import { AtualizacaoDesktop } from "@/widgets/AtualizacaoDesktop/AtualizacaoDesktop";
 import {
     IconDownload,
     IconArrowRight,
@@ -39,10 +36,12 @@ import {
    passada depois que alguém publica uma nova — link de download velho é
    pior que ausente, porque funciona e entrega o errado.
 
-   A plataforma detectada vira uma SEÇÃO própria, com um cartão grande, e
-   as demais seguem num grid abaixo. Detecção por user-agent erra, e uma
-   página que esconde as outras opções ao errar deixa a pessoa sem saída —
-   por isso promover, nunca ocultar.
+   Os sistemas são apresentados em pé de igualdade: mesma superfície,
+   mesmo tamanho, ordem fixa. NÃO há detecção de plataforma nem "melhor
+   opção" — houve, e saiu. Detecção por user-agent erra com frequência, e
+   uma página que já decidiu por você transfere para a interface uma
+   escolha que é de quem baixa. Quem sabe qual é o próprio sistema é a
+   pessoa; o trabalho da página é mostrar tudo com clareza igual.
 ───────────────────────────────────────────────────────── */
 
 const NOMES: Record<Plataforma, string> = {
@@ -62,7 +61,7 @@ const ICONES: Record<
     android: IconAndroid,
 };
 
-/** A ordem de sempre, quando não há nada detectado para promover. */
+/** Ordem fixa, igual para todo mundo. */
 const ORDEM: Plataforma[] = ["windows", "macos", "linux", "android"];
 
 type ChaveFormato =
@@ -165,12 +164,6 @@ export const DownloadsPage: React.FC = () => {
     useReducedMotion();
     const { dados, status } = useDownloads();
 
-    /* Uma vez por montagem: o user-agent não muda no meio da visita. */
-    const detectada: PlataformaDetectada = useMemo(
-        () => detectarPlataforma(),
-        [],
-    );
-
     useDocumentMeta({
         title: `${t("downloads.title")} — ${PROFILE.name}`,
         description: t("downloads.lead"),
@@ -187,19 +180,13 @@ export const DownloadsPage: React.FC = () => {
         return mapa;
     }, [dados.arquivos]);
 
+    /* Ordem fixa, sem reordenar por nada: dois visitantes na mesma
+       versão veem exatamente a mesma página. */
     const presentes = useMemo(
         () => ORDEM.filter((p) => porPlataforma.has(p)),
         [porPlataforma],
     );
 
-    const promovida =
-        detectada !== "ios" &&
-        detectada !== "desconhecida" &&
-        porPlataforma.has(detectada)
-            ? detectada
-            : null;
-
-    const secundarias = presentes.filter((p) => p !== promovida);
     const temArquivos = presentes.length > 0;
 
     /* Navegação interna, com as teclas de "abrir em nova aba" intactas:
@@ -273,6 +260,10 @@ export const DownloadsPage: React.FC = () => {
                         )}
                     </header>
 
+                    {/* Só renderiza dentro do aplicativo; no navegador o
+                        hook devolve `indisponivel` e não sai nada. */}
+                    <AtualizacaoDesktop />
+
                     {status === "error" && (
                         <div className="dl__erro" role="status">
                             <p className="dl__erro-texto">
@@ -319,64 +310,20 @@ export const DownloadsPage: React.FC = () => {
                         </div>
                     )}
 
-                    {promovida && (
+                    {temArquivos && (
                         <section
-                            className="dl__destaque"
-                            aria-labelledby="dl-para-voce"
+                            className="dl__sistemas"
+                            aria-labelledby="dl-sistemas"
                         >
-                            <h2 className="dl__secao" id="dl-para-voce">
-                                {t("downloads.forYou")}
-                            </h2>
-
-                            <article className="card dl-hero">
-                                <span
-                                    className="dl-hero__icone"
-                                    aria-hidden="true"
-                                >
-                                    {React.createElement(ICONES[promovida], {
-                                        width: 30,
-                                        height: 30,
-                                    })}
-                                </span>
-
-                                <div className="dl-hero__texto">
-                                    <h3 className="dl-hero__nome">
-                                        {NOMES[promovida]}
-                                    </h3>
-                                    <p className="dl-hero__hint">
-                                        {t("downloads.forYouHint")}
-                                    </p>
-                                </div>
-
-                                <div className="dl-hero__arquivos">
-                                    <ListaDeArquivos
-                                        arquivos={
-                                            porPlataforma.get(promovida) ?? []
-                                        }
-                                        plataforma={promovida}
-                                        lang={lang}
-                                        t={t}
-                                    />
-                                </div>
-                            </article>
-                        </section>
-                    )}
-
-                    {secundarias.length > 0 && (
-                        <section
-                            className="dl__outras"
-                            aria-labelledby="dl-outras"
-                        >
-                            {/* Só se chama "outras" quando houve uma
-                                primeira; sem destaque, é a lista completa. */}
-                            <h2 className="dl__secao" id="dl-outras">
-                                {promovida
-                                    ? t("downloads.others")
-                                    : t("downloads.title")}
+                            {/* Um heading só, e nada de "outras": não há
+                                uma primeira da qual as demais sejam o
+                                resto. Todos os sistemas são o assunto. */}
+                            <h2 className="dl__secao" id="dl-sistemas">
+                                {t("downloads.platforms")}
                             </h2>
 
                             <div className="dl__grade">
-                                {secundarias.map((p) => {
+                                {presentes.map((p) => {
                                     const Icone = ICONES[p];
                                     return (
                                         <article

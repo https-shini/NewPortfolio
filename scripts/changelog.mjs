@@ -87,7 +87,12 @@ for (const entrada of RELEASE_NOTES) {
     }
 }
 
-linhas.push("---", "", `[Todas as versões](${SITE}/release-notes) · [Releases](${REPO}/releases)`, "");
+linhas.push(
+    "---",
+    "",
+    `[Todas as versões](${SITE}/release-notes) · [Releases](${REPO}/releases)`,
+    "",
+);
 
 const conteudo = linhas.join("\n");
 

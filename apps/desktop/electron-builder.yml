@@ -10,7 +10,10 @@
 electronVersion: 33.4.11
 
 appId: br.dev.gcruz.portfolio
-productName: Portfolio Guilherme Cruz
+# Nome do produto é a identidade do projeto, não a da pessoa: é o que
+# aparece no título da janela, no menu Iniciar, no Launchpad e em todas
+# as telas do instalador.
+productName: GCruz.dev
 copyright: Copyright © 2026 Guilherme Cruz
 
 # Não há dependência nativa aqui: o app é HTML servido de um protocolo
@@ -45,7 +48,9 @@ extraResources:
 #
 # De quebra a arquitetura entra no nome, que é de onde a /downloads a lê:
 # antes só o .deb a revelava, e o .exe e o AppImage apareciam sem selo.
-artifactName: ${name}-${version}-${os}-${arch}.${ext}
+# `${productName}` tem ponto e viraria "GCruz.dev-2.2.0..."; o prefixo é
+# escrito para o nome do arquivo ficar legível e sem espaço.
+artifactName: gcruz-dev-${version}-${os}-${arch}.${ext}
 
 # A atualização automática NÃO pode ler as releases do GitHub: o
 # repositório é privado, e um app distribuído não tem como carregar um
@@ -56,35 +61,51 @@ publish:
     provider: generic
     url: https://gcruz.dev.br/atualizacao
 
-# O mesmo ícone do site, não uma cópia dele. Sem `icon` o electron-builder
-# empacota o ícone padrão do Electron — o app instalado apareceria no menu
-# e na barra de tarefas como "Electron" genérico. O 512x512 é o tamanho de
-# origem que o builder pede para derivar .ico e .icns sozinho.
+# Os ícones saem todos de build/icon.svg, por scripts/icones.mjs. O
+# electron-builder acha build/icon.png sozinho (é o buildResources) e
+# deriva dele o .icns do macOS e os PNGs do Linux; o Windows usa o .ico
+# gerado com as sete resoluções.
 linux:
-    icon: ../web/public/icon-512.png
+    executableName: gcruz-dev
     target:
         - AppImage
         - deb
     category: Development
     synopsis: Portfólio de Guilherme Cruz
     desktop:
-        StartupWMClass: portfolio-desktop
+        StartupWMClass: gcruz-dev
 
 win:
-    icon: ../web/public/icon-512.png
+    icon: build/icon.ico
     target:
         - target: nsis
           arch: [x64]
 
+# As janelas do assistente são Win32 nativas: não há CSS para aplicar
+# ali. O que dá para levar do design system é a arte — ícone, cabeçalho
+# e a lateral —, e é o que estes campos fazem. A lateral é BMP porque o
+# NSIS não lê PNG.
 nsis:
     oneClick: false
     perMachine: false
     allowToChangeInstallationDirectory: true
+    installerIcon: build/icon.ico
+    uninstallerIcon: build/icon.ico
+    installerHeaderIcon: build/icon.ico
+    installerSidebar: build/installerSidebar.bmp
+    uninstallerSidebar: build/installerSidebar.bmp
+    shortcutName: GCruz.dev
     # Sem certificado de assinatura, o SmartScreen avisa no primeiro uso.
     # Não bloqueia a instalação; é o item que depende de compra.
 
+# A janela do .dmg é o instalador do macOS, e aceita fundo próprio.
+dmg:
+    background: build/dmg-background.png
+    window:
+        width: 540
+        height: 380
+
 mac:
-    icon: ../web/public/icon-512.png
     target:
         - target: dmg
           arch: [x64, arm64]
