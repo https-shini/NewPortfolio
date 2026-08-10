@@ -40,7 +40,6 @@ interface GithubRelease {
     published_at?: string;
     draft?: boolean;
     prerelease?: boolean;
-    html_url?: string;
     assets?: GithubAsset[];
 }
 
@@ -66,7 +65,6 @@ export interface Arquivo {
 export interface Downloads {
     versao: string | null;
     publicadoEm: string | null;
-    notasUrl: string | null;
     arquivos: Arquivo[];
 }
 
@@ -97,16 +95,31 @@ export function classificar(
           : null;
 
     if (n.endsWith(".exe")) {
-        return { plataforma: "windows", nome, formato: "Instalador .exe", arquitetura };
+        return {
+            plataforma: "windows",
+            nome,
+            formato: "Instalador .exe",
+            arquitetura,
+        };
     }
     if (n.endsWith(".dmg")) {
-        return { plataforma: "macos", nome, formato: "Imagem .dmg", arquitetura };
+        return {
+            plataforma: "macos",
+            nome,
+            formato: "Imagem .dmg",
+            arquitetura,
+        };
     }
     if (n.endsWith(".appimage")) {
         return { plataforma: "linux", nome, formato: "AppImage", arquitetura };
     }
     if (n.endsWith(".deb")) {
-        return { plataforma: "linux", nome, formato: "Pacote .deb", arquitetura };
+        return {
+            plataforma: "linux",
+            nome,
+            formato: "Pacote .deb",
+            arquitetura,
+        };
     }
     if (n.endsWith(".apk")) {
         return { plataforma: "android", nome, formato: "APK", arquitetura };
@@ -125,7 +138,6 @@ export async function buscarDownloads(): Promise<Downloads> {
     const vazio: Downloads = {
         versao: null,
         publicadoEm: null,
-        notasUrl: null,
         arquivos: [],
     };
 
@@ -154,13 +166,21 @@ export async function buscarDownloads(): Promise<Downloads> {
 
             const arquivos = (r.assets ?? [])
                 .map((a) => {
+                    /* O `browser_download_url` não é mais usado como
+                       destino, mas continua valendo como sinal de que o
+                       upload terminou: um asset ainda subindo aparece na
+                       lista sem ele. */
                     if (!a.name || !a.browser_download_url) return null;
                     const meta = classificar(a.name);
                     if (!meta) return null;
                     return {
                         ...meta,
                         tamanho: a.size ?? 0,
-                        url: a.browser_download_url,
+                        /* Endereço próprio, não o `browser_download_url`.
+                           Aquele só é anônimo enquanto o repositório for
+                           público — num repositório privado responde 404
+                           para o visitante. Ver api/baixar.ts. */
+                        url: `/api/baixar?arquivo=${encodeURIComponent(a.name)}`,
                         downloads: a.download_count ?? 0,
                     } satisfies Arquivo;
                 })
@@ -171,7 +191,6 @@ export async function buscarDownloads(): Promise<Downloads> {
             return {
                 versao: String(r.tag_name).replace(/^v/i, ""),
                 publicadoEm: r.published_at ?? null,
-                notasUrl: r.html_url ?? null,
                 arquivos,
             };
         }

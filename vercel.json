@@ -9,6 +9,10 @@
       "destination": "/api/feed"
     },
     {
+      "source": "/atualizacao/:arquivo",
+      "destination": "/api/baixar?arquivo=:arquivo"
+    },
+    {
       "source": "/links",
       "has": [
         {

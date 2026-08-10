@@ -34,14 +34,12 @@ export interface Arquivo {
 export interface Downloads {
     versao: string | null;
     publicadoEm: string | null;
-    notasUrl: string | null;
     arquivos: Arquivo[];
 }
 
 const VAZIO: Downloads = {
     versao: null,
     publicadoEm: null,
-    notasUrl: null,
     arquivos: [],
 };
 
@@ -75,7 +73,6 @@ export function useDownloads(enabled = true): {
                 const seguro: Downloads = {
                     versao: data?.versao ?? null,
                     publicadoEm: data?.publicadoEm ?? null,
-                    notasUrl: data?.notasUrl ?? null,
                     arquivos: Array.isArray(data?.arquivos)
                         ? data.arquivos
                         : [],

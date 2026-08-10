@@ -68,17 +68,19 @@ export async function fetchGithubReleases(): Promise<ReleasePayload[]> {
 
         const data = (await response.json()) as GithubReleasePayload[];
 
-        return data
-            /* Rascunhos não são públicos. */
-            .filter((r) => !r.draft && Boolean(r.tag_name))
-            .map((r) => ({
-                version: String(r.tag_name).replace(/^v/i, ""),
-                date: r.published_at ?? r.created_at ?? "",
-                title: r.name?.trim() || String(r.tag_name),
-                html: renderMarkdown(r.body ?? ""),
-                url: r.html_url ?? "",
-            }))
-            .filter((r) => Boolean(r.date));
+        return (
+            data
+                /* Rascunhos não são públicos. */
+                .filter((r) => !r.draft && Boolean(r.tag_name))
+                .map((r) => ({
+                    version: String(r.tag_name).replace(/^v/i, ""),
+                    date: r.published_at ?? r.created_at ?? "",
+                    title: r.name?.trim() || String(r.tag_name),
+                    html: renderMarkdown(r.body ?? ""),
+                    url: r.html_url ?? "",
+                }))
+                .filter((r) => Boolean(r.date))
+        );
     } catch (error) {
         console.error("[releases] falha ao buscar:", error);
         return [];

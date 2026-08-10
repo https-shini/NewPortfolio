@@ -259,7 +259,7 @@ export type TranslationKey =
     | "downloads.downloadCount"
     | "downloads.security.title"
     | "downloads.security.body"
-    | "downloads.security.sourceLink"
+    | "downloads.retry"
     | "downloads.formatLabel.exe"
     | "downloads.formatLabel.dmg"
     | "downloads.formatLabel.appimage"
@@ -570,8 +570,9 @@ const pt: Translations = {
     "downloads.empty.body":
         "A primeira versão empacotada sai junto da próxima release. Enquanto isso, o site funciona por completo no navegador.",
     "downloads.error":
-        "Não deu para carregar a lista agora. Os arquivos continuam disponíveis direto no GitHub.",
-    "downloads.allReleases": "Todas as versões no GitHub",
+        "Não deu para carregar a lista de instaladores agora. Isso costuma ser momentâneo.",
+    "downloads.retry": "Tentar de novo",
+    "downloads.allReleases": "Ver o histórico de versões",
     "downloads.ios.title": "iPhone e iPad",
     "downloads.ios.body":
         "A Apple não permite instalar fora da App Store. Está previsto via TestFlight.",
@@ -582,8 +583,6 @@ const pt: Translations = {
     "downloads.security.title": "Sobre o aviso do sistema",
     "downloads.security.body":
         "Os instaladores ainda não são assinados digitalmente. O Windows e o macOS vão mostrar um aviso de \u201ceditor não reconhecido\u201d na primeira execução — é esperado, não é malware. No Android, é preciso permitir \u201cinstalar de fontes desconhecidas\u201d nas configurações.",
-    "downloads.security.sourceLink":
-        "Prefere compilar você mesmo? O código-fonte é público.",
     "downloads.formatLabel.exe": "Instalador Windows",
     "downloads.formatLabel.dmg": "Imagem de disco macOS",
     "downloads.formatLabel.appimage": "Executável portátil (AppImage)",
@@ -901,8 +900,9 @@ const en: Translations = {
     "downloads.empty.body":
         "The first packaged version ships with the next release. Until then, the site works fully in the browser.",
     "downloads.error":
-        "Couldn't load the list right now. The files are still available directly on GitHub.",
-    "downloads.allReleases": "All versions on GitHub",
+        "Couldn't load the installer list right now. This is usually temporary.",
+    "downloads.retry": "Try again",
+    "downloads.allReleases": "See the version history",
     "downloads.ios.title": "iPhone and iPad",
     "downloads.ios.body":
         "Apple doesn't allow installing outside the App Store. Planned via TestFlight.",
@@ -913,8 +913,6 @@ const en: Translations = {
     "downloads.security.title": "About the security warning",
     "downloads.security.body":
         "The installers aren't code-signed yet. Windows and macOS will show an \u201cunrecognized publisher\u201d warning on first run — that's expected, not malware. On Android, you'll need to allow \u201cinstall from unknown sources\u201d in settings.",
-    "downloads.security.sourceLink":
-        "Prefer to build it yourself? The source is public.",
     "downloads.formatLabel.exe": "Windows installer",
     "downloads.formatLabel.dmg": "macOS disk image",
     "downloads.formatLabel.appimage": "Portable executable (AppImage)",

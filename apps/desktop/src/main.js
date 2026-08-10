@@ -24,9 +24,19 @@
 const { app, BrowserWindow, shell, protocol, net } = require("electron");
 const path = require("node:path");
 const { pathToFileURL } = require("node:url");
+const { resolver } = require("./rota.js");
 
 const ESQUEMA = "app";
 const ORIGEM = `${ESQUEMA}://local`;
+
+/* De onde vêm as funções serverless. O app empacota o site, não o
+   backend: `/api/downloads` e `/api/release-notes` continuam sendo
+   servidos pela Vercel, e o processo principal repassa a chamada.
+
+   A variável permite apontar para outro host — um `vercel dev` local, ou
+   um servidor de teste — sem editar o código. Em produção ninguém a
+   define e vale o padrão. */
+const API_REMOTA = process.env.PORTFOLIO_API ?? "https://gcruz.dev.br";
 
 /* O build do site. Em desenvolvimento vem do repositório; empacotado,
    electron-builder copia o dist para dentro dos recursos. */
@@ -61,18 +71,25 @@ protocol.registerSchemesAsPrivileged([
  * seria criar uma segunda fonte da verdade que um dia diverge.
  */
 function servir(request) {
-    const { pathname } = new URL(request.url);
-    const relativo = decodeURIComponent(pathname).replace(/^\/+/, "");
+    const { pathname, search } = new URL(request.url);
+    const destino = resolver(pathname, RAIZ_WEB);
 
-    /* `path.resolve` normaliza `..` — sem isto, `app://local/../../etc`
-       sairia da pasta do site e leria qualquer arquivo do disco. */
-    const alvo = path.resolve(RAIZ_WEB, relativo);
-    const dentro = alvo === RAIZ_WEB || alvo.startsWith(RAIZ_WEB + path.sep);
+    /* As chamadas de API atravessam para o site. Sem isto elas caíam no
+       fallback e recebiam o index.html — HTML onde o hook espera JSON —,
+       e a /downloads dentro do app mostrava o cartão de erro enquanto a
+       mesma página no navegador funcionava. Vai do processo principal, e
+       não do renderer, porque `app://` é outra origem e um fetch direto
+       esbarraria no CORS. */
+    if (destino.tipo === "api") {
+        return net.fetch(`${API_REMOTA}${pathname}${search}`, {
+            headers: { Accept: "application/json" },
+            /* O /api/baixar responde 302 para uma URL assinada; seguir o
+               redirecionamento aqui é o que faz o download começar. */
+            redirect: "follow",
+        });
+    }
 
-    const temExtensao = path.extname(alvo) !== "";
-    const arquivo = dentro && temExtensao ? alvo : path.join(RAIZ_WEB, "index.html");
-
-    return net.fetch(pathToFileURL(arquivo).toString());
+    return net.fetch(pathToFileURL(destino.caminho).toString());
 }
 
 function criarJanela() {

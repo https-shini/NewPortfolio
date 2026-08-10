@@ -98,9 +98,76 @@ export type ReleaseTag = "design" | "feature" | "perf" | "a11y" | "fix";
 ───────────────────────────────────────────────────────── */
 export const RELEASE_NOTES: ReleaseEntry[] = [
     {
-        version: "2.1.0",
+        version: "2.2.0",
         date: "2026-08-10",
         featured: true,
+        tags: ["feature", "fix"],
+        title: {
+            pt: "Distribuição que não depende do repositório",
+            en: "Distribution that doesn't depend on the repository",
+        },
+        summary: {
+            pt: "O download passa a sair do próprio site, com o repositório fechado.",
+            en: "Downloads now come from the site itself, with the repository closed.",
+        },
+        body: {
+            pt: "O repositório deste projeto vai deixar de ser público, e a versão anterior não sobreviveria a isso. Os links de download vinham do `browser_download_url` que o GitHub devolve em cada arquivo — um endereço que só é anônimo enquanto o repositório está aberto. Fechado o repositório, todo botão da página de downloads passaria a responder 404, sem aviso.\n\nAgora existe uma porta própria. O servidor faz o que o visitante não pode: pede o arquivo à API do GitHub com um token e recebe de volta um endereço assinado, válido por poucos minutos, para o qual o navegador é encaminhado. O arquivo continua vindo da infraestrutura do GitHub; o que deixou de ser necessário é o repositório estar aberto. O token nunca sai do servidor.\n\nA mesma porta serve a **atualização automática**. Ela lia as releases do GitHub, o que um aplicativo instalado não consegue fazer num repositório privado — não há como embutir um token num programa distribuído. O app passa a consultar o próprio site.\n\nDois defeitos apareceram na revisão do aplicativo desktop, e nenhum dos dois aparecia em desenvolvimento. As chamadas de API dentro do app caíam no mesmo caminho das páginas e recebiam HTML onde o código esperava dados — a tela de downloads mostrava erro dentro do aplicativo enquanto funcionava no navegador. E as rotas de versão, como `/release-notes/v2.1.0`, eram confundidas com pedido de arquivo por causa do ponto no número: recarregar a página estando nelas não carregava nada.\n\nOs instaladores também mudaram de nome. Antes traziam espaços, que viravam código na URL e eram trocados por pontos ao publicar — o suficiente para a atualização automática procurar um arquivo que não existia. Agora o nome traz sistema e arquitetura, e é o mesmo do começo ao fim.",
+            en: "This project's repository is going private, and the previous version would not survive that. Download links came from the `browser_download_url` that GitHub returns for each file — an address that is only anonymous while the repository is open. Once closed, every button on the downloads page would answer 404, with no warning.\n\nThere is a door of its own now. The server does what the visitor cannot: it asks GitHub's API for the file using a token and gets back a signed address, valid for a few minutes, which the browser is forwarded to. The file still comes from GitHub's infrastructure; what stopped being necessary is the repository being open. The token never leaves the server.\n\nThe same door serves **automatic updates**. They used to read GitHub releases, which an installed application cannot do on a private repository — there is no way to embed a token in a distributed program. The app now asks the site instead.\n\nTwo defects surfaced while reviewing the desktop app, and neither showed up in development. API calls inside the app fell through the same path as pages and received HTML where the code expected data — the downloads screen showed an error inside the application while working in the browser. And version routes like `/release-notes/v2.1.0` were mistaken for file requests because of the dot in the number: reloading while on one of them loaded nothing.\n\nThe installers were renamed too. They used to carry spaces, which became escape codes in the URL and were swapped for dots on publish — enough for automatic updates to look for a file that did not exist. The name now carries system and architecture, and is the same from end to end.",
+        },
+        changes: {
+            added: [
+                {
+                    pt: "Download servido pelo próprio site, com o repositório privado",
+                    en: "Downloads served by the site itself, with a private repository",
+                },
+                {
+                    pt: "Canal de atualização automática independente do GitHub",
+                    en: "Automatic update channel independent from GitHub",
+                },
+            ],
+            changed: [
+                {
+                    pt: "Instaladores nomeados por sistema e arquitetura, sem espaços",
+                    en: "Installers named by system and architecture, without spaces",
+                },
+                {
+                    pt: "Notas da versão e histórico abrem no site, não no GitHub",
+                    en: "Release notes and history open on the site, not on GitHub",
+                },
+                {
+                    pt: "Ícone próprio no aplicativo instalado, no lugar do genérico",
+                    en: "Own icon on the installed app, replacing the generic one",
+                },
+            ],
+            fixed: [
+                {
+                    pt: "Chamadas de API dentro do aplicativo recebiam HTML no lugar de dados",
+                    en: "API calls inside the app received HTML instead of data",
+                },
+                {
+                    pt: "Rotas de versão não carregavam ao recarregar dentro do aplicativo",
+                    en: "Version routes failed to load on reload inside the app",
+                },
+                {
+                    pt: "Links para o GitHub apontavam para um repositório inexistente",
+                    en: "GitHub links pointed at a repository that does not exist",
+                },
+                {
+                    pt: "A release publicava o build do site junto dos instaladores",
+                    en: "The release published the site build alongside the installers",
+                },
+            ],
+        },
+        links: [
+            {
+                label: { pt: "Baixar o aplicativo", en: "Download the app" },
+                href: "/downloads",
+            },
+        ],
+    },
+    {
+        version: "2.1.0",
+        date: "2026-08-10",
         tags: ["feature"],
         title: {
             pt: "O portfólio fora do navegador",

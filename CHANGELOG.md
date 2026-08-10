@@ -9,6 +9,30 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 > `scripts/changelog.mjs`. Não editar à mão — as alterações se perdem
 > na próxima geração, e há teste conferindo a sincronia.
 
+## [2.2.0](https://gcruz.dev.br/release-notes/v2.2.0) — 2026-08-10
+
+**Distribuição que não depende do repositório**
+
+O download passa a sair do próprio site, com o repositório fechado.
+
+### Adicionado
+
+- Download servido pelo próprio site, com o repositório privado
+- Canal de atualização automática independente do GitHub
+
+### Modificado
+
+- Instaladores nomeados por sistema e arquitetura, sem espaços
+- Notas da versão e histórico abrem no site, não no GitHub
+- Ícone próprio no aplicativo instalado, no lugar do genérico
+
+### Corrigido
+
+- Chamadas de API dentro do aplicativo recebiam HTML no lugar de dados
+- Rotas de versão não carregavam ao recarregar dentro do aplicativo
+- Links para o GitHub apontavam para um repositório inexistente
+- A release publicava o build do site junto dos instaladores
+
 ## [2.1.0](https://gcruz.dev.br/release-notes/v2.1.0) — 2026-08-10
 
 **O portfólio fora do navegador**

@@ -17,9 +17,8 @@ import {
     type PlataformaDetectada,
 } from "@/shared/lib/platform";
 import { formatFullDate } from "@/shared/lib/dateUtils";
-import { ROUTES } from "@/shared/config/routes";
+import { ROUTES, releaseNotePath } from "@/shared/config/routes";
 import { PROFILE } from "@/shared/config/profile";
-import { GITHUB_URL } from "@/shared/config/constants";
 import {
     IconDownload,
     IconArrowRight,
@@ -203,15 +202,23 @@ export const DownloadsPage: React.FC = () => {
     const secundarias = presentes.filter((p) => p !== promovida);
     const temArquivos = presentes.length > 0;
 
-    /* O link vai para a release exata quando ela existe; o índice local é
-       o reserva. Antes ia sempre para o índice, mesmo havendo destino
-       melhor na resposta que a página já tinha em mãos. */
-    const irParaNotas = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        if (dados.notasUrl) return; /* externo: deixa o navegador levar */
+    /* Navegação interna, com as teclas de "abrir em nova aba" intactas:
+       interceptar um ctrl+clique tiraria da pessoa o comportamento que o
+       navegador já dá de graça. */
+    const irPara = (destino: string) => (e: React.MouseEvent) => {
         if (e.metaKey || e.ctrlKey || e.shiftKey) return;
         e.preventDefault();
-        navigate(ROUTES.RELEASE_NOTES);
+        navigate(destino);
     };
+
+    /* A página da versão existe no próprio site, em português e inglês.
+       Antes o destino era o `html_url` da release no GitHub — que some
+       para o visitante assim que o repositório deixa de ser público, e
+       que só existe em um idioma. */
+    const notasDaVersao = dados.versao
+        ? releaseNotePath(dados.versao)
+        : ROUTES.RELEASE_NOTES;
+    const irParaHistorico = irPara(ROUTES.RELEASE_NOTES);
 
     return (
         <>
@@ -256,15 +263,9 @@ export const DownloadsPage: React.FC = () => {
                                     </>
                                 )}
                                 <a
-                                    href={
-                                        dados.notasUrl ?? ROUTES.RELEASE_NOTES
-                                    }
+                                    href={notasDaVersao}
                                     className="dl__notas"
-                                    onClick={irParaNotas}
-                                    {...(dados.notasUrl && {
-                                        target: "_blank",
-                                        rel: "noopener noreferrer",
-                                    })}
+                                    onClick={irPara(notasDaVersao)}
                                 >
                                     {t("downloads.notes")}
                                 </a>
@@ -277,14 +278,17 @@ export const DownloadsPage: React.FC = () => {
                             <p className="dl__erro-texto">
                                 {t("downloads.error")}
                             </p>
-                            <a
+                            {/* Recarregar e não "ver no GitHub": o
+                                repositório é privado, e o cache do hook
+                                só é gravado em sucesso — então recarregar
+                                realmente tenta buscar de novo. */}
+                            <button
+                                type="button"
                                 className="btn btn--outline btn--sm"
-                                href={`${GITHUB_URL}/releases`}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                onClick={() => window.location.reload()}
                             >
-                                {t("downloads.allReleases")}
-                            </a>
+                                {t("downloads.retry")}
+                            </button>
                         </div>
                     )}
 
@@ -307,9 +311,8 @@ export const DownloadsPage: React.FC = () => {
                                 não faz falta. */}
                             <a
                                 className="btn btn--outline btn--sm"
-                                href={`${GITHUB_URL}/releases`}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                href={ROUTES.RELEASE_NOTES}
+                                onClick={irParaHistorico}
                             >
                                 {t("downloads.allReleases")}
                             </a>
@@ -435,14 +438,6 @@ export const DownloadsPage: React.FC = () => {
                                 <p className="dl__seguranca-corpo">
                                     {t("downloads.security.body")}
                                 </p>
-                                <a
-                                    className="dl__seguranca-link"
-                                    href={GITHUB_URL}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {t("downloads.security.sourceLink")}
-                                </a>
                             </div>
                         </section>
                     )}
@@ -458,9 +453,8 @@ export const DownloadsPage: React.FC = () => {
 
                     <p className="dl__todas">
                         <a
-                            href={`${GITHUB_URL}/releases`}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href={ROUTES.RELEASE_NOTES}
+                            onClick={irParaHistorico}
                         >
                             <span>{t("downloads.allReleases")}</span>
                             <IconArrowRight

@@ -76,7 +76,9 @@ export default async function handler(
                 `        <link rel="alternate" type="text/html" href="${esc(url)}"/>`,
                 `        <id>${esc(url)}</id>`,
                 `        <updated>${toRfc3339(r.date)}</updated>`,
-                ...(resumo ? [`        <summary>${esc(resumo)}</summary>`] : []),
+                ...(resumo
+                    ? [`        <summary>${esc(resumo)}</summary>`]
+                    : []),
                 `        <content type="html">${esc(conteudo)}</content>`,
                 ...(r.url
                     ? [`        <link rel="related" href="${esc(r.url)}"/>`]

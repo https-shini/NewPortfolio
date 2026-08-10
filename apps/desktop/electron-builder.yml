@@ -35,12 +35,26 @@ extraResources:
     - from: ../web/dist
       to: web
 
-# A atualização automática lê as releases do GitHub. É o mesmo lugar de
-# onde a página /downloads tira os links — uma fonte, não duas.
+# Nome previsível, e sem espaço.
+#
+# O padrão é `${productName}-${version}.${ext}` — "Portfolio Guilherme
+# Cruz-2.1.0.AppImage". O espaço vira %20 na URL, e a action de release
+# trocou os espaços por pontos ao publicar: o `latest-linux.yml` passou a
+# apontar para um nome que não existe na release, e a atualização
+# automática buscaria um arquivo inexistente.
+#
+# De quebra a arquitetura entra no nome, que é de onde a /downloads a lê:
+# antes só o .deb a revelava, e o .exe e o AppImage apareciam sem selo.
+artifactName: ${name}-${version}-${os}-${arch}.${ext}
+
+# A atualização automática NÃO pode ler as releases do GitHub: o
+# repositório é privado, e um app distribuído não tem como carregar um
+# token para se autenticar. O provedor genérico aponta para o próprio
+# site, onde /atualizacao/<arquivo> é reescrito para /api/baixar — a
+# mesma porta por onde a página entrega os instaladores.
 publish:
-    provider: github
-    owner: https-shini
-    repo: NewPortfolio
+    provider: generic
+    url: https://gcruz.dev.br/atualizacao
 
 # O mesmo ícone do site, não uma cópia dele. Sem `icon` o electron-builder
 # empacota o ícone padrão do Electron — o app instalado apareceria no menu

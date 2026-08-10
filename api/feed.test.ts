@@ -67,7 +67,9 @@ describe("/api/feed", () => {
         const entradas = res.corpo.match(/<entry>/g) ?? [];
         expect(entradas.length).toBeGreaterThan(0);
 
-        const ids = [...res.corpo.matchAll(/<id>(.*?)<\/id>/g)].map((m) => m[1]);
+        const ids = [...res.corpo.matchAll(/<id>(.*?)<\/id>/g)].map(
+            (m) => m[1],
+        );
         /* O primeiro <id> é o do feed; os demais, das entradas. */
         for (const id of ids.slice(1)) {
             expect(id).toMatch(/\/release-notes\/v\d/);

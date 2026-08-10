@@ -128,10 +128,7 @@ export default async function handler(
                     fontSize: 28,
                     color: APAGADO,
                 },
-                [
-                    caixa({ color: TEXTO }, "gcruz.dev.br"),
-                    caixa({}, data),
-                ],
+                [caixa({ color: TEXTO }, "gcruz.dev.br"), caixa({}, data)],
             ),
         ],
     );

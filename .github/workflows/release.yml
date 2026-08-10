@@ -146,6 +146,18 @@ jobs:
                     app/build/outputs/apk/release/app-release-unsigned.apk
                   rm -f release.keystore
 
+            # O Gradle chama o arquivo de `app-release-unsigned.apk`, e era
+            # esse nome que chegava à página de downloads. Sai um nome que
+            # diz o que é e de que versão — e um só, para o glob do upload
+            # não pegar o original junto do renomeado.
+            - name: Nomear o APK
+              working-directory: apps/mobile/android/app/build/outputs/apk/release
+              run: |
+                  versao=$(node -p "require('$GITHUB_WORKSPACE/package.json').version")
+                  origem=$(ls *.apk | head -n1)
+                  mv "$origem" "portfolio-${versao}-android.apk"
+                  ls -la
+
             - uses: actions/upload-artifact@v4
               with:
                   name: android-apk

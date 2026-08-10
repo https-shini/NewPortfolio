@@ -338,6 +338,13 @@ export default defineConfig({
         /* A pasta api/ mora na raiz do repositório (é de lá que a Vercel
            lê as funções), mas o conversor de markdown é código de
            segurança e precisa da mesma suíte. */
-        include: ["src/**/*.test.{ts,tsx}", "../../api/**/*.test.ts"],
+        include: [
+            "src/**/*.test.{ts,tsx}",
+            "../../api/**/*.test.ts",
+            /* O processo principal do app desktop também entra: a
+               resolução de rota dele não aparece em desenvolvimento (o
+               Vite serve tudo) e só se manifestaria depois de instalado. */
+            "../desktop/src/**/*.test.ts",
+        ],
     },
 });
