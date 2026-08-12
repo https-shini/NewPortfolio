@@ -98,9 +98,52 @@ export type ReleaseTag = "design" | "feature" | "perf" | "a11y" | "fix";
 ───────────────────────────────────────────────────────── */
 export const RELEASE_NOTES: ReleaseEntry[] = [
     {
+        version: "2.4.0",
+        date: "2026-08-12",
+        featured: true,
+        tags: ["design"],
+        title: {
+            pt: "De volta a ser só um site",
+            en: "Back to being just a website",
+        },
+        summary: {
+            pt: "A distribuição como aplicativo sai de cena enquanto o projeto muda de direção.",
+            en: "App distribution steps aside while the project changes direction.",
+        },
+        body: {
+            pt: "As três versões anteriores construíram uma coisa só: transformar o portfólio em aplicativo instalável, com página de downloads, atualização automática e instaladores para quatro sistemas. Esta versão remove tudo isso.\n\nNão é conserto de nada — o que existia funcionava. É mudança de direção: há ideias novas para o projeto, e carregar um aplicativo desktop enquanto elas não estão definidas custa atenção a cada mudança no site. Um portfólio que também é app precisa que toda alteração seja pensada duas vezes, e agora esse custo não está sendo pago por nada.\n\nSaíram os dois aplicativos, a página de downloads, as funções que listavam e entregavam os instaladores, o canal de atualização e o fluxo que publicava tudo isso a cada versão. O site volta a ser o que era: um portfólio no navegador.\n\nO que **fica**: a marca `<gcruz.dev/>` e os ícones que saem dela, o menu móvel refeito, e as notas das versões 2.1 a 2.3 — elas descrevem coisas que existiram de verdade, e reescrever o passado para combinar com o presente seria falsificar o registro.\n\nA remoção foi feita num commit único, de propósito: se a ideia voltar, o caminho de volta é desfazer um commit, não recompor sete.",
+            en: "The three previous versions built one single thing: turning the portfolio into an installable application, with a downloads page, automatic updates and installers for four systems. This version removes all of it.\n\nNothing here is a fix — what existed worked. It is a change of direction: there are new ideas for the project, and carrying a desktop application while they are undefined costs attention on every change to the site. A portfolio that is also an app needs every alteration thought through twice, and right now that cost buys nothing.\n\nOut go both applications, the downloads page, the functions that listed and delivered the installers, the update channel and the pipeline that published all of it on every version. The site goes back to what it was: a portfolio in the browser.\n\nWhat **stays**: the `<gcruz.dev/>` mark and the icons derived from it, the reworked mobile menu, and the notes for 2.1 through 2.3 — they describe things that genuinely existed, and rewriting the past to match the present would falsify the record.\n\nThe removal is a single commit, on purpose: if the idea comes back, the way back is undoing one commit, not reassembling seven.",
+        },
+        changes: {
+            removed: [
+                {
+                    pt: "Aplicativo desktop (Electron) e aplicativo Android (Capacitor)",
+                    en: "Desktop application (Electron) and Android application (Capacitor)",
+                },
+                {
+                    pt: "Página /downloads e as funções que listavam e entregavam instaladores",
+                    en: "The /downloads page and the functions that listed and served installers",
+                },
+                {
+                    pt: "Canal de atualização automática e a publicação de release por tag",
+                    en: "The automatic update channel and tag-triggered release publishing",
+                },
+                {
+                    pt: "QR code do rodapé, que apontava para a página de downloads",
+                    en: "The footer QR code, which pointed at the downloads page",
+                },
+            ],
+            changed: [
+                {
+                    pt: "A geração de ícones passa a servir só ao site, a partir da mesma marca",
+                    en: "Icon generation now serves the site alone, from the same mark",
+                },
+            ],
+        },
+    },
+    {
         version: "2.3.0",
         date: "2026-08-10",
-        featured: true,
         tags: ["design", "feature", "fix"],
         title: {
             pt: "A escolha volta a ser de quem baixa",
@@ -158,12 +201,6 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
                 },
             ],
         },
-        links: [
-            {
-                label: { pt: "Baixar o aplicativo", en: "Download the app" },
-                href: "/downloads",
-            },
-        ],
     },
     {
         version: "2.2.0",
@@ -225,12 +262,6 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
                 },
             ],
         },
-        links: [
-            {
-                label: { pt: "Baixar o aplicativo", en: "Download the app" },
-                href: "/downloads",
-            },
-        ],
     },
     {
         version: "2.1.0",
@@ -292,12 +323,6 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
                 },
             ],
         },
-        links: [
-            {
-                label: { pt: "Baixar o aplicativo", en: "Download the app" },
-                href: "/downloads",
-            },
-        ],
     },
     {
         version: "2.0.0",

@@ -16,7 +16,6 @@ export const ROUTES = {
     /* Destino do QR code do rodapé. Serve uma página provisória até a
        página real existir — o endereço é o mesmo desde já, para que um QR
        já compartilhado continue valendo quando o conteúdo chegar. */
-    DOWNLOADS: "/downloads",
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];

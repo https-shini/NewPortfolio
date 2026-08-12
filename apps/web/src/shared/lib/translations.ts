@@ -234,53 +234,11 @@ export type TranslationKey =
     | "releaseNotes.tag.a11y"
     | "releaseNotes.tag.fix"
 
-    /* ── EM CONSTRUÇÃO (/downloads) ────────────────── */
-    | "underConstruction.title"
-    | "underConstruction.lead"
-    | "underConstruction.back"
-    | "underConstruction.meta.description"
-
     /* ── DOWNLOADS ─────────────────────────────────── */
-    | "downloads.title"
-    | "downloads.lead"
-    | "downloads.get"
-    | "downloads.version"
-    | "downloads.notes"
-    | "downloads.empty.title"
-    | "downloads.empty.body"
-    | "downloads.error"
-    | "downloads.allReleases"
-    | "downloads.ios.title"
-    | "downloads.ios.body"
-    | "downloads.publishedAt"
-    | "downloads.platforms"
-    | "downloads.update.title"
-    | "downloads.update.idle"
-    | "downloads.update.checking"
-    | "downloads.update.current"
-    | "downloads.update.available"
-    | "downloads.update.downloading"
-    | "downloads.update.ready"
-    | "downloads.update.error"
-    | "downloads.update.check"
-    | "downloads.update.download"
-    | "downloads.update.install"
-    | "downloads.update.runningVersion"
-    | "downloads.update.unsupported"
-    | "downloads.downloadCount"
-    | "downloads.security.title"
-    | "downloads.security.body"
-    | "downloads.retry"
-    | "downloads.formatLabel.exe"
-    | "downloads.formatLabel.dmg"
-    | "downloads.formatLabel.appimage"
-    | "downloads.formatLabel.deb"
-    | "downloads.formatLabel.apk"
 
     /* ── FOOTER ────────────────────────────────────── */
     | "footer.tagline"
     | "footer.pages"
-    | "footer.downloads"
     | "footer.newsletter.label"
     | "footer.newsletter.hint"
     | "footer.newsletter.hintMailto"
@@ -561,64 +519,14 @@ const pt: Translations = {
     "releaseNotes.tag.fix": "Correções",
 
     /* EM CONSTRUÇÃO */
-    "underConstruction.title": "Em construção",
-    "underConstruction.lead":
-        "A área de downloads está a caminho. Enquanto ela não chega, tudo o que já existe está a um clique daqui.",
-    "underConstruction.back": "Voltar ao início",
-    "underConstruction.meta.description":
-        "A área de downloads do portfólio de Guilherme Cruz está em construção.",
 
     /* DOWNLOADS */
-    "downloads.title": "Baixar o aplicativo",
-    "downloads.lead":
-        "O mesmo portfólio, fora do navegador — instalado na sua máquina ou no seu celular, com o mesmo conteúdo e atualização automática.",
-    "downloads.get": "Baixar",
-    "downloads.version": "Versão",
-    "downloads.notes": "Ver o que mudou",
-    "downloads.empty.title": "Ainda não há instalador publicado",
-    "downloads.empty.body":
-        "A primeira versão empacotada sai junto da próxima release. Enquanto isso, o site funciona por completo no navegador.",
-    "downloads.error":
-        "Não deu para carregar a lista de instaladores agora. Isso costuma ser momentâneo.",
-    "downloads.retry": "Tentar de novo",
-    "downloads.allReleases": "Ver o histórico de versões",
-    "downloads.ios.title": "iPhone e iPad",
-    "downloads.ios.body":
-        "A Apple não permite instalar fora da App Store. Está previsto via TestFlight.",
-    "downloads.publishedAt": "Publicada em",
-    "downloads.platforms": "Sistemas disponíveis",
-    "downloads.update.title": "Atualização do aplicativo",
-    "downloads.update.idle": "Ainda não verificamos se há versão nova.",
-    "downloads.update.checking": "Procurando uma versão mais recente…",
-    "downloads.update.current": "Você já está na versão mais recente.",
-    "downloads.update.available": "Há uma versão nova disponível:",
-    "downloads.update.downloading": "Baixando a atualização —",
-    "downloads.update.ready":
-        "Atualização baixada. Ela é aplicada quando o aplicativo reiniciar.",
-    "downloads.update.error":
-        "Não deu para verificar agora. Costuma ser conexão; tente de novo em instantes.",
-    "downloads.update.check": "Verificar agora",
-    "downloads.update.download": "Baixar atualização",
-    "downloads.update.install": "Reiniciar e instalar",
-    "downloads.update.runningVersion": "Versão instalada:",
-    "downloads.update.unsupported":
-        "Esta instalação não se atualiza sozinha. Para trocar de versão, baixe a mais recente na lista abaixo.",
-    "downloads.downloadCount": "downloads",
-    "downloads.security.title": "Sobre o aviso do sistema",
-    "downloads.security.body":
-        "Os instaladores ainda não são assinados digitalmente. O Windows e o macOS vão mostrar um aviso de \u201ceditor não reconhecido\u201d na primeira execução — é esperado, não é malware. No Android, é preciso permitir \u201cinstalar de fontes desconhecidas\u201d nas configurações.",
-    "downloads.formatLabel.exe": "Instalador Windows",
-    "downloads.formatLabel.dmg": "Imagem de disco macOS",
-    "downloads.formatLabel.appimage": "Executável portátil (AppImage)",
-    "downloads.formatLabel.deb": "Pacote Debian/Ubuntu",
-    "downloads.formatLabel.apk": "Pacote Android",
 
     /* FOOTER */
     "footer.tagline":
         "Desenvolvendo soluções digitais que transformam desafios em oportunidades.",
     "footer.nav": "Navegação",
     "footer.pages": "Páginas",
-    "footer.downloads": "Downloads",
     "footer.newsletter.label": "Novidades por e-mail",
     "footer.newsletter.hint":
         "Aviso quando sai projeto novo ou uma versão importante. Sem frequência fixa.",
@@ -904,64 +812,14 @@ const en: Translations = {
     "releaseNotes.tag.fix": "Fixes",
 
     /* UNDER CONSTRUCTION */
-    "underConstruction.title": "Under construction",
-    "underConstruction.lead":
-        "The downloads area is on its way. Until it lands, everything that already exists is one click from here.",
-    "underConstruction.back": "Back to home",
-    "underConstruction.meta.description":
-        "The downloads area of Guilherme Cruz's portfolio is under construction.",
 
     /* DOWNLOADS */
-    "downloads.title": "Get the app",
-    "downloads.lead":
-        "The same portfolio, off the browser — installed on your machine or phone, same content, auto-updating.",
-    "downloads.get": "Download",
-    "downloads.version": "Version",
-    "downloads.notes": "See what changed",
-    "downloads.empty.title": "No installer published yet",
-    "downloads.empty.body":
-        "The first packaged version ships with the next release. Until then, the site works fully in the browser.",
-    "downloads.error":
-        "Couldn't load the installer list right now. This is usually temporary.",
-    "downloads.retry": "Try again",
-    "downloads.allReleases": "See the version history",
-    "downloads.ios.title": "iPhone and iPad",
-    "downloads.ios.body":
-        "Apple doesn't allow installing outside the App Store. Planned via TestFlight.",
-    "downloads.publishedAt": "Published on",
-    "downloads.platforms": "Available systems",
-    "downloads.update.title": "App update",
-    "downloads.update.idle": "We haven't checked for a new version yet.",
-    "downloads.update.checking": "Looking for a newer version…",
-    "downloads.update.current": "You're already on the latest version.",
-    "downloads.update.available": "A new version is available:",
-    "downloads.update.downloading": "Downloading the update —",
-    "downloads.update.ready":
-        "Update downloaded. It is applied when the app restarts.",
-    "downloads.update.error":
-        "Couldn't check right now. It's usually the connection; try again shortly.",
-    "downloads.update.check": "Check now",
-    "downloads.update.download": "Download update",
-    "downloads.update.install": "Restart and install",
-    "downloads.update.runningVersion": "Installed version:",
-    "downloads.update.unsupported":
-        "This install can't update itself. To move to a newer version, download the latest from the list below.",
-    "downloads.downloadCount": "downloads",
-    "downloads.security.title": "About the security warning",
-    "downloads.security.body":
-        "The installers aren't code-signed yet. Windows and macOS will show an \u201cunrecognized publisher\u201d warning on first run — that's expected, not malware. On Android, you'll need to allow \u201cinstall from unknown sources\u201d in settings.",
-    "downloads.formatLabel.exe": "Windows installer",
-    "downloads.formatLabel.dmg": "macOS disk image",
-    "downloads.formatLabel.appimage": "Portable executable (AppImage)",
-    "downloads.formatLabel.deb": "Debian/Ubuntu package",
-    "downloads.formatLabel.apk": "Android package",
 
     /* FOOTER */
     "footer.tagline":
         "Building digital solutions that turn challenges into opportunities.",
     "footer.nav": "Navigation",
     "footer.pages": "Pages",
-    "footer.downloads": "Downloads",
     "footer.newsletter.label": "Updates by email",
     "footer.newsletter.hint":
         "A note when a new project or a meaningful release ships. No fixed schedule.",

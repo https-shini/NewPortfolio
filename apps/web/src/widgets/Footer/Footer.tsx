@@ -95,24 +95,11 @@ function rotuloSocial(nome: string, href: string, lang: "pt" | "en"): string {
         : `Guilherme Cruz on ${nome} (opens in new tab)`;
 }
 
-/* Temporário: /downloads sai do rodapé enquanto a versão desktop está
-   sendo melhorada — o link e o QR convidariam para instaladores que
-   ainda vão mudar. A ROTA continua existindo e acessível por URL; o que
-   some é o convite. Para trazer de volta, basta `true` aqui.
-
-   Anotado como bandeira em vez de código apagado justamente por ser
-   temporário: assim o caminho de volta é visível para quem ler o
-   arquivo, e não algo a redescobrir no histórico. */
-const MOSTRAR_DOWNLOADS: boolean = false;
-
 /* Rotas próprias do site, na ordem em que o rodapé as lista. A home fica
    de fora: ela já é o logo da coluna Brand e a primeira âncora. */
 const PAGE_ITEMS: PageItem[] = [
     { to: ROUTES.LINKS, key: "nav.links" },
     { to: ROUTES.RELEASE_NOTES, key: "releaseNotes.title" },
-    ...(MOSTRAR_DOWNLOADS
-        ? [{ to: ROUTES.DOWNLOADS, key: "footer.downloads" } as PageItem]
-        : []),
 ];
 
 /* URLs vêm de shared/config/links.ts — fonte única. Aqui só se decide
@@ -139,111 +126,72 @@ const PROJECT_ITEMS: ProjectItem[] = [
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SUB-COMPONENTE — FooterBrand
-   Logo tipográfico · tagline i18n · ícones de redes sociais · QR para
-   a página de downloads.
+   Logo tipográfico · tagline i18n · ícones de redes sociais.
 ═══════════════════════════════════════════════════════════════════════════ */
 
 interface FooterBrandProps {
     tagline: string;
     onLogoClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
-    onQrClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
     lang: "pt" | "en";
 }
 
-const FooterBrand = memo<FooterBrandProps>(
-    ({ tagline, onLogoClick, onQrClick, lang }) => (
-        <div className="footer__brand">
-            {/* Logo — mesma identidade visual do Header */}
-            <a
-                href={`#${SECTION_IDS.HOME}`}
-                className="footer__logo"
-                aria-label={
-                    lang === "pt"
-                        ? "Guilherme Cruz — voltar ao início da página"
-                        : "Guilherme Cruz — back to top"
-                }
-                onClick={onLogoClick}
-            >
-                <Logo />
-            </a>
+const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
+    <div className="footer__brand">
+        {/* Logo — mesma identidade visual do Header */}
+        <a
+            href={`#${SECTION_IDS.HOME}`}
+            className="footer__logo"
+            aria-label={
+                lang === "pt"
+                    ? "Guilherme Cruz — voltar ao início da página"
+                    : "Guilherme Cruz — back to top"
+            }
+            onClick={onLogoClick}
+        >
+            <Logo />
+        </a>
 
-            {/* Tagline */}
-            <p className="footer__brand-tagline">{tagline}</p>
+        {/* Tagline */}
+        <p className="footer__brand-tagline">{tagline}</p>
 
-            {/* Redes sociais — a lista vem de TREE_LINKS, a mesma que
+        {/* Redes sociais — a lista vem de TREE_LINKS, a mesma que
             alimenta a /links. Antes eram três <a> escritos à mão, cada um
             repetindo a decisão de target e rel; um perfil novo entrava em
             dois lugares e saía torto de um deles. */}
-            <nav
-                aria-label={
-                    lang === "pt"
-                        ? "Redes sociais de Guilherme Cruz"
-                        : "Guilherme Cruz's social media"
-                }
-            >
-                <ul className="footer__social">
-                    {SOCIAIS.map(({ id, label, href, icon: Icone }) => {
-                        const externo = linkKind(href) === "external";
-                        return (
-                            <li key={id}>
-                                <a
-                                    href={href}
-                                    className="social-link"
-                                    target={externo ? "_blank" : undefined}
-                                    rel={
-                                        externo
-                                            ? "noopener noreferrer"
-                                            : undefined
-                                    }
-                                    aria-label={rotuloSocial(
-                                        label[lang],
-                                        href,
-                                        lang,
-                                    )}
-                                >
-                                    <Icone width={16} height={16} />
-                                </a>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </nav>
-
-            {/* O QR leva a /downloads; enquanto a página está fora do
-            rodapé, o desenho também sai — um código que aponta para algo
-            que não estamos divulgando é ruído. Ver MOSTRAR_DOWNLOADS.
-
-            Dentro de um link porque o mesmo desenho serve a duas
-            situações: no celular a câmera aponta, no desktop o ponteiro
-            clica — e um QR que não clica é um beco para quem está lendo
-            isto na própria tela.
-
-            O alt descreve o DESTINO, não a figura: "QR code" não diz
-            nada a quem não vê a imagem, e o que interessa é para onde
-            leva. */}
-            {MOSTRAR_DOWNLOADS && (
-                <a
-                    href={ROUTES.DOWNLOADS}
-                    className="footer__qr"
-                    onClick={onQrClick}
-                >
-                    <img
-                        src="/qr-downloads.svg"
-                        width={96}
-                        height={96}
-                        loading="lazy"
-                        decoding="async"
-                        alt={
-                            lang === "pt"
-                                ? "Abrir a página de downloads — aponte a câmera ou clique"
-                                : "Open the downloads page — point your camera or click"
-                        }
-                    />
-                </a>
-            )}
-        </div>
-    ),
-);
+        <nav
+            aria-label={
+                lang === "pt"
+                    ? "Redes sociais de Guilherme Cruz"
+                    : "Guilherme Cruz's social media"
+            }
+        >
+            <ul className="footer__social">
+                {SOCIAIS.map(({ id, label, href, icon: Icone }) => {
+                    const externo = linkKind(href) === "external";
+                    return (
+                        <li key={id}>
+                            <a
+                                href={href}
+                                className="social-link"
+                                target={externo ? "_blank" : undefined}
+                                rel={
+                                    externo ? "noopener noreferrer" : undefined
+                                }
+                                aria-label={rotuloSocial(
+                                    label[lang],
+                                    href,
+                                    lang,
+                                )}
+                            >
+                                <Icone width={16} height={16} />
+                            </a>
+                        </li>
+                    );
+                })}
+            </ul>
+        </nav>
+    </div>
+));
 FooterBrand.displayName = "FooterBrand";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -471,9 +419,6 @@ export const Footer: React.FC = () => {
                             tagline={t("footer.tagline")}
                             onLogoClick={(e) =>
                                 handleInternalNav(e, SECTION_IDS.HOME)
-                            }
-                            onQrClick={(e) =>
-                                handleRouteNav(e, ROUTES.DOWNLOADS)
                             }
                             lang={lang}
                         />

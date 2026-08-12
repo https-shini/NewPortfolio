@@ -30,10 +30,6 @@ const ReleaseNotePage = lazy(() =>
     })),
 );
 
-const DownloadsPage = lazy(() =>
-    import("@/pages/Downloads").then((m) => ({ default: m.DownloadsPage })),
-);
-
 /** O que vem depois de `/release-notes`, quando vem alguma coisa. */
 export type ReleaseNotesMatch =
     { kind: "index"; page: number } | { kind: "entry"; version: string } | null;
@@ -77,9 +73,7 @@ export const Routes: React.FC = () => {
     const { path } = useRoute();
 
     const ehLinks = path === ROUTES.LINKS;
-    const ehDownloads = path === ROUTES.DOWNLOADS;
-    const releaseNotes =
-        ehLinks || ehDownloads ? null : matchReleaseNotes(path);
+    const releaseNotes = ehLinks ? null : matchReleaseNotes(path);
 
     /* UMA instância para todas as rotas, montada aqui e não em cada
        página. É o que faz a atmosfera sobreviver à troca de rota: as
@@ -96,10 +90,6 @@ export const Routes: React.FC = () => {
             {ehLinks ? (
                 <Suspense fallback={null}>
                     <LinksPage />
-                </Suspense>
-            ) : ehDownloads ? (
-                <Suspense fallback={null}>
-                    <DownloadsPage />
                 </Suspense>
             ) : releaseNotes ? (
                 <Suspense fallback={null}>

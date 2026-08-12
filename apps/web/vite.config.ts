@@ -155,18 +155,6 @@ function sitemapPlugin() {
                 },
             ];
 
-            /* A /downloads entrou quando deixou de ser provisória: agora
-               lista instaladores de verdade, então indexar tem valor. */
-            entries.push({
-                loc: `${SITE_URL}/downloads`,
-                lastmod: lastModified([
-                    "apps/web/src/pages/Downloads",
-                    "api/downloads.ts",
-                ]),
-                changefreq: "weekly",
-                priority: "0.8",
-            });
-
             /* Âncoras da home — geradas de SECTION_IDS, não copiadas. */
             for (const id of Object.values(SECTION_IDS)) {
                 entries.push({
@@ -341,10 +329,6 @@ export default defineConfig({
         include: [
             "src/**/*.test.{ts,tsx}",
             "../../api/**/*.test.ts",
-            /* O processo principal do app desktop também entra: a
-               resolução de rota dele não aparece em desenvolvimento (o
-               Vite serve tudo) e só se manifestaria depois de instalado. */
-            "../desktop/src/**/*.test.ts",
         ],
     },
 });

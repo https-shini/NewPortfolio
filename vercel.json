@@ -9,10 +9,6 @@
       "destination": "/api/feed"
     },
     {
-      "source": "/atualizacao/:arquivo",
-      "destination": "/api/baixar?arquivo=:arquivo"
-    },
-    {
       "source": "/links",
       "has": [
         {
@@ -46,17 +42,6 @@
       "destination": "/api/crawler?path=/release-notes/:rest*"
     },
     {
-      "source": "/downloads",
-      "has": [
-        {
-          "type": "header",
-          "key": "user-agent",
-          "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
-        }
-      ],
-      "destination": "/api/crawler?path=/downloads"
-    },
-    {
       "source": "/links",
       "destination": "/index.html"
     },
@@ -74,14 +59,6 @@
     },
     {
       "source": "/release-notes/(.*)",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/downloads",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/downloads/",
       "destination": "/index.html"
     }
   ]

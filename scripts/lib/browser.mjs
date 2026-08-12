@@ -21,7 +21,6 @@ export const ROUTES = {
     links: "/links",
     releaseNotes: "/release-notes",
     releaseVersion: "/release-notes/v2.0.0",
-    downloads: "/downloads",
 };
 
 /**

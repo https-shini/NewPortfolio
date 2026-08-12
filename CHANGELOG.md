@@ -9,6 +9,23 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 > `scripts/changelog.mjs`. Não editar à mão — as alterações se perdem
 > na próxima geração, e há teste conferindo a sincronia.
 
+## [2.4.0](https://gcruz.dev.br/release-notes/v2.4.0) — 2026-08-12
+
+**De volta a ser só um site**
+
+A distribuição como aplicativo sai de cena enquanto o projeto muda de direção.
+
+### Modificado
+
+- A geração de ícones passa a servir só ao site, a partir da mesma marca
+
+### Removido
+
+- Aplicativo desktop (Electron) e aplicativo Android (Capacitor)
+- Página /downloads e as funções que listavam e entregavam instaladores
+- Canal de atualização automática e a publicação de release por tag
+- QR code do rodapé, que apontava para a página de downloads
+
 ## [2.3.0](https://gcruz.dev.br/release-notes/v2.3.0) — 2026-08-10
 
 **A escolha volta a ser de quem baixa**

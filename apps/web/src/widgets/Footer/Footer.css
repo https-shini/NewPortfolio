@@ -90,36 +90,6 @@
     gap: var(--space-2);
 }
 
-/* ── QR para /downloads ────────────────────────────────────────────────
-   O quadro claro é do próprio desenho, não do tema: um QR invertido só é
-   lido por parte dos leitores, e o rodapé não escolhe qual câmera vai
-   apontar para ele. Por isso o fundo é branco nos dois temas, com uma
-   borda para ele não flutuar solto no escuro. */
-.footer__qr {
-    display: inline-flex;
-    padding: var(--space-2);
-    border-radius: var(--radius-md);
-    background: #ffffff;
-    border: 1px solid var(--color-border-2);
-    line-height: 0;
-    width: fit-content;
-    transition:
-        transform var(--transition-fast),
-        box-shadow var(--transition-fast);
-}
-
-.footer__qr img {
-    display: block;
-    width: 96px;
-    height: 96px;
-}
-
-.footer__qr:hover,
-.footer__qr:focus-visible {
-    transform: translateY(-2px);
-    box-shadow: var(--surface-lift);
-}
-
 /* ═══════════════════════════════════════════════════════════════════════════
    4. COLUNAS DE LINKS — navegação e projetos
    Título eyebrow com linha decorativa à esquerda.

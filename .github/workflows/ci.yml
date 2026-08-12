@@ -43,12 +43,6 @@ jobs:
       - name: Test
         run: npm test
 
-      # Refaz o QR e compara byte a byte com o commitado. Sem isto, mudar a
-      # url deixaria o símbolo apontando para o endereço antigo em silêncio
-      # — e um QR errado continua parecendo um QR.
-      - name: QR do rodapé em dia
-        run: npm run qr:check
-
       # Não redesenha nada: confere a assinatura do icon.svg gravada na
       # última geração. Editar a fonte e esquecer de regenerar deixaria o
       # executável, o instalador e a aba do site com desenhos diferentes.
