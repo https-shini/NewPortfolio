@@ -69,11 +69,16 @@
 }
 
 /* ── Avatar ────────────────────────────────────────────────────── */
+/* O tamanho vira variável local porque ele aparecia em quatro
+   declarações (o contêiner e o frame, largura e altura). Escalar no
+   desktop virava quatro edições que precisavam concordar entre si; com
+   a variável, é uma. */
 .linktree__avatar {
+    --avatar: 120px;
     position: relative;
-    width: 120px;
-    height: 120px;
-    margin-bottom: var(--space-5);
+    width: var(--avatar);
+    height: var(--avatar);
+    margin-bottom: var(--space-6);
 }
 .linktree__avatar-glow {
     position: absolute;
@@ -118,8 +123,8 @@
 .linktree__avatar-frame {
     position: relative;
     z-index: 2;
-    width: 120px;
-    height: 120px;
+    width: var(--avatar);
+    height: var(--avatar);
     border-radius: 50%;
     overflow: hidden;
     background: var(--color-surface-2);
@@ -132,56 +137,105 @@
     transform: scale(1.12);
     transform-origin: top center;
 }
-.linktree__status {
-    position: absolute;
-    z-index: 3;
-    right: 8px;
-    bottom: 8px;
-    width: 20px;
-    height: 20px;
+/* ── Pill de disponibilidade ───────────────────────────────────── */
+/* Era um ponto verde solto na borda do avatar, com o rótulo preso num
+   `title` — invisível para quem enxerga e mudo para leitor de tela. A
+   pill diz o que o ponto só insinuava, e é a sobrancelha que abre o
+   bloco: dela o olho desce direto para o nome. */
+.linktree__disponivel {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+    padding: var(--space-1) var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-success);
+    background: var(--color-success-subtle);
+    border: 1px solid var(--color-success-border);
+    border-radius: var(--radius-full);
+}
+.linktree__disponivel-dot {
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     background: var(--color-success);
-    border: 3px solid var(--color-bg);
+    flex-shrink: 0;
     animation: linktree-pulse 2.4s var(--ease-out) infinite;
 }
+/* O halo era calibrado para um ponto de 20px; num de 6px, 12px de
+   propagação virariam uma bolha maior que a própria pill. */
 @keyframes linktree-pulse {
     0% {
         box-shadow: 0 0 0 0
             color-mix(in srgb, var(--color-success) 55%, transparent);
     }
     100% {
-        box-shadow: 0 0 0 12px transparent;
+        box-shadow: 0 0 0 5px transparent;
     }
 }
 
-/* ── Identidade ────────────────────────────────────────────────── */
+/* ── Identidade ────────────────────────────────────────────────────
+   O ritmo vertical é o que carrega este bloco, então ele é declarado de
+   uma vez e não elemento a elemento. As margens eram 20 · 8 · 12 · 16 ·
+   16 — quase equidistantes, e por isso nome e handle (que são uma coisa
+   só) ficavam tão separados quanto bio e chips, que não são.
+
+   Agora são três tempos: 8 cola o handle no nome; 20 e 24 abrem os
+   grupos seguintes. Dá para ler a estrutura sem procurar por ela. */
 .linktree__name {
     font-family: var(--font-display);
     font-size: var(--text-3xl);
     font-weight: 700;
-    line-height: 1.1;
+    line-height: var(--lh-tight);
     letter-spacing: var(--ls-tight);
     color: var(--color-text-1);
+    /* Centralizado, um nome que quebra em duas linhas fica com uma
+       longa e uma órfã; `balance` divide as duas por igual. Mesmo
+       recurso que globals.css já aplica em títulos. */
+    text-wrap: balance;
 }
 .linktree__handle {
     margin-top: var(--space-2);
     font-family: var(--font-mono);
     font-size: var(--text-sm);
     letter-spacing: var(--ls-snug);
+    /* O único acento crimson do bloco. O ponto separador dos papéis
+       também era crimson, e com a pill verde eram três acentos
+       disputando — nenhum nível ficava com o seu. */
     color: var(--color-brand-light);
 }
 .linktree__bio {
     margin-top: var(--space-4);
-    max-width: 34ch;
+    /* 34ch dava ~300px numa coluna de 520: um bloco estreito e
+       irregular sobrando espaço dos dois lados. */
+    max-width: 38ch;
+    margin-inline: auto;
     font-size: var(--text-sm);
+    line-height: var(--lh-relaxed);
     color: var(--color-text-3);
+    text-wrap: pretty;
 }
 .linktree__chips {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
     justify-content: center;
-    margin-top: var(--space-4);
+    margin-top: var(--space-6);
+    /* Teto para os seis quebrarem 3+3 em vez de 4+2: centralizada, uma
+       grade equilibrada lê como decisão; 4+2 lê como acidente.
+
+       320px fica entre as duas medidas reais — três chips ocupam 290px
+       e quatro ocupam 368px —, com folga dos dois lados. O número é
+       calibrado nos rótulos de TECH_STACK, que são fixos e não passam
+       pelo i18n; mexer neles pede remedir. Se um rótulo crescer a ponto
+       de três não caberem, a linha cai para dois em vez de quebrar, e
+       em telas estreitas o flex-wrap continua mandando. */
+    max-width: 20rem;
+    margin-inline: auto;
     list-style: none;
 }
 .linktree__chip {
@@ -215,19 +269,32 @@
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: var(--space-2);
-    margin-top: var(--space-3);
+    column-gap: var(--space-2);
+    row-gap: var(--space-1);
+    margin-top: var(--space-5);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    letter-spacing: var(--ls-wide);
+    letter-spacing: var(--ls-wider);
     text-transform: uppercase;
     color: var(--color-text-3);
 }
-.linktree__roles-dot {
+.linktree__role {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    /* O papel não quebra no meio: ele quebra inteiro, para a linha
+       seguinte, levando o separador junto. */
+    white-space: nowrap;
+}
+/* Separador só entre papéis, e sempre à frente do que ele separa. */
+.linktree__role + .linktree__role::before {
+    content: "";
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    background: var(--color-brand);
+    /* Era --color-brand: um terceiro acento crimson, competindo com o
+       handle logo acima. Separador é pontuação, não destaque. */
+    background: var(--color-border-3);
     flex-shrink: 0;
 }
 
@@ -304,16 +371,20 @@
         max-width: none;
     }
 
-    /* No desktop a identidade encosta na margem da própria coluna: o
-       texto centralizado só funciona quando ele é o eixo da página, e
-       aqui ele deixou de ser. */
-    .linktree__identidade {
-        align-items: flex-start;
-        text-align: left;
+    /* A identidade era alinhada à esquerda aqui, e o override some: ela
+       fica centralizada dentro da própria coluna em qualquer largura.
+       Este bloco volta a ser só a grade. */
+
+    /* Numa coluna de 520px o avatar de 120px fica pequeno para o espaço
+       que ocupa, e o nome tem folga para crescer um degrau. */
+    .linktree__avatar {
+        --avatar: 132px;
     }
-    .linktree__chips,
-    .linktree__roles {
-        justify-content: flex-start;
+    .linktree__name {
+        font-size: var(--text-4xl);
+    }
+    .linktree__bio {
+        font-size: var(--text-md);
     }
 }
 
@@ -332,7 +403,7 @@
         transform: none;
     }
     .linktree__avatar-glow,
-    .linktree__status {
+    .linktree__disponivel-dot {
         animation: none;
     }
 }

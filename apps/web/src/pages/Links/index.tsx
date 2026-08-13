@@ -145,54 +145,68 @@ export const LinksPage: React.FC = () => {
                                     decoding="async"
                                 />
                             </div>
+                        </div>
+
+                        {/* O ponto verde morava na borda do avatar, com o
+                            rótulo num `title` — e `title` em <span> não é
+                            anunciado por leitor de tela, muito menos com o
+                            elemento marcado `aria-hidden`. A tradução de
+                            `links.available` existia nos dois idiomas e não
+                            chegava a ninguém. Como pill acima do nome ela
+                            vira texto de verdade, lido e visto. */}
+                        <p
+                            className="linktree__disponivel reveal-item"
+                            style={{ "--reveal-i": 1 } as React.CSSProperties}
+                        >
                             <span
-                                className="linktree__status"
-                                title={t("links.available")}
+                                className="linktree__disponivel-dot"
                                 aria-hidden="true"
                             />
-                        </div>
+                            {t("links.available")}
+                        </p>
 
                         <h1
                             className="linktree__name reveal-item"
-                            style={{ "--reveal-i": 1 } as React.CSSProperties}
+                            style={{ "--reveal-i": 2 } as React.CSSProperties}
                         >
                             {PROFILE.name}
                         </h1>
 
                         <p
                             className="linktree__handle reveal-item"
-                            style={{ "--reveal-i": 2 } as React.CSSProperties}
+                            style={{ "--reveal-i": 3 } as React.CSSProperties}
                         >
                             {PROFILE.handle}
                         </p>
 
                         <p
                             className="linktree__roles reveal-item"
-                            style={{ "--reveal-i": 3 } as React.CSSProperties}
+                            style={{ "--reveal-i": 4 } as React.CSSProperties}
                         >
-                            {PROFILE.roles.map((role, i) => (
-                                <React.Fragment key={role}>
-                                    {i > 0 && (
-                                        <i
-                                            className="linktree__roles-dot"
-                                            aria-hidden="true"
-                                        />
-                                    )}
-                                    <span>{role}</span>
-                                </React.Fragment>
+                            {/* O separador era um <i> solto entre os papéis.
+                                Quando a linha quebrava — e a 390px ela
+                                quebra — o ponto sobrava no fim da primeira
+                                linha, órfão, sugerindo que faltava algo. Ele
+                                virou um ::before do papel seguinte: viaja
+                                junto com o texto dele e nunca fecha uma
+                                linha sozinho. */}
+                            {PROFILE.roles.map((role) => (
+                                <span key={role} className="linktree__role">
+                                    {role}
+                                </span>
                             ))}
                         </p>
 
                         <p
                             className="linktree__bio reveal-item"
-                            style={{ "--reveal-i": 4 } as React.CSSProperties}
+                            style={{ "--reveal-i": 5 } as React.CSSProperties}
                         >
                             {t("links.bio")}
                         </p>
 
                         <ul
                             className="linktree__chips reveal-item"
-                            style={{ "--reveal-i": 5 } as React.CSSProperties}
+                            style={{ "--reveal-i": 6 } as React.CSSProperties}
                             aria-label={t("links.techLabel")}
                         >
                             {TECH_STACK.map((tech) => (
@@ -224,7 +238,7 @@ export const LinksPage: React.FC = () => {
                                 <LinkCard
                                     key={link.id}
                                     link={link}
-                                    index={i + 6}
+                                    index={i + 7}
                                 />
                             ))}
                         </nav>
@@ -233,7 +247,7 @@ export const LinksPage: React.FC = () => {
                             className="linktree__actions reveal-item"
                             style={
                                 {
-                                    "--reveal-i": 6 + PRIMARY_LINKS.length,
+                                    "--reveal-i": 7 + PRIMARY_LINKS.length,
                                 } as React.CSSProperties
                             }
                         >

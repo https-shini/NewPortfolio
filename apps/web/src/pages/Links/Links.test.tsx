@@ -46,6 +46,17 @@ describe("LinksPage — social tree", () => {
         });
     });
 
+    /* A disponibilidade era um ponto verde com o rótulo num `title`, no
+       mesmo elemento marcado `aria-hidden` — invisível para quem enxerga
+       e mudo para leitor de tela. A tradução existia nos dois idiomas e
+       não chegava a ninguém. */
+    it("anuncia a disponibilidade como texto, e não como enfeite", () => {
+        setup();
+        const pill = corpo().getByText("Disponível");
+        expect(pill).toBeVisible();
+        expect(pill.closest("[aria-hidden='true']")).toBeNull();
+    });
+
     it("usa a mesma foto da seção Sobre (hero.webp)", () => {
         setup();
         const img = screen.getByAltText(PROFILE.name) as HTMLImageElement;

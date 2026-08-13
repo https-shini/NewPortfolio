@@ -9,6 +9,23 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 > `scripts/changelog.mjs`. Não editar à mão — as alterações se perdem
 > na próxima geração, e há teste conferindo a sincronia.
 
+## [2.5.1](https://gcruz.dev.br/release-notes/v2.5.1) — 2026-08-13
+
+**O bloco de identidade da /links, refeito**
+
+Centralizado, com ritmo vertical de verdade — e a disponibilidade finalmente aparece.
+
+### Modificado
+
+- O bloco de identidade fica centralizado também no desktop, dentro da própria coluna
+- Ritmo vertical agrupado, avatar e nome maiores no desktop, bio mais larga e legível
+- Os chips de stack quebram 3+3 em vez de 4+2
+
+### Corrigido
+
+- O status de disponibilidade não era exibido nem anunciado; agora é texto visível
+- O separador entre os papéis deixa de sobrar órfão quando a linha quebra no celular
+
 ## [2.5.0](https://gcruz.dev.br/release-notes/v2.5.0) — 2026-08-13
 
 **A página de links entra no site**

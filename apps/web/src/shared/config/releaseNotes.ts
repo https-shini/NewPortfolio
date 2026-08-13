@@ -98,9 +98,52 @@ export type ReleaseTag = "design" | "feature" | "perf" | "a11y" | "fix";
 ───────────────────────────────────────────────────────── */
 export const RELEASE_NOTES: ReleaseEntry[] = [
     {
-        version: "2.5.0",
+        version: "2.5.1",
         date: "2026-08-13",
         featured: true,
+        tags: ["design", "a11y"],
+        title: {
+            pt: "O bloco de identidade da /links, refeito",
+            en: "The /links identity block, reworked",
+        },
+        summary: {
+            pt: "Centralizado, com ritmo vertical de verdade — e a disponibilidade finalmente aparece.",
+            en: "Centred, with an actual vertical rhythm — and the availability status finally shows.",
+        },
+        body: {
+            pt: "Quando a `/links` ganhou a casca do site e as duas colunas do desktop, o bloco de identidade foi **movido** para a coluna nova, mas nunca redesenhado para ela. Esta versão faz esse trabalho.\n\n**O ritmo.** As margens eram 20 · 8 · 12 · 16 · 16 pixels — quase equidistantes. Sem agrupamento, o nome e o handle, que são uma coisa só, ficavam tão separados quanto a bio e os chips, que não são. Agora são três tempos: 8px cola o handle no nome, e 20 e 24 abrem os grupos seguintes.\n\n**A disponibilidade era informação morta.** O ponto verde na borda do avatar tinha o rótulo preso num atributo `title`, no mesmo elemento marcado como `aria-hidden`. Ou seja: invisível para quem enxerga e mudo para leitor de tela. A tradução existia em português e inglês e não chegava a ninguém. Virou uma pill acima do nome, com o texto visível — e o ponto, agora dentro dela, mantém a pulsação.\n\n**Um acento por nível.** O handle era crimson, o separador dos papéis também era crimson, e o status era verde: três acentos disputando, nenhum nível com o seu. O separador virou pontuação neutra e o crimson ficou só no handle.\n\n**Detalhes que só aparecem medindo.** A bio tinha 34 caracteres de largura máxima dentro de uma coluna de 520px — um bloco estreito sobrando espaço dos dois lados. Os seis chips de stack quebravam 4+2, que lê como acidente; agora quebram 3+3. E o separador entre os papéis, que no celular sobrava órfão no fim da primeira linha, passou a viajar junto com o papel seguinte.",
+            en: "When `/links` got the site shell and the desktop's two columns, the identity block was **moved** into the new column but never redesigned for it. This version does that work.\n\n**The rhythm.** The margins were 20 · 8 · 12 · 16 · 16 pixels — near-equidistant. With no grouping, the name and the handle, which are one thing, sat as far apart as the bio and the chips, which are not. Now there are three beats: 8px binds the handle to the name, and 20 and 24 open the following groups.\n\n**The availability was dead information.** The green dot on the avatar's edge carried its label in a `title` attribute, on the very element marked `aria-hidden`. That is: invisible to sighted users and mute to screen readers. The translation existed in both languages and reached nobody. It became a pill above the name, with visible text — and the dot, now inside it, keeps its pulse.\n\n**One accent per level.** The handle was crimson, the role separator was also crimson, and the status was green: three accents competing, no level owning one. The separator became neutral punctuation and crimson stayed with the handle alone.\n\n**Details that only show up when measured.** The bio was capped at 34 characters inside a 520px column — a narrow block with space to spare on both sides. The six stack chips wrapped 4+2, which reads as an accident; now they wrap 3+3. And the role separator, which on mobile was orphaned at the end of the first line, now travels with the role that follows it.",
+        },
+        changes: {
+            changed: [
+                {
+                    pt: "O bloco de identidade fica centralizado também no desktop, dentro da própria coluna",
+                    en: "The identity block is centred on desktop too, inside its own column",
+                },
+                {
+                    pt: "Ritmo vertical agrupado, avatar e nome maiores no desktop, bio mais larga e legível",
+                    en: "Grouped vertical rhythm, larger avatar and name on desktop, wider and more readable bio",
+                },
+                {
+                    pt: "Os chips de stack quebram 3+3 em vez de 4+2",
+                    en: "The stack chips wrap 3+3 instead of 4+2",
+                },
+            ],
+            fixed: [
+                {
+                    pt: "O status de disponibilidade não era exibido nem anunciado; agora é texto visível",
+                    en: "The availability status was neither shown nor announced; it is now visible text",
+                },
+                {
+                    pt: "O separador entre os papéis deixa de sobrar órfão quando a linha quebra no celular",
+                    en: "The role separator no longer dangles at a line break on mobile",
+                },
+            ],
+        },
+    },
+    {
+        version: "2.5.0",
+        date: "2026-08-13",
         tags: ["design", "a11y"],
         title: {
             pt: "A página de links entra no site",
