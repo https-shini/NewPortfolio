@@ -9,6 +9,20 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 > `scripts/changelog.mjs`. Não editar à mão — as alterações se perdem
 > na próxima geração, e há teste conferindo a sincronia.
 
+## [2.5.2](https://gcruz.dev.br/release-notes/v2.5.2) — 2026-08-13
+
+**Uma frase antes dos links, e as colunas no lugar**
+
+A lista de links ganha uma apresentação, e a coluna da direita para de pender.
+
+### Adicionado
+
+- Mensagem introdutória acima da lista de links, nos dois idiomas
+
+### Modificado
+
+- No desktop, a coluna dos links se centraliza verticalmente em relação à identidade
+
 ## [2.5.1](https://gcruz.dev.br/release-notes/v2.5.1) — 2026-08-13
 
 **O bloco de identidade da /links, refeito**

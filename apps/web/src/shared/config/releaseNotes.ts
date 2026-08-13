@@ -98,9 +98,40 @@ export type ReleaseTag = "design" | "feature" | "perf" | "a11y" | "fix";
 ───────────────────────────────────────────────────────── */
 export const RELEASE_NOTES: ReleaseEntry[] = [
     {
-        version: "2.5.1",
+        version: "2.5.2",
         date: "2026-08-13",
         featured: true,
+        tags: ["design"],
+        title: {
+            pt: "Uma frase antes dos links, e as colunas no lugar",
+            en: "A line before the links, and the columns settled",
+        },
+        summary: {
+            pt: "A lista de links ganha uma apresentação, e a coluna da direita para de pender.",
+            en: "The link list gets an introduction, and the right column stops sinking.",
+        },
+        body: {
+            pt: 'Duas correções pequenas na `/links`, das que só aparecem depois que o resto está pronto.\n\n**A lista começava sem apresentação.** Depois da bio e dos chips de stack, os cartões surgiam direto — faltava a frase que faz a passagem de "quem é" para "onde falar comigo". Ela entra acima da lista, e fica **fora** da região de navegação: o `nav` já se nomeia sozinho, e uma frase corrida como primeiro conteúdo de uma landmark seria lida como se fizesse parte dos links.\n\nO espaçamento abaixo dela é subtraído, não somado. A coluna já separa seus blocos por 32px, distância boa entre a lista e os botões — dois pesos parecidos —, mas demais entre a frase e a lista que ela apresenta: nessa distância a frase perde o vínculo com o que introduz. Ficou em 16px, medido, em todas as larguras.\n\n**As duas colunas não têm a mesma altura.** No desktop elas nasciam coladas no topo, e como a da identidade é mais alta, toda a sobra da direita ficava embaixo — a composição pendia. Agora a coluna dos links se centraliza verticalmente em relação à outra. Com a frase nova, a diferença caiu de 54px para 14px, e o deslocamento é de 7px: um assentamento fino, não um salto. O topo do primeiro cartão continua praticamente na linha do avatar.',
+            en: 'Two small corrections on `/links` — the kind that only surface once everything else is done.\n\n**The list began with no introduction.** After the bio and the stack chips, the cards appeared straight away — missing the line that carries you from "who this is" to "where to reach them". It goes above the list, and stays **outside** the navigation region: the `nav` already names itself, and a running sentence as the first content of a landmark would be read as if it were part of the links.\n\nThe spacing below it is subtracted, not added. The column already separates its blocks by 32px, a good distance between the list and the buttons — two similar weights — but too much between the line and the list it introduces: at that distance the line loses its bond with what follows. It settled at 16px, measured, at every width.\n\n**The two columns are not the same height.** On desktop they both started flush at the top, and since the identity column is taller, all the slack on the right piled up at the bottom — the composition leaned. The links column now centres itself vertically against the other. With the new line, the difference fell from 54px to 14px and the shift is 7px: a fine settling, not a jump. The top of the first card still sits practically on the avatar\'s line.',
+        },
+        changes: {
+            added: [
+                {
+                    pt: "Mensagem introdutória acima da lista de links, nos dois idiomas",
+                    en: "Introductory line above the link list, in both languages",
+                },
+            ],
+            changed: [
+                {
+                    pt: "No desktop, a coluna dos links se centraliza verticalmente em relação à identidade",
+                    en: "On desktop, the links column centres vertically against the identity column",
+                },
+            ],
+        },
+    },
+    {
+        version: "2.5.1",
+        date: "2026-08-13",
         tags: ["design", "a11y"],
         title: {
             pt: "O bloco de identidade da /links, refeito",

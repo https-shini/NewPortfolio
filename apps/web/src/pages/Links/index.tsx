@@ -230,6 +230,18 @@ export const LinksPage: React.FC = () => {
                         As ações moram aqui, e não sob a identidade, para
                         equilibrar as duas colunas no desktop. */}
                     <div className="linktree__acervo">
+                        {/* Fora do <nav>, e não dentro: o nav já se nomeia
+                            por aria-label, e uma frase corrida como primeiro
+                            conteúdo de uma landmark de navegação seria lida
+                            como parte da navegação. Aqui ela é o parágrafo
+                            que apresenta a região seguinte. */}
+                        <p
+                            className="linktree__intro reveal-item"
+                            style={{ "--reveal-i": 7 } as React.CSSProperties}
+                        >
+                            {t("links.intro")}
+                        </p>
+
                         <nav
                             className="linktree__links"
                             aria-label={t("links.mainLinks")}
@@ -238,7 +250,7 @@ export const LinksPage: React.FC = () => {
                                 <LinkCard
                                     key={link.id}
                                     link={link}
-                                    index={i + 7}
+                                    index={i + 8}
                                 />
                             ))}
                         </nav>
@@ -247,7 +259,7 @@ export const LinksPage: React.FC = () => {
                             className="linktree__actions reveal-item"
                             style={
                                 {
-                                    "--reveal-i": 7 + PRIMARY_LINKS.length,
+                                    "--reveal-i": 8 + PRIMARY_LINKS.length,
                                 } as React.CSSProperties
                             }
                         >

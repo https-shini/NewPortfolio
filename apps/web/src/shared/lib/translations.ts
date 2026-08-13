@@ -185,6 +185,7 @@ export type TranslationKey =
     | "links.available"
     | "links.techLabel"
     | "links.mainLinks"
+    | "links.intro"
     | "links.cv"
     | "links.share"
     | "links.copied"
@@ -463,6 +464,7 @@ const pt: Translations = {
     "links.available": "Disponível",
     "links.techLabel": "Principais tecnologias",
     "links.mainLinks": "Links principais",
+    "links.intro": "Conecte-se comigo pelas plataformas abaixo.",
     "links.cv": "Currículo",
     "links.share": "Compartilhar",
     "links.copied": "Copiado!",
@@ -753,6 +755,7 @@ const en: Translations = {
     "links.available": "Available",
     "links.techLabel": "Core technologies",
     "links.mainLinks": "Main links",
+    "links.intro": "Connect with me on the platforms below.",
     "links.cv": "Resume",
     "links.share": "Share",
     "links.copied": "Copied!",

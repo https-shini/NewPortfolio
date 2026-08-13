@@ -298,7 +298,24 @@
     flex-shrink: 0;
 }
 
-/* ── Links e ações ─────────────────────────────────────────────── */
+/* ── Acervo: a mensagem, os links e as ações ───────────────────── */
+/* A frase que faz a passagem da identidade para os links.
+
+   O espaçamento abaixo dela é subtraído, não somado: .linktree__acervo
+   é um flex column com `gap: --space-8`, e esses 32px existem para
+   separar a lista das ações — dois blocos de peso parecido. Entre a
+   frase e a lista que ela apresenta, 32px é demais e a frase perde o
+   vínculo com o que introduz. O margin-bottom negativo desconta o gap
+   e assenta a distância em 16px: metade, que é o que diz "isto
+   pertence ao que vem logo abaixo". */
+.linktree__intro {
+    margin-bottom: calc(var(--space-4) - var(--space-8));
+    font-size: var(--text-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-3);
+    text-wrap: pretty;
+}
+
 .linktree__links {
     width: 100%;
     display: flex;
@@ -374,6 +391,15 @@
     /* A identidade era alinhada à esquerda aqui, e o override some: ela
        fica centralizada dentro da própria coluna em qualquer largura.
        Este bloco volta a ser só a grade. */
+
+    /* As duas colunas não têm a mesma altura — a identidade é a mais
+       alta e define a altura da linha. Com `start` nas duas, toda a
+       sobra do acervo ficava embaixo e a composição pendia. `align-self`
+       no item, e não `align-items` no palco, porque só um dos dois se
+       move: declarado aqui, fica claro qual. */
+    .linktree__acervo {
+        align-self: center;
+    }
 
     /* Numa coluna de 520px o avatar de 120px fica pequeno para o espaço
        que ocupa, e o nome tem folga para crescer um degrau. */

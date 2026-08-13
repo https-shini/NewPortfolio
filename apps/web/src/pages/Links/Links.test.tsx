@@ -57,6 +57,18 @@ describe("LinksPage — social tree", () => {
         expect(pill.closest("[aria-hidden='true']")).toBeNull();
     });
 
+    /* A frase apresenta a lista, mas não faz parte dela: dentro do <nav>
+       ela seria o primeiro conteúdo de uma landmark de navegação, que é
+       o que um leitor de tela percorre procurando links. */
+    it("a mensagem introdutória fica fora da landmark de navegação", () => {
+        setup();
+        const intro = corpo().getByText(
+            "Conecte-se comigo pelas plataformas abaixo.",
+        );
+        expect(intro).toBeVisible();
+        expect(intro.closest("nav")).toBeNull();
+    });
+
     it("usa a mesma foto da seção Sobre (hero.webp)", () => {
         setup();
         const img = screen.getByAltText(PROFILE.name) as HTMLImageElement;
