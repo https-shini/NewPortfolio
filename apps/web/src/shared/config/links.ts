@@ -93,14 +93,22 @@ export interface TreeLink {
 export const siteDomain = PROFILE.siteUrl.replace(/^https?:\/\//, "");
 
 export const TREE_LINKS: readonly TreeLink[] = [
+    /* Rota interna, e não `PROFILE.siteUrl`: desde que a /links passou a
+       montar o Header e o Footer do site, um link externo aqui abriria
+       uma aba nova para o mesmo domínio em que o visitante já está. É o
+       mesmo raciocínio que o rodapé já aplica à própria lista social —
+       ver o filtro de `portfolio` em widgets/Footer/Footer.tsx.
+
+       O sublabel continua sendo o domínio: quem chega de uma bio não
+       sabe onde está, e é a única linha da página que informa isso. */
     {
         id: "portfolio",
         kind: "primary",
         label: { pt: "Portfólio", en: "Portfolio" },
         sublabel: siteDomain,
-        href: PROFILE.siteUrl,
+        href: ROUTES.HOME,
         icon: IconLink,
-        external: true,
+        external: false,
     },
     {
         id: "github",

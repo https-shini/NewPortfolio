@@ -60,14 +60,16 @@
     ".footer": "rgb(255, 255, 255) | none | none | 1 | 4px | 0px | 0px | 0px | solid | color(srgb 0.882353 0.113725 0.282353 / 0.14) | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | 0px | 0px | 0px | 0px | 0px | 0px | 0px | 0px | rgb(30, 41, 59) | 16px | 400"
   },
   "/links · dark": {
-    ".linktree": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 108px | 20px | 48px | 20px | rgb(226, 232, 240) | 16px | 400",
+    ".linktree": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 122px | 32px | 64px | 32px | rgb(226, 232, 240) | 16px | 400",
     ".link-card": "color(srgb 0.0588235 0.0901961 0.164706 / 0.8) | none | blur(20px) saturate(1.8) | 1 | 1px | 1px | 1px | 1px | solid | rgba(255, 255, 255, 0.06) | rgba(255, 255, 255, 0.06) | rgba(255, 255, 255, 0.06) | rgba(255, 255, 255, 0.06) | 12px | 12px | 12px | 12px | 16px | 20px | 16px | 20px | rgb(248, 250, 252) | 16px | 400",
-    ".linktree__ctrl": "color(srgb 0.0588235 0.0901961 0.164706 / 0.8) | none | blur(20px) saturate(1.8) | 1 | 1px | 1px | 1px | 1px | solid | rgba(255, 255, 255, 0.06) | rgba(255, 255, 255, 0.06) | rgba(255, 255, 255, 0.06) | rgba(255, 255, 255, 0.06) | 9999px | 9999px | 9999px | 9999px | 0px | 16px | 0px | 16px | rgb(226, 232, 240) | 12px | 600"
+    ".header": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 1px | 0px | none | rgb(226, 232, 240) | rgb(226, 232, 240) | rgba(0, 0, 0, 0) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 0px | 0px | 0px | 0px | rgb(226, 232, 240) | 16px | 400",
+    ".footer": "rgb(7, 13, 25) | none | none | 1 | 4px | 0px | 0px | 0px | solid | color(srgb 0.882353 0.113725 0.282353 / 0.18) | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 0px | 0px | 0px | 0px | rgb(226, 232, 240) | 16px | 400"
   },
   "/links · light": {
-    ".linktree": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | 0px | 0px | 0px | 0px | 108px | 20px | 48px | 20px | rgb(30, 41, 59) | 16px | 400",
+    ".linktree": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | 0px | 0px | 0px | 0px | 122px | 32px | 64px | 32px | rgb(30, 41, 59) | 16px | 400",
     ".link-card": "color(srgb 1 1 1 / 0.88) | none | blur(20px) saturate(1.4) | 1 | 1px | 1px | 1px | 1px | solid | rgba(0, 0, 0, 0.08) | rgba(0, 0, 0, 0.08) | rgba(0, 0, 0, 0.08) | rgba(0, 0, 0, 0.08) | 12px | 12px | 12px | 12px | 16px | 20px | 16px | 20px | rgb(15, 23, 42) | 16px | 400",
-    ".linktree__ctrl": "color(srgb 1 1 1 / 0.88) | none | blur(20px) saturate(1.4) | 1 | 1px | 1px | 1px | 1px | solid | rgba(0, 0, 0, 0.08) | rgba(0, 0, 0, 0.08) | rgba(0, 0, 0, 0.08) | rgba(0, 0, 0, 0.08) | 9999px | 9999px | 9999px | 9999px | 0px | 16px | 0px | 16px | rgb(30, 41, 59) | 12px | 600"
+    ".header": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 1px | 0px | none | rgb(30, 41, 59) | rgb(30, 41, 59) | rgba(0, 0, 0, 0) | rgb(30, 41, 59) | 0px | 0px | 0px | 0px | 0px | 0px | 0px | 0px | rgb(30, 41, 59) | 16px | 400",
+    ".footer": "rgb(255, 255, 255) | none | none | 1 | 4px | 0px | 0px | 0px | solid | color(srgb 0.882353 0.113725 0.282353 / 0.14) | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | 0px | 0px | 0px | 0px | 0px | 0px | 0px | 0px | rgb(30, 41, 59) | 16px | 400"
   },
   "/release-notes · dark": {
     ".release-page": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 148px | 0px | 80px | 0px | rgb(226, 232, 240) | 16px | 400",

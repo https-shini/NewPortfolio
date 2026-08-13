@@ -1,23 +1,17 @@
 import React, { useState, useCallback } from "react";
 import "./Links.css";
 import { LinkCard } from "./components/LinkCard";
+import { Header } from "@/widgets/Header/Header";
+import { Footer } from "@/widgets/Footer/Footer";
+import { ScrollUtils } from "@/shared/ui/ScrollUtils";
 import { useLang } from "@/shared/hooks/useLang";
 import { useTheme } from "@/shared/hooks/useTheme";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
-import {
-    IconSun,
-    IconMoon,
-    IconTranslate,
-    IconShare,
-    IconCheck,
-    IconDownload,
-    IconLink,
-    IconGmail,
-} from "@/shared/ui/Icons";
+import { IconShare, IconCheck, IconDownload } from "@/shared/ui/Icons";
 import { PROFILE } from "@/shared/config/profile";
 import { ROUTES } from "@/shared/config/routes";
 import { getCvUrl } from "@/shared/config/constants";
-import { PRIMARY_LINKS, SOCIAL_LINKS, siteDomain } from "@/shared/config/links";
+import { PRIMARY_LINKS } from "@/shared/config/links";
 import avatarImg from "@/assets/hero.webp";
 
 /* Ícones de tecnologia — skill-icons (tandpfun, MIT); sql-* criado no
@@ -33,6 +27,26 @@ import sqlDark from "@/assets/skills/sql-dark.svg";
 import sqlLight from "@/assets/skills/sql-light.svg";
 import dockerIcon from "@/assets/skills/docker.svg";
 import gitIcon from "@/assets/skills/git.svg";
+
+/* ─────────────────────────────────────────────────────────
+   /links — a social tree dentro da casca do site
+   ─────────────────────────────────────────────────────────
+   Esta página monta o mesmo Header e o mesmo Footer da home e da
+   /release-notes. Isso é composição, não decoração, e três coisas
+   saíram daqui quando a casca entrou:
+
+   · os controles fixos de idioma e tema — o Header carrega os dois;
+   · a linha de redes secundárias — a coluna Marca do rodapé já lista
+     as mesmas redes, e `SOCIAL_LINKS` está vazio de todo modo;
+   · o rodapé próprio — nome, domínio, e-mail, "feito com ♥" e
+     copyright estavam todos no Footer também, e a página imprimia o
+     copyright duas vezes.
+
+   O que sobrou é o que só existe aqui: identidade, stack, os cartões
+   e as duas ações. No desktop os dois blocos ficam lado a lado, para
+   que o corpo ocupe a mesma medida do Header e do Footer — ver o
+   comentário da grade em Links.css.
+───────────────────────────────────────────────────────── */
 
 /* Stack em destaque — ícones skill-icons, variante conforme o tema.
    `light`/`dark` apontam para o mesmo asset quando não há variante. */
@@ -52,13 +66,14 @@ const TECH_STACK: readonly Tech[] = [
 ];
 
 export const LinksPage: React.FC = () => {
-    const { lang, toggleLang, t } = useLang();
-    const { theme, toggleTheme } = useTheme();
+    const { lang, t } = useLang();
+    /* Só para escolher a variante do ícone de stack — a troca de tema
+       agora é botão do Header. */
+    const { theme } = useTheme();
     const [copied, setCopied] = useState(false);
 
     const isDark = theme === "dark";
     const shareUrl = `${PROFILE.siteUrl}${ROUTES.LINKS}`;
-    const year = new Date().getFullYear();
 
     useDocumentMeta({
         title: `${t("links.pageTitle")} — ${PROFILE.name}`,
@@ -91,285 +106,177 @@ export const LinksPage: React.FC = () => {
         }
     }, [shareUrl]);
 
-    const themeLabel =
-        theme === "dark"
-            ? lang === "pt"
-                ? "Alternar para modo claro"
-                : "Switch to light mode"
-            : lang === "pt"
-              ? "Alternar para modo escuro"
-              : "Switch to dark mode";
-
     return (
         <>
-            <a href="#linktree-main" className="skip-link">
+            <a href="#main-content" className="skip-link">
                 {t("links.skip")}
             </a>
 
-            {/* ── Controles ── */}
-            <div className="linktree__controls">
-                <button
-                    type="button"
-                    className="linktree__ctrl linktree__ctrl--lang"
-                    onClick={toggleLang}
-                    aria-label={
-                        lang === "pt"
-                            ? "Switch to English"
-                            : "Mudar para Português"
-                    }
-                >
-                    <IconTranslate width={15} height={15} />
-                    <span>{lang === "pt" ? "EN" : "PT"}</span>
-                </button>
+            <ScrollUtils
+                label={lang === "pt" ? "Voltar ao topo" : "Back to top"}
+            />
 
-                {/* Mostra a AÇÃO, não o estado — mesma convenção do Header. */}
-                <button
-                    type="button"
-                    className="linktree__ctrl linktree__ctrl--icon"
-                    onClick={toggleTheme}
-                    aria-pressed={isDark}
-                    aria-label={themeLabel}
-                >
-                    {isDark ? (
-                        <IconSun width={16} height={16} />
-                    ) : (
-                        <IconMoon width={16} height={16} />
-                    )}
-                </button>
-            </div>
+            <Header />
 
-            <main id="linktree-main" className="linktree">
-                {/* ── Perfil ── */}
-                <div
-                    className="linktree__avatar reveal-item"
-                    style={{ "--reveal-i": 0 } as React.CSSProperties}
-                >
-                    <span
-                        className="linktree__avatar-glow"
-                        aria-hidden="true"
-                    />
-                    <span
-                        className="linktree__avatar-ring"
-                        aria-hidden="true"
-                    />
-                    <div className="linktree__avatar-frame">
-                        <img
-                            src={avatarImg}
-                            alt={PROFILE.name}
-                            className="linktree__avatar-img"
-                            width={120}
-                            height={120}
-                            loading="eager"
-                            decoding="async"
-                        />
-                    </div>
-                    <span
-                        className="linktree__status"
-                        title={t("links.available")}
-                        aria-hidden="true"
-                    />
-                </div>
-
-                <h1
-                    className="linktree__name reveal-item"
-                    style={{ "--reveal-i": 1 } as React.CSSProperties}
-                >
-                    {PROFILE.name}
-                </h1>
-
-                <p
-                    className="linktree__handle reveal-item"
-                    style={{ "--reveal-i": 2 } as React.CSSProperties}
-                >
-                    {PROFILE.handle}
-                </p>
-
-                <p
-                    className="linktree__roles reveal-item"
-                    style={{ "--reveal-i": 3 } as React.CSSProperties}
-                >
-                    {PROFILE.roles.map((role, i) => (
-                        <React.Fragment key={role}>
-                            {i > 0 && (
-                                <i
-                                    className="linktree__roles-dot"
-                                    aria-hidden="true"
-                                />
-                            )}
-                            <span>{role}</span>
-                        </React.Fragment>
-                    ))}
-                </p>
-
-                <p
-                    className="linktree__bio reveal-item"
-                    style={{ "--reveal-i": 4 } as React.CSSProperties}
-                >
-                    {t("links.bio")}
-                </p>
-
-                <ul
-                    className="linktree__chips reveal-item"
-                    style={{ "--reveal-i": 5 } as React.CSSProperties}
-                    aria-label={t("links.techLabel")}
-                >
-                    {TECH_STACK.map((tech) => (
-                        <li key={tech.label} className="linktree__chip">
-                            <img
-                                className="linktree__chip-ic"
-                                src={isDark ? tech.dark : tech.light}
-                                alt=""
-                                width={18}
-                                height={18}
-                                loading="lazy"
-                                decoding="async"
+            <main id="main-content" className="linktree">
+                <div className="linktree__palco">
+                    {/* ── Identidade ── */}
+                    <div className="linktree__identidade">
+                        <div
+                            className="linktree__avatar reveal-item"
+                            style={{ "--reveal-i": 0 } as React.CSSProperties}
+                        >
+                            <span
+                                className="linktree__avatar-glow"
+                                aria-hidden="true"
                             />
-                            {tech.label}
-                        </li>
-                    ))}
-                </ul>
+                            <span
+                                className="linktree__avatar-ring"
+                                aria-hidden="true"
+                            />
+                            <div className="linktree__avatar-frame">
+                                <img
+                                    src={avatarImg}
+                                    alt={PROFILE.name}
+                                    className="linktree__avatar-img"
+                                    width={120}
+                                    height={120}
+                                    loading="eager"
+                                    decoding="async"
+                                />
+                            </div>
+                            <span
+                                className="linktree__status"
+                                title={t("links.available")}
+                                aria-hidden="true"
+                            />
+                        </div>
 
-                {/* ── Links primários ── */}
-                <nav
-                    className="linktree__links"
-                    aria-label={t("links.mainLinks")}
-                >
-                    {PRIMARY_LINKS.map((link, i) => (
-                        <LinkCard key={link.id} link={link} index={i + 6} />
-                    ))}
-                </nav>
-
-                {/* ── Redes secundárias ── */}
-                {SOCIAL_LINKS.length > 0 && (
-                    <nav
-                        className="linktree__socials reveal-item"
-                        style={
-                            {
-                                "--reveal-i": 6 + PRIMARY_LINKS.length,
-                            } as React.CSSProperties
-                        }
-                        aria-label={t("links.socialLinks")}
-                    >
-                        {SOCIAL_LINKS.map((link) => {
-                            const Icon = link.icon;
-                            return (
-                                <a
-                                    key={link.id}
-                                    className="social-link"
-                                    href={link.href}
-                                    aria-label={
-                                        link.external
-                                            ? `${link.label[lang]} (${t("links.newTab")})`
-                                            : link.label[lang]
-                                    }
-                                    {...(link.external
-                                        ? {
-                                              target: "_blank",
-                                              rel: "noopener noreferrer",
-                                          }
-                                        : {})}
-                                >
-                                    <Icon width={20} height={20} />
-                                </a>
-                            );
-                        })}
-                    </nav>
-                )}
-
-                {/* ── Ações ── */}
-                <div
-                    className="linktree__actions reveal-item"
-                    style={
-                        {
-                            "--reveal-i": 7 + PRIMARY_LINKS.length,
-                        } as React.CSSProperties
-                    }
-                >
-                    <a
-                        className="btn btn--primary"
-                        href={getCvUrl(lang)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <IconDownload width={16} height={16} />
-                        <span>{t("links.cv")}</span>
-                    </a>
-
-                    <button
-                        type="button"
-                        className={`btn btn--outline${copied ? " is-copied" : ""}`}
-                        onClick={handleShare}
-                    >
-                        {copied ? (
-                            <IconCheck width={16} height={16} />
-                        ) : (
-                            <IconShare width={16} height={16} />
-                        )}
-                        <span>
-                            {copied ? t("links.copied") : t("links.share")}
-                        </span>
-                    </button>
-                </div>
-
-                {/* ── Footer ── */}
-                <footer
-                    className="linktree__foot reveal-item"
-                    style={
-                        {
-                            "--reveal-i": 8 + PRIMARY_LINKS.length,
-                        } as React.CSSProperties
-                    }
-                >
-                    <div
-                        className="linktree__foot-divider"
-                        aria-hidden="true"
-                    />
-
-                    <div className="linktree__foot-links">
-                        <a
-                            className="linktree__foot-link"
-                            href={PROFILE.siteUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <h1
+                            className="linktree__name reveal-item"
+                            style={{ "--reveal-i": 1 } as React.CSSProperties}
                         >
-                            <IconLink width={14} height={14} />
-                            {siteDomain}
-                        </a>
-                        <span className="linktree__foot-sep" aria-hidden="true">
-                            ·
-                        </span>
-                        <a
-                            className="linktree__foot-link"
-                            href={`mailto:${PROFILE.email}`}
+                            {PROFILE.name}
+                        </h1>
+
+                        <p
+                            className="linktree__handle reveal-item"
+                            style={{ "--reveal-i": 2 } as React.CSSProperties}
                         >
-                            <IconGmail width={14} height={14} />
-                            {PROFILE.email}
-                        </a>
+                            {PROFILE.handle}
+                        </p>
+
+                        <p
+                            className="linktree__roles reveal-item"
+                            style={{ "--reveal-i": 3 } as React.CSSProperties}
+                        >
+                            {PROFILE.roles.map((role, i) => (
+                                <React.Fragment key={role}>
+                                    {i > 0 && (
+                                        <i
+                                            className="linktree__roles-dot"
+                                            aria-hidden="true"
+                                        />
+                                    )}
+                                    <span>{role}</span>
+                                </React.Fragment>
+                            ))}
+                        </p>
+
+                        <p
+                            className="linktree__bio reveal-item"
+                            style={{ "--reveal-i": 4 } as React.CSSProperties}
+                        >
+                            {t("links.bio")}
+                        </p>
+
+                        <ul
+                            className="linktree__chips reveal-item"
+                            style={{ "--reveal-i": 5 } as React.CSSProperties}
+                            aria-label={t("links.techLabel")}
+                        >
+                            {TECH_STACK.map((tech) => (
+                                <li key={tech.label} className="linktree__chip">
+                                    <img
+                                        className="linktree__chip-ic"
+                                        src={isDark ? tech.dark : tech.light}
+                                        alt=""
+                                        width={18}
+                                        height={18}
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                    {tech.label}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
 
-                    <p className="linktree__foot-name">
-                        {PROFILE.name} <span>· {PROFILE.handle}</span>
-                    </p>
+                    {/* ── Acervo: os cartões e as duas ações ──
+                        As ações moram aqui, e não sob a identidade, para
+                        equilibrar as duas colunas no desktop. */}
+                    <div className="linktree__acervo">
+                        <nav
+                            className="linktree__links"
+                            aria-label={t("links.mainLinks")}
+                        >
+                            {PRIMARY_LINKS.map((link, i) => (
+                                <LinkCard
+                                    key={link.id}
+                                    link={link}
+                                    index={i + 6}
+                                />
+                            ))}
+                        </nav>
 
-                    <p className="linktree__foot-text">
-                        {t("links.madeWith")}{" "}
-                        <span className="linktree__heart" aria-hidden="true">
-                            ♥
-                        </span>{" "}
-                        {t("links.builtWith")}
-                    </p>
+                        <div
+                            className="linktree__actions reveal-item"
+                            style={
+                                {
+                                    "--reveal-i": 6 + PRIMARY_LINKS.length,
+                                } as React.CSSProperties
+                            }
+                        >
+                            <a
+                                className="btn btn--primary"
+                                href={getCvUrl(lang)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <IconDownload width={16} height={16} />
+                                <span>{t("links.cv")}</span>
+                            </a>
 
-                    <a
-                        className="linktree__foot-brand"
-                        href={PROFILE.siteUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        © {year} {siteDomain.replace(/\.dev\.br$/, "")}
-                        <b>.dev.br</b>
-                    </a>
-                </footer>
+                            <button
+                                type="button"
+                                className={`btn btn--outline${copied ? " is-copied" : ""}`}
+                                onClick={handleShare}
+                            >
+                                {copied ? (
+                                    <IconCheck width={16} height={16} />
+                                ) : (
+                                    <IconShare width={16} height={16} />
+                                )}
+                                <span>
+                                    {copied
+                                        ? t("links.copied")
+                                        : t("links.share")}
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </main>
+
+            <Footer />
+
+            <div
+                id="aria-live-region"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                className="sr-only"
+            />
         </>
     );
 };

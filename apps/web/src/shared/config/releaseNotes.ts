@@ -98,9 +98,52 @@ export type ReleaseTag = "design" | "feature" | "perf" | "a11y" | "fix";
 ───────────────────────────────────────────────────────── */
 export const RELEASE_NOTES: ReleaseEntry[] = [
     {
+        version: "2.5.0",
+        date: "2026-08-13",
+        featured: true,
+        tags: ["design", "a11y"],
+        title: {
+            pt: "A página de links entra no site",
+            en: "The links page joins the site",
+        },
+        summary: {
+            pt: "A /links deixa de ser uma ilha: passa a usar o mesmo cabeçalho e rodapé das outras páginas.",
+            en: "The /links page stops being an island: it now uses the same header and footer as every other page.",
+        },
+        body: {
+            pt: "A `/links` era a única rota sem a casca do site. Em vez do cabeçalho e do rodapé que a home e as notas de versão usam, ela tinha dois botões flutuantes num canto e um rodapé escrito só para ela. Quem chegava de uma bio do Instagram via uma página bonita e sem nenhuma porta para o resto do portfólio.\n\nAgora ela monta o mesmo cabeçalho e o mesmo rodapé. Isso não foi colar dois componentes por cima do que existia — três coisas precisavam mudar junto.\n\n**A largura.** O corpo tinha 480px de máximo em qualquer tela, enquanto o cabeçalho e o rodapé ocupam a medida inteira do site. Num monitor, a navegação de oito itens se estendia por cima de uma tira estreita sem relação com ela. A partir de 900px o corpo passa a ter duas colunas — identidade à esquerda, links e ações à direita — encostadas nas mesmas margens do logotipo e do rodapé. Abaixo disso nada muda: continua a coluna única, que é como a página é de fato aberta.\n\n**A repetição.** GitHub, LinkedIn e e-mail apareceriam nos cartões e outra vez nos ícones do rodapé; nome, domínio e copyright apareceriam duas vezes na mesma tela. Saíram os controles flutuantes, a linha de redes secundárias e o rodapé próprio da página — tudo o que eles diziam já é dito pelo rodapé do site.\n\n**O cartão do portfólio.** Ele abria uma aba nova para `gcruz.dev.br` — o mesmo endereço em que o visitante já está, agora que o cabeçalho existe. Virou navegação interna, sem recarregar nada. O domínio continua visível embaixo do título, porque é a única linha da página que informa onde ele está.",
+            en: "The `/links` route was the only one without the site's shell. Instead of the header and footer used by the home page and the release notes, it had two floating buttons in a corner and a footer written just for it. Anyone arriving from an Instagram bio saw a nice page with no door to the rest of the portfolio.\n\nIt now mounts the same header and the same footer. This was not a matter of pasting two components on top of what was there — three things had to change with it.\n\n**Width.** The body was capped at 480px on any screen, while the header and footer span the site's full measure. On a monitor, an eight-item navigation stretched above a narrow strip unrelated to it. From 900px up the body becomes two columns — identity on the left, links and actions on the right — flush with the same margins as the logo and the footer. Below that nothing changes: still the single column, which is how the page is actually opened.\n\n**Repetition.** GitHub, LinkedIn and email would appear in the cards and again in the footer icons; name, domain and copyright would appear twice on one screen. Out went the floating controls, the secondary social row and the page's own footer — everything they said is already said by the site footer.\n\n**The portfolio card.** It opened a new tab to `gcruz.dev.br` — the very address the visitor is already on, now that the header exists. It became internal navigation, with no reload. The domain stays visible under the title, because it is the only line on the page that says where they are.",
+        },
+        changes: {
+            changed: [
+                {
+                    pt: "A /links passa a usar o cabeçalho e o rodapé do site, como as demais rotas",
+                    en: "The /links page now uses the site header and footer, like every other route",
+                },
+                {
+                    pt: "No desktop o corpo da /links ganha duas colunas, alinhadas à medida do site",
+                    en: "On desktop the /links body gains two columns, aligned to the site's measure",
+                },
+                {
+                    pt: "O cartão do portfólio virou rota interna, em vez de abrir uma aba nova para o mesmo domínio",
+                    en: "The portfolio card became an internal route instead of opening a new tab to the same domain",
+                },
+            ],
+            removed: [
+                {
+                    pt: "Controles flutuantes de idioma e tema da /links — o cabeçalho carrega os dois",
+                    en: "The floating language and theme controls on /links — the header carries both",
+                },
+                {
+                    pt: "Rodapé próprio da /links, que repetia nome, domínio, e-mail e copyright",
+                    en: "The /links page's own footer, which repeated name, domain, email and copyright",
+                },
+            ],
+        },
+    },
+    {
         version: "2.4.0",
         date: "2026-08-12",
-        featured: true,
         tags: ["design"],
         title: {
             pt: "De volta a ser só um site",

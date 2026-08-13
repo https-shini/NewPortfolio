@@ -57,10 +57,20 @@ describe("TREE_LINKS — integridade dos dados", () => {
 describe("TREE_LINKS — derivação de PROFILE (sem URL reescrita à mão)", () => {
     const byId = (id: string) => TREE_LINKS.find((l) => l.id === id);
 
-    it("portfólio, GitHub e LinkedIn vêm do perfil", () => {
-        expect(byId("portfolio")?.href).toBe(PROFILE.siteUrl);
+    it("GitHub e LinkedIn vêm do perfil", () => {
         expect(byId("github")?.href).toBe(PROFILE.social.github.url);
         expect(byId("linkedin")?.href).toBe(PROFILE.social.linkedin.url);
+    });
+
+    /* O portfólio era `PROFILE.siteUrl` e abria aba nova. Depois que a
+       /links passou a montar o Header e o Footer do site, esse link
+       mandava o visitante para uma segunda aba do domínio em que ele já
+       estava. Virou rota interna; o domínio segue visível no sublabel,
+       que é a única linha da página que diz onde ele está. */
+    it("o portfólio é rota interna, com o domínio no sublabel", () => {
+        expect(byId("portfolio")?.href).toBe(ROUTES.HOME);
+        expect(byId("portfolio")?.external).toBe(false);
+        expect(byId("portfolio")?.sublabel).toBe(siteDomain);
     });
 
     it("o contato usa o e-mail do perfil", () => {

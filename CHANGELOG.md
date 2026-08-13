@@ -9,6 +9,23 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 > `scripts/changelog.mjs`. Não editar à mão — as alterações se perdem
 > na próxima geração, e há teste conferindo a sincronia.
 
+## [2.5.0](https://gcruz.dev.br/release-notes/v2.5.0) — 2026-08-13
+
+**A página de links entra no site**
+
+A /links deixa de ser uma ilha: passa a usar o mesmo cabeçalho e rodapé das outras páginas.
+
+### Modificado
+
+- A /links passa a usar o cabeçalho e o rodapé do site, como as demais rotas
+- No desktop o corpo da /links ganha duas colunas, alinhadas à medida do site
+- O cartão do portfólio virou rota interna, em vez de abrir uma aba nova para o mesmo domínio
+
+### Removido
+
+- Controles flutuantes de idioma e tema da /links — o cabeçalho carrega os dois
+- Rodapé próprio da /links, que repetia nome, domínio, e-mail e copyright
+
 ## [2.4.0](https://gcruz.dev.br/release-notes/v2.4.0) — 2026-08-12
 
 **De volta a ser só um site**

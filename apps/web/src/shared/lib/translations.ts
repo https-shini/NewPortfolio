@@ -185,14 +185,11 @@ export type TranslationKey =
     | "links.available"
     | "links.techLabel"
     | "links.mainLinks"
-    | "links.socialLinks"
     | "links.cv"
     | "links.share"
     | "links.copied"
     | "links.newTab"
     | "links.skip"
-    | "links.madeWith"
-    | "links.builtWith"
 
     /* ── RELEASE NOTES ─────────────────────────────── */
     | "releaseNotes.title"
@@ -466,14 +463,11 @@ const pt: Translations = {
     "links.available": "Disponível",
     "links.techLabel": "Principais tecnologias",
     "links.mainLinks": "Links principais",
-    "links.socialLinks": "Redes secundárias",
     "links.cv": "Currículo",
     "links.share": "Compartilhar",
     "links.copied": "Copiado!",
     "links.newTab": "abre em nova aba",
     "links.skip": "Ir para o conteúdo principal",
-    "links.madeWith": "Feito com",
-    "links.builtWith": "usando o Design System do portfólio",
 
     /* RELEASE NOTES */
     "releaseNotes.title": "Notas de versão",
@@ -759,14 +753,11 @@ const en: Translations = {
     "links.available": "Available",
     "links.techLabel": "Core technologies",
     "links.mainLinks": "Main links",
-    "links.socialLinks": "Secondary networks",
     "links.cv": "Resume",
     "links.share": "Share",
     "links.copied": "Copied!",
     "links.newTab": "opens in a new tab",
     "links.skip": "Skip to main content",
-    "links.madeWith": "Built with",
-    "links.builtWith": "using the portfolio's Design System",
 
     /* RELEASE NOTES */
     "releaseNotes.title": "Release notes",

@@ -94,7 +94,11 @@ const ALVOS = {
         ".header__ctrl",
         ".footer",
     ],
-    [ROUTES.links]: [".linktree", ".link-card", ".linktree__ctrl"],
+    /* `.linktree__ctrl` eram os controles fixos de idioma e tema, que
+       saíram quando a página passou a montar a casca do site. Header e
+       Footer entram no lugar: são novos nesta rota, e é justamente numa
+       rota nova que um deles pode divergir sem ninguém notar. */
+    [ROUTES.links]: [".linktree", ".link-card", ".header", ".footer"],
     [ROUTES.releaseNotes]: [".release-page", ".release-card"],
 };
 

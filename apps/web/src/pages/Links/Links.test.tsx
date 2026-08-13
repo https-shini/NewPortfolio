@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
 import { LangProvider } from "@/app/LangContext";
@@ -8,6 +8,14 @@ import { LinksPage } from "./index";
 import { PROFILE } from "@/shared/config/profile";
 import { PRIMARY_LINKS } from "@/shared/config/links";
 import { ROUTES } from "@/shared/config/routes";
+
+/* ─────────────────────────────────────────────────────────
+   Desde que a página monta o Header e o Footer do site, o
+   documento tem mais de um link para GitHub, LinkedIn, e-mail e
+   currículo — os do corpo e os do rodapé. `screen.getByRole` passou a
+   achar dois de cada e a estourar. As asserções sobre o corpo escopam
+   em <main>; as que falam da casca escopam nela.
+───────────────────────────────────────────────────────── */
 
 const setup = () => {
     localStorage.setItem("portfolio-lang", "pt");
@@ -20,6 +28,9 @@ const setup = () => {
     );
 };
 
+/** O corpo da página, sem o Header nem o Footer. */
+const corpo = () => within(screen.getByRole("main"));
+
 describe("LinksPage — social tree", () => {
     beforeEach(() => window.history.replaceState({}, "", ROUTES.LINKS));
     afterEach(() => vi.unstubAllGlobals());
@@ -29,9 +40,9 @@ describe("LinksPage — social tree", () => {
         expect(
             screen.getByRole("heading", { level: 1, name: PROFILE.name }),
         ).toBeInTheDocument();
-        expect(screen.getByText(PROFILE.handle)).toBeInTheDocument();
+        expect(corpo().getByText(PROFILE.handle)).toBeInTheDocument();
         PROFILE.roles.forEach((role) => {
-            expect(screen.getByText(role)).toBeInTheDocument();
+            expect(corpo().getByText(role)).toBeInTheDocument();
         });
     });
 
@@ -45,7 +56,7 @@ describe("LinksPage — social tree", () => {
         setup();
         PRIMARY_LINKS.forEach((link) => {
             expect(
-                screen.getByRole("link", {
+                corpo().getByRole("link", {
                     name: new RegExp(`^${link.label.pt}`),
                 }),
             ).toBeInTheDocument();
@@ -54,7 +65,7 @@ describe("LinksPage — social tree", () => {
 
     it("abre links externos em nova aba com rel seguro", () => {
         setup();
-        const github = screen.getByRole("link", { name: /^GitHub/ });
+        const github = corpo().getByRole("link", { name: /^GitHub/ });
         expect(github).toHaveAttribute("href", PROFILE.social.github.url);
         expect(github).toHaveAttribute("target", "_blank");
         expect(github).toHaveAttribute("rel", "noopener noreferrer");
@@ -62,21 +73,31 @@ describe("LinksPage — social tree", () => {
 
     it("não abre nova aba no link de e-mail", () => {
         setup();
-        const contato = screen.getByRole("link", { name: "Contato" });
+        const contato = corpo().getByRole("link", { name: "Contato" });
         expect(contato).toHaveAttribute("href", `mailto:${PROFILE.email}`);
         expect(contato).not.toHaveAttribute("target");
+    });
+
+    /* O cartão do portfólio apontava para PROFILE.siteUrl e abria uma aba
+       nova — para o mesmo domínio em que o visitante já está, desde que a
+       casca do site entrou nesta página. */
+    it("o cartão do portfólio é rota interna, e não aba nova", () => {
+        setup();
+        const portfolio = corpo().getByRole("link", { name: "Portfólio" });
+        expect(portfolio).toHaveAttribute("href", ROUTES.HOME);
+        expect(portfolio).not.toHaveAttribute("target");
     });
 
     it("avisa no nome acessível quando o link abre em nova aba", () => {
         setup();
         expect(
-            screen.getByRole("link", { name: /GitHub \(abre em nova aba\)/ }),
+            corpo().getByRole("link", { name: /GitHub \(abre em nova aba\)/ }),
         ).toBeInTheDocument();
     });
 
     it("o currículo aponta para o PDF do idioma corrente", () => {
         setup();
-        const cv = screen.getByRole("link", { name: /Currículo/ });
+        const cv = corpo().getByRole("link", { name: /Currículo/ });
         expect(cv).toHaveAttribute("href", PROFILE.cv.pt);
     });
 
@@ -130,5 +151,50 @@ describe("LinksPage — social tree", () => {
                 .querySelector('link[rel="canonical"]')
                 ?.getAttribute("href"),
         ).toBe(`${PROFILE.siteUrl}${ROUTES.LINKS}`);
+    });
+});
+
+/* ─────────────────────────────────────────────────────────
+   A casca do site — o que a mudança estrutural precisa garantir
+───────────────────────────────────────────────────────── */
+
+describe("LinksPage — Header e Footer do site", () => {
+    beforeEach(() => window.history.replaceState({}, "", ROUTES.LINKS));
+
+    it("monta o Header, com a navegação das seções da home", () => {
+        setup();
+        const header = screen.getByRole("banner");
+        expect(header).toBeInTheDocument();
+        expect(
+            within(header).getByRole("link", { name: /Sobre/ }),
+        ).toBeInTheDocument();
+    });
+
+    it("monta o Footer", () => {
+        setup();
+        expect(screen.getByRole("contentinfo")).toBeInTheDocument();
+    });
+
+    /* Enquanto a página tinha rodapé próprio, ela e o Footer imprimiam
+       cada um o seu copyright — dois na mesma tela. */
+    it("o copyright aparece uma vez só", () => {
+        setup();
+        expect(screen.getAllByText(/Guilherme Cruz\./)).toHaveLength(1);
+    });
+
+    /* Idioma e tema saíram do canto da página e passaram a ser os do
+       Header, os mesmos de todas as rotas. */
+    it("idioma e tema são os controles do Header", () => {
+        setup();
+        const header = screen.getByRole("banner");
+        expect(
+            within(header).getByRole("button", { name: /Switch to English/ }),
+        ).toBeInTheDocument();
+        /* O rótulo mostra a AÇÃO, não o estado, então ele depende do tema
+           corrente — a asserção fica no que não varia. */
+        expect(
+            within(header).getByRole("button", { name: /Alternar para modo/ }),
+        ).toBeInTheDocument();
+        expect(document.querySelector(".linktree__controls")).toBeNull();
     });
 });
