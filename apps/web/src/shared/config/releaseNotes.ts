@@ -3,31 +3,63 @@ import type { Localized } from "@/shared/lib/localized";
 /* ─────────────────────────────────────────────────────────
    releaseNotes.ts — camada local do histórico de versões
    ─────────────────────────────────────────────────────────
-   Cada versão tem duas camadas:
+   Este é um histórico CURADO, e não um registro de tudo que
+   aconteceu. Ele é público, faz parte do portfólio, e conta uma
+   coisa só: como o projeto amadureceu de bl4ck404.dev.br até
+   gcruz.dev.br. Versões que descreviam caminhos abandonados
+   saíram — quem lê quer entender o projeto de hoje, não
+   arqueologia. Acrescentar uma entrada aqui é decisão
+   editorial, não consequência automática de ter feito um
+   commit.
 
-   · estruturada (sempre): a lista categorizada no padrão
-     Keep a Changelog — added / changed / fixed / removed;
-   · editorial (opcional, só quando `featured`): capa, título,
-     texto corrido e mídia, virando um pequeno estudo de caso.
+   Cada versão tem três camadas:
 
-   Na Fase 2 este arquivo passa a ser uma *sobreposição*: o
-   GitHub manda em versão, data e links, e o que estiver aqui
-   sobrepõe título, corpo, mídia e destaque — é o que preserva
-   o bilíngue, já que o corpo de uma release do GitHub é
-   monolíngue.
+   · resumo (`summary`): uma linha em linguagem corrente, que é
+     o que aparece no card do índice — qualquer pessoa entende;
+   · corpo (`body`): o texto da página da versão, onde cabem
+     termos técnicos e visão de alto nível;
+   · estruturada (`changes`): a lista categorizada — ver o
+     comentário de ChangeType abaixo.
+
+   O `featured` NÃO controla se o corpo aparece (ReleaseCard o
+   renderiza sempre que existe); ele marca quem abre expandido
+   no topo do índice, e só a entrada mais recente o leva.
+
+   Este arquivo é também a LISTA DE PERMISSÃO do histórico: o
+   GitHub manda em data e link, mas só para versões declaradas
+   aqui — ver mergeReleaseNotes.ts.
 
    A versão do topo precisa casar com a do package.json
    (injetada como __APP_VERSION__); há teste garantindo isso.
 ───────────────────────────────────────────────────────── */
 
-export type ChangeType = "added" | "changed" | "fixed" | "removed";
+/* O vocabulário era o do Keep a Changelog — added / changed / fixed /
+   removed —, que serve a um changelog de biblioteca: quem lê quer saber
+   o que quebrou e o que sumiu. Este histórico tem outro leitor. Ele é
+   público, faz parte do portfólio, e a pergunta que responde é como o
+   projeto amadureceu.
+
+   Daí as seis categorias abaixo: elas nomeiam eixos de evolução em vez
+   de tipos de commit. `fixed` e `removed` saíram porque nenhuma entrada
+   os usa — um histórico curado registra o avanço, e correção de bug
+   antigo ou funcionalidade descontinuada não descrevem o projeto de
+   hoje. */
+export type ChangeType =
+    | "added"
+    | "improved"
+    | "design"
+    | "performance"
+    | "architecture"
+    | "content";
 
 /** Ordem canônica de exibição das categorias. */
 export const CHANGE_TYPES: ChangeType[] = [
     "added",
-    "changed",
-    "fixed",
-    "removed",
+    "improved",
+    "design",
+    "performance",
+    "architecture",
+    "content",
 ];
 
 /**
@@ -98,467 +130,231 @@ export type ReleaseTag = "design" | "feature" | "perf" | "a11y" | "fix";
 ───────────────────────────────────────────────────────── */
 export const RELEASE_NOTES: ReleaseEntry[] = [
     {
-        version: "2.5.2",
-        date: "2026-08-13",
-        featured: true,
-        tags: ["design"],
-        title: {
-            pt: "Uma frase antes dos links, e as colunas no lugar",
-            en: "A line before the links, and the columns settled",
-        },
-        summary: {
-            pt: "A lista de links ganha uma apresentação, e a coluna da direita para de pender.",
-            en: "The link list gets an introduction, and the right column stops sinking.",
-        },
-        body: {
-            pt: 'Duas correções pequenas na `/links`, das que só aparecem depois que o resto está pronto.\n\n**A lista começava sem apresentação.** Depois da bio e dos chips de stack, os cartões surgiam direto — faltava a frase que faz a passagem de "quem é" para "onde falar comigo". Ela entra acima da lista, e fica **fora** da região de navegação: o `nav` já se nomeia sozinho, e uma frase corrida como primeiro conteúdo de uma landmark seria lida como se fizesse parte dos links.\n\nO espaçamento abaixo dela é subtraído, não somado. A coluna já separa seus blocos por 32px, distância boa entre a lista e os botões — dois pesos parecidos —, mas demais entre a frase e a lista que ela apresenta: nessa distância a frase perde o vínculo com o que introduz. Ficou em 16px, medido, em todas as larguras.\n\n**As duas colunas não têm a mesma altura.** No desktop elas nasciam coladas no topo, e como a da identidade é mais alta, toda a sobra da direita ficava embaixo — a composição pendia. Agora a coluna dos links se centraliza verticalmente em relação à outra. Com a frase nova, a diferença caiu de 54px para 14px, e o deslocamento é de 7px: um assentamento fino, não um salto. O topo do primeiro cartão continua praticamente na linha do avatar.',
-            en: 'Two small corrections on `/links` — the kind that only surface once everything else is done.\n\n**The list began with no introduction.** After the bio and the stack chips, the cards appeared straight away — missing the line that carries you from "who this is" to "where to reach them". It goes above the list, and stays **outside** the navigation region: the `nav` already names itself, and a running sentence as the first content of a landmark would be read as if it were part of the links.\n\nThe spacing below it is subtracted, not added. The column already separates its blocks by 32px, a good distance between the list and the buttons — two similar weights — but too much between the line and the list it introduces: at that distance the line loses its bond with what follows. It settled at 16px, measured, at every width.\n\n**The two columns are not the same height.** On desktop they both started flush at the top, and since the identity column is taller, all the slack on the right piled up at the bottom — the composition leaned. The links column now centres itself vertically against the other. With the new line, the difference fell from 54px to 14px and the shift is 7px: a fine settling, not a jump. The top of the first card still sits practically on the avatar\'s line.',
-        },
-        changes: {
-            added: [
-                {
-                    pt: "Mensagem introdutória acima da lista de links, nos dois idiomas",
-                    en: "Introductory line above the link list, in both languages",
-                },
-            ],
-            changed: [
-                {
-                    pt: "No desktop, a coluna dos links se centraliza verticalmente em relação à identidade",
-                    en: "On desktop, the links column centres vertically against the identity column",
-                },
-            ],
-        },
-    },
-    {
-        version: "2.5.1",
-        date: "2026-08-13",
-        tags: ["design", "a11y"],
-        title: {
-            pt: "O bloco de identidade da /links, refeito",
-            en: "The /links identity block, reworked",
-        },
-        summary: {
-            pt: "Centralizado, com ritmo vertical de verdade — e a disponibilidade finalmente aparece.",
-            en: "Centred, with an actual vertical rhythm — and the availability status finally shows.",
-        },
-        body: {
-            pt: "Quando a `/links` ganhou a casca do site e as duas colunas do desktop, o bloco de identidade foi **movido** para a coluna nova, mas nunca redesenhado para ela. Esta versão faz esse trabalho.\n\n**O ritmo.** As margens eram 20 · 8 · 12 · 16 · 16 pixels — quase equidistantes. Sem agrupamento, o nome e o handle, que são uma coisa só, ficavam tão separados quanto a bio e os chips, que não são. Agora são três tempos: 8px cola o handle no nome, e 20 e 24 abrem os grupos seguintes.\n\n**A disponibilidade era informação morta.** O ponto verde na borda do avatar tinha o rótulo preso num atributo `title`, no mesmo elemento marcado como `aria-hidden`. Ou seja: invisível para quem enxerga e mudo para leitor de tela. A tradução existia em português e inglês e não chegava a ninguém. Virou uma pill acima do nome, com o texto visível — e o ponto, agora dentro dela, mantém a pulsação.\n\n**Um acento por nível.** O handle era crimson, o separador dos papéis também era crimson, e o status era verde: três acentos disputando, nenhum nível com o seu. O separador virou pontuação neutra e o crimson ficou só no handle.\n\n**Detalhes que só aparecem medindo.** A bio tinha 34 caracteres de largura máxima dentro de uma coluna de 520px — um bloco estreito sobrando espaço dos dois lados. Os seis chips de stack quebravam 4+2, que lê como acidente; agora quebram 3+3. E o separador entre os papéis, que no celular sobrava órfão no fim da primeira linha, passou a viajar junto com o papel seguinte.",
-            en: "When `/links` got the site shell and the desktop's two columns, the identity block was **moved** into the new column but never redesigned for it. This version does that work.\n\n**The rhythm.** The margins were 20 · 8 · 12 · 16 · 16 pixels — near-equidistant. With no grouping, the name and the handle, which are one thing, sat as far apart as the bio and the chips, which are not. Now there are three beats: 8px binds the handle to the name, and 20 and 24 open the following groups.\n\n**The availability was dead information.** The green dot on the avatar's edge carried its label in a `title` attribute, on the very element marked `aria-hidden`. That is: invisible to sighted users and mute to screen readers. The translation existed in both languages and reached nobody. It became a pill above the name, with visible text — and the dot, now inside it, keeps its pulse.\n\n**One accent per level.** The handle was crimson, the role separator was also crimson, and the status was green: three accents competing, no level owning one. The separator became neutral punctuation and crimson stayed with the handle alone.\n\n**Details that only show up when measured.** The bio was capped at 34 characters inside a 520px column — a narrow block with space to spare on both sides. The six stack chips wrapped 4+2, which reads as an accident; now they wrap 3+3. And the role separator, which on mobile was orphaned at the end of the first line, now travels with the role that follows it.",
-        },
-        changes: {
-            changed: [
-                {
-                    pt: "O bloco de identidade fica centralizado também no desktop, dentro da própria coluna",
-                    en: "The identity block is centred on desktop too, inside its own column",
-                },
-                {
-                    pt: "Ritmo vertical agrupado, avatar e nome maiores no desktop, bio mais larga e legível",
-                    en: "Grouped vertical rhythm, larger avatar and name on desktop, wider and more readable bio",
-                },
-                {
-                    pt: "Os chips de stack quebram 3+3 em vez de 4+2",
-                    en: "The stack chips wrap 3+3 instead of 4+2",
-                },
-            ],
-            fixed: [
-                {
-                    pt: "O status de disponibilidade não era exibido nem anunciado; agora é texto visível",
-                    en: "The availability status was neither shown nor announced; it is now visible text",
-                },
-                {
-                    pt: "O separador entre os papéis deixa de sobrar órfão quando a linha quebra no celular",
-                    en: "The role separator no longer dangles at a line break on mobile",
-                },
-            ],
-        },
-    },
-    {
-        version: "2.5.0",
-        date: "2026-08-13",
-        tags: ["design", "a11y"],
-        title: {
-            pt: "A página de links entra no site",
-            en: "The links page joins the site",
-        },
-        summary: {
-            pt: "A /links deixa de ser uma ilha: passa a usar o mesmo cabeçalho e rodapé das outras páginas.",
-            en: "The /links page stops being an island: it now uses the same header and footer as every other page.",
-        },
-        body: {
-            pt: "A `/links` era a única rota sem a casca do site. Em vez do cabeçalho e do rodapé que a home e as notas de versão usam, ela tinha dois botões flutuantes num canto e um rodapé escrito só para ela. Quem chegava de uma bio do Instagram via uma página bonita e sem nenhuma porta para o resto do portfólio.\n\nAgora ela monta o mesmo cabeçalho e o mesmo rodapé. Isso não foi colar dois componentes por cima do que existia — três coisas precisavam mudar junto.\n\n**A largura.** O corpo tinha 480px de máximo em qualquer tela, enquanto o cabeçalho e o rodapé ocupam a medida inteira do site. Num monitor, a navegação de oito itens se estendia por cima de uma tira estreita sem relação com ela. A partir de 900px o corpo passa a ter duas colunas — identidade à esquerda, links e ações à direita — encostadas nas mesmas margens do logotipo e do rodapé. Abaixo disso nada muda: continua a coluna única, que é como a página é de fato aberta.\n\n**A repetição.** GitHub, LinkedIn e e-mail apareceriam nos cartões e outra vez nos ícones do rodapé; nome, domínio e copyright apareceriam duas vezes na mesma tela. Saíram os controles flutuantes, a linha de redes secundárias e o rodapé próprio da página — tudo o que eles diziam já é dito pelo rodapé do site.\n\n**O cartão do portfólio.** Ele abria uma aba nova para `gcruz.dev.br` — o mesmo endereço em que o visitante já está, agora que o cabeçalho existe. Virou navegação interna, sem recarregar nada. O domínio continua visível embaixo do título, porque é a única linha da página que informa onde ele está.",
-            en: "The `/links` route was the only one without the site's shell. Instead of the header and footer used by the home page and the release notes, it had two floating buttons in a corner and a footer written just for it. Anyone arriving from an Instagram bio saw a nice page with no door to the rest of the portfolio.\n\nIt now mounts the same header and the same footer. This was not a matter of pasting two components on top of what was there — three things had to change with it.\n\n**Width.** The body was capped at 480px on any screen, while the header and footer span the site's full measure. On a monitor, an eight-item navigation stretched above a narrow strip unrelated to it. From 900px up the body becomes two columns — identity on the left, links and actions on the right — flush with the same margins as the logo and the footer. Below that nothing changes: still the single column, which is how the page is actually opened.\n\n**Repetition.** GitHub, LinkedIn and email would appear in the cards and again in the footer icons; name, domain and copyright would appear twice on one screen. Out went the floating controls, the secondary social row and the page's own footer — everything they said is already said by the site footer.\n\n**The portfolio card.** It opened a new tab to `gcruz.dev.br` — the very address the visitor is already on, now that the header exists. It became internal navigation, with no reload. The domain stays visible under the title, because it is the only line on the page that says where they are.",
-        },
-        changes: {
-            changed: [
-                {
-                    pt: "A /links passa a usar o cabeçalho e o rodapé do site, como as demais rotas",
-                    en: "The /links page now uses the site header and footer, like every other route",
-                },
-                {
-                    pt: "No desktop o corpo da /links ganha duas colunas, alinhadas à medida do site",
-                    en: "On desktop the /links body gains two columns, aligned to the site's measure",
-                },
-                {
-                    pt: "O cartão do portfólio virou rota interna, em vez de abrir uma aba nova para o mesmo domínio",
-                    en: "The portfolio card became an internal route instead of opening a new tab to the same domain",
-                },
-            ],
-            removed: [
-                {
-                    pt: "Controles flutuantes de idioma e tema da /links — o cabeçalho carrega os dois",
-                    en: "The floating language and theme controls on /links — the header carries both",
-                },
-                {
-                    pt: "Rodapé próprio da /links, que repetia nome, domínio, e-mail e copyright",
-                    en: "The /links page's own footer, which repeated name, domain, email and copyright",
-                },
-            ],
-        },
-    },
-    {
-        version: "2.4.0",
-        date: "2026-08-12",
-        tags: ["design"],
-        title: {
-            pt: "De volta a ser só um site",
-            en: "Back to being just a website",
-        },
-        summary: {
-            pt: "A distribuição como aplicativo sai de cena enquanto o projeto muda de direção.",
-            en: "App distribution steps aside while the project changes direction.",
-        },
-        body: {
-            pt: "As três versões anteriores construíram uma coisa só: transformar o portfólio em aplicativo instalável, com página de downloads, atualização automática e instaladores para quatro sistemas. Esta versão remove tudo isso.\n\nNão é conserto de nada — o que existia funcionava. É mudança de direção: há ideias novas para o projeto, e carregar um aplicativo desktop enquanto elas não estão definidas custa atenção a cada mudança no site. Um portfólio que também é app precisa que toda alteração seja pensada duas vezes, e agora esse custo não está sendo pago por nada.\n\nSaíram os dois aplicativos, a página de downloads, as funções que listavam e entregavam os instaladores, o canal de atualização e o fluxo que publicava tudo isso a cada versão. O site volta a ser o que era: um portfólio no navegador.\n\nO que **fica**: a marca `<gcruz.dev/>` e os ícones que saem dela, o menu móvel refeito, e as notas das versões 2.1 a 2.3 — elas descrevem coisas que existiram de verdade, e reescrever o passado para combinar com o presente seria falsificar o registro.\n\nA remoção foi feita num commit único, de propósito: se a ideia voltar, o caminho de volta é desfazer um commit, não recompor sete.",
-            en: "The three previous versions built one single thing: turning the portfolio into an installable application, with a downloads page, automatic updates and installers for four systems. This version removes all of it.\n\nNothing here is a fix — what existed worked. It is a change of direction: there are new ideas for the project, and carrying a desktop application while they are undefined costs attention on every change to the site. A portfolio that is also an app needs every alteration thought through twice, and right now that cost buys nothing.\n\nOut go both applications, the downloads page, the functions that listed and delivered the installers, the update channel and the pipeline that published all of it on every version. The site goes back to what it was: a portfolio in the browser.\n\nWhat **stays**: the `<gcruz.dev/>` mark and the icons derived from it, the reworked mobile menu, and the notes for 2.1 through 2.3 — they describe things that genuinely existed, and rewriting the past to match the present would falsify the record.\n\nThe removal is a single commit, on purpose: if the idea comes back, the way back is undoing one commit, not reassembling seven.",
-        },
-        changes: {
-            removed: [
-                {
-                    pt: "Aplicativo desktop (Electron) e aplicativo Android (Capacitor)",
-                    en: "Desktop application (Electron) and Android application (Capacitor)",
-                },
-                {
-                    pt: "Página /downloads e as funções que listavam e entregavam instaladores",
-                    en: "The /downloads page and the functions that listed and served installers",
-                },
-                {
-                    pt: "Canal de atualização automática e a publicação de release por tag",
-                    en: "The automatic update channel and tag-triggered release publishing",
-                },
-                {
-                    pt: "QR code do rodapé, que apontava para a página de downloads",
-                    en: "The footer QR code, which pointed at the downloads page",
-                },
-            ],
-            changed: [
-                {
-                    pt: "A geração de ícones passa a servir só ao site, a partir da mesma marca",
-                    en: "Icon generation now serves the site alone, from the same mark",
-                },
-            ],
-        },
-    },
-    {
-        version: "2.3.0",
-        date: "2026-08-10",
-        tags: ["design", "feature", "fix"],
-        title: {
-            pt: "A escolha volta a ser de quem baixa",
-            en: "The choice goes back to whoever downloads",
-        },
-        summary: {
-            pt: "Downloads sem recomendação, atualização dentro do app e identidade própria.",
-            en: "Downloads with no recommendation, in-app updates and an identity of its own.",
-        },
-        body: {
-            pt: "A página de downloads adivinhava o seu sistema pelo navegador e punha um cartão grande no topo dizendo **\u201cpara o seu sistema\u201d**. Parecia atencioso e era presunçoso: a detecção por user-agent erra com frequência, e mesmo quando acerta transfere para a interface uma decisão que é de quem baixa.\n\nAgora os quatro sistemas aparecem em pé de igualdade — mesmo cartão, mesmo tamanho, ordem fixa. Duas pessoas em máquinas diferentes veem exatamente a mesma tela.\n\nDentro do aplicativo, a mesma página passa a mostrar o estado da atualização e a resolvê-la ali: verificar, baixar e reiniciar sem sair para lugar nenhum. O download **não** começa sozinho — baixar mais de cem megabytes sem perguntar é o tipo de coisa que acontece numa rede móvel sem querer.\n\nA revisão do processo de atualização encontrou algo que valia por si: **ela nunca havia funcionado**. O `electron-updater` é CommonJS, e a forma como era carregado devolvia um objeto vazio; a primeira linha a usá-lo falhava. Como o erro caía num tratamento vazio, nada aparecia em lugar nenhum — nem no aplicativo, nem no log de quem publicou. Foi corrigido, e todo caminho de falha passou a virar estado visível em vez de silêncio.\n\nHá ainda um limite honesto: no Linux só a versão AppImage sabe se atualizar sozinha. Quem instala pelo pacote Debian vê isso escrito na própria página, com a lista de downloads logo abaixo, em vez de um \u201cverificando\u201d que nunca termina.\n\nPor fim, o aplicativo deixou de se chamar pelo nome de uma pessoa e de usar uma foto como ícone. O produto tem marca própria — a mesma do site — e ela agora vale do ícone do executável às telas do instalador.",
-            en: "The downloads page used to guess your system from the browser and put a large card at the top saying **\u201cfor your system\u201d**. It looked considerate and was presumptuous: user-agent detection is often wrong, and even when right it hands the interface a decision that belongs to whoever is downloading.\n\nNow the four systems appear as equals — same card, same size, fixed order. Two people on different machines see exactly the same screen.\n\nInside the application, that same page now shows the update state and resolves it right there: check, download and restart without leaving. The download does **not** start on its own — pulling a hundred-plus megabytes unasked is the kind of thing that happens on mobile data by accident.\n\nReviewing the update path turned up something worth the trip on its own: **it had never worked**. `electron-updater` is CommonJS, and the way it was being loaded returned an empty object; the first line to use it failed. Because the error fell into an empty handler, nothing surfaced anywhere — not in the app, not in the publisher's log. It is fixed, and every failure path now becomes visible state instead of silence.\n\nThere is an honest limit left: on Linux only the AppImage build can update itself. Anyone installing the Debian package reads that on the page itself, with the download list right below, instead of a \u201cchecking\u201d that never ends.\n\nFinally, the application stopped going by a person's name and using a photo as its icon. The product has a mark of its own — the same one the site uses — and it now holds from the executable icon through the installer screens.",
-        },
-        changes: {
-            added: [
-                {
-                    pt: "Atualização verificada, baixada e aplicada dentro do aplicativo",
-                    en: "Updates checked, downloaded and applied inside the app",
-                },
-                {
-                    pt: "Aviso claro quando a instalação não sabe se atualizar sozinha",
-                    en: "A clear notice when an install cannot update itself",
-                },
-                {
-                    pt: "Ícones gerados de uma fonte só, para todas as plataformas",
-                    en: "Icons generated from a single source, for every platform",
-                },
-            ],
-            changed: [
-                {
-                    pt: "Downloads sem detecção de sistema: os quatro em pé de igualdade",
-                    en: "Downloads with no system detection: all four presented equally",
-                },
-                {
-                    pt: "Aplicativo e instalador com a marca do projeto, não com foto pessoal",
-                    en: "App and installer carry the project mark, not a personal photo",
-                },
-                {
-                    pt: "Executável renomeado para a identidade do produto",
-                    en: "Executable renamed to the product identity",
-                },
-                {
-                    pt: "Telas do instalador e janela do .dmg no tema do projeto",
-                    en: "Installer screens and .dmg window in the project theme",
-                },
-            ],
-            fixed: [
-                {
-                    pt: "A atualização automática nunca funcionou: o updater era carregado errado",
-                    en: "Auto-update never worked: the updater was being loaded incorrectly",
-                },
-                {
-                    pt: "Falhas de atualização viravam silêncio em vez de mensagem",
-                    en: "Update failures became silence instead of a message",
-                },
-            ],
-        },
-    },
-    {
-        version: "2.2.0",
-        date: "2026-08-10",
-        tags: ["feature", "fix"],
-        title: {
-            pt: "Distribuição que não depende do repositório",
-            en: "Distribution that doesn't depend on the repository",
-        },
-        summary: {
-            pt: "O download passa a sair do próprio site, com o repositório fechado.",
-            en: "Downloads now come from the site itself, with the repository closed.",
-        },
-        body: {
-            pt: "O repositório deste projeto vai deixar de ser público, e a versão anterior não sobreviveria a isso. Os links de download vinham do `browser_download_url` que o GitHub devolve em cada arquivo — um endereço que só é anônimo enquanto o repositório está aberto. Fechado o repositório, todo botão da página de downloads passaria a responder 404, sem aviso.\n\nAgora existe uma porta própria. O servidor faz o que o visitante não pode: pede o arquivo à API do GitHub com um token e recebe de volta um endereço assinado, válido por poucos minutos, para o qual o navegador é encaminhado. O arquivo continua vindo da infraestrutura do GitHub; o que deixou de ser necessário é o repositório estar aberto. O token nunca sai do servidor.\n\nA mesma porta serve a **atualização automática**. Ela lia as releases do GitHub, o que um aplicativo instalado não consegue fazer num repositório privado — não há como embutir um token num programa distribuído. O app passa a consultar o próprio site.\n\nDois defeitos apareceram na revisão do aplicativo desktop, e nenhum dos dois aparecia em desenvolvimento. As chamadas de API dentro do app caíam no mesmo caminho das páginas e recebiam HTML onde o código esperava dados — a tela de downloads mostrava erro dentro do aplicativo enquanto funcionava no navegador. E as rotas de versão, como `/release-notes/v2.1.0`, eram confundidas com pedido de arquivo por causa do ponto no número: recarregar a página estando nelas não carregava nada.\n\nOs instaladores também mudaram de nome. Antes traziam espaços, que viravam código na URL e eram trocados por pontos ao publicar — o suficiente para a atualização automática procurar um arquivo que não existia. Agora o nome traz sistema e arquitetura, e é o mesmo do começo ao fim.",
-            en: "This project's repository is going private, and the previous version would not survive that. Download links came from the `browser_download_url` that GitHub returns for each file — an address that is only anonymous while the repository is open. Once closed, every button on the downloads page would answer 404, with no warning.\n\nThere is a door of its own now. The server does what the visitor cannot: it asks GitHub's API for the file using a token and gets back a signed address, valid for a few minutes, which the browser is forwarded to. The file still comes from GitHub's infrastructure; what stopped being necessary is the repository being open. The token never leaves the server.\n\nThe same door serves **automatic updates**. They used to read GitHub releases, which an installed application cannot do on a private repository — there is no way to embed a token in a distributed program. The app now asks the site instead.\n\nTwo defects surfaced while reviewing the desktop app, and neither showed up in development. API calls inside the app fell through the same path as pages and received HTML where the code expected data — the downloads screen showed an error inside the application while working in the browser. And version routes like `/release-notes/v2.1.0` were mistaken for file requests because of the dot in the number: reloading while on one of them loaded nothing.\n\nThe installers were renamed too. They used to carry spaces, which became escape codes in the URL and were swapped for dots on publish — enough for automatic updates to look for a file that did not exist. The name now carries system and architecture, and is the same from end to end.",
-        },
-        changes: {
-            added: [
-                {
-                    pt: "Download servido pelo próprio site, com o repositório privado",
-                    en: "Downloads served by the site itself, with a private repository",
-                },
-                {
-                    pt: "Canal de atualização automática independente do GitHub",
-                    en: "Automatic update channel independent from GitHub",
-                },
-            ],
-            changed: [
-                {
-                    pt: "Instaladores nomeados por sistema e arquitetura, sem espaços",
-                    en: "Installers named by system and architecture, without spaces",
-                },
-                {
-                    pt: "Notas da versão e histórico abrem no site, não no GitHub",
-                    en: "Release notes and history open on the site, not on GitHub",
-                },
-                {
-                    pt: "Ícone próprio no aplicativo instalado, no lugar do genérico",
-                    en: "Own icon on the installed app, replacing the generic one",
-                },
-            ],
-            fixed: [
-                {
-                    pt: "Chamadas de API dentro do aplicativo recebiam HTML no lugar de dados",
-                    en: "API calls inside the app received HTML instead of data",
-                },
-                {
-                    pt: "Rotas de versão não carregavam ao recarregar dentro do aplicativo",
-                    en: "Version routes failed to load on reload inside the app",
-                },
-                {
-                    pt: "Links para o GitHub apontavam para um repositório inexistente",
-                    en: "GitHub links pointed at a repository that does not exist",
-                },
-                {
-                    pt: "A release publicava o build do site junto dos instaladores",
-                    en: "The release published the site build alongside the installers",
-                },
-            ],
-        },
-    },
-    {
-        version: "2.1.0",
-        date: "2026-08-10",
-        tags: ["feature"],
-        title: {
-            pt: "O portfólio fora do navegador",
-            en: "The portfolio outside the browser",
-        },
-        summary: {
-            pt: "Primeira versão com instalador para Windows, macOS e Linux.",
-            en: "First version with an installer for Windows, macOS and Linux.",
-        },
-        body: {
-            pt: "Esta versão publica o portfólio como **aplicativo instalável**, no mesmo modelo de distribuição que o Discord usa: o instalador sai de uma release do GitHub e o próprio app cuida da atualização daí em diante.\n\nO desktop é **Electron**, e a interface é exatamente a mesma do site — não há uma segunda base de código. O `dist/` produzido por `apps/web` é copiado para dentro do pacote e servido por um **protocolo próprio, `app://`**. Isso não é detalhe de implementação: servir de `file://` quebraria a History API, que é o roteamento inteiro do site, e abrir uma porta HTTP local só para servir arquivos do próprio disco seria expor um servidor sem necessidade. O protocolo próprio resolve os dois de uma vez, com `contextIsolation` ligado e `nodeIntegration` desligado.\n\nA página **/downloads** foi reorganizada em torno disso. A lista de instaladores não está escrita no código: vem das releases do GitHub por uma função serverless. É o que impede a página de continuar oferecendo a versão passada depois que outra é publicada — link de download velho é pior que link ausente, porque funciona e entrega o errado.\n\nA plataforma detectada pelo navegador ganha um cartão próprio no topo, e as demais seguem logo abaixo. A detecção **promove, nunca esconde**: ela erra, e uma página que oculta as outras opções ao errar deixa a pessoa sem saída.\n\nOs instaladores **ainda não são assinados digitalmente**. O Windows e o macOS vão mostrar um aviso de editor não reconhecido na primeira execução. É esperado, e a página diz isso em vez de deixar a pessoa descobrir sozinha.",
-            en: "This version ships the portfolio as an **installable app**, following the same distribution model Discord uses: the installer comes from a GitHub release, and the app handles updates from there on.\n\nThe desktop build is **Electron**, and the interface is exactly the same as the website — there is no second codebase. The `dist/` produced by `apps/web` is copied into the package and served through a **custom `app://` protocol**. That is not an implementation detail: serving from `file://` would break the History API, which is the site's entire routing, and opening a local HTTP port just to serve files from your own disk would expose a server for no reason. The custom protocol solves both at once, with `contextIsolation` on and `nodeIntegration` off.\n\nThe **/downloads** page was reorganized around it. The installer list is not written in the code: it comes from GitHub releases through a serverless function. That is what stops the page from offering the previous version after a new one ships — a stale download link is worse than a missing one, because it works and hands over the wrong thing.\n\nThe platform detected from the browser gets its own card at the top, with the others right below. Detection **promotes, never hides**: it gets things wrong, and a page that hides the alternatives when it does leaves you with no way out.\n\nThe installers are **not yet digitally signed**. Windows and macOS will show an unrecognized-publisher warning on first run. That is expected, and the page says so instead of letting you find out on your own.",
-        },
-        changes: {
-            added: [
-                {
-                    pt: "Aplicativo desktop em Electron para Windows, macOS e Linux",
-                    en: "Electron desktop app for Windows, macOS and Linux",
-                },
-                {
-                    pt: "Instaladores .exe, .dmg, AppImage e .deb publicados por tag",
-                    en: "Installers .exe, .dmg, AppImage and .deb published by tag",
-                },
-                {
-                    pt: "Atualização automática a partir das releases do GitHub",
-                    en: "Automatic updates from GitHub releases",
-                },
-                {
-                    pt: "Página /downloads com detecção de plataforma e contagem de downloads",
-                    en: "/downloads page with platform detection and download counts",
-                },
-                {
-                    pt: "Monorepo com npm workspaces: apps/web, apps/desktop e apps/mobile",
-                    en: "Monorepo with npm workspaces: apps/web, apps/desktop and apps/mobile",
-                },
-            ],
-            changed: [
-                {
-                    pt: "Rodapé reorganizado: âncoras e páginas em colunas separadas",
-                    en: "Reorganized footer: anchors and pages in separate columns",
-                },
-                {
-                    pt: "Fundo e iluminação fixos na rolagem; só as partículas se movem",
-                    en: "Background and lighting fixed on scroll; only particles move",
-                },
-            ],
-            fixed: [
-                {
-                    pt: "Dois tokens inexistentes deixavam cartões e caixas sem borda nos dois temas",
-                    en: "Two non-existent tokens left cards and boxes with no border in both themes",
-                },
-                {
-                    pt: "Resposta da API de downloads passa a ser normalizada campo a campo",
-                    en: "The downloads API response is now normalized field by field",
-                },
-            ],
-        },
-    },
-    {
         version: "2.0.0",
         date: "2026-08-04",
-        tags: ["design", "feature"],
+        featured: true,
+        tags: ["design", "feature", "a11y", "perf"],
         title: {
-            pt: "Segunda geração do portfólio",
-            en: "Second generation of the portfolio",
+            pt: "gcruz.dev.br — a segunda geração",
+            en: "gcruz.dev.br — the second generation",
         },
         summary: {
-            pt: "Primeira versão publicada da reconstrução completa.",
-            en: "First published version of the full rebuild.",
+            pt: "O portfólio ganha domínio, identidade e estrutura próprios: mais rápido, mais acessível e pensado para crescer.",
+            en: "The portfolio gets its own domain, identity and structure: faster, more accessible and built to grow.",
         },
         body: {
-            pt: "Esta é a primeira versão marcada do portfólio reconstruído. A versão anterior era **HTML, CSS e JavaScript puro**; esta é uma aplicação **React com TypeScript**, organizada em camadas e apoiada num design system próprio.\n\nA decisão que mais moldou o resto foi manter **apenas duas dependências de runtime** — React e ReactDOM. Todo o resto é do projeto: os tokens de estilo, os 65 ícones, o modal acessível, o roteamento e a internacionalização. Isso mantém o bundle previsível e o código sob controle.\n\nCada número exibido no site é **derivado, nunca digitado**: semestre da graduação, anos de experiência e datas de carreira saem de marcos em ISO e se atualizam sozinhos com o tempo.\n\nO CSS nasceu desktop-first e foi convertido por inteiro: **nenhuma** das consultas de largura usava min-width, e hoje são 45. Uma refatoração de aparência não tem teste que a cubra, então a garantia veio de um **diff de geometria** — um arranjo que mede a caixa de cada elemento em 288 combinações de rota, largura e tema, calibrado contra o próprio código sem mudança antes de servir de prova. As únicas diferenças que apareceram foram as duas faixas de breakpoint fundidas de propósito.",
-            en: "This is the first tagged version of the rebuilt portfolio. The previous one was **plain HTML, CSS and JavaScript**; this is a **React and TypeScript** application, organized in layers and backed by its own design system.\n\nThe decision that shaped everything else was keeping **only two runtime dependencies** — React and ReactDOM. Everything else belongs to the project: the style tokens, the 65 icons, the accessible modal, the routing and the internationalization. That keeps the bundle predictable and the code under control.\n\nEvery number the site shows is **derived, never typed**: current semester, years of experience and career dates all come from ISO milestones and keep themselves up to date.\n\nThe CSS started out desktop-first and was converted end to end: **none** of the width queries used min-width, and today 45 do. A refactor of appearance has no test that covers it, so the guarantee came from a **geometry diff** — a harness that measures every element's box across 288 combinations of route, width and theme, calibrated against the unchanged code before it was trusted as proof. The only differences it reported were the two breakpoint ranges merged on purpose.",
+            pt: "Esta é a versão que está no ar em **gcruz.dev.br**, e o ponto de chegada de tudo que as versões anteriores prepararam.\n\nO site deixou de ser uma página com seções e passou a ser uma aplicação com arquitetura: interface construída em **React com TypeScript**, empacotada por **Vite**, e organizada em camadas — `app`, `pages`, `widgets` e `shared` —, em que cada peça sabe do que depende e nada depende de tudo. É o que permite acrescentar uma página nova sem tocar nas existentes.\n\n**A identidade ficou própria.** A marca tipográfica `<gcruz.dev/>` é a mesma no cabeçalho, no rodapé e no menu, e dela saem todos os ícones do site — o favicon, o ícone de instalação, o do iOS — gerados a partir de um único desenho, para que nunca divirjam entre si. O tema escuro é o padrão, com um tema claro completo, e ambos vêm de um sistema de tokens: cor, espaçamento, tipografia e raio têm nome e escala, em vez de valores repetidos por aí.\n\n**A qualidade virou automação.** Cada mudança passa por tipos, lint, formato, testes e por auditorias que rodam num navegador de verdade: acessibilidade sem violações em todas as combinações de rota, tema e idioma; nenhuma rolagem horizontal de 320 a 1440 pixels; orçamento de tamanho de JavaScript e CSS que reprova o que passar do limite. O que não é medido não entra.\n\n**O conteúdo ganhou lugar.** Carreira, formação, projetos e recomendações têm apresentação própria, com um projeto em destaque que abre em galeria. Tudo bilíngue — português e inglês — com idioma na URL e metadados por rota, para que cada página seja compartilhável com título, descrição e imagem corretos.",
+            en: "This is the version live at **gcruz.dev.br**, and the destination of everything the previous versions prepared.\n\nThe site stopped being a page with sections and became an application with an architecture: an interface built in **React with TypeScript**, bundled by **Vite**, and organised in layers — `app`, `pages`, `widgets` and `shared` — where every piece knows what it depends on and nothing depends on everything. That is what makes it possible to add a new page without touching the existing ones.\n\n**The identity became its own.** The typographic mark `<gcruz.dev/>` is the same in the header, the footer and the menu, and every icon on the site comes from it — the favicon, the install icon, the iOS one — generated from a single drawing so they can never drift apart. Dark is the default theme, with a complete light theme alongside it, and both come from a token system: colour, spacing, typography and radius have names and scales instead of values repeated around the codebase.\n\n**Quality became automation.** Every change goes through types, linting, formatting, tests, and audits that run in a real browser: accessibility with zero violations across every combination of route, theme and language; no horizontal scrolling from 320 to 1440 pixels; a size budget for JavaScript and CSS that fails anything over the limit. What is not measured does not ship.\n\n**The content got a place of its own.** Career, education, projects and recommendations each have their own presentation, with a featured project that opens in a gallery. Everything is bilingual — Portuguese and English — with the language in the URL and per-route metadata, so each page is shareable with the right title, description and image.",
         },
         changes: {
             added: [
                 {
-                    pt: "Design system com tokens em três níveis, tema claro e escuro",
-                    en: "Design system with three-tier tokens, light and dark themes",
+                    pt: "Domínio próprio gcruz.dev.br, com página de links e histórico de versões",
+                    en: "Own domain gcruz.dev.br, with a link hub and a version history",
                 },
                 {
-                    pt: "Arquitetura em camadas: app, pages, widgets e shared",
-                    en: "Layered architecture: app, pages, widgets and shared",
-                },
-                {
-                    pt: "Internacionalização completa em português e inglês",
-                    en: "Full internationalization in Portuguese and English",
-                },
-                {
-                    pt: "Página /links: central de links no formato social tree",
-                    en: "/links page: link hub in social tree format",
-                },
-                {
-                    pt: "Roteamento por History API, sem dependência externa",
-                    en: "History API routing, with no external dependency",
-                },
-                {
-                    pt: "Integração de contribuições do GitHub por função serverless",
-                    en: "GitHub contribution stats via a serverless function",
+                    pt: "Site bilíngue completo, com idioma na URL e metadados por rota",
+                    en: "Fully bilingual site, with the language in the URL and per-route metadata",
                 },
             ],
-            changed: [
+            design: [
                 {
-                    pt: "Imagens migradas para WebP: de 8,6 MB para cerca de 224 KB",
-                    en: "Images migrated to WebP: from 8.6 MB down to about 224 KB",
+                    pt: "Marca tipográfica <gcruz.dev/> unificada em cabeçalho, rodapé e menu",
+                    en: "Typographic mark <gcruz.dev/> unified across header, footer and menu",
                 },
                 {
-                    pt: "Bundle dividido: vendor separado e modais sob demanda",
-                    en: "Split bundle: separate vendor chunk and on-demand modals",
+                    pt: "Temas escuro e claro completos, derivados de um sistema de tokens",
+                    en: "Complete dark and light themes, derived from a token system",
                 },
                 {
-                    pt: "CSS convertido para mobile-first: 45 consultas por min-width",
-                    en: "CSS converted to mobile-first: 45 min-width queries",
-                },
-                {
-                    pt: "Escala de breakpoints declarada: dez valores soltos viraram oito",
-                    en: "Declared breakpoint scale: ten loose values became eight",
+                    pt: "Todos os ícones do site gerados a partir de um único desenho da marca",
+                    en: "Every site icon generated from a single drawing of the mark",
                 },
             ],
-            fixed: [
+            architecture: [
                 {
-                    pt: "Overflow horizontal eliminado de 320 px a 4K",
-                    en: "Horizontal overflow eliminated from 320 px to 4K",
+                    pt: "Interface em React e TypeScript, empacotada por Vite",
+                    en: "Interface in React and TypeScript, bundled by Vite",
                 },
                 {
-                    pt: "Alvos de toque de 44 px em dispositivos sem mouse",
-                    en: "44 px touch targets on pointer-coarse devices",
+                    pt: "Código organizado em camadas: app, pages, widgets e shared",
+                    en: "Code organised in layers: app, pages, widgets and shared",
+                },
+            ],
+            performance: [
+                {
+                    pt: "Orçamento de tamanho para JavaScript e CSS, verificado a cada mudança",
+                    en: "Size budget for JavaScript and CSS, checked on every change",
+                },
+            ],
+            improved: [
+                {
+                    pt: "Acessibilidade sem violações em todas as rotas, temas e idiomas",
+                    en: "Accessibility with zero violations across every route, theme and language",
                 },
                 {
-                    pt: "Código morto no CSS: grade repetida, regra sem efeito e declaração duplicada",
-                    en: "Dead CSS: repeated grid, no-op rule and duplicated declaration",
+                    pt: "Layout sem rolagem horizontal de 320 a 1440 pixels",
+                    en: "Layout free of horizontal scrolling from 320 to 1440 pixels",
+                },
+            ],
+            content: [
+                {
+                    pt: "Carreira, formação, projetos e recomendações com apresentação própria",
+                    en: "Career, education, projects and recommendations with their own presentation",
+                },
+                {
+                    pt: "Projeto em destaque com galeria e detalhamento técnico",
+                    en: "Featured project with a gallery and technical detail",
                 },
             ],
         },
         links: [
             {
-                label: { pt: "Ver a central de links", en: "See the link hub" },
-                href: "/links",
+                label: {
+                    pt: "Abrir o site",
+                    en: "Open the site",
+                },
+                href: "https://gcruz.dev.br",
             },
         ],
     },
     {
-        version: "2.0.0-rc.1",
+        version: "2.0.0-beta.5",
         date: "2026-08-03",
-        tags: ["feature", "fix"],
+        tags: ["feature", "design"],
         title: {
-            pt: "Central de links e roteamento próprio",
-            en: "Link hub and in-house routing",
+            pt: "Central de links e navegação própria",
+            en: "Link hub and in-house navigation",
         },
         summary: {
-            pt: "Central de links, roteamento próprio e correções de deploy.",
-            en: "Link hub, in-house routing and deploy fixes.",
+            pt: "Uma página só para os links de contato, e um sistema de rotas que sustenta o site crescer.",
+            en: "A page dedicated to contact links, and a routing system that lets the site grow.",
+        },
+        body: {
+            pt: "A última etapa antes do lançamento resolveu duas coisas que o site precisava para deixar de ser uma página só.\n\n**A central de links.** Nasceu a `/links`: uma página enxuta, pensada para ser aberta a partir da bio de uma rede social, reunindo portfólio, GitHub, LinkedIn e contato em cartões grandes, com foto, stack e um botão de compartilhar. Ela tem título, endereço canônico e imagem de compartilhamento próprios, então cai bem em qualquer lugar que se cole o link.\n\n**A navegação própria.** Até aqui o site era um endereço único. Passou a ter roteamento próprio, escrito sobre a API de histórico do navegador — sem biblioteca de rotas —, com cada página carregada sob demanda. Trocar de página não recarrega o site, e o botão de voltar funciona como se espera.\n\n**Uma fonte só para os endereços.** As URLs dos projetos estavam repetidas em quatro componentes diferentes, o que garantia que uma hora divergiriam. Agora vivem num lugar só, e todo componente que precisa delas consulta esse lugar.",
+            en: "The last step before launch settled two things the site needed in order to stop being a single page.\n\n**The link hub.** `/links` was born: a lean page, designed to be opened from a social media bio, gathering portfolio, GitHub, LinkedIn and contact into large cards, with a photo, a stack and a share button. It has its own title, canonical address and share image, so it looks right wherever the link is pasted.\n\n**In-house navigation.** Until then the site was a single address. It gained its own routing, written on top of the browser's History API — no routing library — with each page loaded on demand. Changing pages does not reload the site, and the back button behaves as expected.\n\n**One source for the addresses.** Project URLs were duplicated across four different components, which guaranteed they would eventually drift. They now live in one place, and every component that needs them reads from it.",
         },
         changes: {
             added: [
                 {
-                    pt: "Rota /links com título, canonical e Open Graph próprios",
-                    en: "/links route with its own title, canonical and Open Graph",
+                    pt: "Página /links, com cartões de contato, foto, stack e compartilhamento",
+                    en: "/links page, with contact cards, photo, stack and sharing",
                 },
+                {
+                    pt: "Roteamento próprio sobre a API de histórico, sem biblioteca externa",
+                    en: "In-house routing on top of the History API, with no external library",
+                },
+            ],
+            architecture: [
                 {
                     pt: "Fonte única para todas as URLs públicas do site",
                     en: "Single source for every public URL on the site",
                 },
+                {
+                    pt: "Páginas secundárias carregadas sob demanda",
+                    en: "Secondary pages loaded on demand",
+                },
             ],
-            fixed: [
+            content: [
                 {
-                    pt: "Acesso direto a /links retornava 404 em produção",
-                    en: "Direct access to /links returned 404 in production",
+                    pt: "Título, endereço canônico e imagem de compartilhamento por página",
+                    en: "Per-page title, canonical address and share image",
+                },
+            ],
+        },
+    },
+    {
+        version: "2.0.0-beta.4",
+        date: "2026-07-31",
+        tags: ["a11y", "perf"],
+        title: {
+            pt: "Acessível de ponta a ponta, e medido",
+            en: "Accessible end to end, and measured",
+        },
+        summary: {
+            pt: "Acessibilidade e responsividade deixam de ser intenção e passam a ser verificadas automaticamente.",
+            en: "Accessibility and responsiveness stop being an intention and start being checked automatically.",
+        },
+        body: {
+            pt: "Esta etapa trocou boas intenções por verificação. Todo site diz ser acessível e responsivo; poucos conseguem provar. Aqui isso passou a ser medido a cada mudança.\n\n**Acessibilidade.** Um navegador de verdade abre cada rota, em cada tema e em cada idioma, e roda uma bateria de regras de acessibilidade reconhecidas. Qualquer violação reprova a mudança. As correções que isso trouxe são as invisíveis e importantes: contraste de texto, nomes acessíveis em botões que só têm ícone, foco visível em tudo que recebe teclado, e regiões que anunciam mudanças para quem usa leitor de tela.\n\n**Responsividade.** Os pontos de quebra viraram uma escala nomeada, em vez de valores escolhidos caso a caso. E existe uma verificação que abre o site de 320 a 1440 pixels e reprova qualquer rolagem horizontal — o defeito de responsividade mais comum, e o mais fácil de não notar no monitor de quem desenvolve.\n\n**Toque e movimento.** Alvos de toque com tamanho confortável em telas pequenas, e respeito à preferência de movimento reduzido do sistema: quem pediu menos animação recebe menos animação.",
+            en: "This step traded good intentions for verification. Every site claims to be accessible and responsive; few can prove it. Here that became measured on every change.\n\n**Accessibility.** A real browser opens each route, in each theme and each language, and runs a recognised battery of accessibility rules. Any violation fails the change. The fixes this brought are the invisible, important ones: text contrast, accessible names on icon-only buttons, visible focus on everything reachable by keyboard, and regions that announce updates to screen reader users.\n\n**Responsiveness.** Breakpoints became a named scale instead of values picked case by case. And a check opens the site from 320 to 1440 pixels and fails any horizontal scrolling — the most common responsive defect, and the easiest to miss on a developer's monitor.\n\n**Touch and motion.** Comfortably sized touch targets on small screens, and respect for the system's reduced-motion preference: whoever asked for less animation gets less animation.",
+        },
+        changes: {
+            improved: [
+                {
+                    pt: "Acessibilidade verificada automaticamente em cada rota, tema e idioma",
+                    en: "Accessibility automatically checked on every route, theme and language",
                 },
                 {
-                    pt: "Função serverless nunca chegava a ser compilada no deploy",
-                    en: "Serverless function was never compiled during deploy",
+                    pt: "Contraste, foco visível e nomes acessíveis revisados em todo o site",
+                    en: "Contrast, visible focus and accessible names reviewed across the site",
                 },
                 {
-                    pt: "URLs de projeto duplicadas entre quatro componentes",
-                    en: "Project URLs duplicated across four components",
+                    pt: "Alvos de toque confortáveis em telas pequenas",
+                    en: "Comfortable touch targets on small screens",
+                },
+            ],
+            design: [
+                {
+                    pt: "Escala nomeada de pontos de quebra, aplicada a todos os componentes",
+                    en: "Named breakpoint scale, applied across every component",
+                },
+            ],
+            performance: [
+                {
+                    pt: "Verificação de rolagem horizontal de 320 a 1440 pixels",
+                    en: "Horizontal scrolling check from 320 to 1440 pixels",
+                },
+                {
+                    pt: "Preferência de movimento reduzido respeitada nas animações",
+                    en: "Reduced-motion preference respected across animations",
+                },
+            ],
+        },
+    },
+    {
+        version: "2.0.0-beta.3",
+        date: "2026-07-29",
+        tags: ["design", "feature"],
+        title: {
+            pt: "Sistema de design e apresentação dos projetos",
+            en: "Design system and project presentation",
+        },
+        summary: {
+            pt: "Cor, espaçamento e tipografia ganham escala própria, e os projetos ganham lugar de destaque.",
+            en: "Colour, spacing and typography get their own scale, and the projects get a place to shine.",
+        },
+        body: {
+            pt: "Com a base já organizada, esta etapa cuidou de como o site se parece e de como ele apresenta o trabalho.\n\n**O sistema de design.** Cor, espaçamento, tipografia, raio de borda e sombra passaram a ter nome e escala. Em vez de um valor escolhido em cada arquivo, existe um vocabulário: quem escreve um componente novo usa as mesmas medidas que todos os outros, e mudar o tema inteiro é mudar a definição, não caçar ocorrências. É o que tornou o tema claro possível sem duplicar folha de estilo.\n\n**A linguagem visual.** Superfícies de vidro com desfoque e borda translúcida, cantos generosos, e movimento sutil — o suficiente para dar vida sem atrapalhar a leitura. Tipografia com três famílias e papéis claros: uma de exibição para títulos, uma de texto para leitura e uma monoespaçada para tudo que é técnico.\n\n**Os projetos.** Ganharam apresentação de verdade: um projeto em destaque, com galeria de imagens que abre em tela cheia, descrição do problema, da solução e do resultado, e a lista de tecnologias. Os demais aparecem em cartões com demonstração e repositório. As recomendações recebidas ganharam carrossel próprio.",
+            en: "With the foundation already organised, this step took care of how the site looks and how it presents the work.\n\n**The design system.** Colour, spacing, typography, border radius and shadow were given names and scales. Instead of a value picked in each file, there is a vocabulary: whoever writes a new component uses the same measurements as every other one, and changing the whole theme means changing a definition rather than hunting occurrences. That is what made the light theme possible without duplicating a stylesheet.\n\n**The visual language.** Glass surfaces with blur and a translucent border, generous corners, and subtle motion — enough to feel alive without getting in the way of reading. Typography with three families and clear roles: a display face for headings, a body face for reading, and a monospaced one for everything technical.\n\n**The projects.** They got a real presentation: a featured project, with an image gallery that opens full screen, a description of the problem, the solution and the outcome, and the list of technologies. The others appear as cards with a demo and a repository. Recommendations received got a carousel of their own.",
+        },
+        changes: {
+            design: [
+                {
+                    pt: "Sistema de tokens para cor, espaçamento, tipografia, raio e sombra",
+                    en: "Token system for colour, spacing, typography, radius and shadow",
+                },
+                {
+                    pt: "Tema claro completo, derivado do mesmo vocabulário do escuro",
+                    en: "Complete light theme, derived from the same vocabulary as the dark one",
+                },
+                {
+                    pt: "Superfícies de vidro e tipografia com papéis definidos",
+                    en: "Glass surfaces and typography with defined roles",
+                },
+            ],
+            content: [
+                {
+                    pt: "Projeto em destaque com galeria em tela cheia e detalhamento técnico",
+                    en: "Featured project with a full-screen gallery and technical detail",
+                },
+                {
+                    pt: "Cartões de projeto com demonstração e repositório",
+                    en: "Project cards with a demo and a repository",
+                },
+                {
+                    pt: "Carrossel de recomendações recebidas",
+                    en: "Carousel of recommendations received",
                 },
             ],
         },
@@ -568,34 +364,38 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
         date: "2026-07-26",
         tags: ["perf", "design"],
         title: {
-            pt: "Modal reutilizável e bundle dividido",
-            en: "Reusable modal and a split bundle",
+            pt: "Componentes reutilizáveis e carregamento mais leve",
+            en: "Reusable components and a lighter load",
         },
         summary: {
-            pt: "Modal reutilizável, carrossel de recomendações e bundle menor.",
-            en: "Reusable modal, recommendations carousel and a smaller bundle.",
+            pt: "Peças de interface deixam de ser repetidas, e o site passa a carregar em partes.",
+            en: "Interface pieces stop being repeated, and the site starts loading in parts.",
+        },
+        body: {
+            pt: "Com a base refatorada, apareceu o padrão que se repetia: várias telas precisavam de uma janela sobreposta, e cada uma resolvia à sua maneira.\n\n**A janela sobreposta virou uma peça só.** Um componente base que trata o que costuma ser esquecido: o foco fica preso dentro dela enquanto está aberta, a página atrás para de rolar, a tecla Escape fecha, e o conteúdo de trás fica inerte para quem usa leitor de tela. Quem precisa de uma janela nova herda tudo isso em vez de reimplementar — e de esquecer metade.\n\n**O carregamento ficou em partes.** O site era entregue num único bloco de código. Ele foi dividido: as bibliotecas de base de um lado, a aplicação do outro, e as telas secundárias só chegam quando alguém as abre. Quem entra na página inicial não paga pelo que não vai ver.\n\n**O tema voltou a ouvir o sistema.** Sem preferência salva, o site passou a seguir o modo claro ou escuro configurado no aparelho, em vez de assumir um.",
+            en: "With the foundation refactored, the repeating pattern showed itself: several screens needed an overlay window, and each solved it its own way.\n\n**The overlay became a single piece.** A base component that handles what usually gets forgotten: focus stays trapped inside while it is open, the page behind stops scrolling, the Escape key closes it, and the content behind becomes inert for screen reader users. Anyone needing a new window inherits all of that instead of reimplementing it — and forgetting half.\n\n**Loading happens in parts.** The site was delivered as a single block of code. It was split: base libraries on one side, the application on the other, and secondary screens only arrive when someone opens them. Whoever lands on the home page does not pay for what they will not see.\n\n**The theme listens to the system again.** With no saved preference, the site follows the light or dark mode configured on the device instead of assuming one.",
         },
         changes: {
             added: [
                 {
-                    pt: "Modal base com foco preso, trava de rolagem e Escape",
-                    en: "Base modal with focus trap, scroll lock and Escape",
-                },
-                {
-                    pt: "Carrossel paginado nas recomendações",
-                    en: "Paginated carousel in the recommendations section",
+                    pt: "Janela sobreposta reutilizável, com foco preso, trava de rolagem e Escape",
+                    en: "Reusable overlay window, with focus trap, scroll lock and Escape",
                 },
             ],
-            changed: [
+            performance: [
                 {
-                    pt: "Chunk único de 284 KB dividido em vendor e aplicação",
-                    en: "Single 284 KB chunk split into vendor and application",
+                    pt: "Código dividido entre bibliotecas de base e aplicação",
+                    en: "Code split between base libraries and application",
+                },
+                {
+                    pt: "Telas secundárias carregadas apenas quando abertas",
+                    en: "Secondary screens loaded only when opened",
                 },
             ],
-            fixed: [
+            improved: [
                 {
-                    pt: "Tema voltou a acompanhar o sistema sem preferência salva",
-                    en: "Theme follows the system again when no preference is saved",
+                    pt: "Tema acompanha a preferência do sistema quando não há escolha salva",
+                    en: "Theme follows the system preference when no choice is saved",
                 },
             ],
         },
@@ -603,30 +403,89 @@ export const RELEASE_NOTES: ReleaseEntry[] = [
     {
         version: "2.0.0-beta.1",
         date: "2026-07-23",
-        tags: ["design", "a11y"],
+        tags: ["feature", "a11y"],
         title: {
-            pt: "Refatoração completa da base",
-            en: "Full refactor of the codebase",
+            pt: "Nova base: React, TypeScript e testes",
+            en: "New foundation: React, TypeScript and tests",
         },
         summary: {
-            pt: "Refatoração completa unificada na branch principal.",
-            en: "Full refactor unified into the main branch.",
+            pt: "O portfólio é reconstruído sobre uma base moderna, com tipos e verificação automática desde o primeiro dia.",
+            en: "The portfolio is rebuilt on a modern foundation, with types and automated checks from day one.",
+        },
+        body: {
+            pt: "O começo da segunda geração. A versão anterior tinha chegado ao limite do que dava para sustentar com HTML, CSS e JavaScript escritos à mão: cada seção nova significava repetir estrutura, e cada ajuste de estilo significava procurar onde mais aquilo aparecia.\n\n**A base mudou.** O site foi reconstruído em **React com TypeScript**. React porque a interface passa a ser feita de peças que se compõem, em vez de blocos de HTML repetidos; TypeScript porque o compilador passa a apontar o erro antes de a página abrir, e não depois de alguém encontrar.\n\n**Os componentes ganharam lugar.** Em vez de arquivos por assunto, uma organização por camada e responsabilidade: o que é de uma página fica com a página, o que é compartilhado fica no compartilhado, e a direção das dependências é sempre a mesma.\n\n**A verificação nasceu junto.** Suíte de testes automatizados e integração contínua desde esta versão: a cada mudança enviada, o projeto verifica lint, tipos, formatação, testes e build. Não é algo que se acrescenta quando o projeto cresce — é o que permite ele crescer.",
+            en: "The start of the second generation. The previous version had reached the limit of what hand-written HTML, CSS and JavaScript could sustain: every new section meant repeating structure, and every style tweak meant hunting for wherever else it appeared.\n\n**The foundation changed.** The site was rebuilt in **React with TypeScript**. React because the interface becomes made of pieces that compose, instead of repeated blocks of HTML; TypeScript because the compiler points at the error before the page opens, rather than after someone finds it.\n\n**Components got a place.** Instead of files grouped by subject, an organisation by layer and responsibility: what belongs to a page stays with the page, what is shared stays in the shared layer, and dependencies always point the same way.\n\n**Verification was born with it.** An automated test suite and continuous integration from this version on: on every change pushed, the project checks linting, types, formatting, tests and build. It is not something added once a project grows — it is what lets it grow.",
+        },
+        changes: {
+            architecture: [
+                {
+                    pt: "Reconstrução em React e TypeScript, substituindo a base anterior",
+                    en: "Rebuilt in React and TypeScript, replacing the previous foundation",
+                },
+                {
+                    pt: "Componentes organizados por camada e responsabilidade",
+                    en: "Components organised by layer and responsibility",
+                },
+            ],
+            added: [
+                {
+                    pt: "Suíte de testes automatizados",
+                    en: "Automated test suite",
+                },
+                {
+                    pt: "Integração contínua: lint, tipos, formato, testes e build",
+                    en: "Continuous integration: linting, types, formatting, tests and build",
+                },
+            ],
+        },
+    },
+    {
+        version: "1.0.0",
+        date: "2024-05-11",
+        tags: ["design", "feature"],
+        title: {
+            pt: "bl4ck404.dev.br — o primeiro portfólio",
+            en: "bl4ck404.dev.br — the first portfolio",
+        },
+        summary: {
+            pt: "A primeira versão consolidada: um currículo online completo, com identidade própria e domínio próprio.",
+            en: "The first consolidated version: a complete online résumé, with its own identity and its own domain.",
+        },
+        body: {
+            pt: "O ponto de partida. Sob o domínio **bl4ck404.dev.br**, esta foi a primeira versão consolidada do portfólio — uma página única reunindo apresentação pessoal, trajetória, habilidades, projetos e formas de contato.\n\n**A construção.** Feita com **HTML, CSS e JavaScript**, servida pelo **Vite**, sem framework de interface. Os estilos foram organizados em camadas desde o início — normalização, base, utilitários e componentes —, o que já era uma decisão de estrutura, e não só de arquivo.\n\n**O que ela já resolvia.** Alternância entre tema claro e escuro, navegação própria para telas pequenas e carregamento adiado de imagens. Para uma página estática escrita à mão, é mais do que costuma existir.\n\n**O que ela deixou para a próxima.** A divisão em seções — início, sobre, trajetória, destaque, projetos e contato — se mostrou certa e sobreviveu inteira à reconstrução: é a mesma que organiza o site até hoje. Esta versão estabeleceu o esqueleto conceitual do portfólio; as seguintes trocaram a técnica embaixo dele sem precisar repensá-lo.",
+            en: "The starting point. Under the domain **bl4ck404.dev.br**, this was the first consolidated version of the portfolio — a single page gathering a personal introduction, career path, skills, projects and ways to get in touch.\n\n**How it was built.** With **HTML, CSS and JavaScript**, served by **Vite**, with no interface framework. The styles were organised in layers from the start — normalisation, base, utilities and components — which was already a structural decision, not just a filing one.\n\n**What it already solved.** Light and dark theme switching, dedicated navigation for small screens, and deferred image loading. For a hand-written static page, that is more than usually exists.\n\n**What it handed to the next version.** The division into sections — home, about, career, featured, projects and contact — proved right and survived the rebuild intact: it is the same one organising the site today. This version established the conceptual skeleton of the portfolio; the ones that followed swapped the technique underneath without having to rethink it.",
         },
         changes: {
             added: [
                 {
-                    pt: "Suíte de testes com Vitest e Testing Library",
-                    en: "Test suite with Vitest and Testing Library",
+                    pt: "Primeiro portfólio publicado, sob domínio próprio",
+                    en: "First portfolio published, under its own domain",
                 },
                 {
-                    pt: "Integração contínua: lint, tipos, formato, testes e build",
-                    en: "Continuous integration: lint, types, format, tests and build",
+                    pt: "Alternância entre tema claro e escuro",
+                    en: "Light and dark theme switching",
+                },
+                {
+                    pt: "Navegação dedicada para telas pequenas",
+                    en: "Dedicated navigation for small screens",
                 },
             ],
-            changed: [
+            design: [
                 {
-                    pt: "Componentes reorganizados por camada e responsabilidade",
-                    en: "Components reorganized by layer and responsibility",
+                    pt: "Estilos em camadas: normalização, base, utilitários e componentes",
+                    en: "Styles in layers: normalisation, base, utilities and components",
+                },
+            ],
+            performance: [
+                {
+                    pt: "Carregamento adiado de imagens",
+                    en: "Deferred image loading",
+                },
+            ],
+            content: [
+                {
+                    pt: "Seções de apresentação, trajetória, habilidades, projetos e contato",
+                    en: "Sections for introduction, career path, skills, projects and contact",
                 },
             ],
         },

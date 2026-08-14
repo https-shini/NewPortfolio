@@ -7,9 +7,11 @@ export type ReleaseFilter = ReleaseTag | "all";
 /** Rótulo i18n de cada categoria de mudança. */
 export const CATEGORY_LABELS: Record<ChangeType, TranslationKey> = {
     added: "releaseNotes.category.added",
-    changed: "releaseNotes.category.changed",
-    fixed: "releaseNotes.category.fixed",
-    removed: "releaseNotes.category.removed",
+    improved: "releaseNotes.category.improved",
+    design: "releaseNotes.category.design",
+    performance: "releaseNotes.category.performance",
+    architecture: "releaseNotes.category.architecture",
+    content: "releaseNotes.category.content",
 };
 
 /** Rótulo i18n de cada tag. */

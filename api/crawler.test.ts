@@ -92,7 +92,10 @@ describe("/api/crawler", () => {
         expect(meta(corpo, "og:type")).toBe("website");
     });
 
-    it("a release que só existe no GitHub também ganha cartão", async () => {
+    /* O histórico do site é curado: a camada local é a lista de permissão
+       (ver mergeReleaseNotes). Uma release publicada no GitHub que não
+       conste dela não vira página, e portanto não vira cartão. */
+    it("a release que só existe no GitHub não ganha cartão", async () => {
         releasesFalsas.atual = [
             {
                 version: "9.9.9",
@@ -103,24 +106,22 @@ describe("/api/crawler", () => {
             },
         ];
         const { corpo } = await pedir("/release-notes/v9.9.9");
-        expect(meta(corpo, "og:title")).toContain("v9.9.9");
-        expect(meta(corpo, "og:image")).toContain("v=9.9.9");
+        expect(meta(corpo, "og:title")).not.toContain("9.9.9");
+        expect(corpo).not.toContain("Publicada depois do deploy");
     });
 
-    it("escapa aspas e sinais que quebrariam o atributo", async () => {
-        releasesFalsas.atual = [
-            {
-                version: "8.8.8",
-                date: "2026-01-02T03:04:05Z",
-                title: 'Fusão & "aspas" <script>',
-                html: "<p>corpo</p>",
-                url: "https://exemplo.test/r",
-            },
-        ];
-        const { corpo } = await pedir("/release-notes/v8.8.8");
-        expect(corpo).toContain("&quot;aspas&quot;");
-        expect(corpo).not.toContain('<script>"');
-        expect(meta(corpo, "og:title")).not.toContain('"');
+    /* Antes este caso injetava um título hostil por uma release só do
+       GitHub — caminho que a lista de permissão fechou. O que importa
+       continua valendo e passou a ser verificado no conteúdo real: os
+       atributos saem sempre bem formados. */
+    it("os atributos saem bem formados, sem aspas ou & soltos", async () => {
+        const { corpo } = await pedir("/release-notes/v2.0.0");
+
+        for (const nome of ["og:title", "og:description", "og:url"]) {
+            expect(meta(corpo, nome)).not.toContain('"');
+        }
+        /* Nenhum & solto sobrou: todos viraram entidade. */
+        expect(/&(?!(amp|lt|gt|quot|apos|#\d+);)/.test(corpo)).toBe(false);
     });
 
     it("não deixa a ênfase do corpo editorial vazar para a descrição", async () => {

@@ -9,221 +9,159 @@ e o versionamento segue [SemVer](https://semver.org/lang/pt-BR/).
 > `scripts/changelog.mjs`. Não editar à mão — as alterações se perdem
 > na próxima geração, e há teste conferindo a sincronia.
 
-## [2.5.2](https://gcruz.dev.br/release-notes/v2.5.2) — 2026-08-13
-
-**Uma frase antes dos links, e as colunas no lugar**
-
-A lista de links ganha uma apresentação, e a coluna da direita para de pender.
-
-### Adicionado
-
-- Mensagem introdutória acima da lista de links, nos dois idiomas
-
-### Modificado
-
-- No desktop, a coluna dos links se centraliza verticalmente em relação à identidade
-
-## [2.5.1](https://gcruz.dev.br/release-notes/v2.5.1) — 2026-08-13
-
-**O bloco de identidade da /links, refeito**
-
-Centralizado, com ritmo vertical de verdade — e a disponibilidade finalmente aparece.
-
-### Modificado
-
-- O bloco de identidade fica centralizado também no desktop, dentro da própria coluna
-- Ritmo vertical agrupado, avatar e nome maiores no desktop, bio mais larga e legível
-- Os chips de stack quebram 3+3 em vez de 4+2
-
-### Corrigido
-
-- O status de disponibilidade não era exibido nem anunciado; agora é texto visível
-- O separador entre os papéis deixa de sobrar órfão quando a linha quebra no celular
-
-## [2.5.0](https://gcruz.dev.br/release-notes/v2.5.0) — 2026-08-13
-
-**A página de links entra no site**
-
-A /links deixa de ser uma ilha: passa a usar o mesmo cabeçalho e rodapé das outras páginas.
-
-### Modificado
-
-- A /links passa a usar o cabeçalho e o rodapé do site, como as demais rotas
-- No desktop o corpo da /links ganha duas colunas, alinhadas à medida do site
-- O cartão do portfólio virou rota interna, em vez de abrir uma aba nova para o mesmo domínio
-
-### Removido
-
-- Controles flutuantes de idioma e tema da /links — o cabeçalho carrega os dois
-- Rodapé próprio da /links, que repetia nome, domínio, e-mail e copyright
-
-## [2.4.0](https://gcruz.dev.br/release-notes/v2.4.0) — 2026-08-12
-
-**De volta a ser só um site**
-
-A distribuição como aplicativo sai de cena enquanto o projeto muda de direção.
-
-### Modificado
-
-- A geração de ícones passa a servir só ao site, a partir da mesma marca
-
-### Removido
-
-- Aplicativo desktop (Electron) e aplicativo Android (Capacitor)
-- Página /downloads e as funções que listavam e entregavam instaladores
-- Canal de atualização automática e a publicação de release por tag
-- QR code do rodapé, que apontava para a página de downloads
-
-## [2.3.0](https://gcruz.dev.br/release-notes/v2.3.0) — 2026-08-10
-
-**A escolha volta a ser de quem baixa**
-
-Downloads sem recomendação, atualização dentro do app e identidade própria.
-
-### Adicionado
-
-- Atualização verificada, baixada e aplicada dentro do aplicativo
-- Aviso claro quando a instalação não sabe se atualizar sozinha
-- Ícones gerados de uma fonte só, para todas as plataformas
-
-### Modificado
-
-- Downloads sem detecção de sistema: os quatro em pé de igualdade
-- Aplicativo e instalador com a marca do projeto, não com foto pessoal
-- Executável renomeado para a identidade do produto
-- Telas do instalador e janela do .dmg no tema do projeto
-
-### Corrigido
-
-- A atualização automática nunca funcionou: o updater era carregado errado
-- Falhas de atualização viravam silêncio em vez de mensagem
-
-## [2.2.0](https://gcruz.dev.br/release-notes/v2.2.0) — 2026-08-10
-
-**Distribuição que não depende do repositório**
-
-O download passa a sair do próprio site, com o repositório fechado.
-
-### Adicionado
-
-- Download servido pelo próprio site, com o repositório privado
-- Canal de atualização automática independente do GitHub
-
-### Modificado
-
-- Instaladores nomeados por sistema e arquitetura, sem espaços
-- Notas da versão e histórico abrem no site, não no GitHub
-- Ícone próprio no aplicativo instalado, no lugar do genérico
-
-### Corrigido
-
-- Chamadas de API dentro do aplicativo recebiam HTML no lugar de dados
-- Rotas de versão não carregavam ao recarregar dentro do aplicativo
-- Links para o GitHub apontavam para um repositório inexistente
-- A release publicava o build do site junto dos instaladores
-
-## [2.1.0](https://gcruz.dev.br/release-notes/v2.1.0) — 2026-08-10
-
-**O portfólio fora do navegador**
-
-Primeira versão com instalador para Windows, macOS e Linux.
-
-### Adicionado
-
-- Aplicativo desktop em Electron para Windows, macOS e Linux
-- Instaladores .exe, .dmg, AppImage e .deb publicados por tag
-- Atualização automática a partir das releases do GitHub
-- Página /downloads com detecção de plataforma e contagem de downloads
-- Monorepo com npm workspaces: apps/web, apps/desktop e apps/mobile
-
-### Modificado
-
-- Rodapé reorganizado: âncoras e páginas em colunas separadas
-- Fundo e iluminação fixos na rolagem; só as partículas se movem
-
-### Corrigido
-
-- Dois tokens inexistentes deixavam cartões e caixas sem borda nos dois temas
-- Resposta da API de downloads passa a ser normalizada campo a campo
-
 ## [2.0.0](https://gcruz.dev.br/release-notes/v2.0.0) — 2026-08-04
 
-**Segunda geração do portfólio**
+**gcruz.dev.br — a segunda geração**
 
-Primeira versão publicada da reconstrução completa.
-
-### Adicionado
-
-- Design system com tokens em três níveis, tema claro e escuro
-- Arquitetura em camadas: app, pages, widgets e shared
-- Internacionalização completa em português e inglês
-- Página /links: central de links no formato social tree
-- Roteamento por History API, sem dependência externa
-- Integração de contribuições do GitHub por função serverless
-
-### Modificado
-
-- Imagens migradas para WebP: de 8,6 MB para cerca de 224 KB
-- Bundle dividido: vendor separado e modais sob demanda
-- CSS convertido para mobile-first: 45 consultas por min-width
-- Escala de breakpoints declarada: dez valores soltos viraram oito
-
-### Corrigido
-
-- Overflow horizontal eliminado de 320 px a 4K
-- Alvos de toque de 44 px em dispositivos sem mouse
-- Código morto no CSS: grade repetida, regra sem efeito e declaração duplicada
-
-## [2.0.0-rc.1](https://gcruz.dev.br/release-notes/v2.0.0-rc.1) — 2026-08-03
-
-**Central de links e roteamento próprio**
-
-Central de links, roteamento próprio e correções de deploy.
+O portfólio ganha domínio, identidade e estrutura próprios: mais rápido, mais acessível e pensado para crescer.
 
 ### Adicionado
 
-- Rota /links com título, canonical e Open Graph próprios
+- Domínio próprio gcruz.dev.br, com página de links e histórico de versões
+- Site bilíngue completo, com idioma na URL e metadados por rota
+
+### Aprimorado
+
+- Acessibilidade sem violações em todas as rotas, temas e idiomas
+- Layout sem rolagem horizontal de 320 a 1440 pixels
+
+### Design
+
+- Marca tipográfica <gcruz.dev/> unificada em cabeçalho, rodapé e menu
+- Temas escuro e claro completos, derivados de um sistema de tokens
+- Todos os ícones do site gerados a partir de um único desenho da marca
+
+### Performance
+
+- Orçamento de tamanho para JavaScript e CSS, verificado a cada mudança
+
+### Arquitetura
+
+- Interface em React e TypeScript, empacotada por Vite
+- Código organizado em camadas: app, pages, widgets e shared
+
+### Conteúdo
+
+- Carreira, formação, projetos e recomendações com apresentação própria
+- Projeto em destaque com galeria e detalhamento técnico
+
+## [2.0.0-beta.5](https://gcruz.dev.br/release-notes/v2.0.0-beta.5) — 2026-08-03
+
+**Central de links e navegação própria**
+
+Uma página só para os links de contato, e um sistema de rotas que sustenta o site crescer.
+
+### Adicionado
+
+- Página /links, com cartões de contato, foto, stack e compartilhamento
+- Roteamento próprio sobre a API de histórico, sem biblioteca externa
+
+### Arquitetura
+
 - Fonte única para todas as URLs públicas do site
+- Páginas secundárias carregadas sob demanda
 
-### Corrigido
+### Conteúdo
 
-- Acesso direto a /links retornava 404 em produção
-- Função serverless nunca chegava a ser compilada no deploy
-- URLs de projeto duplicadas entre quatro componentes
+- Título, endereço canônico e imagem de compartilhamento por página
+
+## [2.0.0-beta.4](https://gcruz.dev.br/release-notes/v2.0.0-beta.4) — 2026-07-31
+
+**Acessível de ponta a ponta, e medido**
+
+Acessibilidade e responsividade deixam de ser intenção e passam a ser verificadas automaticamente.
+
+### Aprimorado
+
+- Acessibilidade verificada automaticamente em cada rota, tema e idioma
+- Contraste, foco visível e nomes acessíveis revisados em todo o site
+- Alvos de toque confortáveis em telas pequenas
+
+### Design
+
+- Escala nomeada de pontos de quebra, aplicada a todos os componentes
+
+### Performance
+
+- Verificação de rolagem horizontal de 320 a 1440 pixels
+- Preferência de movimento reduzido respeitada nas animações
+
+## [2.0.0-beta.3](https://gcruz.dev.br/release-notes/v2.0.0-beta.3) — 2026-07-29
+
+**Sistema de design e apresentação dos projetos**
+
+Cor, espaçamento e tipografia ganham escala própria, e os projetos ganham lugar de destaque.
+
+### Design
+
+- Sistema de tokens para cor, espaçamento, tipografia, raio e sombra
+- Tema claro completo, derivado do mesmo vocabulário do escuro
+- Superfícies de vidro e tipografia com papéis definidos
+
+### Conteúdo
+
+- Projeto em destaque com galeria em tela cheia e detalhamento técnico
+- Cartões de projeto com demonstração e repositório
+- Carrossel de recomendações recebidas
 
 ## [2.0.0-beta.2](https://gcruz.dev.br/release-notes/v2.0.0-beta.2) — 2026-07-26
 
-**Modal reutilizável e bundle dividido**
+**Componentes reutilizáveis e carregamento mais leve**
 
-Modal reutilizável, carrossel de recomendações e bundle menor.
+Peças de interface deixam de ser repetidas, e o site passa a carregar em partes.
 
 ### Adicionado
 
-- Modal base com foco preso, trava de rolagem e Escape
-- Carrossel paginado nas recomendações
+- Janela sobreposta reutilizável, com foco preso, trava de rolagem e Escape
 
-### Modificado
+### Aprimorado
 
-- Chunk único de 284 KB dividido em vendor e aplicação
+- Tema acompanha a preferência do sistema quando não há escolha salva
 
-### Corrigido
+### Performance
 
-- Tema voltou a acompanhar o sistema sem preferência salva
+- Código dividido entre bibliotecas de base e aplicação
+- Telas secundárias carregadas apenas quando abertas
 
 ## [2.0.0-beta.1](https://gcruz.dev.br/release-notes/v2.0.0-beta.1) — 2026-07-23
 
-**Refatoração completa da base**
+**Nova base: React, TypeScript e testes**
 
-Refatoração completa unificada na branch principal.
+O portfólio é reconstruído sobre uma base moderna, com tipos e verificação automática desde o primeiro dia.
 
 ### Adicionado
 
-- Suíte de testes com Vitest e Testing Library
+- Suíte de testes automatizados
 - Integração contínua: lint, tipos, formato, testes e build
 
-### Modificado
+### Arquitetura
 
-- Componentes reorganizados por camada e responsabilidade
+- Reconstrução em React e TypeScript, substituindo a base anterior
+- Componentes organizados por camada e responsabilidade
+
+## [1.0.0](https://gcruz.dev.br/release-notes/v1.0.0) — 2024-05-11
+
+**bl4ck404.dev.br — o primeiro portfólio**
+
+A primeira versão consolidada: um currículo online completo, com identidade própria e domínio próprio.
+
+### Adicionado
+
+- Primeiro portfólio publicado, sob domínio próprio
+- Alternância entre tema claro e escuro
+- Navegação dedicada para telas pequenas
+
+### Design
+
+- Estilos em camadas: normalização, base, utilitários e componentes
+
+### Performance
+
+- Carregamento adiado de imagens
+
+### Conteúdo
+
+- Seções de apresentação, trajetória, habilidades, projetos e contato
 
 ---
 

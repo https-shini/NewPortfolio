@@ -223,9 +223,11 @@ export type TranslationKey =
     | "releaseNotes.page.next"
     | "releaseNotes.page.status"
     | "releaseNotes.category.added"
-    | "releaseNotes.category.changed"
-    | "releaseNotes.category.fixed"
-    | "releaseNotes.category.removed"
+    | "releaseNotes.category.improved"
+    | "releaseNotes.category.design"
+    | "releaseNotes.category.performance"
+    | "releaseNotes.category.architecture"
+    | "releaseNotes.category.content"
     | "releaseNotes.tag.design"
     | "releaseNotes.tag.feature"
     | "releaseNotes.tag.perf"
@@ -505,9 +507,11 @@ const pt: Translations = {
     "releaseNotes.page.next": "Próxima página",
     "releaseNotes.page.status": "Página {current} de {total}",
     "releaseNotes.category.added": "Adicionado",
-    "releaseNotes.category.changed": "Alterado",
-    "releaseNotes.category.fixed": "Corrigido",
-    "releaseNotes.category.removed": "Removido",
+    "releaseNotes.category.improved": "Aprimorado",
+    "releaseNotes.category.design": "Design",
+    "releaseNotes.category.performance": "Performance",
+    "releaseNotes.category.architecture": "Arquitetura",
+    "releaseNotes.category.content": "Conteúdo",
     "releaseNotes.tag.design": "Design",
     "releaseNotes.tag.feature": "Recursos",
     "releaseNotes.tag.perf": "Performance",
@@ -796,9 +800,11 @@ const en: Translations = {
     "releaseNotes.page.next": "Next page",
     "releaseNotes.page.status": "Page {current} of {total}",
     "releaseNotes.category.added": "Added",
-    "releaseNotes.category.changed": "Changed",
-    "releaseNotes.category.fixed": "Fixed",
-    "releaseNotes.category.removed": "Removed",
+    "releaseNotes.category.improved": "Improved",
+    "releaseNotes.category.design": "Design",
+    "releaseNotes.category.performance": "Performance",
+    "releaseNotes.category.architecture": "Architecture",
+    "releaseNotes.category.content": "Content",
     "releaseNotes.tag.design": "Design",
     "releaseNotes.tag.feature": "Features",
     "releaseNotes.tag.perf": "Performance",

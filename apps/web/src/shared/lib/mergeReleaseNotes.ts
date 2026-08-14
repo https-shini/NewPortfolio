@@ -48,7 +48,11 @@ function toIsoDay(date: string): string {
  * Combina as duas fontes numa lista única, da versão mais recente
  * para a mais antiga.
  *
- * · Versões presentes só no GitHub entram com título e corpo de lá.
+ * · Versões presentes só no GitHub são IGNORADAS. A camada local é a
+ *   lista de permissão: o histórico do site é curado, e uma release
+ *   publicada lá não se convida para a timeline. Sem isso, uma release
+ *   antiga — de um caminho que o projeto abandonou, por exemplo —
+ *   ressurgiria sozinha e desfaria a curadoria.
  * · Versões presentes só na camada local continuam aparecendo — é o
  *   que mantém a timeline de pé quando a rede falha.
  * · Presentes nas duas: a data e o link vêm do GitHub; título, resumo,
@@ -60,9 +64,14 @@ export function mergeReleaseNotes(
 ): MergedRelease[] {
     const byVersion = new Map<string, MergedRelease>();
 
-    /* 1. O GitHub entra primeiro, definindo a estrutura. */
+    /* A camada local é a lista de permissão do histórico. */
+    const declaradas = new Set(local.map((e) => normalize(e.version)));
+
+    /* 1. O GitHub entra primeiro, definindo data e link — mas só das
+          versões que a camada local declara. */
     github.forEach((release) => {
         const version = normalize(release.version);
+        if (!declaradas.has(version)) return;
         byVersion.set(version, {
             version,
             date: toIsoDay(release.date),

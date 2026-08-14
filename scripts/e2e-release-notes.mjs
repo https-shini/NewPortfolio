@@ -134,12 +134,12 @@ try {
         /* O permalink precisa levar à versão certa, não só existir. Os
            ids trocam ponto por traço, porque ponto tem significado em
            seletor CSS e quebraria querySelector. */
-        await page.goto(`${preview.url}/release-notes#v2-0-0-rc-1`, {
+        await page.goto(`${preview.url}/release-notes#v2-0-0-beta-3`, {
             waitUntil: "domcontentloaded",
         });
         await page.waitForTimeout(800);
         const alvoVisivel = await page
-            .locator("#v2-0-0-rc-1")
+            .locator("#v2-0-0-beta-3")
             .isVisible()
             .catch(() => false);
         check("permalink alcança a versão", alvoVisivel);

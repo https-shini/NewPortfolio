@@ -30,11 +30,18 @@ const { RELEASE_NOTES, CHANGE_TYPES } = await import(
     resolve(raiz, "apps/web/src/shared/config/releaseNotes.ts")
 );
 
+/* O vocabulário não é mais o do Keep a Changelog. Aquele padrão serve a
+   um changelog de biblioteca, onde a pergunta é o que quebrou e o que
+   sumiu; este histórico é público, faz parte do portfólio, e responde
+   como o projeto amadureceu. As categorias vêm de releaseNotes.ts e
+   nomeiam eixos de evolução — ver o comentário de ChangeType lá. */
 const TITULO_CATEGORIA = {
     added: "Adicionado",
-    changed: "Modificado",
-    fixed: "Corrigido",
-    removed: "Removido",
+    improved: "Aprimorado",
+    design: "Design",
+    performance: "Performance",
+    architecture: "Arquitetura",
+    content: "Conteúdo",
 };
 
 const REPO = "https://github.com/https-shini/NewPortfolio";

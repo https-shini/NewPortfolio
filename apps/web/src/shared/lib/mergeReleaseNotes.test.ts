@@ -31,16 +31,23 @@ describe("mergeReleaseNotes", () => {
         expect(mergeReleaseNotes([], [])).toEqual([]);
     });
 
-    it("só GitHub: entra com título e corpo de lá", () => {
-        const [entry] = mergeReleaseNotes([], [gh("2.0.0", "2026-08-04")]);
+    /* O histórico do site é curado: a camada local é a lista de
+       permissão. Uma release publicada no GitHub que não conste dela
+       fica de fora — sem isso, uma release antiga, de um caminho que o
+       projeto abandonou, ressurgiria sozinha na timeline. */
+    it("só GitHub: fica de fora, porque o local é a lista de permissão", () => {
+        expect(mergeReleaseNotes([], [gh("2.1.0", "2026-08-09")])).toEqual([]);
+    });
 
-        expect(entry!.version).toBe("2.0.0");
-        expect(entry!.title).toEqual({
-            pt: "Release 2.0.0",
-            en: "Release 2.0.0",
-        });
-        expect(entry!.html).toBe("<p>Notas de 2.0.0</p>");
-        expect(entry!.url).toContain("releases/tag/v2.0.0");
+    it("GitHub traz data e link só de quem o local declara", () => {
+        const entries = mergeReleaseNotes(
+            [local("2.0.0", "1999-01-01")],
+            [gh("2.0.0", "2026-08-04"), gh("2.1.0", "2026-08-09")],
+        );
+
+        expect(entries.map((e) => e.version)).toEqual(["2.0.0"]);
+        expect(entries[0]!.date).toBe("2026-08-04");
+        expect(entries[0]!.url).toContain("releases/tag/v2.0.0");
     });
 
     it("só local: continua aparecendo (degradação sem rede)", () => {
@@ -114,7 +121,11 @@ describe("mergeReleaseNotes", () => {
 
     it("ordena da mais recente para a mais antiga", () => {
         const entries = mergeReleaseNotes(
-            [local("1.0.0", "2026-01-01")],
+            [
+                local("1.0.0", "2026-01-01"),
+                local("2.0.0", "1999-01-01"),
+                local("1.5.0", "1999-01-01"),
+            ],
             [gh("2.0.0", "2026-08-04"), gh("1.5.0", "2026-05-01")],
         );
 
@@ -127,7 +138,7 @@ describe("mergeReleaseNotes", () => {
 
     it("desempata datas iguais pela versão, de forma estável", () => {
         const entries = mergeReleaseNotes(
-            [],
+            [local("2.0.0", "1999-01-01"), local("2.1.0", "1999-01-01")],
             [gh("2.0.0", "2026-08-04"), gh("2.1.0", "2026-08-04")],
         );
 
@@ -136,7 +147,7 @@ describe("mergeReleaseNotes", () => {
 
     it("reduz o timestamp do GitHub ao dia", () => {
         const [entry] = mergeReleaseNotes(
-            [],
+            [local("2.0.0", "1999-01-01")],
             [gh("2.0.0", "2026-08-04T23:59:59Z")],
         );
         expect(entry!.date).toBe("2026-08-04");

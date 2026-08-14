@@ -90,11 +90,14 @@ describe("/api/feed", () => {
         }
     });
 
+    /* A entrada hostil entra pelo endereço da release, que é o dado do
+       GitHub que sobrevive à fusão numa versão já declarada localmente —
+       título e corpo vêm do local, que é bilíngue. */
     it("escapa o que quebraria o XML", async () => {
         releasesFalsas.atual = [
             {
-                version: "9.9.9",
-                date: "2026-01-02T03:04:05Z",
+                version: "2.0.0",
+                date: "2026-08-04T03:04:05Z",
                 title: 'Fusão & <script> "aspas"',
                 html: "<p>corpo & cia</p>",
                 url: "https://exemplo.test/r?a=1&b=2",
@@ -104,12 +107,16 @@ describe("/api/feed", () => {
         const res = resposta();
         await handler(req, res as never);
 
-        expect(res.corpo).toContain("Fusão &amp; &lt;script&gt;");
+        expect(res.corpo).toContain("exemplo.test/r?a=1&amp;b=2");
         /* Nenhum & solto sobrou: todos viraram entidade. */
-        expect(/&(?!(amp|lt|gt|quot|apos);)/.test(res.corpo)).toBe(false);
+        expect(/&(?!(amp|lt|gt|quot|apos|#\d+);)/.test(res.corpo)).toBe(false);
     });
 
-    it("a release do GitHub entra mesmo sem par na camada local", async () => {
+    /* O histórico do site é curado: a camada local é a lista de permissão
+       (ver mergeReleaseNotes). O feed segue sendo função e não arquivo de
+       build — é o que deixa data e link virem do GitHub —, mas quem entra
+       na lista é decisão editorial, não consequência de publicar. */
+    it("a release do GitHub sem par na camada local fica de fora", async () => {
         releasesFalsas.atual = [
             {
                 version: "9.9.9",
@@ -123,8 +130,7 @@ describe("/api/feed", () => {
         const res = resposta();
         await handler(req, res as never);
 
-        /* É a razão de o feed ser função e não arquivo de build. */
-        expect(res.corpo).toContain("Só no GitHub");
-        expect(res.corpo).toContain("/release-notes/v9.9.9");
+        expect(res.corpo).not.toContain("Só no GitHub");
+        expect(res.corpo).not.toContain("/release-notes/v9.9.9");
     });
 });
