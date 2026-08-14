@@ -228,8 +228,8 @@
     /* Teto para os seis quebrarem 3+3 em vez de 4+2: centralizada, uma
        grade equilibrada lê como decisão; 4+2 lê como acidente.
 
-       320px fica entre as duas medidas reais — três chips ocupam 290px
-       e quatro ocupam 368px —, com folga dos dois lados. O número é
+       320px fica entre as duas medidas reais — três chips ocupam 302px
+       e quatro ocupam 384px —, com folga dos dois lados. O número é
        calibrado nos rótulos de TECH_STACK, que são fixos e não passam
        pelo i18n; mexer neles pede remedir. Se um rótulo crescer a ponto
        de três não caberem, a linha cai para dois em vez de quebrar, e
@@ -255,10 +255,15 @@
     border-color: var(--color-border-brand);
     transform: translateY(-2px);
 }
+/* O ícone é o que se reconhece à distância — o rótulo em mono de 12px só
+   confirma. A 18px ele era menor que a caixa de texto ao lado e a marca
+   de cada tecnologia virava mancha; a 22px ela volta a ser legível, e o
+   chip cresce de 29px para 33px de altura junto. O raio acompanha para o
+   quadrado arredondado não virar quase-círculo. */
 .linktree__chip-ic {
-    width: 18px;
-    height: 18px;
-    border-radius: 5px;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
     display: block;
     flex-shrink: 0;
 }

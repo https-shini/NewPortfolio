@@ -215,8 +215,8 @@ export const LinksPage: React.FC = () => {
                                         className="linktree__chip-ic"
                                         src={isDark ? tech.dark : tech.light}
                                         alt=""
-                                        width={18}
-                                        height={18}
+                                        width={22}
+                                        height={22}
                                         loading="lazy"
                                         decoding="async"
                                     />
