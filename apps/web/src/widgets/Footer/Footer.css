@@ -263,10 +263,15 @@
     pointer-events: none;
 }
 
+/* Era --text-xs (12px), MAIOR que o --text-2xs dos títulos de coluna
+   logo acima — a legenda de uma subseção vinha maior que o título da
+   seção que a contém. Hierarquia invertida. Agora divide a medida com
+   os títulos e se distingue deles pelo que não tem: o traço crimson,
+   que é o que marca coluna. */
 .footer__news-label {
-    font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: var(--ls-wider);
     text-transform: uppercase;
     color: var(--color-text-2);
 }
@@ -280,11 +285,55 @@
     text-wrap: pretty;
 }
 
+/* ── O controle de inscrição ───────────────────────────────────────
+   Campo e botão viram uma peça só, dentro de um contêiner de vidro.
+
+   Eram duas caixas soltas e discordantes: o campo com --radius-sm (4px)
+   e o botão com o --radius-md do .btn (8px), lado a lado. Pior, o campo
+   do formulário de Contato usa --radius-md — duas entradas de e-mail no
+   mesmo site com cantos diferentes, exatamente o ruído que o comentário
+   de cabeçalho do NewsletterForm diz querer evitar.
+
+   Fundidos, existe um raio só, uma borda só e um foco só. E a superfície
+   passa a ser o vidro do design system, em vez de --color-surface-2
+   chapado, que era o único campo do site fora dessa linguagem. */
 .footer__news-row {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-top: var(--space-1);
+    /* `stretch` e não `center`: os dois dividem a altura do controle em
+       vez de flutuarem nele. Sem isto o botão ficava com 28px dentro de
+       uma pílula de 42px no desktop, e no celular acontecia o inverso —
+       o botão ia a 44px pelo alvo de toque e o campo continuava em 32px,
+       com dois retângulos de alturas diferentes lado a lado. Assim quem
+       for mais alto define a medida e o outro acompanha; no celular o
+       campo herda os 44px do alvo de toque de graça. */
+    align-items: stretch;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+    padding: var(--space-1);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    box-shadow: var(--surface-edge);
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
+}
+
+/* O foco acende o contêiner inteiro, não o campo: quem está no campo
+   está no controle. `:focus-within` porque o botão também mora aqui —
+   tabular do campo para o botão não pode apagar o anel. O anel é
+   explícito (3px sólidos) e não só a borda: é ele que cumpre o
+   indicador de foco visível, já que o outline do próprio input sai. */
+.footer__news-row:focus-within {
+    border-color: var(--color-brand);
+    /* 25%, e não --color-brand-subtle: aquele token fica em ~13% e some
+       contra o rodapé, deixando o indicador inteiro por conta de 1px de
+       borda. Mesma forma de color-mix que o border-top do rodapé já usa. */
+    box-shadow:
+        var(--surface-edge),
+        0 0 0 3px color-mix(in srgb, var(--color-brand) 25%, transparent);
 }
 
 .footer__news-input {
@@ -293,25 +342,24 @@
        é empurrado para fora do container. */
     flex: 1 1 0;
     min-width: 0;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-2) var(--space-4);
     font-size: var(--text-sm);
     font-family: inherit;
     color: var(--color-text-1);
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-sm);
-    transition:
-        border-color var(--transition-fast),
-        background var(--transition-fast);
+    /* Sem fundo, sem borda, sem raio: o contêiner já tem os três, e
+       repeti-los desenharia uma caixa dentro da outra. */
+    background: transparent;
+    border: 0;
 }
 
 .footer__news-input::placeholder {
     color: var(--color-text-3);
 }
 
+/* O anel de foco é o do contêiner. Um outline aqui traçaria um
+   retângulo dentro da pílula. */
 .footer__news-input:focus-visible {
-    border-color: var(--color-brand);
-    background: var(--color-surface-1);
+    outline: none;
 }
 
 .footer__news-input:disabled {
@@ -319,8 +367,18 @@
     cursor: not-allowed;
 }
 
+/* Pílula dentro de pílula: o .btn nasce com --radius-md, que dentro
+   deste contêiner deixaria dois cantos discordando a 4px de distância. */
 .footer__news-btn {
     flex: 0 0 auto;
+    border-radius: var(--radius-full);
+}
+
+/* O botão já se destaca por ser o único preenchido na coluna; a
+   elevação do :hover do .btn--primary, dentro de um contêiner de 4px de
+   respiro, o faria escapar da pílula que o contém. */
+.footer__news-btn:hover:not(:disabled) {
+    transform: none;
 }
 
 /* `min-height` em vez de esconder quando vazia: um `display: none`
