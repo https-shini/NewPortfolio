@@ -407,12 +407,25 @@ fiscal — entende eSocial, CNAB e emissão de nota porque resolve esses problem
 que constrói software com rigor de engenharia.* O portfólio hoje conta a segunda metade e
 omite a primeira.
 
-**Sobre o `AI & Automation` no `roles`.** Hoje é rótulo sem item de vitrine que o acompanhe —
-não há projeto de IA ou automação entre os cinco de `shared/config/links.ts`. Um eixo do
-posicionamento sustentado por uma linha de perfil, e não por trabalho exibido, é o elo mais
-fraco da narrativa: cada rótulo do herói deveria ter para onde apontar. **Ação:** dar lastro
-de vitrine à alegação — um projeto, um script publicado, um case — ou concentrar o herói nos
-eixos que já têm prova. *Prioridade P1 · Impacto Médio · Esforço Baixo* (ver T25).
+**Sobre o `AI & Automation` no `roles`.** O eixo tem duas metades, e elas estão em situações
+opostas.
+
+**"Automation" já tem lastro, e ele é forte — só nunca foi apresentado.** `scripts/` reúne
+**11 automações, 2.268 linhas**, rodando no CI a cada push: `icones.mjs` gera quatro formatos
+de ícone a partir de um único SVG, com verificação por assinatura; `identity.mjs` trava 68
+superfícies visuais contra regressão; `a11y.mjs`, `overflow.mjs`, `layers.mjs`, `perf.mjs` e
+`bundle-budget.mjs` medem e reprovam; `changelog.mjs` gera documento a partir de dado
+estruturado. Isso é engenharia de automação real e publicada, invisível na vitrine.
+
+**"AI" não tem lastro.** Não há projeto de IA entre os exibidos, e as duas menções no site
+(`Timeline.data.ts:308` e `:395`) são matéria de faculdade e certificação de QA — formação,
+não entrega.
+
+**Decisão tomada:** o eixo permanece, e o lastro da metade "AI" será construído **antes** de o
+herói ser reescrito. Ver a Fase 1.5 no roadmap (§20) e os itens T26–T33 (§22).
+
+*Prioridade P1 · Impacto Alto · Esforço: Baixo para apresentar a automação, Médio-Alto para
+construir o projeto de IA.*
 
 ---
 
@@ -500,6 +513,34 @@ durante as fases seguintes.
 **Fase 1 · Posicionamento** — *P0, a mais importante.* Herói, bio, curadoria de projetos, CTA.
 Nenhuma linha de arquitetura muda; muda o que o site diz. **Maior retorno por hora do roadmap.**
 
+**Fase 1.5 · Lastro do eixo AI & Automation** — *P0/P1.* Duas frentes de peso muito diferente.
+A primeira é apresentar a automação que **já existe** em `scripts/` — trabalho de vitrine, não
+de construção, e resolve metade do eixo em horas. A segunda é construir o projeto de IA que
+sustenta a outra metade: o **tradutor de rejeições fiscais** descrito abaixo.
+
+Esta fase **precede a reescrita do herói (T06)**, e é de propósito: não se reescreve a linha
+que um recrutador lê em cinco segundos antes de cada eixo dela ter para onde apontar.
+
+> **O projeto: tradutor de rejeições fiscais.** Recebe um código de rejeição bancária ou
+> fiscal e devolve, em linguagem clara, o que deu errado e o que fazer.
+>
+> **A decisão de engenharia que define o projeto.** Um LLM sozinho inventa código de rejeição
+> — produz texto plausível para um código inexistente, e num domínio fiscal isso é pior que não
+> responder. O desenho é **recuperação sobre tabela curada** (a fonte da verdade, finita e
+> verificável) **+ LLM apenas para redigir** a explicação do registro recuperado. Código não
+> encontrado responde "não encontrado", nunca um palpite.
+>
+> **Escopo da v1: retorno CNAB.** Motivos de ocorrência são finitos, as tabelas são públicas
+> (FEBRABAN, layouts 240 e 400), e é o assunto de domínio do autor. NFS-e e eSocial depois —
+> NFS-e varia por município e multiplica a curadoria.
+>
+> **Restrição inegociável.** Somente tabelas e layouts públicos. Nenhum arquivo, código
+> interno, nome de cliente ou dado de empregador. Exemplos são sintéticos.
+>
+> **Repositório separado**, com o portfólio linkando; **chave do LLM no servidor**, no mesmo
+> padrão que `api/release-notes.ts` já usa para o `GITHUB_TOKEN`; e **limite por IP com teto
+> de gasto antes de a demo ir ao ar** — demo pública com LLM é conta aberta.
+
 **Fase 2 · Prova** — *P0/P1.* Os estudos de caso e a rota que os hospeda. É a fase longa, e é
 a que transforma "sabe programar" em "resolve problema".
 
@@ -535,6 +576,18 @@ disponibilidade do autor (CLT + faculdade em ano de formatura) não é conhecida
 - **Dependências:** nenhuma técnica. Depende de o autor **decidir a narrativa** — é trabalho de
   escrita, não de código.
 - **Resultado:** herói, bio e vitrine alinhados ao ativo mais escasso do autor.
+
+### Etapa 2.5 — Lastro do eixo AI & Automation · *Grande* · P0/P1
+- **Objetivo:** que os três eixos do herói tenham para onde apontar.
+- **Tarefas:** T26 (vitrine da automação existente), depois T27 → T33 (o tradutor fiscal, na
+  ordem das dependências).
+- **Dependências:** T26 não tem nenhuma e pode sair primeiro. T27 é a curadoria da tabela e
+  precede todo o resto — **sem a tabela não há o que recuperar, e sem recuperação o LLM
+  inventa.**
+- **Resultado:** automação apresentada, tradutor no ar com demo e repositório próprios, e T06
+  desbloqueado.
+- **Nota de sequenciamento:** T26 entrega valor em horas; T27–T33 são a fase longa do roadmap
+  inteiro. Vale tratar como duas entregas, não uma.
 
 ### Etapa 3 — Instrumentação · *Pequeno* · P1
 - **Objetivo:** parar de decidir conteúdo às cegas.
@@ -578,7 +631,7 @@ disponibilidade do autor (CLT + faculdade em ano de formatura) não é conhecida
 | T03 | Remover as 8 URLs de âncora do sitemap em `vite.config.ts` | SEO | P2 | Médio | Baixo | — | 0 |
 | T04 | Resolver as 2 vulnerabilidades altas de `@vercel/og`/`sharp` | Segurança | P1 | Médio | Baixo | — | 0 |
 | T05 | Remover o `:hover` de elevação dos chips em `Links.css` | UX | P3 | Baixo | Baixo | — | 0 |
-| T06 | Reescrever `roles` e bio do herói em torno do domínio ERP fiscal | Conteúdo | P0 | Muito alto | Baixo | — | 1 |
+| T06 | Reescrever `roles` e bio do herói em torno do domínio ERP fiscal | Conteúdo | P0 | Muito alto | Baixo | **T33** | 1 |
 | T07 | Reescrever a seção Sobre conectando suporte em ERP a desenvolvimento | Conteúdo | P0 | Alto | Baixo | T06 | 1 |
 | T08 | Tirar `devlinksRocketseat` da vitrine ou marcá-lo como exercício | Conteúdo | P1 | Alto | Baixo | — | 1 |
 | T09 | Desdobrar o CTA em dois caminhos: oportunidade e orçamento | UX | P2 | Médio | Baixo | T15 | 1/5 |
@@ -597,7 +650,15 @@ disponibilidade do autor (CLT + faculdade em ano de formatura) não é conhecida
 | T22 | Reconciliar `docs/ROADMAP.md` com a direção atual | Docs | P3 | Baixo | Baixo | — | 7 |
 | T23 | Verificar o domínio no Google Search Console | SEO | P2 | Médio | Baixo | — | 3 |
 | T24 | Verificar rate limiting do endpoint de formulário | Segurança | P2 | Médio | Baixo | — | 6 |
-| T25 | Dar lastro de vitrine a "AI & Automation" (projeto/case), ou concentrar o herói nos eixos já provados | Conteúdo | P1 | Médio | Baixo | **bloqueia T06** | 1 |
+| T25 | ~~Definir o destino do eixo "AI & Automation"~~ — **DECIDIDO:** o eixo permanece e o lastro será construído (T26–T33) | Conteúdo | — | — | — | encerrado | — |
+| T26 | Apresentar `scripts/` como item de vitrine — 11 automações, o que cada família mede e por que existe | Conteúdo | P1 | Alto | Baixo | — | 1.5 |
+| T27 | Curar a tabela de motivos de ocorrência CNAB 240/400 de fontes públicas, em formato estruturado e versionado | Dados | P0 | Alto | Médio | — | 1.5 |
+| T28 | Repositório novo com a recuperação sobre a tabela — **sem LLM ainda**, provando que o caminho funciona sem ele | Feature | P0 | Alto | Médio | T27 | 1.5 |
+| T29 | Camada de LLM só para redação, respondendo "não encontrado" quando a recuperação falha | Feature | P0 | Muito alto | Médio | T28 | 1.5 |
+| T30 | Função serverless com a chave no servidor, limite por IP e teto de gasto | Segurança | P0 | Alto | Médio | T29 | 1.5 |
+| T31 | Interface mínima da demo, reusando os tokens do design system | UX | P1 | Médio | Médio | T30 | 1.5 |
+| T32 | README do projeto explicando a decisão de recuperação-antes-de-LLM | Docs | P1 | Alto | Baixo | T29 | 1.5 |
+| T33 | Entrar na vitrine do portfólio com demo e repositório | Conteúdo | P1 | Muito alto | Baixo | T31 | 1.5 |
 
 ---
 
@@ -668,16 +729,25 @@ entende de ERP fiscal **e** constrói software, em vez da história genérica de
 Sugestão concreta para a próxima sessão: T06 + T07 + T08 num único lote de conteúdo, revisando
 o texto em português e inglês, e medindo o resultado depois que T10 estiver no ar.
 
-**T06 está bloqueado por T25, e o bloqueio é deliberado.** O herói tem três eixos e um deles
-— "AI & Automation" — não tem item de vitrine que o acompanhe. Reescrever o herói antes de
-resolver isso significa ou repetir um eixo sem prova, ou removê-lo sem que o autor tenha
-decidido. Nenhuma das duas é escolha minha.
+**T06 está bloqueado por T33, e o bloqueio é deliberado.** O herói declara três eixos, e um
+deles — "AI & Automation" — ainda não tem para onde apontar na metade "AI". Reescrever a linha
+que um recrutador lê em cinco segundos antes disso significaria repetir um eixo sem prova.
+Decidido: o eixo permanece e o lastro será construído (Fase 1.5).
 
-**O desbloqueio é uma pergunta só:** existe projeto, script publicado ou trabalho que sustente
-"AI & Automation"? Se existir, ele vira item de vitrine e o eixo fica mais forte do que é hoje.
-Se não existir, o herói se concentra em dois eixos com prova — e fica mais forte por ser
-inteiramente verificável. Enquanto a resposta não vier, **T07 e T08 podem andar sozinhos**:
-nenhum dos dois depende de T25.
+**A ordem que entrega valor mais cedo**, para o ritmo constante de várias horas por semana:
 
-**Enquanto isso, a Etapa 1 (Higiene) é o caminho desimpedido.** T01 a T05 não dependem de
-decisão nenhuma e tiram do repositório o que está objetivamente errado.
+1. **Etapa 1 · Higiene** — T01 a T05. Desimpedida, sem decisão pendente, tira do repositório o
+   que está objetivamente errado.
+2. **T26 · Vitrine da automação existente.** Meia parte do eixo resolvida em horas: os 11
+   scripts de `scripts/` já são o lastro de "Automation", só nunca foram apresentados.
+3. **T07 e T08** — o Sobre e a curadoria da vitrine. Nenhum depende do eixo bloqueado, e
+   deixá-los esperando o projeto seria desperdício.
+4. **T27 → T33 · O tradutor fiscal.** A fase longa. Começa pela curadoria da tabela, porque
+   sem ela não há o que recuperar — e sem recuperação o LLM inventa.
+5. **T06 · O herói**, agora com os três eixos apontando para algo real.
+6. Etapas 3 a 7, sem mudança.
+
+**O próximo passo concreto é T01–T05 e T26 na mesma leva.** São de esforço baixo, não dependem
+de nada, e T26 muda a percepção do portfólio mais do que o tamanho dele sugere: 2.268 linhas de
+automação em produção contam uma história sobre rigor de engenharia que nenhum texto de "sobre
+mim" consegue contar.
