@@ -74,8 +74,13 @@ export const RELEASE_NOTES_PAGE_SEGMENT = "page";
 
 /** Versões por página do índice. Mora aqui, e não no widget, porque o
     gerador de sitemap precisa do mesmo número para saber quantas páginas
-    existem — e não pode importar um .tsx sem arrastar o React junto. */
-export const RELEASE_NOTES_PAGE_SIZE = 50;
+    existem — e não pode importar um .tsx sem arrastar o React junto.
+
+    Quatro, e não um número grande: o histórico é curado e curto, e a
+    página respira melhor com quatro cartões recolhidos do que com a
+    lista inteira. Mudar este número muda o sitemap e o roteiro de ponta
+    a ponta junto — os dois derivam daqui. */
+export const RELEASE_NOTES_PAGE_SIZE = 4;
 
 /** `/release-notes/v2.0.0` — o `v` espelha a tag do Git. */
 export function releaseNotePath(version: string): string {

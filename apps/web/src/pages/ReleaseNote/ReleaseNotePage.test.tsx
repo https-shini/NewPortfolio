@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import React from "react";
 import { LangProvider } from "@/app/LangContext";
 import { RouterProvider } from "@/app/RouterContext";
@@ -32,12 +32,35 @@ describe("ReleaseNotePage", () => {
 
     afterEach(() => vi.unstubAllGlobals());
 
-    it("mostra a versão pedida, com título como manchete", () => {
+    /* O h1 é a versão, e não o título: é ela que identifica a página e
+       não muda de idioma. O título editorial vem logo abaixo, como h2. */
+    it("anuncia a versão no h1 e o título no h2", () => {
         setup(latest!.version);
 
         expect(
-            screen.getByRole("heading", { level: 1, name: latest!.title.pt }),
+            screen.getByRole("heading", {
+                level: 1,
+                name: `v${latest!.version}`,
+            }),
         ).toBeInTheDocument();
+        expect(
+            screen.getByRole("heading", { level: 2, name: latest!.title.pt }),
+        ).toBeInTheDocument();
+    });
+
+    it("situa a página com uma trilha até a home", () => {
+        setup(latest!.version);
+
+        /* Dentro da trilha, e não na página: o header do site também tem
+           uma âncora "Início", e ela aponta para `#inicio`. */
+        const trilha = screen.getByRole("navigation", { name: /Você está em/ });
+        expect(
+            within(trilha).getByRole("link", { name: "Início" }),
+        ).toHaveAttribute("href", "/");
+        expect(within(trilha).getByText(`v${latest!.version}`)).toHaveAttribute(
+            "aria-current",
+            "page",
+        );
     });
 
     it("usa o mesmo header e rodapé do site", () => {
@@ -62,7 +85,10 @@ describe("ReleaseNotePage", () => {
     it("aceita a versão com ou sem o prefixo v", () => {
         setup(`v${latest!.version}`);
         expect(
-            screen.getByRole("heading", { level: 1, name: latest!.title.pt }),
+            screen.getByRole("heading", {
+                level: 1,
+                name: `v${latest!.version}`,
+            }),
         ).toBeInTheDocument();
     });
 

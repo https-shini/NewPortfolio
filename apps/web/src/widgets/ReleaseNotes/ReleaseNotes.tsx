@@ -156,6 +156,7 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
                         <ReleaseCard
                             entry={latest}
                             headingLevel={headingLevel + 1}
+                            showPermalink
                         />
                     </li>
                 </ol>
@@ -174,13 +175,31 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
                         </div>
 
                         {visible.length === 0 ? (
-                            <p
+                            /* Estado vazio com saída: um filtro sem
+                               resultado é beco sem saída se a única forma
+                               de voltar for adivinhar qual chip desmarcar. */
+                            <div
                                 className="release-notes__empty"
                                 role="status"
                                 aria-live="polite"
                             >
-                                {t("releaseNotes.empty")}
-                            </p>
+                                <span
+                                    className="release-notes__empty-glyph"
+                                    aria-hidden="true"
+                                >
+                                    0
+                                </span>
+                                <p className="release-notes__empty-text">
+                                    {t("releaseNotes.empty")}
+                                </p>
+                                <button
+                                    type="button"
+                                    className="btn btn--outline btn--sm"
+                                    onClick={() => handleFilter("all")}
+                                >
+                                    {t("releaseNotes.filterAll")}
+                                </button>
+                            </div>
                         ) : (
                             <ol className="release-notes__list">
                                 {visible.map((entry) => (
@@ -207,6 +226,30 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
                                 >
                                     {t("releaseNotes.page.previous")}
                                 </a>
+
+                                {/* Os pontos são o mesmo dado do texto ao
+                                    lado, em forma visual — daí ficarem fora
+                                    da árvore de acessibilidade: quem ouve
+                                    recebe "página 1 de 2", e ouvir dois
+                                    marcadores sem rótulo não acrescenta. */}
+                                <span
+                                    className="release-notes__dots"
+                                    aria-hidden="true"
+                                >
+                                    {Array.from(
+                                        { length: totalPages },
+                                        (_, i) => (
+                                            <span
+                                                key={i}
+                                                className={`release-notes__dot${
+                                                    i + 1 === current
+                                                        ? " is-current"
+                                                        : ""
+                                                }`}
+                                            />
+                                        ),
+                                    )}
+                                </span>
 
                                 <span
                                     className="release-notes__page-status"

@@ -4,14 +4,30 @@ import type { TranslationKey } from "@/shared/lib/translations";
 /** Filtro ativo do histórico: uma tag ou todas. */
 export type ReleaseFilter = ReleaseTag | "all";
 
-/** Rótulo i18n de cada categoria de mudança. */
-export const CATEGORY_LABELS: Record<ChangeType, TranslationKey> = {
-    added: "releaseNotes.category.added",
-    improved: "releaseNotes.category.improved",
-    design: "releaseNotes.category.design",
-    performance: "releaseNotes.category.performance",
-    architecture: "releaseNotes.category.architecture",
-    content: "releaseNotes.category.content",
+/**
+ * Cada categoria tem rótulo i18n e um glifo.
+ *
+ * O glifo existe porque cor sozinha não é informação acessível: quem não
+ * distingue matizes — ou lê em monocromático — precisa de uma segunda
+ * pista para separar "Adicionado" de "Aprimorado" antes de ler o rótulo.
+ * Ele é decorativo na árvore de acessibilidade (o rótulo já está escrito
+ * ao lado), mas carrega a distinção visual junto com a cor.
+ *
+ * A cor mora no CSS, em `--cat-{categoria}`, e não aqui: o valor muda
+ * entre tema claro e escuro, e isso é assunto de folha de estilo.
+ */
+export interface CategoryMeta {
+    label: TranslationKey;
+    glyph: string;
+}
+
+export const CATEGORY_LABELS: Record<ChangeType, CategoryMeta> = {
+    added: { label: "releaseNotes.category.added", glyph: "+" },
+    improved: { label: "releaseNotes.category.improved", glyph: "~" },
+    design: { label: "releaseNotes.category.design", glyph: "◆" },
+    performance: { label: "releaseNotes.category.performance", glyph: "↑" },
+    architecture: { label: "releaseNotes.category.architecture", glyph: "▣" },
+    content: { label: "releaseNotes.category.content", glyph: "¶" },
 };
 
 /** Rótulo i18n de cada tag. */

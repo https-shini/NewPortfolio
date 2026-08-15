@@ -5,6 +5,8 @@ import { Header } from "@/widgets/Header/Header";
 import { Footer } from "@/widgets/Footer/Footer";
 import { ScrollUtils } from "@/shared/ui/ScrollUtils";
 import { ReleaseCard } from "@/widgets/ReleaseNotes/components/ReleaseCard";
+import { ReleaseAside } from "@/widgets/ReleaseNotes/components/ReleaseAside";
+import { SyncBadge } from "@/widgets/ReleaseNotes/components/SyncBadge";
 import { useLang } from "@/shared/hooks/useLang";
 import { useRoute } from "@/shared/hooks/useRoute";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
@@ -97,21 +99,97 @@ export const ReleaseNotePage: React.FC<ReleaseNotePageProps> = ({
             <main id="main-content" className="release-page">
                 <div className="container">
                     <div className="release-page__content">
-                        <a
-                            className="release-note__back"
-                            href={ROUTES.RELEASE_NOTES}
-                            onClick={goTo(ROUTES.RELEASE_NOTES)}
-                        >
-                            <IconChevronLeft
-                                width={14}
-                                height={14}
-                                aria-hidden="true"
-                            />
-                            {t("releaseNotes.backToIndex")}
-                        </a>
+                        <div className="release-note__topbar">
+                            <a
+                                className="release-note__back"
+                                href={ROUTES.RELEASE_NOTES}
+                                onClick={goTo(ROUTES.RELEASE_NOTES)}
+                            >
+                                <IconChevronLeft
+                                    width={14}
+                                    height={14}
+                                    aria-hidden="true"
+                                />
+                                {t("releaseNotes.backToIndex")}
+                            </a>
+
+                            {/* O caminho até aqui. O botão ao lado é a ação;
+                                isto é a posição — duas perguntas diferentes. */}
+                            <nav
+                                className="release-note__crumbs"
+                                aria-label={t("releaseNotes.breadcrumb")}
+                            >
+                                <ol className="release-note__crumb-list">
+                                    <li>
+                                        <a
+                                            href={ROUTES.HOME}
+                                            onClick={goTo(ROUTES.HOME)}
+                                        >
+                                            {t("nav.home")}
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href={ROUTES.RELEASE_NOTES}
+                                            onClick={goTo(ROUTES.RELEASE_NOTES)}
+                                        >
+                                            {t("releaseNotes.title")}
+                                        </a>
+                                    </li>
+                                    <li aria-current="page">
+                                        v{entry?.version ?? version}
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
 
                         {entry ? (
-                            <ReleaseCard entry={entry} headingLevel={1} />
+                            <>
+                                {/* Cabeçalho em duas colunas: à esquerda a
+                                    procedência do dado, à direita a manchete.
+                                    O h1 é a versão — é ela que identifica a
+                                    página —, e o título vem logo abaixo. */}
+                                <header className="release-note__header">
+                                    <div className="release-note__header-side">
+                                        <span className="release-note__kicker">
+                                            {index === 0
+                                                ? t("releaseNotes.latest")
+                                                : t("releaseNotes.past")}
+                                        </span>
+                                        <SyncBadge
+                                            status={status}
+                                            count={releases.length}
+                                        />
+                                    </div>
+
+                                    <div className="release-note__header-main">
+                                        <h1 className="release-note__version">
+                                            v{entry.version}
+                                        </h1>
+                                        <h2 className="release-note__title">
+                                            {entry.title[lang]}
+                                        </h2>
+                                        {entry.summary && (
+                                            <p className="release-note__summary">
+                                                {entry.summary[lang]}
+                                            </p>
+                                        )}
+                                    </div>
+                                </header>
+
+                                {/* Duas colunas: a ficha à esquerda acompanha
+                                    a rolagem, o artigo à direita corre.
+                                    Empilha abaixo de --bp-xl (ver o CSS). */}
+                                <div className="release-note__layout">
+                                    <ReleaseAside entry={entry} />
+                                    <ReleaseCard
+                                        entry={entry}
+                                        headingLevel={2}
+                                        changesVariant="editorial"
+                                        hideHeading
+                                    />
+                                </div>
+                            </>
                         ) : loading ? (
                             <p
                                 className="release-note__status"

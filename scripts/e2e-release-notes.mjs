@@ -126,10 +126,38 @@ try {
             `${await chips.count()} chips`,
         );
 
+        /* Este caso assertava o oposto — "histórico curto não pagina" —
+           quando o tamanho de página era 50. Com 4 por página o índice
+           passa a ter mais de uma, e o que importa verificar é que a
+           paginação aparece, marca a página corrente e leva à seguinte. */
+        const paginacao = page.locator('[class*="pagination"]');
+        check("o índice pagina", (await paginacao.count()) === 1);
+
+        const dots = page.locator(".release-notes__dot");
         check(
-            "histórico curto não pagina",
-            (await page.locator('[class*="pagination"]').count()) === 0,
+            "um ponto por página, um deles marcado",
+            (await dots.count()) >= 2 &&
+                (await page.locator(".release-notes__dot.is-current").count()) ===
+                    1,
+            `${await dots.count()} pontos`,
         );
+
+        const primeiraPagina = await page.locator(".release-item").count();
+        await page.locator('[class*="pagination"] a').last().click();
+        await page.waitForTimeout(600);
+        check(
+            "avançar de página troca o conteúdo",
+            new URL(page.url()).pathname.includes("/page/2") &&
+                (await page.locator(".release-item").count()) > 0 &&
+                (await page.locator(".release-item").count()) <= primeiraPagina,
+            new URL(page.url()).pathname,
+        );
+
+        /* Volta ao índice para os casos seguintes. */
+        await page.goto(`${preview.url}/release-notes`, {
+            waitUntil: "domcontentloaded",
+        });
+        await page.waitForTimeout(500);
 
         /* O permalink precisa levar à versão certa, não só existir. Os
            ids trocam ponto por traço, porque ponto tem significado em
@@ -166,10 +194,24 @@ try {
 
         const h1 = page.locator("h1").first();
         check("a versão monta com h1", await h1.isVisible());
+        /* O h1 é a versão — ela identifica a página e é a mesma nos dois
+           idiomas. O título editorial desceu para o h2 logo abaixo, e o
+           caso confere os dois para que a hierarquia não se perca. */
         check(
-            "o h1 é o título da versão",
-            (await h1.innerText()).trim() === MAIS_RECENTE.title.pt,
+            "o h1 é o número da versão",
+            (await h1.innerText()).trim() === `v${MAIS_RECENTE.version}`,
             (await h1.innerText()).slice(0, 40),
+        );
+        const h2 = page.locator(".release-note__title").first();
+        check(
+            "o título da versão vem no h2",
+            (await h2.innerText()).trim() === MAIS_RECENTE.title.pt,
+            (await h2.innerText()).slice(0, 40),
+        );
+
+        check(
+            "a trilha situa a página",
+            (await page.locator(".release-note__crumbs").count()) === 1,
         );
         check(
             "título da aba traz a versão",
@@ -273,7 +315,17 @@ try {
 
     /* ══ Idioma e tema nas duas rotas ════════════════════════════ */
     {
+        /* Qual elemento carrega a manchete traduzida em cada rota: no
+           índice é o próprio h1; na página da versão o h1 é o número
+           `vX.Y.Z`, igual nos dois idiomas — quem traduz é o h2. */
+        const manchete = {
+            "/release-notes": "h1",
+            [ROTA_RECENTE]: ".release-note__title",
+        };
+
         for (const rota of ["/release-notes", ROTA_RECENTE]) {
+            const alvo = manchete[rota];
+
             const pt = await newContext(browser, {
                 baseUrl: preview.url,
                 theme: "dark",
@@ -281,7 +333,7 @@ try {
                 viewport: { width: 1280, height: 900 },
             });
             await visit(pt.page, preview.url, rota);
-            const emPt = await pt.page.locator("h1").first().innerText();
+            const emPt = await pt.page.locator(alvo).first().innerText();
             await pt.ctx.close();
 
             const en = await newContext(browser, {
@@ -291,14 +343,14 @@ try {
                 viewport: { width: 1280, height: 900 },
             });
             await visit(en.page, preview.url, rota);
-            const emEn = await en.page.locator("h1").first().innerText();
+            const emEn = await en.page.locator(alvo).first().innerText();
             const langDoc = await en.page.evaluate(
                 () => document.documentElement.lang,
             );
             await en.ctx.close();
 
             check(
-                `${rota} traduz o h1`,
+                `${rota} traduz a manchete`,
                 emPt !== emEn,
                 `"${emPt.slice(0, 24)}" → "${emEn.slice(0, 24)}"`,
             );

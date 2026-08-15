@@ -90,6 +90,20 @@ export function formatFullDate(iso: string, lang: Lang = "pt"): string {
     }).format(date);
 }
 
+/**
+ * formatShortDate — a mesma data em `YYYY-MM-DD`, sem idioma.
+ *
+ * Ex.: "2026-04-06T18:22:31Z" → "2026-04-06"
+ *
+ * Serve a telas estreitas, onde "6 de abril de 2026" empurra o resto da
+ * linha de metadados para baixo. Não é traduzida de propósito: ISO 8601 é
+ * a notação que já aparece no `dateTime` do `<time>`, e ordenar por ela é
+ * ordenar por data — o que um formato localizado não garante.
+ */
+export function formatShortDate(iso: string): string {
+    return iso.slice(0, 10);
+}
+
 export function formatMonthYear(date: string, lang: Lang = "pt"): string {
     const p = date.split("-").map(Number);
     const d = new Date(p[0], p[1] - 1, 1);

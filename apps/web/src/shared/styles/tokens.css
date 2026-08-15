@@ -184,6 +184,70 @@
         var(--_green-500) 35%,
         transparent
     );
+
+    /* ── Categorias de mudança das notas de versão ──────────────────
+       Uma cor por eixo de evolução, para que a lista de mudanças seja
+       varrida pelo olho antes de ser lida. Cada uma tem três valores:
+       a cor sólida do glifo e do rótulo, o `tint` do fundo e o `edge`
+       da borda — os dois derivados da mesma matiz, de modo que ajustar
+       a cor ajusta o conjunto.
+
+       As matizes saem das cinco famílias que já existem acima. Nenhuma
+       é nova: `design` e `content` dividem a família crimson em dois
+       tons, e o que os separa no fim é o glifo e o rótulo, sempre
+       presentes. Inventar uma sexta matiz custaria mais à coerência da
+       identidade do que essa proximidade custa à leitura. */
+    --cat-added: var(--_green-400);
+    --cat-added-tint: color-mix(in srgb, var(--_green-400) 12%, transparent);
+    --cat-added-edge: color-mix(in srgb, var(--_green-400) 32%, transparent);
+    --cat-improved: var(--_indigo-400);
+    --cat-improved-tint: color-mix(
+        in srgb,
+        var(--_indigo-400) 12%,
+        transparent
+    );
+    --cat-improved-edge: color-mix(
+        in srgb,
+        var(--_indigo-400) 32%,
+        transparent
+    );
+    --cat-design: var(--_crimson-500);
+    --cat-design-tint: color-mix(in srgb, var(--_crimson-500) 12%, transparent);
+    --cat-design-edge: color-mix(in srgb, var(--_crimson-500) 32%, transparent);
+    --cat-performance: var(--_amber-400);
+    --cat-performance-tint: color-mix(
+        in srgb,
+        var(--_amber-400) 12%,
+        transparent
+    );
+    --cat-performance-edge: color-mix(
+        in srgb,
+        var(--_amber-400) 32%,
+        transparent
+    );
+    --cat-architecture: var(--_slate-400);
+    --cat-architecture-tint: color-mix(
+        in srgb,
+        var(--_slate-400) 12%,
+        transparent
+    );
+    --cat-architecture-edge: color-mix(
+        in srgb,
+        var(--_slate-400) 32%,
+        transparent
+    );
+    --cat-content: var(--_crimson-400);
+    --cat-content-tint: color-mix(
+        in srgb,
+        var(--_crimson-400) 12%,
+        transparent
+    );
+    --cat-content-edge: color-mix(
+        in srgb,
+        var(--_crimson-400) 32%,
+        transparent
+    );
+
     --color-warning: var(--_amber-500);
     --color-warning-subtle: color-mix(
         in srgb,
@@ -391,6 +455,70 @@ body.light-mode {
         var(--_green-600) 30%,
         transparent
     );
+
+    /* ── Categorias de mudança das notas de versão ──────────────────
+       Uma cor por eixo de evolução, para que a lista de mudanças seja
+       varrida pelo olho antes de ser lida. Cada uma tem três valores:
+       a cor sólida do glifo e do rótulo, o `tint` do fundo e o `edge`
+       da borda — os dois derivados da mesma matiz, de modo que ajustar
+       a cor ajusta o conjunto.
+
+       As matizes saem das cinco famílias que já existem acima. Nenhuma
+       é nova: `design` e `content` dividem a família crimson em dois
+       tons, e o que os separa no fim é o glifo e o rótulo, sempre
+       presentes. Inventar uma sexta matiz custaria mais à coerência da
+       identidade do que essa proximidade custa à leitura. */
+    --cat-added: var(--_green-600);
+    --cat-added-tint: color-mix(in srgb, var(--_green-600) 10%, transparent);
+    --cat-added-edge: color-mix(in srgb, var(--_green-600) 28%, transparent);
+    --cat-improved: var(--_indigo-600);
+    --cat-improved-tint: color-mix(
+        in srgb,
+        var(--_indigo-600) 10%,
+        transparent
+    );
+    --cat-improved-edge: color-mix(
+        in srgb,
+        var(--_indigo-600) 28%,
+        transparent
+    );
+    --cat-design: var(--_crimson-600);
+    --cat-design-tint: color-mix(in srgb, var(--_crimson-600) 10%, transparent);
+    --cat-design-edge: color-mix(in srgb, var(--_crimson-600) 28%, transparent);
+    --cat-performance: var(--_amber-500);
+    --cat-performance-tint: color-mix(
+        in srgb,
+        var(--_amber-500) 10%,
+        transparent
+    );
+    --cat-performance-edge: color-mix(
+        in srgb,
+        var(--_amber-500) 28%,
+        transparent
+    );
+    --cat-architecture: var(--_slate-600);
+    --cat-architecture-tint: color-mix(
+        in srgb,
+        var(--_slate-600) 10%,
+        transparent
+    );
+    --cat-architecture-edge: color-mix(
+        in srgb,
+        var(--_slate-600) 28%,
+        transparent
+    );
+    --cat-content: var(--_crimson-500);
+    --cat-content-tint: color-mix(
+        in srgb,
+        var(--_crimson-500) 10%,
+        transparent
+    );
+    --cat-content-edge: color-mix(
+        in srgb,
+        var(--_crimson-500) 28%,
+        transparent
+    );
+
     --color-error: var(--_red-600);
     --color-error-subtle: color-mix(in srgb, var(--_red-500) 9%, transparent);
     --color-error-border: color-mix(in srgb, var(--_red-600) 30%, transparent);

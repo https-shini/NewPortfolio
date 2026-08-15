@@ -3,6 +3,7 @@ import {
     calculateDuration,
     formatFullDate,
     formatMonthYear,
+    formatShortDate,
     monthsSince,
     yearsSince,
 } from "./dateUtils";
@@ -104,5 +105,21 @@ describe("formatFullDate", () => {
     it("não desloca o dia por fuso horário", () => {
         /* new Date("2026-01-01") seria UTC e viraria 31/12 em fusos negativos. */
         expect(formatFullDate("2026-01-01", "pt")).toContain("1 de janeiro");
+    });
+});
+
+describe("formatShortDate", () => {
+    it("devolve a data em YYYY-MM-DD", () => {
+        expect(formatShortDate("2026-04-06")).toBe("2026-04-06");
+    });
+
+    it("corta o horário do timestamp do GitHub", () => {
+        expect(formatShortDate("2026-04-06T18:30:00Z")).toBe("2026-04-06");
+    });
+
+    it("não passa pelo Date — nada de deslocamento de fuso", () => {
+        /* O caso que quebraria uma implementação via `new Date`: em fuso
+           negativo, 1º de janeiro à meia-noite UTC vira 31 de dezembro. */
+        expect(formatShortDate("2026-01-01T00:00:00Z")).toBe("2026-01-01");
     });
 });

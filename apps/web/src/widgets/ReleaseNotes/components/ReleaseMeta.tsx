@@ -1,6 +1,6 @@
 import React from "react";
 import { useLang } from "@/shared/hooks/useLang";
-import { formatFullDate } from "@/shared/lib/dateUtils";
+import { formatFullDate, formatShortDate } from "@/shared/lib/dateUtils";
 import type { ReleaseEntry } from "@/shared/config/releaseNotes";
 import { TAG_LABELS, isPrerelease } from "../ReleaseNotes.types";
 
@@ -35,8 +35,18 @@ export const ReleaseMeta: React.FC<ReleaseMetaProps> = ({
                 </span>
             )}
 
+            {/* As duas formas da mesma data, uma escondida por CSS no
+                breakpoint: quem lê a tela recebe só a que está visível, e
+                a data legível por máquina segue no `dateTime`. Trocar por
+                JS exigiria um hook de media query que o projeto não tem —
+                e faria a data depender de hidratação. */}
             <time className="release-meta__date" dateTime={entry.date}>
-                {formatFullDate(entry.date, lang)}
+                <span className="release-meta__date-full">
+                    {formatFullDate(entry.date, lang)}
+                </span>
+                <span className="release-meta__date-short">
+                    {formatShortDate(entry.date)}
+                </span>
             </time>
 
             {entry.tags?.map((tag) => (

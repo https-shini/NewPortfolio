@@ -5,11 +5,23 @@
    exclusivas: voltar, estados vazios e a navegação entre versões.
 ═══════════════════════════════════════════════════════════════ */
 
+/* ── Barra de topo: a ação e a posição ─────────────────────────────
+   O botão responde "como saio daqui"; a trilha responde "onde estou".
+   São perguntas diferentes, e por isso as duas convivem na mesma linha
+   em vez de uma substituir a outra. */
+.release-note__topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+}
+
 .release-note__back {
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
-    margin-bottom: var(--space-6);
     padding-block: var(--space-1);
 
     font-size: var(--text-sm);
@@ -21,6 +33,103 @@
 
 .release-note__back:hover {
     color: var(--color-brand-text);
+}
+
+.release-note__crumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-4);
+}
+
+/* A barra é do CSS, e não do HTML: separador é ornamento de trilha, e
+   um leitor de tela não ganha nada soletrando "barra" três vezes. */
+.release-note__crumb-list li + li::before {
+    content: "/";
+    margin-inline-end: var(--space-2);
+    color: var(--color-border-3);
+}
+
+.release-note__crumb-list a {
+    color: var(--color-text-4);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.release-note__crumb-list a:hover {
+    color: var(--color-brand-text);
+}
+
+.release-note__crumb-list [aria-current="page"] {
+    color: var(--color-text-2);
+}
+
+/* ── Cabeçalho da versão ───────────────────────────────────────────
+   A versão é o h1 porque é ela que identifica a página — o título é
+   editorial e muda de idioma; `v2.0.0` é o mesmo endereço em qualquer
+   língua. */
+.release-note__header {
+    display: grid;
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-border-1);
+}
+
+.release-note__header-side {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.release-note__kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+}
+
+.release-note__header-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.release-note__version {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: var(--lh-tight);
+    color: var(--color-brand-text);
+}
+
+.release-note__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    line-height: var(--lh-snug);
+    color: var(--color-text-1);
+}
+
+.release-note__summary {
+    margin: 0;
+    font-size: var(--text-md);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-3);
+    max-width: 62ch;
 }
 
 /* ── Carregando / não encontrada ───────────────────────────────── */
@@ -71,10 +180,20 @@
     transform: translateY(-2px);
 }
 
+/* Filete lateral do lado para onde o cartão leva, e na cor da idade que
+   ele representa: indigo para o que veio depois, cinza para o que ficou
+   para trás. É a mesma leitura da trilha do índice, em miniatura. */
+.release-note__nav-link--prev {
+    /* border-3, e não border-2: a 3px de largura o traço mais claro some
+       contra o fundo do cartão e o filete deixa de existir. */
+    border-inline-start: 3px solid var(--color-border-3);
+}
+
 /* A seguinte alinha à direita — a direção reforça para onde leva. */
 .release-note__nav-link--next {
     text-align: end;
     align-items: flex-end;
+    border-inline-end: 3px solid var(--color-accent);
 }
 
 .release-note__nav-label {
@@ -107,5 +226,157 @@
 @media (prefers-reduced-motion: reduce) {
     .release-note__nav-link:hover {
         transform: none;
+    }
+}
+
+/* ── Duas colunas: ficha e artigo ───────────────────────────────────
+   A ficha vem ANTES do cartão no HTML, e não depois: quem navega por
+   teclado ou leitor de tela recebe versão, data e contagem antes de
+   entrar no texto longo, que é a ordem útil. No desktop a grade
+   reposiciona sem mexer na ordem do documento. */
+.release-note__layout {
+    display: grid;
+    gap: var(--space-6);
+}
+
+/* ── Ficha da versão ───────────────────────────────────────────── */
+.release-aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-4);
+
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--surface-edge);
+}
+
+.release-aside__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: 0;
+}
+
+.release-aside__row {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.release-aside__term {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-4);
+}
+
+.release-aside__value {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-2);
+}
+
+.release-aside__version {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--color-brand-text);
+}
+
+/* Pré-lançamento perde o crimson: ele marca a versão corrente. */
+.release-aside__version--pre {
+    color: var(--color-text-3);
+}
+
+.release-aside__breakdown {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+/* Um pip por categoria presente, na cor dela. A variável vem do mesmo
+   seletor `release-changes__group--*` que a lista usa — uma definição
+   de cor, dois consumidores. */
+.release-aside__pip {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: var(--cat, var(--color-text-4));
+}
+
+/* Folga maior que a da ficha: as tags são caixa alta com entreletra
+   aberta, e a 4px de distância uma emenda na outra e o bloco vira uma
+   palavra só. */
+.release-aside__tags {
+    gap: var(--space-1) var(--space-3);
+}
+
+.release-aside__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    /* Alvo de no mínimo 24px de altura (WCAG 2.5.8). */
+    min-height: var(--tap-min);
+
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.release-aside__link:hover {
+    color: var(--color-brand-text);
+}
+
+/* ── A partir de --bp-xl (900px): ficha à esquerda, artigo à direita ──
+   Abaixo disso as duas empilham e a ficha vira um resumo no topo, que é
+   o comportamento certo num celular: ninguém quer uma coluna lateral de
+   250px numa tela de 390. */
+@media (min-width: 901px) {
+    .release-note__layout {
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: var(--space-8);
+        align-items: start;
+    }
+
+    /* Mesma métrica da grade abaixo: a coluna do rótulo e a da ficha
+       compartilham a borda esquerda, e o h1 nasce alinhado ao artigo. */
+    .release-note__header {
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: var(--space-8);
+        align-items: start;
+    }
+
+    .release-note__header-side {
+        flex-direction: column;
+        align-items: flex-start;
+        /* Alinha o rótulo com a primeira linha do h1, em vez de com o
+           topo da caixa. */
+        padding-top: var(--space-2);
+    }
+
+    .release-note__version {
+        font-size: var(--text-4xl);
+    }
+
+    .release-note__title {
+        font-size: var(--text-2xl);
+    }
+
+    /* O que justifica a coluna existir: num artigo longo a ficha
+       continua à vista, e é no fim do texto que alguém procura o link
+       do GitHub ou confere a data. */
+    .release-aside {
+        position: sticky;
+        top: calc(var(--header-height) + var(--space-4));
     }
 }

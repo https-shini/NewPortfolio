@@ -1,7 +1,9 @@
 import React from "react";
 import { useLang } from "@/shared/hooks/useLang";
 import { useLinkProps } from "@/shared/hooks/useLinkProps";
+import { useRoute } from "@/shared/hooks/useRoute";
 import { renderRichParagraphs } from "@/shared/lib/richText";
+import { releaseNotePath } from "@/shared/config/routes";
 import {
     IconExternalLink,
     IconArrowRight,
@@ -34,6 +36,22 @@ interface ReleaseCardProps {
     entry: MergedRelease;
     /** Acompanha o nível do título da timeline — ver ReleaseNotes.tsx. */
     headingLevel?: number;
+    /**
+     * Como a lista de mudanças se apresenta. `grade` no índice, onde ela é
+     * um resumo ao lado de outras versões; `editorial` na página da versão,
+     * onde é o conteúdo principal. Ver ChangeList.
+     */
+    changesVariant?: "grade" | "editorial";
+    /**
+     * Oferece o caminho para a página da versão. Ligado no índice; desligado
+     * na própria página da versão, onde o link apontaria para onde já se está.
+     */
+    showPermalink?: boolean;
+    /**
+     * Suprime o título e a faixa de metadados. A página da versão já os traz
+     * no cabeçalho dela — repetir aqui daria dois títulos para o mesmo texto.
+     */
+    hideHeading?: boolean;
 }
 
 /**
@@ -44,16 +62,22 @@ interface ReleaseCardProps {
 export const ReleaseCard: React.FC<ReleaseCardProps> = ({
     entry,
     headingLevel = 3,
+    changesVariant = "grade",
+    showPermalink = false,
+    hideHeading = false,
 }) => {
     const { t, lang } = useLang();
+    const { navigate } = useRoute();
     const titleId = `${versionSlug(entry.version)}-title`;
     const Heading = `h${headingLevel}` as "h2" | "h3";
+
+    const permalink = releaseNotePath(entry.version);
 
     return (
         <article
             className="release-card"
             id={versionSlug(entry.version)}
-            aria-labelledby={entry.title ? titleId : undefined}
+            aria-labelledby={entry.title && !hideHeading ? titleId : undefined}
         >
             {entry.cover && (
                 <img
@@ -65,12 +89,16 @@ export const ReleaseCard: React.FC<ReleaseCardProps> = ({
                 />
             )}
 
-            <ReleaseMeta entry={entry} isLatest />
+            {!hideHeading && (
+                <>
+                    <ReleaseMeta entry={entry} isLatest />
 
-            {entry.title && (
-                <Heading className="release-card__title" id={titleId}>
-                    {entry.title[lang]}
-                </Heading>
+                    {entry.title && (
+                        <Heading className="release-card__title" id={titleId}>
+                            {entry.title[lang]}
+                        </Heading>
+                    )}
+                </>
             )}
 
             {entry.body ? (
@@ -126,10 +154,33 @@ export const ReleaseCard: React.FC<ReleaseCardProps> = ({
             <ChangeList
                 changes={entry.changes}
                 headingLevel={headingLevel + 1}
+                variant={changesVariant}
             />
 
-            {(entry.links?.length || entry.url) && (
+            {(showPermalink || entry.links?.length || entry.url) && (
                 <div className="release-card__links">
+                    {/* Primeiro da fila e destacado: no índice, a saída
+                        natural do cartão é a página inteira da versão. */}
+                    {showPermalink && (
+                        <a
+                            className="release-card__link release-card__link--lead"
+                            href={permalink}
+                            onClick={(e) => {
+                                if (e.metaKey || e.ctrlKey || e.shiftKey)
+                                    return;
+                                e.preventDefault();
+                                navigate(permalink);
+                            }}
+                        >
+                            {t("releaseNotes.readFull")}
+                            <IconArrowRight
+                                width={14}
+                                height={14}
+                                aria-hidden="true"
+                            />
+                        </a>
+                    )}
+
                     {entry.links?.map((link) => (
                         <ReleaseLinkItem key={link.href} link={link} />
                     ))}

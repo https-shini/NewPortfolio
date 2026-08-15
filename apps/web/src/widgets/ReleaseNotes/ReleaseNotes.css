@@ -130,10 +130,14 @@
     inset-inline-start: 5px;
     width: 2px;
     border-radius: var(--radius-full);
+    /* Esfria de cima para baixo: crimson na versão corrente, indigo na
+       transição, cinza no passado. A linha conta a idade das entradas
+       antes de qualquer data ser lida. */
     background: linear-gradient(
         to bottom,
         var(--color-brand),
-        var(--color-border-2) 30%,
+        var(--color-accent) 22%,
+        var(--color-border-2) 55%,
         transparent
     );
 }
@@ -349,6 +353,26 @@
     color: var(--color-brand-hover);
 }
 
+/* O primeiro link do rodapé é a saída principal do cartão — vira pill
+   para se separar dos links de apoio ao lado, que continuam texto. */
+.release-card__link--lead {
+    margin-inline-end: auto;
+    padding: var(--space-2) var(--space-4);
+
+    background: var(--color-brand-subtle);
+    border: 1px solid var(--color-border-brand);
+    border-radius: var(--radius-full);
+    transition:
+        color var(--transition-fast),
+        border-color var(--transition-fast),
+        background var(--transition-fast);
+}
+
+.release-card__link--lead:hover {
+    background: var(--color-brand-subtle);
+    border-color: var(--color-brand);
+}
+
 /* ── Metadados (versão, data, tags) ────────────────────────────── */
 .release-meta {
     display: flex;
@@ -402,45 +426,93 @@
     color: var(--color-accent-light);
 }
 
-/* ── Lista estruturada (Keep a Changelog) ──────────────────────── */
+/* ── Lista estruturada de mudanças ──────────────────────────────────
+   As regras de cor aqui apontavam para `--changed`, `--fixed` e
+   `--removed`, categorias que deixaram de existir quando o vocabulário
+   passou a nomear eixos de evolução. O CSS ficou para trás: as três
+   regras estavam mortas e cinco das seis categorias atuais renderizavam
+   sem cor nenhuma. Agora cada uma puxa o seu par de tokens `--cat-*`,
+   e a variável no seletor do grupo evita repetir seis blocos por
+   propriedade. */
 .release-changes {
-    display: flex;
-    flex-direction: column;
+    display: grid;
     gap: var(--space-4);
+}
+
+/* Grade: o resumo dentro do cartão em destaque, onde as categorias são
+   varridas em paralelo. Uma coluna até --bp-lg (ver o fim do arquivo). */
+.release-changes--grade {
+    grid-template-columns: 1fr;
+}
+
+/* Editorial: a lista como conteúdo principal da página da versão. */
+.release-changes--editorial {
+    gap: var(--space-6);
+}
+
+/* Uma variável por grupo, e todo o resto do bloco a consome. */
+.release-changes__group--added {
+    --cat: var(--cat-added);
+    --cat-bg: var(--cat-added-tint);
+    --cat-line: var(--cat-added-edge);
+}
+.release-changes__group--improved {
+    --cat: var(--cat-improved);
+    --cat-bg: var(--cat-improved-tint);
+    --cat-line: var(--cat-improved-edge);
+}
+.release-changes__group--design {
+    --cat: var(--cat-design);
+    --cat-bg: var(--cat-design-tint);
+    --cat-line: var(--cat-design-edge);
+}
+.release-changes__group--performance {
+    --cat: var(--cat-performance);
+    --cat-bg: var(--cat-performance-tint);
+    --cat-line: var(--cat-performance-edge);
+}
+.release-changes__group--architecture {
+    --cat: var(--cat-architecture);
+    --cat-bg: var(--cat-architecture-tint);
+    --cat-line: var(--cat-architecture-edge);
+}
+.release-changes__group--content {
+    --cat: var(--cat-content);
+    --cat-bg: var(--cat-content-tint);
+    --cat-line: var(--cat-content-edge);
 }
 
 .release-changes__label {
     display: flex;
     align-items: center;
     gap: var(--space-2);
-    margin: 0 0 var(--space-2);
+    margin: 0 0 var(--space-3);
+
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    /* A cor da categoria, com reserva para o caso de o grupo não
+       declarar a variável — nunca herda o texto puro. */
+    color: var(--cat, var(--color-text-2));
+}
+
+/* O glifo num quadro próprio: é ele que separa as categorias para quem
+   não distingue as matizes. */
+.release-changes__glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
 
     font-size: var(--text-xs);
-    font-weight: 600;
-    letter-spacing: var(--ls-wide);
-    text-transform: uppercase;
-    color: var(--color-text-2);
-}
-
-.release-changes__dot {
-    width: 8px;
-    height: 8px;
-    border-radius: var(--radius-full);
-    background: var(--color-text-4);
-}
-
-/* Cores por categoria — verde, indigo, âmbar, crimson. */
-.release-changes__group--added .release-changes__dot {
-    background: var(--color-success);
-}
-.release-changes__group--changed .release-changes__dot {
-    background: var(--color-accent);
-}
-.release-changes__group--fixed .release-changes__dot {
-    background: var(--color-warning);
-}
-.release-changes__group--removed .release-changes__dot {
-    background: var(--color-brand);
+    line-height: 1;
+    background: var(--cat-bg, transparent);
+    border: 1px solid var(--cat-line, var(--color-border-2));
+    border-radius: var(--radius-sm);
 }
 
 /* O reset global zera os marcadores; o recuo e o rótulo colorido acima
@@ -451,6 +523,13 @@
     gap: var(--space-2);
     margin: 0;
     padding-inline-start: var(--space-4);
+}
+
+/* No editorial o filete substitui o recuo: a lista deixa de flutuar e
+   passa a ser ancorada pela cor da categoria. */
+.release-changes--editorial .release-changes__list {
+    padding-inline-start: var(--space-4);
+    border-inline-start: 2px solid var(--cat-line, var(--color-border-2));
 }
 
 .release-changes__item {
@@ -534,10 +613,39 @@
     border-color: var(--color-brand);
 }
 
+/* Estado vazio: o zero grande dá a resposta antes da frase, e o botão
+   é a saída — sem ele, desfazer o filtro depende de adivinhar. */
 .release-notes__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-10) var(--space-4);
+    background: var(--color-surface-1);
+    border: 1px dashed var(--color-border-2);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.release-notes__empty-glyph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text-4);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+}
+
+.release-notes__empty-text {
     margin: 0;
     font-size: var(--text-sm);
-    color: var(--color-text-4);
+    color: var(--color-text-3);
 }
 
 /* ── Item colapsável ───────────────────────────────────────────── */
@@ -644,13 +752,38 @@
     margin-top: var(--space-6);
 }
 
+/* Os pontos e o texto formam o miolo: os dois juntos ficam centrados
+   mesmo quando um dos botões some nas pontas. */
+/* Os dois empurram um do lado: juntos ficam centrados entre os botões,
+   e continuam centrados quando um deles some nas pontas. */
+.release-notes__dots {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-inline-start: auto;
+}
+
+.release-notes__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-border-3);
+    transition:
+        background var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.release-notes__dot.is-current {
+    background: var(--color-brand);
+    transform: scale(1.4);
+}
+
 .release-notes__page-status {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
     letter-spacing: var(--ls-wide);
     color: var(--color-text-3);
-    /* Fica no meio mesmo quando um dos lados está oculto nas pontas. */
-    margin-inline: auto;
+    margin-inline-end: auto;
 }
 
 /* Aqui caberia uma container query — o cartão aparece no índice e na
@@ -665,6 +798,14 @@
    sem ganho. Fica no viewport. */
 
 /* ── A partir de --bp-sm (480px) ───────────────────────────────── */
+/* A grade do resumo abre em duas colunas quando há largura: as
+   categorias passam a ser varridas em paralelo em vez de em sequência. */
+@media (min-width: 769px) {
+    .release-changes--grade {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 @media (min-width: 481px) {
     .release-notes__timeline {
         padding-inline-start: var(--space-6);
@@ -680,6 +821,24 @@
     }
 }
 
+/* A data curta só existe abaixo de --bp-sm: "6 de abril de 2026" ocupa
+   metade da linha de metadados num celular e empurra as tags para baixo;
+   "2026-04-06" cabe ao lado do pill da versão. */
+.release-meta__date-short {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .release-meta__date-full {
+        display: none;
+    }
+
+    .release-meta__date-short {
+        display: inline;
+        font-family: var(--font-mono);
+    }
+}
+
 /* Alvo de toque confortável — mesma condição de globals.css. */
 @media (pointer: coarse), (max-width: 640px) {
     .release-notes__filter {
@@ -690,12 +849,25 @@
     .release-item__trigger {
         min-height: var(--tap-comfort);
     }
+
+    /* O link de apoio é texto e vale a área da linha; o pill é botão, e
+       botão pequeno demais no toque erra o alvo. */
+    .release-card__link--lead {
+        min-height: var(--tap-comfort);
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .release-item,
     .release-item__chevron,
-    .release-notes__filter {
+    .release-notes__filter,
+    .release-notes__dot {
         transition: none;
+    }
+
+    /* O pulso do selo de sincronização é decorativo — o texto ao lado já
+       diz o estado. */
+    .release-notes__sync--loading .release-notes__sync-dot {
+        animation: none;
     }
 }

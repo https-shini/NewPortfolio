@@ -214,6 +214,8 @@ export type TranslationKey =
     | "releaseNotes.meta.description"
     | "releaseNotes.readFull"
     | "releaseNotes.backToIndex"
+    | "releaseNotes.breadcrumb"
+    | "releaseNotes.past"
     | "releaseNotes.newerVersion"
     | "releaseNotes.olderVersion"
     | "releaseNotes.loading"
@@ -497,6 +499,8 @@ const pt: Translations = {
         "Histórico de versões do portfólio de Guilherme Cruz — o que mudou em cada release, com data e detalhes.",
     "releaseNotes.readFull": "Ver esta versão",
     "releaseNotes.backToIndex": "Todas as versões",
+    "releaseNotes.breadcrumb": "Você está em",
+    "releaseNotes.past": "versão do histórico",
     "releaseNotes.newerVersion": "Versão mais recente",
     "releaseNotes.olderVersion": "Versão anterior",
     "releaseNotes.loading": "Carregando a versão",
@@ -790,6 +794,8 @@ const en: Translations = {
         "Version history of Guilherme Cruz's portfolio — what changed in each release, with dates and details.",
     "releaseNotes.readFull": "See this version",
     "releaseNotes.backToIndex": "All versions",
+    "releaseNotes.breadcrumb": "You are here",
+    "releaseNotes.past": "past version",
     "releaseNotes.newerVersion": "Newer version",
     "releaseNotes.olderVersion": "Older version",
     "releaseNotes.loading": "Loading the version",
