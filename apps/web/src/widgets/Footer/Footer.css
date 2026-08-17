@@ -157,7 +157,7 @@
     width: 0;
     height: 1px;
     background: var(--color-brand-light);
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     transition: width var(--transition-base);
 }
 
@@ -193,6 +193,7 @@
 .footer__contact-cta {
     width: fit-content;
     gap: var(--space-2);
+    border-radius: var(--radius-sm);
 }
 
 /* E-mail e LinkedIn visíveis como texto — ATS legível */
@@ -314,7 +315,7 @@
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     box-shadow: var(--surface-edge);
     transition:
         border-color var(--transition-fast),
@@ -371,7 +372,7 @@
    deste contêiner deixaria dois cantos discordando a 4px de distância. */
 .footer__news-btn {
     flex: 0 0 auto;
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-sm);
 }
 
 /* O botão já se destaca por ser o único preenchido na coluna; a
@@ -468,7 +469,7 @@
     text-decoration: none;
     padding: var(--space-1) var(--space-3);
     border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     letter-spacing: var(--ls-wide);
     transition:
         color var(--transition-fast),
@@ -593,7 +594,7 @@
 .footer button:focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: 3px;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
 }
 
 /* Remove animações para usuários com preferência de movimento reduzido */
@@ -624,7 +625,7 @@
 
     background: none;
     border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     cursor: pointer;
 
     transition:

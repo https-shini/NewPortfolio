@@ -243,16 +243,6 @@ const FooterContact = memo<FooterContactProps>(
                 com maior precisão do que um <div> genérico.
             */}
             <address className="footer__address">
-                {/* CTA compacto de e-mail */}
-                <a
-                    href={mailtoHref}
-                    className="footer__contact-cta btn btn--primary btn--sm"
-                    aria-label={`${ctaLabel} — ${AUTHOR_EMAIL}`}
-                >
-                    <IconGmail width={14} height={14} />
-                    <span>{ctaLabel}</span>
-                </a>
-
                 {/* E-mail visível em texto — ATS indexa o endereço */}
                 <a
                     href={`mailto:${AUTHOR_EMAIL}`}
@@ -282,6 +272,16 @@ const FooterContact = memo<FooterContactProps>(
                     <IconLocation width={12} height={12} />
                     <span>{location}</span>
                 </span>
+
+                {/* CTA compacto de e-mail */}
+                <a
+                    href={mailtoHref}
+                    className="footer__contact-cta btn btn--primary btn--sm"
+                    aria-label={`${ctaLabel} — ${AUTHOR_EMAIL}`}
+                >
+                    <IconGmail width={14} height={14} />
+                    <span>{ctaLabel}</span>
+                </a>
             </address>
 
             {/* Fica fora do <address>: uma caixa de inscrição não é dado
