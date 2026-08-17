@@ -538,7 +538,7 @@ const pt: Translations = {
         "Deixe seu e-mail e eu te aviso quando sair projeto novo ou uma versão importante.",
     "footer.newsletter.mailto":
         "Abri seu app de e-mail com a mensagem pronta — é só enviar.",
-    "footer.newsletter.placeholder": "seu@email.com",
+    "footer.newsletter.placeholder": "newsletter@gcruz.dev.br",
     "footer.newsletter.submit": "Inscrever",
     "footer.newsletter.sending": "Enviando…",
     "footer.newsletter.success":
@@ -833,7 +833,7 @@ const en: Translations = {
         "Leave your email and I'll let you know when a new project or release ships.",
     "footer.newsletter.mailto":
         "I opened your email app with the message ready — just hit send.",
-    "footer.newsletter.placeholder": "you@email.com",
+    "footer.newsletter.placeholder": "newsletter@gcruz.dev.br",
     "footer.newsletter.submit": "Subscribe",
     "footer.newsletter.sending": "Sending…",
     "footer.newsletter.success":
