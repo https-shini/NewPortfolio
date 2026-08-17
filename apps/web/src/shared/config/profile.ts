@@ -44,7 +44,7 @@ export const PROFILE = {
      */
     roles: ["Full Stack Developer", "AI & Automation", "Freelancer"],
 
-    email: "contato.guilhermescruz@gmail.com",
+    email: "contato@gcruz.dev.br",
     location: {
         pt: "São Paulo, Brasil",
         en: "São Paulo, Brazil",
