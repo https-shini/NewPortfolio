@@ -16,16 +16,25 @@
    no Footer, inclusive o copyright, que a página imprimia duas vezes. */
 
 /* ── Casca da página ───────────────────────────────────────────── */
-/* `min-height: 100dvh` morava aqui e precisou sair: com o Footer no fim
-   da página, ele obrigava o rodapé a nascer sempre abaixo da dobra,
-   mesmo num monitor em que a página inteira caberia.
+/* `min-height: 100dvh` morou aqui, saiu quando o Footer entrou no fim
+   da página (empurrava o rodapé sempre para baixo da dobra, mesmo em
+   telas altas), e volta agora por decisão contrária: o conteúdo deve
+   ocupar a tela inteira e ficar centralizado nela, com o Footer só
+   aparecendo quando a pessoa rola — de propósito, não por acidente.
 
-   O respiro do topo agora conta com o header fixo em vez de adivinhar:
-   era `clamp(4rem, 12vh, 7rem)`, que a 800px de altura dava 96px e
-   deixava o anel do avatar quase encostando na barra. */
+   `display: flex` + `align-items/justify-content: center` centraliza
+   `.linktree__palco` dentro da área de 100dvh. O padding-block segue
+   assimétrico (topo desconta o header fixo, base é fixa em --space-16),
+   então o centro visual do bloco não é o centro exato da tela — é o
+   centro do espaço que sobra abaixo do header, que é o que a pessoa
+   de fato vê. */
 .linktree {
     position: relative;
     z-index: var(--z-raised);
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding-block: calc(var(--header-height) + clamp(2rem, 6vh, 3.5rem))
         var(--space-16);
     padding-inline: var(--gutter-sm);
@@ -114,6 +123,9 @@
     -webkit-mask:
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
 }
@@ -156,7 +168,7 @@
     color: var(--color-success);
     background: var(--color-success-subtle);
     border: 1px solid var(--color-success-border);
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
 }
 .linktree__disponivel-dot {
     width: 6px;
@@ -247,7 +259,7 @@
     font-size: var(--text-xs);
     color: var(--color-text-2);
     border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     transition: var(--transition-base);
 }
 .linktree__chip:hover {
