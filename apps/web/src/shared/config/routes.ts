@@ -82,6 +82,27 @@ export const RELEASE_NOTES_PAGE_SEGMENT = "page";
     a ponta junto — os dois derivam daqui. */
 export const RELEASE_NOTES_PAGE_SIZE = 4;
 
+/**
+ * releaseNotesTotalPages — páginas do índice para um histórico de N entradas.
+ *
+ * "Histórico" é a lista **sem a versão mais recente**: ela ocupa o topo do
+ * índice, sempre aberta, e não entra na paginação. Quem tem a lista completa
+ * precisa descontá-la — ver o gerador de sitemap em vite.config.ts.
+ *
+ * Mora aqui porque a conta tinha dois donos. O widget contava sobre o
+ * histórico e o gerador de sitemap contava sobre o total, e as duas fórmulas
+ * divergiam sempre que `total % PAGE_SIZE === 1`: com 5 versões o sitemap
+ * anunciava `/release-notes/page/2`, que o widget devolve como página 1 — uma
+ * URL de conteúdo duplicado entregue aos buscadores. Com as 7 de hoje as duas
+ * davam 2 por coincidência, e o defeito não aparecia.
+ */
+export function releaseNotesTotalPages(historico: number): number {
+    return Math.max(
+        1,
+        Math.ceil(Math.max(historico, 0) / RELEASE_NOTES_PAGE_SIZE),
+    );
+}
+
 /** `/release-notes/v2.0.0` — o `v` espelha a tag do Git. */
 export function releaseNotePath(version: string): string {
     return `${ROUTES.RELEASE_NOTES}/v${version.replace(/^v/i, "")}`;

@@ -185,8 +185,8 @@ export const ReleaseNotePage: React.FC<ReleaseNotePageProps> = ({
                                     <ReleaseCard
                                         entry={entry}
                                         headingLevel={2}
-                                        changesVariant="editorial"
-                                        hideHeading
+                                        variant="completo"
+                                        isLatest={index === 0}
                                     />
                                 </div>
                             </>

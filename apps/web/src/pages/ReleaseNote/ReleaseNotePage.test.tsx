@@ -63,6 +63,22 @@ describe("ReleaseNotePage", () => {
         );
     });
 
+    /* O tratamento crimson do cartão quer dizer "é esta que está no ar".
+       Aplicado a uma versão antiga, ele dizia isso de uma release de dois
+       anos atrás. */
+    it("só a versão corrente recebe a superfície de destaque", () => {
+        const { unmount } = setup(latest!.version);
+        expect(document.querySelector(".release-card")).not.toHaveClass(
+            "release-card--arquivo",
+        );
+        unmount();
+
+        setup(previous!.version);
+        expect(document.querySelector(".release-card")).toHaveClass(
+            "release-card--arquivo",
+        );
+    });
+
     it("usa o mesmo header e rodapé do site", () => {
         setup(latest!.version);
 

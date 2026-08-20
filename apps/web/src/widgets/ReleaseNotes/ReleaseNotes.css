@@ -199,6 +199,26 @@
     box-shadow: var(--surface-edge), var(--surface-lift);
 }
 
+/* O crimson do cartão quer dizer "é esta que está no ar". Na página de uma
+   versão antiga ele dizia isso de uma release de dois anos atrás — o mesmo
+   destaque para a corrente e para o arquivo. Aqui a superfície volta ao
+   neutro; o vidro por aresta fica, porque não carrega esse significado. */
+.release-card--arquivo {
+    background: var(--color-surface-1);
+    border-color: var(--color-border-1);
+}
+
+/* O resumo no índice — a frase que responde "o que mudou aqui" antes de a
+   lista de categorias ser lida. Na página da versão o mesmo texto vive no
+   cabeçalho, e o cartão traz o corpo inteiro no lugar dele. */
+.release-card__summary {
+    margin: 0;
+    font-size: var(--text-md);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-2);
+    max-width: 68ch;
+}
+
 .release-card__cover {
     width: 100%;
     /* Proporção reservada — evita salto de layout ao carregar. */

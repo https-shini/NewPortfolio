@@ -37,47 +37,63 @@ interface ReleaseCardProps {
     /** Acompanha o nível do título da timeline — ver ReleaseNotes.tsx. */
     headingLevel?: number;
     /**
-     * Como a lista de mudanças se apresenta. `grade` no índice, onde ela é
-     * um resumo ao lado de outras versões; `editorial` na página da versão,
-     * onde é o conteúdo principal. Ver ChangeList.
+     * O que o cartão mostra, e por quê.
+     *
+     * `resumo` — no índice. Metadados, título, resumo e a grade de
+     * mudanças. **Sem o corpo do artigo**: ali as versões se comparam
+     * entre si, e uma delas abrir cinco parágrafos enquanto as outras
+     * mostram uma linha desequilibra a página e enterra o histórico.
+     *
+     * `completo` — na página da versão, onde a versão é o assunto: corpo,
+     * mídia e as mudanças em formato editorial. Título e metadados ficam
+     * de fora porque o cabeçalho da página já os traz.
+     *
+     * Era um trio de booleanos (`changesVariant`, `showPermalink`,
+     * `hideHeading`) que sempre variavam juntos — só duas das oito
+     * combinações faziam sentido. Como um campo só, as outras seis deixam
+     * de ser representáveis.
      */
-    changesVariant?: "grade" | "editorial";
+    variant?: "resumo" | "completo";
     /**
-     * Oferece o caminho para a página da versão. Ligado no índice; desligado
-     * na própria página da versão, onde o link apontaria para onde já se está.
+     * Se esta é a versão corrente. Vale no `completo`: o tratamento
+     * crimson do cartão significa "é esta que está no ar", e aplicá-lo a
+     * uma versão de dois anos atrás diria uma coisa que não é verdade.
      */
-    showPermalink?: boolean;
-    /**
-     * Suprime o título e a faixa de metadados. A página da versão já os traz
-     * no cabeçalho dela — repetir aqui daria dois títulos para o mesmo texto.
-     */
-    hideHeading?: boolean;
+    isLatest?: boolean;
 }
 
 /**
- * ReleaseCard — a versão do topo, sempre expandida.
- * Traz o tratamento editorial completo: capa, título, texto,
- * mídia e, no rodapé, a lista estruturada.
+ * ReleaseCard — uma versão, nos dois lugares onde ela aparece por inteiro:
+ * no topo da timeline e na página dedicada. Ver `variant`.
  */
 export const ReleaseCard: React.FC<ReleaseCardProps> = ({
     entry,
     headingLevel = 3,
-    changesVariant = "grade",
-    showPermalink = false,
-    hideHeading = false,
+    variant = "resumo",
+    isLatest = false,
 }) => {
     const { t, lang } = useLang();
     const { navigate } = useRoute();
     const titleId = `${versionSlug(entry.version)}-title`;
     const Heading = `h${headingLevel}` as "h2" | "h3";
 
+    const resumo = variant === "resumo";
     const permalink = releaseNotePath(entry.version);
+
+    /* Sem o título dentro do cartão, o `aria-labelledby` não tem para onde
+       apontar e o artigo ficaria sem nome na árvore de acessibilidade. A
+       versão é o nome curto e previsível para ele. */
+    const nome = resumo
+        ? { "aria-labelledby": entry.title ? titleId : undefined }
+        : { "aria-label": `v${entry.version}` };
 
     return (
         <article
-            className="release-card"
+            className={`release-card${
+                !resumo && !isLatest ? " release-card--arquivo" : ""
+            }`}
             id={versionSlug(entry.version)}
-            aria-labelledby={entry.title && !hideHeading ? titleId : undefined}
+            {...nome}
         >
             {entry.cover && (
                 <img
@@ -89,7 +105,7 @@ export const ReleaseCard: React.FC<ReleaseCardProps> = ({
                 />
             )}
 
-            {!hideHeading && (
+            {resumo ? (
                 <>
                     <ReleaseMeta entry={entry} isLatest />
 
@@ -98,70 +114,89 @@ export const ReleaseCard: React.FC<ReleaseCardProps> = ({
                             {entry.title[lang]}
                         </Heading>
                     )}
-                </>
-            )}
 
-            {entry.body ? (
-                <div className="release-card__body">
-                    {renderRichParagraphs(
-                        entry.body[lang],
-                        "release-card__paragraph",
+                    {entry.summary && (
+                        <p className="release-card__summary">
+                            {entry.summary[lang]}
+                        </p>
                     )}
-                </div>
+                </>
             ) : (
-                entry.html && (
-                    /* HTML produzido pela própria serverless, que escapa o
-                       texto antes de converter — as únicas tags presentes
-                       são as que ela emite. Ver api/_markdown.ts. */
-                    <div
-                        className="release-card__body release-card__body--html"
-                        dangerouslySetInnerHTML={{ __html: entry.html }}
-                    />
-                )
-            )}
+                <>
+                    {entry.body ? (
+                        <div className="release-card__body">
+                            {renderRichParagraphs(
+                                entry.body[lang],
+                                "release-card__paragraph",
+                            )}
+                        </div>
+                    ) : (
+                        entry.html && (
+                            /* HTML produzido pela própria serverless, que
+                               escapa o texto antes de converter — as únicas
+                               tags presentes são as que ela emite. Ver
+                               api/_markdown.ts. */
+                            <div
+                                className="release-card__body release-card__body--html"
+                                dangerouslySetInnerHTML={{ __html: entry.html }}
+                            />
+                        )
+                    )}
 
-            {entry.media && entry.media.length > 0 && (
-                <div className="release-card__media">
-                    {entry.media.map((m, i) => (
-                        <figure key={i} className="release-card__figure">
-                            {m.type === "image" ? (
-                                <img
-                                    src={m.src}
-                                    alt={m.alt?.[lang] ?? ""}
-                                    loading="lazy"
-                                    decoding="async"
-                                />
-                            ) : (
-                                <video src={m.src} controls preload="none">
-                                    {/* O tipo exige `captions`; sem faixa o
-                                        vídeo não chega a ser publicável. */}
-                                    <track
-                                        kind="captions"
-                                        src={m.captions}
-                                        srcLang={lang}
-                                        default
-                                    />
-                                </video>
-                            )}
-                            {m.caption && (
-                                <figcaption>{m.caption[lang]}</figcaption>
-                            )}
-                        </figure>
-                    ))}
-                </div>
+                    {entry.media && entry.media.length > 0 && (
+                        <div className="release-card__media">
+                            {entry.media.map((m, i) => (
+                                <figure
+                                    key={i}
+                                    className="release-card__figure"
+                                >
+                                    {m.type === "image" ? (
+                                        <img
+                                            src={m.src}
+                                            alt={m.alt?.[lang] ?? ""}
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
+                                    ) : (
+                                        <video
+                                            src={m.src}
+                                            controls
+                                            preload="none"
+                                        >
+                                            {/* O tipo exige `captions`; sem
+                                                faixa o vídeo não chega a ser
+                                                publicável. */}
+                                            <track
+                                                kind="captions"
+                                                src={m.captions}
+                                                srcLang={lang}
+                                                default
+                                            />
+                                        </video>
+                                    )}
+                                    {m.caption && (
+                                        <figcaption>
+                                            {m.caption[lang]}
+                                        </figcaption>
+                                    )}
+                                </figure>
+                            ))}
+                        </div>
+                    )}
+                </>
             )}
 
             <ChangeList
                 changes={entry.changes}
                 headingLevel={headingLevel + 1}
-                variant={changesVariant}
+                variant={resumo ? "grade" : "editorial"}
             />
 
-            {(showPermalink || entry.links?.length || entry.url) && (
+            {(resumo || entry.links?.length || entry.url) && (
                 <div className="release-card__links">
                     {/* Primeiro da fila e destacado: no índice, a saída
                         natural do cartão é a página inteira da versão. */}
-                    {showPermalink && (
+                    {resumo && (
                         <a
                             className="release-card__link release-card__link--lead"
                             href={permalink}

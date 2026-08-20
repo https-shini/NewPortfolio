@@ -5,6 +5,7 @@ import { useRoute } from "@/shared/hooks/useRoute";
 import { useReleaseNotes } from "@/shared/hooks/useReleaseNotes";
 import {
     releaseNotesPagePath,
+    releaseNotesTotalPages,
     RELEASE_NOTES_PAGE_SIZE,
 } from "@/shared/config/routes";
 import { RELEASE_NOTES, getUsedTags } from "@/shared/config/releaseNotes";
@@ -23,8 +24,8 @@ import type { ReleaseFilter } from "./ReleaseNotes.types";
  * Quantas versões do histórico cabem numa página do índice.
  *
  * A mais recente fica fora da conta: ela ocupa o topo, sempre aberta.
- * Com o histórico curto de hoje a paginação nem aparece — o número
- * existe para quando aparecer.
+ * Reexportado porque os testes derivam o tamanho dos fixtures daqui — o
+ * valor mesmo mora em routes.ts, junto da conta de páginas.
  */
 export const PAGE_SIZE = RELEASE_NOTES_PAGE_SIZE;
 
@@ -89,7 +90,10 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
         [history, filter],
     );
 
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    /* `filtered` já é o histórico — a mais recente saiu no destructuring
+       acima. A conta vem de routes.ts, que é onde o gerador de sitemap
+       busca a mesma resposta. */
+    const totalPages = releaseNotesTotalPages(filtered.length);
     /* Página fora do intervalo (link velho, histórico encurtado por um
        filtro) cai na última existente, em vez de mostrar lista vazia. */
     const current = Math.min(Math.max(page, 1), totalPages);
@@ -153,10 +157,12 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
 
                 <ol className="release-notes__list">
                     <li className="release-notes__entry release-notes__entry--latest">
+                        {/* `resumo` é o padrão: no índice o cartão mostra o
+                            resumo e as mudanças, e o corpo do artigo fica
+                            para a página da versão. Ver ReleaseCard. */}
                         <ReleaseCard
                             entry={latest}
                             headingLevel={headingLevel + 1}
-                            showPermalink
                         />
                     </li>
                 </ol>

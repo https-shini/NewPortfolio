@@ -119,6 +119,22 @@ try {
             (await page.locator(".release-notes__sync").count()) > 0,
         );
 
+        /* O índice resume, a página da versão conta. O cartão do topo já
+           abriu o corpo inteiro enquanto as demais entradas mostravam uma
+           linha — quase 1.400px antes de o histórico começar. O caso trava
+           os dois lados: o resumo está lá, e o corpo não. */
+        const destaque = page.locator(".release-notes__entry--latest");
+        const textoDoDestaque = await destaque.innerText();
+        check(
+            "o cartão do índice mostra o resumo",
+            textoDoDestaque.includes(MAIS_RECENTE.summary.pt.slice(0, 40)),
+            MAIS_RECENTE.summary.pt.slice(0, 40),
+        );
+        check(
+            "o cartão do índice não abre o corpo do artigo",
+            (await destaque.locator(".release-card__body").count()) === 0,
+        );
+
         const chips = page.locator('[role="group"] button, .tag-filter button');
         check(
             "chips de filtro renderizam",

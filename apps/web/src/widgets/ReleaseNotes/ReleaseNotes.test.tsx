@@ -73,10 +73,23 @@ describe("ReleaseNotes", () => {
         const card = screen.getByRole("article", { name: "Segunda geração" });
 
         expect(within(card).getByText("v2.0.0")).toBeInTheDocument();
-        expect(within(card).getByText("Texto do post.")).toBeInTheDocument();
         /* O topo não é colapsável: seu conteúdo não fica atrás de um botão. */
         expect(
             within(card).queryByRole("button", { name: /^v/ }),
+        ).not.toBeInTheDocument();
+    });
+
+    /* O índice resume; a página da versão é que traz o artigo. Antes o
+       cartão do topo abria o corpo inteiro enquanto as outras entradas
+       mostravam uma linha — a assimetria empurrava o histórico para
+       ~1.400px abaixo da dobra. */
+    it("o cartão do índice traz o resumo, não o corpo do artigo", () => {
+        setup();
+        const card = screen.getByRole("article", { name: "Segunda geração" });
+
+        expect(within(card).getByText("Resumo 2.0.0")).toBeInTheDocument();
+        expect(
+            within(card).queryByText("Texto do post."),
         ).not.toBeInTheDocument();
     });
 

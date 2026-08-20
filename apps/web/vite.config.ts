@@ -115,7 +115,7 @@ function sitemapPlugin() {
                 SECTION_IDS,
                 releaseNotePath,
                 releaseNotesPagePath,
-                RELEASE_NOTES_PAGE_SIZE,
+                releaseNotesTotalPages,
                 HREFLANG,
                 withLang,
             } = await import("./src/shared/config/routes");
@@ -166,10 +166,14 @@ function sitemapPlugin() {
             }
 
             /* Índice paginado: a página 1 é o próprio /release-notes, já
-               listado acima, então o laço começa na 2. Com o histórico
-               atual não há página 2 — o laço simplesmente não roda. */
-            const totalPages = Math.ceil(
-                RELEASE_NOTES.length / RELEASE_NOTES_PAGE_SIZE,
+               listado acima, então o laço começa na 2.
+
+               O `- 1` é a versão mais recente, que ocupa o topo do índice e
+               não entra na paginação. Sem ele a conta daqui divergia da do
+               widget e o sitemap chegava a anunciar uma página que o site
+               devolve como a anterior. */
+            const totalPages = releaseNotesTotalPages(
+                RELEASE_NOTES.length - 1,
             );
             for (let page = 2; page <= totalPages; page++) {
                 entries.push({
