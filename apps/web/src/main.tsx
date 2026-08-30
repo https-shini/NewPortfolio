@@ -4,7 +4,7 @@
 ═══════════════════════════════════════════════════════════════════════════ */
 
 import React from "react";
-import { createRoot, hydrateRoot } from "react-dom/client";
+import { createRoot } from "react-dom/client";
 
 // ── Global styles — ordem obrigatória ─────────────────────────────────────────
 import "@/shared/styles/tokens.css"; // 1. Primitivos + semânticos (dark + light)
@@ -12,40 +12,17 @@ import "@/shared/styles/globals.css"; // 2. Reset + utilitários base
 import "@/shared/styles/theme-patches.css"; // 3. Overrides de light mode por seção
 
 import App from "@/app/App";
-import { getInitialLang } from "@/app/LangContext";
 
-const raiz = document.getElementById("root")!;
+/* Houve aqui uma pré-renderização da home com hidratação. Ela foi revertida
+   por medição, não por gosto: o PageSpeed no celular caiu de 86 para 81 —
+   FCP 2,9→3,2s, LCP 3,0→3,4s e TBT 20→200ms. Hidratar ~110 KB de DOM cobra
+   main thread num aparelho modesto, e o ganho de pintura (~150ms no meu A/B
+   com rede estrangulada) não pagou a conta.
 
-const arvore = (
+   Se o assunto voltar, o que faltou da primeira vez foi medir LCP e TBT, e
+   não só o FCP que eu esperava melhorar. */
+createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <App />
-    </React.StrictMode>
+    </React.StrictMode>,
 );
-
-/* O build injeta a home já renderizada no #root (ver scripts/prerender.mjs),
-   e aí o trabalho é hidratar — adotar o HTML que já está na tela em vez de
-   pintá-lo de novo. O servidor de desenvolvimento serve o index.html cru,
-   com o #root vazio, e ali é montagem normal.
-
-   A rota precisa bater. O HTML gerado é o da home, e hidratar a home por
-   cima de /links seria casar duas páginas diferentes: o React derrubaria a
-   árvore inteira e ainda gastaria a tentativa. As reescritas mandam as
-   outras rotas para o app.html, sem pré-renderização; esta conferência é o
-   que segura o caso de a reescrita não existir. */
-const podeHidratar =
-    raiz.firstElementChild !== null &&
-    raiz.dataset.prerendered === window.location.pathname &&
-    /* O HTML sai do build em português. Para quem chega em inglês — por
-       `?lang=en` ou pelo idioma do navegador — cada texto da página seria
-       diferente do gerado, e o React reclamaria de todos eles. Melhor
-       montar do zero: perde-se a pintura adiantada, não a correção. */
-    raiz.dataset.lang === getInitialLang();
-
-if (podeHidratar) {
-    hydrateRoot(raiz, arvore);
-} else {
-    /* Conteúdo de outra rota na tela: some com ele antes de montar, para
-       não deixar a página errada visível enquanto o React trabalha. */
-    if (raiz.firstElementChild) raiz.replaceChildren();
-    createRoot(raiz).render(arvore);
-}

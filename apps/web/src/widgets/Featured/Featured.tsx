@@ -477,11 +477,14 @@ export const Featured: React.FC = () => {
                         </div>
 
                         {/* Badges */}
-                        <div className="featured__badges" role="list">
+                        {/* <ul>/<li> de verdade, e não ARIA por cima de
+                            <div>/<span>: o Lighthouse reprovava o papel
+                            sobreposto, e a semântica nativa já diz a mesma
+                            coisa para leitor de tela e para agente. */}
+                        <ul className="featured__badges">
                             {project.badges.map((b) => (
-                                <span
+                                <li
                                     key={b.label}
-                                    role="listitem"
                                     className={`featured__pill featured__pill--${b.variant}`}
                                 >
                                     {b.variant === "live" && (
@@ -491,9 +494,9 @@ export const Featured: React.FC = () => {
                                         />
                                     )}
                                     {b.label}
-                                </span>
+                                </li>
                             ))}
-                        </div>
+                        </ul>
 
                         {/* Description */}
                         <p
@@ -640,13 +643,12 @@ export const Featured: React.FC = () => {
                 </div>
 
                 {/* ─── Architecture cards ─── */}
-                <div className="featured__architecture" role="list">
+                <ul className="featured__architecture">
                     {project.architecture.map((card, i) => {
                         const Icon = ARCH_ICON[card.icon];
                         return (
-                            <article
+                            <li
                                 key={card.icon}
-                                role="listitem"
                                 className="arch-card"
                                 style={{ ["--stagger-index" as string]: i }}
                             >
@@ -662,10 +664,10 @@ export const Featured: React.FC = () => {
                                 <p className="arch-card__text">
                                     {card.text[lang]}
                                 </p>
-                            </article>
+                            </li>
                         );
                     })}
-                </div>
+                </ul>
             </div>
 
             {lightboxIndex !== null && (

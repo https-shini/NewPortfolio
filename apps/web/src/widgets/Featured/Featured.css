@@ -896,7 +896,11 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-4);
-    margin-top: var(--space-8);
+    /* Virou <ul>: o reset de lista entra aqui para o marcador e o recuo
+       padrão não aparecerem. O .featured__badges ao lado já tinha o dele. */
+    margin: var(--space-8) 0 0;
+    padding: 0;
+    list-style: none;
 }
 
 .arch-card {

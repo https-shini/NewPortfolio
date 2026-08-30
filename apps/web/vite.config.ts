@@ -237,10 +237,7 @@ function sitemapPlugin() {
     };
 }
 
-/* Função, e não objeto: o build de SSR da pré-renderização
-   (scripts/prerender.mjs) precisa de uma diferença de configuração — ver
-   `manualChunks` abaixo. */
-export default defineConfig(({ isSsrBuild }) => ({
+export default defineConfig({
     plugins: [
         react({
             jsxRuntime: "automatic",
@@ -287,31 +284,15 @@ export default defineConfig(({ isSsrBuild }) => ({
 
         cssCodeSplit: true,
 
-        /* Favicons, manifest e PDFs não têm o que fazer numa saída de SSR
-           que existe para produzir uma string de HTML. */
-        copyPublicDir: !isSsrBuild,
-
         rollupOptions: {
             output: {
                 /* React/ReactDOM raramente mudam — isolá-los preserva o
-                   cache do usuário entre deploys do código da aplicação.
+                   cache do usuário entre deploys do código da aplicação. */
+                manualChunks: {
+                    vendor: ["react", "react-dom", "react-dom/client"],
+                },
 
-                   No build de SSR eles são externos (rodam do node_modules,
-                   não são empacotados), e pedir para separar em pedaço algo
-                   que não entra no pacote é erro de configuração — o Rollup
-                   reprova. Daí a condição. */
-                manualChunks: isSsrBuild
-                    ? undefined
-                    : {
-                          vendor: ["react", "react-dom", "react-dom/client"],
-                      },
-
-                /* No SSR o consumidor é o scripts/prerender.mjs, que importa
-                   o arquivo pelo nome: hash ali só serviria para o script ter
-                   de adivinhar qual é. Saída intermediária, apagada no fim. */
-                entryFileNames: isSsrBuild
-                    ? "[name].js"
-                    : "assets/js/[name]-[hash].js",
+                entryFileNames: "assets/js/[name]-[hash].js",
                 chunkFileNames: "assets/js/[name]-[hash].js",
 
                 assetFileNames: ({ name }) => {
@@ -354,4 +335,4 @@ export default defineConfig(({ isSsrBuild }) => ({
             "../../api/**/*.test.ts",
         ],
     },
-}));
+});
