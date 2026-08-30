@@ -120,18 +120,54 @@ try {
             });
             await visit(page, preview.url, rota);
 
+            /* Cada superfície é trazida para a tela ANTES de ser lida.
+               As seções abaixo da dobra usam `content-visibility: auto`
+               (ver globals.css), e o navegador não computa o estilo de uma
+               subárvore que está pulando — `getComputedStyle` ali devolve
+               valor herdado de antes da cascata do tema, e a leitura sai
+               errada. Foi assim que este arranjo passou aqui e reprovou no
+               CI com `.arch-card` e `.featured__gallery` respondendo a cor
+               do tema escuro na página clara.
+
+               Rolar antes de medir não afrouxa nada: a pergunta é como a
+               superfície APARECE, e uma superfície não renderizada não tem
+               aparência. Vale com ou sem `content-visibility`. */
             const lido = await page.evaluate(
-                ([sels, props]) => {
+                async ([sels, props]) => {
                     const out = {};
+                    const doisQuadros = () =>
+                        new Promise((r) =>
+                            requestAnimationFrame(() =>
+                                requestAnimationFrame(r),
+                            ),
+                        );
+
                     for (const s of sels) {
+                        /* Sempre do topo: o cabeçalho muda de aparência
+                           quando a página rola (fundo, desfoque, borda), e
+                           medi-lo depois de uma rolagem daria o estado
+                           errado. Cada superfície começa do zero. */
+                        window.scrollTo(0, 0);
+                        await doisQuadros();
+
                         const el = document.querySelector(s);
                         if (!el) {
                             out[s] = "AUSENTE";
                             continue;
                         }
+
+                        /* Rola só o que não está na tela. */
+                        const r = el.getBoundingClientRect();
+                        if (r.bottom < 0 || r.top > window.innerHeight) {
+                            el.scrollIntoView({ block: "center" });
+                            await doisQuadros();
+                        }
+
                         const cs = getComputedStyle(el);
                         out[s] = props.map((p) => cs[p]).join(" | ");
                     }
+
+                    window.scrollTo(0, 0);
                     return out;
                 },
                 [seletores, PROPRIEDADES],
