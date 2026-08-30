@@ -758,3 +758,65 @@ body.light-mode .divider-brand {
     -webkit-backdrop-filter: var(--glass-blur);
     border: 1px solid var(--glass-border);
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   17. SEÇÕES ABAIXO DA DOBRA — RENDERIZAÇÃO ADIADA
+══════════════════════════════════════════════════════════════════════════════ */
+/*
+  Medido a 412×823: a home monta 1.325 elementos, e apenas 95 — o cabeçalho e o
+  hero — cabem na primeira tela. Os outros 1.230 recebiam cálculo de estilo e
+  layout antes da primeira pintura sem que ninguém pudesse vê-los. É o que o
+  PageSpeed reporta como "Style & Layout 1.279 ms", cinco vezes o custo de
+  avaliação de script.
+
+  `content-visibility: auto` manda o navegador pular estilo, layout e pintura de
+  subárvores fora da tela, e renderizá-las quando se aproximam. A/B com CPU a 4×
+  e rede a 1,6 Mbps/150 ms, 5 amostras de cada lado: FCP de 1.860ms para
+  1.544ms — as faixas não se sobrepõem (pior caso com a regra, 1.580ms, melhor
+  sem ela, 1.836ms).
+
+  O `auto` em `contain-intrinsic-size` é o que protege o CLS: depois da primeira
+  renderização o navegador passa a lembrar a altura real da seção e só usa o
+  palpite antes disso. Os valores abaixo são as alturas medidas a 412px, que é o
+  viewport que esta regra existe para servir.
+
+  O rodapé fica de fora de propósito: a medição devolveu altura destoante para
+  ele, e tamanho intrínseco errado é justamente como se introduz salto.
+*/
+#sobre,
+#carreira,
+#destaque,
+#projetos,
+#recomendacoes,
+#formacoes,
+#contato {
+    content-visibility: auto;
+}
+
+#sobre {
+    contain-intrinsic-size: auto 3964px;
+}
+
+#carreira {
+    contain-intrinsic-size: auto 1810px;
+}
+
+#destaque {
+    contain-intrinsic-size: auto 2166px;
+}
+
+#projetos {
+    contain-intrinsic-size: auto 2077px;
+}
+
+#recomendacoes {
+    contain-intrinsic-size: auto 1072px;
+}
+
+#formacoes {
+    contain-intrinsic-size: auto 1786px;
+}
+
+#contato {
+    contain-intrinsic-size: auto 2110px;
+}

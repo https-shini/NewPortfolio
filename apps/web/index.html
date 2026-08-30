@@ -86,7 +86,15 @@
           é entre ver o texto na fonte de sistema por um instante ou não ver
           texto nenhum.
         -->
-        <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+        <!-- Sem `crossorigin`: este host serve a FOLHA, buscada por um
+          <link rel="stylesheet"> comum, que não é requisição CORS. Um
+          preconnect com o atributo abre a conexão em modo CORS, que a folha
+          não reaproveita — o navegador abre uma segunda para o mesmo host e o
+          Lighthouse marca a primeira como "pré-conexão não usada". O par do
+          Google logo abaixo sempre esteve certo: googleapis (CSS) sem o
+          atributo, gstatic (fontes) com ele. Aqui o `crossorigin` do host de
+          fontes tinha sido copiado para o host de CSS. -->
+        <link rel="preconnect" href="https://api.fontshare.com" />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
         <link
             href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,600,700&f[]=general-sans@400,500,600&display=swap"
