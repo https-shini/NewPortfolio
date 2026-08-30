@@ -39,7 +39,15 @@ export function langFromSearch(search: string): Lang | null {
     return isLang(pedido) ? pedido : null;
 }
 
-function getInitialLang(): Lang {
+/** Exportado para o main.tsx: ele precisa da MESMA resposta para decidir se
+    o HTML pré-renderizado (que é em português) serve para hidratar. */
+export function getInitialLang(): Lang {
+    /* No build não há navegador: a pré-renderização da home roda este
+       componente em Node, e `window` não existe. Ali vale o padrão — que é
+       exatamente o que o HTML gerado precisa declarar. Quem chega com outro
+       idioma recebe a correção na hidratação. */
+    if (typeof window === "undefined") return DEFAULT_LANG;
+
     const daUrl = langFromSearch(window.location.search);
     if (daUrl) return daUrl;
 

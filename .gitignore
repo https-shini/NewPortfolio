@@ -15,3 +15,7 @@ apps/desktop/release/
 # Projeto Android gerado por `cap add android` — grande e derivado.
 apps/mobile/android/
 apps/mobile/ios/
+
+# Saída intermediária da pré-renderização (scripts/prerender.mjs).
+# O script a apaga ao terminar; isto cobre o build interrompido no meio.
+.prerender/

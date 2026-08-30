@@ -23,6 +23,11 @@ export type Theme = "dark" | "light";
 
 /** Lê o tema inicial na ordem: localStorage → prefers-color-scheme → 'dark' */
 function getInitialTheme(): Theme {
+    /* Mesma razão do idioma em LangContext: durante a pré-renderização não
+       há `localStorage` nem `matchMedia`. O escuro é o padrão do site — é o
+       que o <body class="dark-mode"> do index.html já declara. */
+    if (typeof window === "undefined") return "dark";
+
     try {
         const saved = localStorage.getItem(THEME_KEY) as Theme | null;
         if (saved === "dark" || saved === "light") return saved;

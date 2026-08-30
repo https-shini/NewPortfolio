@@ -113,8 +113,14 @@
             />
         </noscript>
 
-        <!-- ── CDN externo usado nos ícones de tecnologia ───────────── -->
-        <link rel="preconnect" href="https://skillicons.dev" crossorigin />
+        <!-- ── CDN externo usado nos ícones de tecnologia ─────────────
+          `dns-prefetch`, e não `preconnect`. O Lighthouse avisa a partir de
+          quatro preconnects, e com razão: cada um segura um par de DNS+TLS no
+          caminho crítico. Estes ícones aparecem em Sobre, Destaque e Formações
+          — nenhum acima da dobra —, então adiantar o handshake tira lugar de
+          quem é necessário para a primeira tela. Resolver o nome antes é de
+          graça e continua ajudando quando a vez deles chegar. -->
+        <link rel="dns-prefetch" href="https://skillicons.dev" />
 
         <!-- ── Structured Data (JSON-LD) ────────────────────────────── -->
         <script type="application/ld+json">

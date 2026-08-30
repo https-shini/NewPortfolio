@@ -43,23 +43,34 @@
     },
     {
       "source": "/links",
-      "destination": "/index.html"
+      "destination": "/app.html"
     },
     {
       "source": "/links/",
-      "destination": "/index.html"
+      "destination": "/app.html"
     },
     {
       "source": "/release-notes",
-      "destination": "/index.html"
+      "destination": "/app.html"
     },
     {
       "source": "/release-notes/",
-      "destination": "/index.html"
+      "destination": "/app.html"
     },
     {
       "source": "/release-notes/(.*)",
-      "destination": "/index.html"
+      "destination": "/app.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }

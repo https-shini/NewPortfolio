@@ -160,7 +160,14 @@ export const Hero: React.FC = () => {
                             width={380}
                             height={420}
                             loading="eager"
-                            fetchPriority="high"
+                            /* Espalhado em minúsculo, que é o nome do
+                               atributo em HTML. Os tipos do React trazem a
+                               forma camelCase, mas o react-dom 18.3.1 em uso
+                               não a reconhece e avisa no console a cada
+                               carregamento — em produção, hoje, antes desta
+                               mudança. Assim o atributo chega ao DOM e o
+                               aviso some. */
+                            {...{ fetchpriority: "high" }}
                             decoding="async"
                         />
 

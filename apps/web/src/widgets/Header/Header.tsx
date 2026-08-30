@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+    useState,
+    useEffect,
+    useRef,
+    useCallback,
+    useSyncExternalStore,
+} from "react";
 import { createPortal } from "react-dom";
 import "./Header.css";
 import { useTheme } from "@/shared/hooks/useTheme";
@@ -39,6 +45,25 @@ export const Header: React.FC = () => {
         SECTION_IDS.HOME,
     );
     const [langSwitching, setLangSwitching] = useState(false);
+
+    /* O drawer vai para um portal no <body>, e portal é coisa de navegador:
+       na pré-renderização não há `document.body` para servir de destino.
+
+       Guardar só por `typeof document` não basta e eu já errei assim: o
+       servidor omitia o <nav> e o cliente o criava JÁ NO PRIMEIRO RENDER,
+       então a hidratação procurava no HTML um nó que nunca fora gerado e
+       falhava com "Expected server HTML to contain a matching <nav>" —
+       derrubando a árvore inteira para render de cliente.
+
+       Com o sinalizador de montagem os dois primeiros renders concordam
+       (nenhum tem o portal) e o drawer entra logo depois, num efeito. Ele
+       nasce fechado, então não há nada para ver nesse intervalo. */
+    const montado = useSyncExternalStore(
+        /* Nada muda depois de montar: a inscrição não precisa notificar. */
+        () => () => {},
+        () => true, // no navegador
+        () => false, // na pré-renderização
+    );
 
     const mobileNavRef = useRef<HTMLElement>(null);
     const hamburgerRef = useRef<HTMLButtonElement>(null);
@@ -242,24 +267,27 @@ export const Header: React.FC = () => {
                 useInertBackground neutraliza os irmãos do overlay, e
                 daqui de dentro do #root o drawer seria desligado junto
                 com o resto da página. O CSS não sente a mudança — todo
-                seletor dele é `.mobile-nav*` ou parte de `body`. */}
-            {createPortal(
-                /* Clique no backdrop é afordância redundante de dismiss —
+                seletor dele é `.mobile-nav*` ou parte de `body`.
+
+                Só depois de montado — ver a nota em `montado`, acima. */}
+            {montado &&
+                createPortal(
+                    /* Clique no backdrop é afordância redundante de dismiss —
                    Escape e o botão hamburger cobrem teclado (focus trap ativo). */
-                /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */
-                <nav
-                    ref={mobileNavRef}
-                    id="mobile-nav"
-                    className={`mobile-nav${isMenuOpen ? " is-open" : ""}`}
-                    role="dialog"
-                    aria-modal="true"
-                    aria-label={navMenuLabel}
-                    aria-hidden={!isMenuOpen}
-                    onClick={(e) => {
-                        if (e.target === mobileNavRef.current) closeMenu();
-                    }}
-                >
-                    {/* Barra própria do overlay, e não uma decoração.
+                    /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */
+                    <nav
+                        ref={mobileNavRef}
+                        id="mobile-nav"
+                        className={`mobile-nav${isMenuOpen ? " is-open" : ""}`}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label={navMenuLabel}
+                        aria-hidden={!isMenuOpen}
+                        onClick={(e) => {
+                            if (e.target === mobileNavRef.current) closeMenu();
+                        }}
+                    >
+                        {/* Barra própria do overlay, e não uma decoração.
                         Com o menu aberto o `useInertBackground` marca o
                         #root como inerte, e o header inteiro mora lá:
                         marca, idioma, tema e o próprio X ficavam
@@ -267,73 +295,79 @@ export const Header: React.FC = () => {
                         Escape e o clique no fundo. Agora o header some e
                         estes controles, que estão dentro do overlay,
                         são os que respondem. */}
-                    <div className="mobile-nav__topo">
-                        <Logo />
+                        <div className="mobile-nav__topo">
+                            <Logo />
 
-                        <div className="mobile-nav__acoes">
-                            <button
-                                className={`header__lang${langSwitching ? " is-switching" : ""}`}
-                                type="button"
-                                onClick={handleLangToggle}
-                                aria-label={currentLang.switchLabel}
-                            >
-                                <IconTranslate className="header__lang-icon" />
-                                <span className="header__lang-code">
-                                    {currentLang.label}
-                                </span>
-                            </button>
+                            <div className="mobile-nav__acoes">
+                                <button
+                                    className={`header__lang${langSwitching ? " is-switching" : ""}`}
+                                    type="button"
+                                    onClick={handleLangToggle}
+                                    aria-label={currentLang.switchLabel}
+                                >
+                                    <IconTranslate className="header__lang-icon" />
+                                    <span className="header__lang-code">
+                                        {currentLang.label}
+                                    </span>
+                                </button>
 
-                            <button
-                                className="header__ctrl"
-                                type="button"
-                                onClick={toggleTheme}
-                                aria-label={themeLabel}
-                                aria-pressed={theme === "dark"}
-                            >
-                                {theme === "dark" ? <IconSun /> : <IconMoon />}
-                            </button>
+                                <button
+                                    className="header__ctrl"
+                                    type="button"
+                                    onClick={toggleTheme}
+                                    aria-label={themeLabel}
+                                    aria-pressed={theme === "dark"}
+                                >
+                                    {theme === "dark" ? (
+                                        <IconSun />
+                                    ) : (
+                                        <IconMoon />
+                                    )}
+                                </button>
 
-                            {/* O X que faltava. O do header está inerte
+                                {/* O X que faltava. O do header está inerte
                                 enquanto o menu existe. */}
-                            <button
-                                className="header__ctrl mobile-nav__fechar"
-                                type="button"
-                                onClick={closeMenu}
-                                aria-label={menuLabel}
-                            >
-                                <IconClose />
-                            </button>
+                                <button
+                                    className="header__ctrl mobile-nav__fechar"
+                                    type="button"
+                                    onClick={closeMenu}
+                                    aria-label={menuLabel}
+                                >
+                                    <IconClose />
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="mobile-nav__links">
-                        {NAV_LINKS.map(({ href, key }, i) => (
-                            <a
-                                key={href}
-                                href={`#${href}`}
-                                className={`mobile-nav__link${activeSection === href ? " is-active" : ""}`}
-                                style={{ "--i": i } as React.CSSProperties}
-                                onClick={(e) => handleNavClick(e, href)}
-                            >
-                                <span className="mobile-nav__link-num">
-                                    {String(i + 1).padStart(2, "0")}
-                                </span>
-                                {t(key)}
-                            </a>
-                        ))}
-                    </div>
+                        <div className="mobile-nav__links">
+                            {NAV_LINKS.map(({ href, key }, i) => (
+                                <a
+                                    key={href}
+                                    href={`#${href}`}
+                                    className={`mobile-nav__link${activeSection === href ? " is-active" : ""}`}
+                                    style={{ "--i": i } as React.CSSProperties}
+                                    onClick={(e) => handleNavClick(e, href)}
+                                >
+                                    <span className="mobile-nav__link-num">
+                                        {String(i + 1).padStart(2, "0")}
+                                    </span>
+                                    {t(key)}
+                                </a>
+                            ))}
+                        </div>
 
-                    <a
-                        href={`#${SECTION_IDS.CONTACT}`}
-                        className="mobile-nav__cta"
-                        onClick={(e) => handleNavClick(e, SECTION_IDS.CONTACT)}
-                    >
-                        <span>{ctaLabel}</span>
-                        <span aria-hidden="true">↗</span>
-                    </a>
-                </nav>,
-                document.body,
-            )}
+                        <a
+                            href={`#${SECTION_IDS.CONTACT}`}
+                            className="mobile-nav__cta"
+                            onClick={(e) =>
+                                handleNavClick(e, SECTION_IDS.CONTACT)
+                            }
+                        >
+                            <span>{ctaLabel}</span>
+                            <span aria-hidden="true">↗</span>
+                        </a>
+                    </nav>,
+                    document.body,
+                )}
         </>
     );
 };
