@@ -35,20 +35,33 @@ const visibleCards = () =>
         .filter((page) => page.getAttribute("aria-hidden") === "false")
         .flatMap((page) => within(page).getAllByRole("button"));
 
+/* Nº de cards por página no desktop — espelha DESKTOP_PER_PAGE do widget.
+   As contagens abaixo derivam dos dados: acrescentar uma recomendação não
+   deve exigir mexer no teste. */
+const POR_PAGINA = 2;
+const totalPaginas = (porPagina: number) =>
+    Math.ceil(recommendations.length / porPagina);
+
 describe("Recommendations — carrossel paginado", () => {
     beforeEach(() => stubViewport(false)); // desktop
     afterEach(() => vi.unstubAllGlobals());
 
     it("mostra 2 cards por página no desktop", () => {
         setup();
-        expect(visibleCards()).toHaveLength(2);
+        expect(visibleCards()).toHaveLength(
+            Math.min(POR_PAGINA, recommendations.length),
+        );
     });
 
-    it("divide os itens em páginas de 2 (3 itens → 2 páginas)", () => {
+    it("divide os itens em páginas de 2", () => {
         setup();
-        expect(recommendations.length).toBe(3);
-        expect(allPages()).toHaveLength(2);
-        expect(screen.getByText("02")).toBeInTheDocument(); // total no contador
+        const paginas = totalPaginas(POR_PAGINA);
+        expect(allPages()).toHaveLength(paginas);
+        /* Total no contador, com dois dígitos. Preso ao elemento certo:
+           por texto, "02" também casa com o índice da página corrente. */
+        expect(
+            document.querySelector(".rec-controls__counter-total")?.textContent,
+        ).toBe(String(paginas).padStart(2, "0"));
     });
 
     it("avança de página pelo botão Próxima", async () => {
@@ -60,8 +73,11 @@ describe("Recommendations — carrossel paginado", () => {
             screen.getByRole("button", { name: /próxima recomendação/i }),
         );
 
+        /* A 2ª página leva o que sobrou da 1ª. */
         const afterCards = visibleCards();
-        expect(afterCards).toHaveLength(1); // 3º item sozinho na 2ª página
+        expect(afterCards).toHaveLength(
+            Math.min(POR_PAGINA, recommendations.length - POR_PAGINA),
+        );
         expect(afterCards[0]).not.toBe(first);
     });
 
@@ -69,7 +85,7 @@ describe("Recommendations — carrossel paginado", () => {
         stubViewport(true);
         setup();
         expect(visibleCards()).toHaveLength(1);
-        expect(allPages()).toHaveLength(3);
+        expect(allPages()).toHaveLength(recommendations.length);
     });
 
     it("abre o modal ao clicar num card", async () => {

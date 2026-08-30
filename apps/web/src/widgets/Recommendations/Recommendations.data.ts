@@ -91,4 +91,28 @@ export const recommendations: RecommendationItem[] = [
             { pt: "Colaboração", en: "Collaboration" },
         ],
     },
+    {
+        id: "rec-lucca-campello",
+        authorName: "Lucca Campello",
+        authorRole: {
+            pt: "Analista de Dados · SQL · Python · Power BI · PostgreSQL · AWS · Estudante de Engenharia de Software",
+            en: "Data Analyst · SQL · Python · Power BI · PostgreSQL · AWS · Software Engineering Student",
+        },
+        date: "2026-08-11",
+        relationship: {
+            pt: "Trabalhou na mesma equipe que Guilherme",
+            en: "Worked on the same team as Guilherme",
+        },
+        text: {
+            pt: 'Tive o prazer de trabalhar ao lado do Guilherme na Wise System, e posso dizer que ele é um daqueles profissionais em quem você realmente confia no dia a dia.\n\nAtuando diretamente com homologação e suporte técnico aos clientes, sempre se destacou pela didática e pela facilidade em transformar problemas técnicos em explicações claras. Isso era tão perceptível que tivemos clientes que faziam questão de tratar determinadas demandas diretamente com ele, justamente pela confiança e pela forma como conduzia cada atendimento.\n\nNo dia a dia, o Guilherme também era uma das pessoas com quem eu mais gostava de discutir problemas. Muitas vezes ele vinha até a minha mesa com uma dúvida ou uma situação diferente, e acabávamos debatendo possibilidades até encontrar a melhor solução. Nunca era simplesmente "resolver o chamado", mas entender o problema e buscar uma forma melhor de resolvê-lo.\n\nQuando eu precisava direcionar alguma demanda relacionada ao N2, tinha tranquilidade em contar com ele, porque sabia que haveria comprometimento tanto na execução quanto no retorno ao cliente.\n\nNa área de homologação, além de dominar muito bem os processos, também assumia a responsabilidade de orientar e treinar novos estagiários. Durante a transição do sistema para suportar pagamentos via PIX, trabalhamos muito próximos nas homologações, CNABs e particularidades dos diferentes clientes, e a participação dele foi fundamental durante todo esse processo.\n\nMais do que competência técnica, o que sempre me chamou atenção no Guilherme foi a vontade genuína de entregar um trabalho bem feito, a integridade e a disposição para ajudar quem estivesse ao lado.\n\nÉ um profissional que eu recomendaria de olhos fechados e com quem teria enorme prazer em trabalhar novamente.',
+            en: 'It was a pleasure to work alongside Guilherme at Wise System, and I can say he is one of those professionals you genuinely rely on day to day.\n\nWorking directly with homologation and technical support for clients, he always stood out for how clearly he explains things and for turning technical problems into plain explanations. It was so noticeable that we had clients who made a point of handling certain demands directly with him, precisely because of the trust and the way he conducted every case.\n\nDay to day, Guilherme was also one of the people I most enjoyed discussing problems with. He would often come to my desk with a question or an unusual situation, and we would end up debating possibilities until we found the best solution. It was never simply "closing the ticket", but understanding the problem and looking for a better way to solve it.\n\nWhenever I had to route a demand related to N2, I was at ease counting on him, because I knew there would be commitment both in the execution and in getting back to the client.\n\nIn homologation, beyond mastering the processes very well, he also took on the responsibility of guiding and training new interns. During the system transition to support PIX payments, we worked very closely on homologations, CNAB files and the particularities of each client, and his contribution was fundamental throughout that whole process.\n\nMore than technical competence, what always stood out to me in Guilherme was the genuine will to deliver work well done, his integrity and his readiness to help whoever was beside him.\n\nHe is a professional I would recommend with my eyes closed and with whom I would have enormous pleasure in working again.',
+        },
+        tags: [
+            { pt: "Homologação", en: "Homologation" },
+            { pt: "Suporte N2", en: "N2 support" },
+            { pt: "PIX e CNAB", en: "PIX and CNAB" },
+            { pt: "Didática", en: "Clear communication" },
+            { pt: "Treinamento de estagiários", en: "Training interns" },
+        ],
+    },
 ];
