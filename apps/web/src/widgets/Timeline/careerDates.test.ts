@@ -31,15 +31,21 @@ describe("buildPeriod", () => {
 describe("buildDuration", () => {
     it("remove o prefixo 'Em andamento' — status é exibido separado", () => {
         const out = buildDuration("2024-01", "2024-07", "pt");
-        expect(out).toBe("6 meses");
         expect(out).not.toContain("Em andamento");
+    });
+
+    /* Duração de currículo conta o primeiro e o último mês: é assim que o
+       LinkedIn apresenta os mesmos cargos, e é de lá que esta seção vem. */
+    it("conta o mês de início e o de término", () => {
+        expect(buildDuration("2024-01", "2024-07", "pt")).toBe("7 meses");
+        expect(buildDuration("2025-04", "2025-12", "pt")).toBe("9 meses");
     });
 });
 
 describe("buildTotalDuration", () => {
     it("soma da posição mais antiga até a mais recente", () => {
         const positions = [
-            position("2025-01", "2025-12"), // mais recente primeiro
+            position("2025-01", "2025-11"), // mais recente primeiro
             position("2024-01", "2024-12"),
         ];
         expect(buildTotalDuration(positions, "en")).toBe(

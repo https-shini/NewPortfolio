@@ -52,6 +52,15 @@ describe("calculateDuration", () => {
         );
     });
 
+    /* A opção que a carreira usa: currículo conta o primeiro e o último
+       mês como cheios, e é assim que o LinkedIn mostra os mesmos cargos. */
+    it("conta início e fim quando inclusive", () => {
+        expect(
+            calculateDuration("2025-04", "2025-12", "pt", { inclusive: true }),
+        ).toBe("9 meses");
+        expect(calculateDuration("2025-04", "2025-12", "pt")).toBe("8 meses");
+    });
+
     describe("posição em andamento (endDate undefined)", () => {
         beforeEach(() => {
             vi.useFakeTimers();

@@ -43,7 +43,14 @@ export function buildDuration(
 ): string {
     // calculateDuration adiciona "Em andamento · " quando endDate é undefined.
     // Aqui queremos apenas a duração — strip do prefixo se presente.
-    const raw = calculateDuration(startDate, endDate, lang);
+    //
+    // `inclusive`: duração de currículo conta o primeiro e o último mês.
+    // É como o LinkedIn apresenta os mesmos cargos, e é de lá que o
+    // conteúdo desta seção vem — sem isso, o perfil diz "9 meses" onde o
+    // site dizia "8 meses" para a mesma vaga.
+    const raw = calculateDuration(startDate, endDate, lang, {
+        inclusive: true,
+    });
     const sep = " · ";
     const idx = raw.indexOf(sep);
     return idx >= 0 ? raw.slice(idx + sep.length) : raw;

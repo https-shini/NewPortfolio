@@ -14,10 +14,24 @@ export function yearsSince(startDate: string, now: Date = new Date()): number {
     return Math.floor(monthsSince(startDate, now) / 12);
 }
 
+export interface DurationOptions {
+    /**
+     * Conta o mês de início e o de término como meses cheios — a convenção
+     * de currículo, e a que o LinkedIn usa: abr/2025 a dez/2025 são 9
+     * meses, não 8. Sem isto, a mesma vaga aparece com números diferentes
+     * aqui e no perfil de onde o conteúdo veio.
+     *
+     * Fica opcional e desligada por padrão porque só a carreira conta
+     * assim; medir um intervalo qualquer continua sendo subtração.
+     */
+    inclusive?: boolean;
+}
+
 export function calculateDuration(
     startDate: string,
     endDate: string | undefined,
     lang: Lang = "pt",
+    { inclusive = false }: DurationOptions = {},
 ): string {
     const parts = startDate.split("-").map(Number);
     const sy = parts[0];
@@ -36,7 +50,7 @@ export function calculateDuration(
         em = now.getMonth() + 1;
     }
 
-    const totalMonths = (ey - sy) * 12 + (em - sm);
+    const totalMonths = (ey - sy) * 12 + (em - sm) + (inclusive ? 1 : 0);
     const years = Math.floor(totalMonths / 12);
     const months = totalMonths % 12;
 

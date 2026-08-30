@@ -5,15 +5,121 @@ import type {
 } from "./Timeline.types";
 
 /* ─────────────────────────────────────────────────────────
-   WISE_SYSTEM_BULLETS — atividades operacionais bilíngues
-   compartilhadas entre as duas posições na Wise System.
-   Itens com `highlight: true` aparecem na seção "Destaques".
+   Bullets da Wise System — uma lista por posição.
+   ──────────────
+   As duas posições compartilhavam um único array, o que dizia
+   que o estagiário fazia exatamente o mesmo que o efetivo. A
+   efetivação existe justamente porque o escopo mudou: liderança
+   da implantação, apoio ao N2, transição para PIX e formação de
+   novos estagiários só valem para a posição CLT.
+
+   Itens com `highlight: true` sobem para a seção "Destaques"; os
+   demais ficam em "Atividades" — ver PositionEntry.tsx.
 ───────────────────────────────────────────────────────── */
-const WISE_SYSTEM_BULLETS: CareerBullet[] = [
+const WISE_N1_BULLETS: CareerBullet[] = [
     {
         text: {
-            pt: "Suporte técnico e funcional a clientes via telefone, chat, e-mail e acesso remoto, orientando sobre uso do SIGO e boas práticas operacionais",
-            en: "Technical and functional customer support via phone, chat, email and remote access, guiding SIGO usage and operational best practices",
+            pt: "Efetivado de estágio a CLT em menos de um ano, com ampliação de responsabilidades e autonomia técnica",
+            en: "Promoted from intern to full-time in under a year, with broader responsibilities and technical autonomy",
+        },
+        highlight: true,
+    },
+    {
+        text: {
+            pt: "Liderança da equipe de implantação nos processos de homologação bancária e de notas fiscais, atuando com diversos bancos e municípios",
+            en: "Leading the deployment team through bank and invoice homologation, working with several banks and municipalities",
+        },
+        highlight: true,
+    },
+    {
+        text: {
+            pt: "Suporte técnico e funcional ao ERP (SIGO), com análise de regras de negócio, resolução de problemas e apoio em demandas de Suporte N2",
+            en: "Technical and functional support for the ERP (SIGO), with business-rule analysis, problem-solving and support on Tier 2 demands",
+        },
+    },
+    {
+        text: {
+            pt: "Atuação nos módulos Financeiro e Faturamento, com domínio de Contas a Pagar e Receber (lançamentos, baixas, cobranças e conciliações)",
+            en: "Working across the Finance and Billing modules, with command of Accounts Payable and Receivable (entries, settlements, collections and reconciliations)",
+        },
+    },
+    {
+        text: {
+            pt: "Análise e correção de inconsistências em arquivos CNAB (remessa e retorno), incluindo integrações com instituições financeiras",
+            en: "Analysis and correction of inconsistencies in CNAB files (outbound and return), including integrations with financial institutions",
+        },
+    },
+    {
+        text: {
+            pt: "Participação ativa na transição do sistema para pagamentos via PIX, atuando em homologações, CNABs e particularidades de clientes",
+            en: "Active role in the system's transition to PIX payments, working on homologations, CNAB files and client-specific requirements",
+        },
+        highlight: true,
+    },
+    {
+        text: {
+            pt: "Homologação de notas fiscais e boletos bancários, com suporte a rotinas de faturamento, emissão, validação e tratativa de rejeições",
+            en: "Homologation of invoices and bank slips, supporting billing routines, issuance, validation and rejection handling",
+        },
+    },
+    {
+        text: {
+            pt: "Postura investigativa na resolução de problemas: análise de causa raiz e avaliação de impacto no ecossistema do software",
+            en: "Investigative approach to problem-solving: root-cause analysis and assessment of impact across the software ecosystem",
+        },
+        highlight: true,
+    },
+    {
+        text: {
+            pt: "Condução de atendimentos técnicos com clareza e didática, sendo referência direta para clientes em determinadas demandas",
+            en: "Conducting technical support with clarity and didactics, becoming the direct point of reference for clients on certain demands",
+        },
+    },
+    {
+        text: {
+            pt: "Treinamentos online para clientes sobre os módulos do sistema, com foco em didática e clareza na explicação técnica",
+            en: "Online training for clients on the system's modules, focused on didactics and clarity in technical explanation",
+        },
+    },
+    {
+        text: {
+            pt: "Treinamento e capacitação interna de novos estagiários, orientando processos e boas práticas",
+            en: "Internal training and onboarding of new interns, guiding processes and best practices",
+        },
+        highlight: true,
+    },
+    {
+        text: {
+            pt: "Estruturação de sistema interno de controle de homologação, organizando processos e indicadores da equipe",
+            en: "Structuring an internal homologation control system, organising the team's processes and indicators",
+        },
+        highlight: true,
+    },
+    {
+        text: {
+            pt: "Identificação e reporte de bugs, com comunicação técnica estruturada para as equipes de Suporte N2 e Desenvolvimento",
+            en: "Identifying and reporting bugs, with structured technical communication to the Tier 2 Support and Development teams",
+        },
+    },
+    {
+        text: {
+            pt: "Gestão de chamados via Service Desk, com documentação técnica detalhada, rastreabilidade e escalonamento",
+            en: "Ticket management through Service Desk, with detailed technical documentation, traceability and escalation",
+        },
+    },
+    {
+        text: {
+            pt: "Proposição de melhorias em processos internos, contribuindo para a redução de incidentes e o aumento da eficiência operacional",
+            en: "Proposing improvements to internal processes, contributing to fewer incidents and greater operational efficiency",
+        },
+    },
+];
+
+const WISE_ESTAGIO_BULLETS: CareerBullet[] = [
+    {
+        text: {
+            pt: "Suporte técnico e funcional a clientes via telefone, chat, e-mail e acesso remoto, orientando sobre o uso do ERP (SIGO) e boas práticas operacionais",
+            en: "Technical and functional customer support via phone, chat, email and remote access, guiding usage of the ERP (SIGO) and operational best practices",
         },
         highlight: true,
     },
@@ -21,6 +127,12 @@ const WISE_SYSTEM_BULLETS: CareerBullet[] = [
         text: {
             pt: "Atuação focada nos módulos Financeiro e Faturamento",
             en: "Focused on the Finance and Billing modules",
+        },
+    },
+    {
+        text: {
+            pt: "Integrante da equipe de implantação, atuando nos processos de homologação bancária e de notas fiscais",
+            en: "Member of the deployment team, working on bank and invoice homologation",
         },
         highlight: true,
     },
@@ -32,8 +144,8 @@ const WISE_SYSTEM_BULLETS: CareerBullet[] = [
     },
     {
         text: {
-            pt: "Homologação bancária e análise de inconsistências em arquivos CNAB (remessa e retorno) e integrações com instituições financeiras",
-            en: "Bank homologation and analysis of inconsistencies in CNAB files (outbound and return) and integrations with financial institutions",
+            pt: "Análise e resolução de inconsistências em arquivos bancários CNAB (remessa e retorno) e integrações com instituições financeiras",
+            en: "Analysis and resolution of inconsistencies in CNAB bank files (outbound and return) and integrations with financial institutions",
         },
         highlight: true,
     },
@@ -45,15 +157,15 @@ const WISE_SYSTEM_BULLETS: CareerBullet[] = [
     },
     {
         text: {
-            pt: "Suporte em Faturamento e documentos fiscais: emissão de NF e RPS, rejeições, correção de erros na geração da nota e homologação",
-            en: "Support for Billing and tax documents: invoice and RPS issuance, rejections, fixing note generation errors and approval",
+            pt: "Suporte em Faturamento e documentos fiscais: emissão, rejeições e homologação de notas fiscais",
+            en: "Support for Billing and tax documents: issuance, rejections and invoice homologation",
         },
         highlight: true,
     },
     {
         text: {
-            pt: "Investigação e correção de erros tributários e validação de regras de negócio no sistema",
-            en: "Investigation and correction of tax errors and validation of business rules in the system",
+            pt: "Investigação e correção de erros tributários, com validação de regras de negócio no sistema",
+            en: "Investigation and correction of tax errors, validating business rules in the system",
         },
     },
     {
@@ -65,32 +177,40 @@ const WISE_SYSTEM_BULLETS: CareerBullet[] = [
     },
     {
         text: {
-            pt: "Gerenciamento de chamados em sistema ServiceDesk com documentação detalhada e rastreabilidade",
-            en: "Ticket management in a ServiceDesk system with detailed documentation and traceability",
+            pt: "Treinamentos para novos estagiários sobre os módulos do sistema, com foco em didática e clareza na explicação técnica",
+            en: "Training new interns on the system's modules, focused on didactics and clarity in technical explanation",
         },
     },
     {
         text: {
-            pt: "Escalonamento técnico e interação com equipes de Desenvolvimento e Implantação para correção de falhas sistêmicas",
-            en: "Technical escalation and collaboration with Development and Deployment teams to fix systemic failures",
+            pt: "Gerenciamento de chamados em sistema Service Desk, com documentação detalhada e rastreabilidade",
+            en: "Ticket management in a Service Desk system, with detailed documentation and traceability",
         },
     },
     {
         text: {
-            pt: "Elaboração de materiais explicativos, orientações operacionais e apoio a treinamentos para usuários",
-            en: "Creation of explanatory materials, operational guidance and support for user training",
+            pt: "Escalonamento técnico e interação com as equipes de Suporte N2 e Desenvolvimento para correção de falhas sistêmicas",
+            en: "Technical escalation and collaboration with the Tier 2 Support and Development teams to fix systemic failures",
         },
     },
     {
         text: {
-            pt: "Proposição de melhorias em processos internos e redução de recorrência de chamados",
-            en: "Proposing improvements to internal processes and reducing ticket recurrence",
+            pt: "Elaboração de materiais explicativos e orientações operacionais, com apoio a treinamentos para usuários",
+            en: "Creation of explanatory materials and operational guidance, supporting user training",
+        },
+    },
+    {
+        text: {
+            pt: "Proposição de melhorias em processos internos, contribuindo para a redução de recorrência de chamados",
+            en: "Proposing improvements to internal processes, contributing to fewer recurring tickets",
         },
     },
 ];
 
+/* Competências comuns às duas posições. */
 const WISE_SYSTEM_TAGS = [
     { pt: "SIGO", en: "SIGO" },
+    { pt: "ERP", en: "ERP" },
     { pt: "SST", en: "SST" },
     { pt: "Financeiro", en: "Finance" },
     { pt: "Faturamento", en: "Billing" },
@@ -98,7 +218,19 @@ const WISE_SYSTEM_TAGS = [
     { pt: "Conciliação Bancária", en: "Bank Reconciliation" },
     { pt: "NFS-e", en: "NFS-e" },
     { pt: "RPS", en: "RPS" },
-    { pt: "ServiceDesk", en: "ServiceDesk" },
+    { pt: "Service Desk", en: "Service Desk" },
+    { pt: "Homologação Bancária", en: "Bank Homologation" },
+    { pt: "Implantação", en: "Deployment" },
+    { pt: "Análise de Causa Raiz", en: "Root-Cause Analysis" },
+    { pt: "Treinamento", en: "Training" },
+];
+
+/* O que só a posição efetiva acrescenta. O painel lateral agrega o
+   conjunto único dos dois cargos — ver CareerStats.tsx. */
+const WISE_N1_TAGS = [
+    { pt: "PIX", en: "PIX" },
+    { pt: "Suporte N2", en: "Tier 2 Support" },
+    { pt: "Liderança Técnica", en: "Technical Leadership" },
 ];
 
 /* ─────────────────────────────────────────────────────────
@@ -127,11 +259,11 @@ export const careerCompanies: CareerCompany[] = [
                 modality: "ON_SITE",
                 statusType: "active",
                 summary: {
-                    pt: "Suporte técnico ao SIGO, plataforma de SST (Saúde e Segurança do Trabalho) e eSocial da Wise System, com foco nos módulos Financeiro (homologação bancária, remessa/retorno CNAB, conciliação) e Faturamento (homologação de NF/RPS e correção de erros na emissão). Análise de causa raiz, escalonamento técnico e melhoria contínua.",
-                    en: "Technical support for SIGO, Wise System's occupational health & safety (SST) and eSocial platform, focused on the Finance (bank homologation, CNAB outbound/return, reconciliation) and Billing (invoice/RPS approval and fixing issuance errors) modules. Root-cause analysis, technical escalation and continuous improvement.",
+                    pt: "Efetivado após o estágio, com liderança das homologações bancárias e de notas fiscais junto à equipe de implantação.",
+                    en: "Promoted from intern to full-time, leading bank and invoice homologations alongside the deployment team.",
                 },
-                bullets: WISE_SYSTEM_BULLETS,
-                tags: [...WISE_SYSTEM_TAGS],
+                bullets: WISE_N1_BULLETS,
+                tags: [...WISE_SYSTEM_TAGS, ...WISE_N1_TAGS],
             },
             {
                 id: "wise-estagio",
@@ -145,10 +277,10 @@ export const careerCompanies: CareerCompany[] = [
                 modality: "ON_SITE",
                 statusType: "done",
                 summary: {
-                    pt: "Primeiro contato profissional com o mercado de tecnologia, prestando suporte técnico e funcional a clientes nos módulos do SIGO, o software de SST da Wise System, com foco em Financeiro e Faturamento.",
-                    en: "First professional experience in the tech industry, providing technical and functional support to clients across the modules of SIGO, Wise System's occupational health & safety (SST) software, focused on Finance and Billing.",
+                    pt: "Primeiro contato profissional com tecnologia: suporte a clientes nos módulos Financeiro e Faturamento do SIGO, integrando a equipe de implantação.",
+                    en: "First professional experience in tech: client support across SIGO's Finance and Billing modules, as part of the deployment team.",
                 },
-                bullets: WISE_SYSTEM_BULLETS,
+                bullets: WISE_ESTAGIO_BULLETS,
                 tags: [...WISE_SYSTEM_TAGS],
             },
         ],
