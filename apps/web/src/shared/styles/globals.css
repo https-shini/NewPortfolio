@@ -782,6 +782,13 @@ body.light-mode .divider-brand {
 
   O rodapé fica de fora de propósito: a medição devolveu altura destoante para
   ele, e tamanho intrínseco errado é justamente como se introduz salto.
+
+  Um efeito colateral a saber, para não assustar depois: captura de tela de
+  PÁGINA INTEIRA (o `fullPage` do Playwright) passa a sair com as seções
+  adiadas em branco, porque o capturador não força a renderização delas. Não é
+  o que o usuário vê — rolando até cada seção, tudo aparece normalmente, e foi
+  conferido assim. Nenhum arranjo de auditoria do projeto usa `fullPage`; eles
+  medem por janela e por seletor. Se algum vier a usar, precisa rolar antes.
 */
 #sobre,
 #carreira,
