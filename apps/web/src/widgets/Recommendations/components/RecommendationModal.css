@@ -1,34 +1,37 @@
 /* ═══════════════════════════════════════════════════════════
-   RECOMMENDATION MODAL — two-column detailed view
-   ┌──────────────────────────┬────────────────────┐
-   │ full recommendation text │ author · context · │
-   │                          │ date · tags        │
-   └──────────────────────────┴────────────────────┘
+   RECOMMENDATION MODAL — a recomendação inteira
+   ───────────────────────────────────────────────────────────
+   Celular: uma coluna, UMA rolagem, na ordem de leitura.
+   Desktop: texto à esquerda, autor e contexto à direita.
+
+     ┌──────────────────────────┬────────────────────┐
+     │ texto completo           │ autor              │
+     │                          ├────────────────────┤
+     │                          │ data · contexto ·  │
+     │                          │ tópicos            │
+     ├──────────────────────────┴────────────────────┤
+     │ anterior · 02/04 · próxima                    │
+     └───────────────────────────────────────────────┘
 ═══════════════════════════════════════════════════════════ */
 
-/* ── Dialog grid ────────────────────────────────────────────
-   Casca (overlay, portal, foco, Esc, surface, borda, sombra)
-   vem do Modal base (shared/ui/Modal). Aqui: dimensões da
-   instância + layout interno em duas colunas.
+/* ── Diálogo ────────────────────────────────────────────────
+   Casca (overlay, portal, foco, Esc, superfície, borda,
+   sombra) vem do Modal base. Aqui: dimensões da instância e
+   as duas faixas — painel e navegação.
 ─────────────────────────────────────────────────────────── */
 .rec-modal {
     --modal-width: 980px;
-    /* dvh, não vh: no mobile a barra dinâmica faz `vh` medir a mais e
+    /* dvh, não vh: no celular a barra dinâmica faz `vh` medir a mais e
        o diálogo passa da tela. */
     --modal-max-height: 92dvh;
 
     display: grid;
-    grid-template-columns: 1fr;
-    /* Empilhado a barra lateral vem primeiro (order: -1) e as duas
-       faixas rolam por dentro. A proporção é o que importa: com `auto`
-       na primeira, num celular deitado — diálogo de ~296px — a barra
-       lateral ficava com os 294px e sobrava ZERO para o texto, que era
-       o conteúdo do modal. Repartir garante que nenhuma das duas engula
-       a outra, em qualquer altura de tela. */
-    grid-template-rows: minmax(0, 2fr) minmax(0, 3fr);
+    /* O painel toma a altura que sobra e não cresce além dela — é o que
+       faz a rolagem interna existir. A navegação fica com o que pede. */
+    grid-template-rows: minmax(0, 1fr) auto;
 }
 
-/* ── Close button (absolute, over content) ───────────────── */
+/* ── Fechar (flutua sobre o conteúdo) ───────────────────── */
 .rec-modal__close {
     position: absolute;
     top: var(--space-4);
@@ -43,7 +46,7 @@
     border: 1px solid var(--color-border-2);
     color: var(--color-text-3);
     cursor: pointer;
-    z-index: 2;
+    z-index: 3;
     transition:
         background var(--transition-fast),
         color var(--transition-fast),
@@ -64,88 +67,76 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   LEFT COLUMN — full text
+   PAINEL — empilhado, com a única rolagem do diálogo
+   ─────────────────────────────────────────────────────────
+   Eram duas áreas roláveis aninhadas (a barra do autor e o
+   texto), cada uma com o seu gesto e nada distinguindo as
+   duas. Pior: as tags ficavam abaixo da rolagem própria da
+   barra e não apareciam em momento nenhum.
 ───────────────────────────────────────────────────────── */
-.rec-modal__text {
-    padding: var(--space-6);
+.rec-modal__panel {
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
-    /* Sem isto o gesto continua na página atrás quando o texto acaba. */
+    /* Sem isto o gesto continua na página atrás quando o conteúdo acaba. */
     overscroll-behavior: contain;
     min-height: 0;
 }
 
-.rec-modal__text:focus-visible {
+.rec-modal__panel:focus-visible {
     outline: none;
     box-shadow: inset 0 0 0 2px var(--color-brand);
 }
 
-.rec-modal__quote {
-    display: block;
-    font-size: 3.25rem;
-    line-height: 0.7;
-    color: var(--color-brand);
-    opacity: 0.35;
-    font-family: Georgia, serif;
-    user-select: none;
-    margin-bottom: var(--space-4);
-}
-
-.rec-modal__paragraph {
-    font-size: var(--text-sm);
-    line-height: var(--lh-relaxed);
-    color: var(--color-text-2, var(--color-text-3));
-    margin: 0 0 var(--space-4);
-}
-
-.rec-modal__paragraph:last-of-type {
-    margin-bottom: 0;
-}
-
-/* Scrollbar styling for the text column */
+.rec-modal__panel::-webkit-scrollbar,
 .rec-modal__text::-webkit-scrollbar {
     width: 6px;
 }
+.rec-modal__panel::-webkit-scrollbar-track,
 .rec-modal__text::-webkit-scrollbar-track {
     background: transparent;
 }
+.rec-modal__panel::-webkit-scrollbar-thumb,
 .rec-modal__text::-webkit-scrollbar-thumb {
     background: var(--color-border-2);
     border-radius: var(--radius-full);
 }
+.rec-modal__panel::-webkit-scrollbar-thumb:hover,
 .rec-modal__text::-webkit-scrollbar-thumb:hover {
     background: var(--color-border-brand);
 }
 
 /* ─────────────────────────────────────────────────────────
-   RIGHT COLUMN — author sidebar
+   QUEM FALOU
 ───────────────────────────────────────────────────────── */
-.rec-modal__sidebar {
+.rec-modal__identity {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-    padding: var(--space-6);
-    padding-right: calc(var(--space-10) + var(--space-2)); /* close btn */
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    /* Espaço do botão fechar. */
+    padding-right: calc(var(--space-10) + var(--space-2));
     background: var(--color-surface-2);
     border-bottom: 1px solid var(--color-border-1);
-    order: -1;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    min-height: 0;
+
+    /* O autor continua à vista enquanto se lê o depoimento. */
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
-.rec-modal__author-block {
+.rec-modal__identity-text {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-    padding-bottom: var(--space-4);
-    border-bottom: 1px solid var(--color-border-1);
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
 }
 
 .rec-modal__avatar {
-    width: 52px;
-    height: 52px;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     overflow: hidden;
     background: var(--color-brand-subtle);
@@ -161,7 +152,7 @@
 }
 
 .rec-modal__initials {
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
     font-weight: 700;
     color: var(--color-brand-light);
     letter-spacing: 0.05em;
@@ -177,13 +168,89 @@
 }
 
 .rec-modal__role {
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     color: var(--color-text-3);
     margin: 0;
     line-height: 1.45;
+
+    /* O cargo vem do LinkedIn e às vezes tem sete qualificações; duas
+       linhas dizem quem é a pessoa sem empurrar o depoimento pra fora
+       da tela. O texto inteiro continua no card do carrossel. */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-/* ── Facts (date / context) as definition list ──────────── */
+/* ─────────────────────────────────────────────────────────
+   O QUE FALOU
+───────────────────────────────────────────────────────── */
+.rec-modal__text {
+    padding: var(--space-5);
+    /* Empilhado, quem rola é o painel — e um item de flex encolhe abaixo
+       do próprio conteúdo por padrão. Sem travar isto, o texto encolhia,
+       transbordava sem rolagem e o depoimento ficava cortado no meio da
+       frase, sem forma de ler o resto. */
+    flex: 0 0 auto;
+}
+
+.rec-modal__text:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--color-brand);
+}
+
+.rec-modal__quote {
+    display: block;
+    font-size: 2.5rem;
+    line-height: 0.7;
+    color: var(--color-brand);
+    opacity: 0.35;
+    font-family: Georgia, serif;
+    user-select: none;
+    margin-bottom: var(--space-4);
+}
+
+.rec-modal__paragraph {
+    font-size: var(--text-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-2, var(--color-text-3));
+    margin: 0 0 var(--space-4);
+
+    /* Justificado como o resto do texto corrido do site (`.about__text`,
+       `.spec-card__desc`). A hifenização é o que segura o resultado na
+       coluna estreita do celular — sem ela o justificado abre buracos
+       entre as palavras. O dicionário sai do `lang` do documento, que o
+       LangContext mantém em dia. */
+    text-align: justify;
+    hyphens: auto;
+}
+
+.rec-modal__paragraph:last-of-type {
+    margin-bottom: 0;
+}
+
+/* ─────────────────────────────────────────────────────────
+   QUANDO, E SOBRE O QUÊ
+───────────────────────────────────────────────────────── */
+.rec-modal__meta {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding: var(--space-5);
+    background: var(--color-surface-2);
+    border-top: 1px solid var(--color-border-1);
+    /* Empurra o bloco para o fim quando o texto é curto — no empilhado
+       ele é rodapé do conteúdo, não um bloco solto no meio. */
+    margin-top: auto;
+}
+
+.rec-modal__meta:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--color-brand);
+}
+
 .rec-modal__facts {
     display: flex;
     flex-direction: column;
@@ -215,12 +282,12 @@
     line-height: 1.4;
 }
 
-/* ── Tags block ──────────────────────────────────────────── */
+/* ── Tópicos ─────────────────────────────────────────────── */
 .rec-modal__tags-block {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    padding-top: var(--space-5);
+    padding-top: var(--space-4);
     border-top: 1px solid var(--color-border-1);
 }
 
@@ -257,74 +324,248 @@
     border-radius: var(--radius-full);
 }
 
-/* Scrollbar on sidebar */
-.rec-modal__sidebar::-webkit-scrollbar {
-    width: 6px;
+/* ─────────────────────────────────────────────────────────
+   NAVEGAÇÃO — percorrer as recomendações sem fechar
+   ─────────────────────────────────────────────────────────
+   Fora do painel de propósito: é faixa fixa do diálogo, e não
+   some com a rolagem. As setas do teclado fazem o mesmo, de
+   qualquer lugar de dentro (ver RecommendationModal.tsx).
+───────────────────────────────────────────────────────── */
+.rec-modal__nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+    background: var(--color-surface-2);
+    border-top: 1px solid var(--color-border-1);
 }
-.rec-modal__sidebar::-webkit-scrollbar-track {
-    background: transparent;
+
+.rec-modal__nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--tap-min);
+    height: var(--tap-min);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border-2);
+    color: var(--color-text-3);
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast),
+        border-color var(--transition-fast);
 }
-.rec-modal__sidebar::-webkit-scrollbar-thumb {
-    background: var(--color-border-2);
-    border-radius: var(--radius-full);
+
+.rec-modal__nav-btn:hover {
+    background: var(--color-brand-subtle);
+    color: var(--color-brand-light);
+    border-color: var(--color-border-brand);
+}
+
+.rec-modal__nav-btn:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+
+.rec-modal__counter {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-4);
+    letter-spacing: var(--ls-wide);
+}
+
+.rec-modal__counter strong {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-text-1);
+}
+
+.rec-modal__counter-sep {
+    opacity: 0.5;
 }
 
 /* ── A partir de --bp-md (640px) ─────────────────────────── */
 @media (min-width: 641px) {
-    .rec-modal__facts {
-        gap: var(--space-4);
+    .rec-modal__identity,
+    .rec-modal__text,
+    .rec-modal__meta {
+        padding: var(--space-6);
+    }
+
+    .rec-modal__identity {
+        padding-right: calc(var(--space-10) + var(--space-2));
     }
 }
 
 /* ─────────────────────────────────────────────────────────
-   A partir de --bp-lg (768px) — as duas colunas lado a lado
+   A partir de --bp-lg (768px) — duas colunas
    ─────────────────────────────────────────────────────────
-   Era 780px, e foi absorvido pelo 768 da escala: 12px de
-   faixa não sustentam decisão de layout própria.
+   `identity` e `meta` ocupam a mesma coluna, com a mesma
+   superfície e a mesma borda: lêem como um painel só, mas são
+   irmãos do texto — é isso que permite empilhá-los na ordem
+   de leitura no celular sem duplicar marcação.
 ───────────────────────────────────────────────────────── */
 @media (min-width: 769px) {
     .rec-modal {
         --modal-max-height: min(85dvh, 760px);
+    }
 
+    .rec-modal__panel {
+        display: grid;
         grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-        /* Sem isto a linha é `auto`, as duas colunas crescem com o
-           conteúdo e o `overflow-y` delas nunca entra em ação. */
-        grid-template-rows: minmax(0, 1fr);
+        grid-template-areas:
+            "texto identidade"
+            "texto meta";
+        grid-template-rows: auto minmax(0, 1fr);
+        /* Quem rola aqui é a coluna de texto, não o painel. */
+        overflow: hidden;
     }
 
-    .rec-modal__sidebar {
-        order: 0;
-        border-bottom: none;
-        border-left: 1px solid var(--color-border-1);
-        padding: var(--space-8) var(--space-7);
-    }
-
-    .rec-modal__author-block {
+    .rec-modal__identity {
+        grid-area: identidade;
+        position: static;
         flex-direction: column;
         align-items: flex-start;
-        flex-wrap: nowrap;
         gap: var(--space-3);
-        padding-bottom: var(--space-5);
+        border-bottom: none;
+        border-left: 1px solid var(--color-border-1);
+        padding: var(--space-7) var(--space-6) var(--space-5);
+        padding-right: calc(var(--space-10) + var(--space-2));
     }
 
     .rec-modal__avatar {
-        width: 64px;
-        height: 64px;
+        width: 60px;
+        height: 60px;
+    }
+
+    .rec-modal__initials {
+        font-size: var(--text-xl);
+    }
+
+    .rec-modal__role {
+        font-size: var(--text-sm);
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
     }
 
     .rec-modal__text {
+        grid-area: texto;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        min-height: 0;
         padding: var(--space-8);
-        padding-right: calc(
-            var(--space-10) + var(--space-2)
-        ); /* clears close btn */
+    }
+
+    .rec-modal__quote {
+        font-size: 3.25rem;
     }
 
     .rec-modal__paragraph {
         font-size: var(--text-md);
+        /* Linha longa cansa, e justificada cansa mais: 68 caracteres é
+           o teto confortável. O bloco fica centrado na coluna. */
+        max-width: 68ch;
+        margin-inline: auto;
+    }
+
+    .rec-modal__meta {
+        grid-area: meta;
+        margin-top: 0;
+        border-top: none;
+        border-left: 1px solid var(--color-border-1);
+        padding: 0 var(--space-6) var(--space-7);
+        gap: var(--space-4);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        min-height: 0;
+    }
+
+    .rec-modal__facts {
+        gap: var(--space-4);
+        padding-top: var(--space-5);
+        border-top: 1px solid var(--color-border-1);
+    }
+
+    .rec-modal__nav {
+        justify-content: flex-end;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-6);
     }
 }
 
-/* ── Reduced motion ──────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────
+   Tela larga e baixa — celular deitado
+   ─────────────────────────────────────────────────────────
+   844×390 recebe o layout de duas colunas com 390px de altura
+   para tudo. Sem isto o avatar de 60px e os respiros de tela
+   grande cortavam o contexto no meio da frase.
+───────────────────────────────────────────────────────── */
+@media (min-width: 769px) and (max-height: 520px) {
+    .rec-modal {
+        --modal-max-height: calc(100dvh - var(--space-6));
+    }
+
+    .rec-modal__avatar {
+        width: 42px;
+        height: 42px;
+    }
+
+    .rec-modal__initials {
+        font-size: var(--text-md);
+    }
+
+    .rec-modal__identity {
+        flex-direction: row;
+        align-items: center;
+        padding: var(--space-4) var(--space-5) var(--space-3);
+        padding-right: calc(var(--space-10) + var(--space-2));
+    }
+
+    .rec-modal__role {
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+    }
+
+    .rec-modal__text {
+        padding: var(--space-5) var(--space-6);
+    }
+
+    .rec-modal__meta {
+        padding: 0 var(--space-5) var(--space-4);
+        gap: var(--space-3);
+    }
+
+    .rec-modal__facts {
+        padding-top: var(--space-3);
+        gap: var(--space-3);
+    }
+
+    .rec-modal__nav {
+        padding: var(--space-2) var(--space-5);
+    }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Tema claro
+   ─────────────────────────────────────────────────────────
+   Crimson-600 sobre a lavagem crimson clara dá 3,9:1, abaixo
+   dos 4,5:1 que texto pequeno exige — medido com axe sobre o
+   modal aberto. O tema claro do site já resolve isso em toda
+   parte trocando por crimson-700 (ver theme-patches.css); as
+   iniciais e as tags do modal só não tinham passado por essa
+   verificação porque a auditoria não abre diálogos.
+───────────────────────────────────────────────────────── */
+body.light-mode .rec-modal__initials,
+body.light-mode .rec-modal__tag {
+    color: var(--_crimson-700);
+}
+
+/* ── Movimento reduzido ──────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
     .rec-modal__close:hover {
         transform: none;

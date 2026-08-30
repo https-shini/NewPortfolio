@@ -98,4 +98,43 @@ describe("Recommendations — carrossel paginado", () => {
         const dialog = await screen.findByRole("dialog");
         expect(dialog).toBeInTheDocument();
     });
+
+    /* Dá para ler as recomendações em sequência sem fechar e reabrir. */
+    it("percorre as recomendações pelo botão dentro do modal", async () => {
+        const user = userEvent.setup();
+        setup();
+
+        await user.click(visibleCards()[0]!);
+        const dialog = await screen.findByRole("dialog");
+        expect(
+            within(dialog).getByRole("heading", { level: 3 }),
+        ).toHaveTextContent(recommendations[0]!.authorName);
+
+        await user.click(
+            within(dialog).getByRole("button", {
+                name: /próxima recomendação/i,
+            }),
+        );
+
+        expect(
+            within(dialog).getByRole("heading", { level: 3 }),
+        ).toHaveTextContent(recommendations[1]!.authorName);
+    });
+
+    /* Circula nas pontas: da primeira, voltar leva à última. */
+    it("volta pelo teclado e circula na ponta", async () => {
+        const user = userEvent.setup();
+        setup();
+
+        await user.click(visibleCards()[0]!);
+        const dialog = await screen.findByRole("dialog");
+
+        await user.keyboard("{ArrowLeft}");
+
+        expect(
+            within(dialog).getByRole("heading", { level: 3 }),
+        ).toHaveTextContent(
+            recommendations[recommendations.length - 1]!.authorName,
+        );
+    });
 });

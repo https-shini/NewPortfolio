@@ -35,7 +35,9 @@ function getPerPage(): number {
 
 export const Recommendations: React.FC = () => {
     const { t, lang } = useLang();
-    const [openItem, setOpenItem] = useState<RecommendationItem | null>(null);
+    /* Índice, e não o item: a navegação dentro do modal precisa saber
+       onde está na lista para andar para os lados. */
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
     const [activePage, setActivePage] = useState(0);
     const [perPage, setPerPage] = useState<number>(getPerPage);
     const carouselRef = useRef<HTMLDivElement>(null);
@@ -112,10 +114,21 @@ export const Recommendations: React.FC = () => {
 
     /* A restauração do foco ao card de origem é feita pelo Modal base. */
     const openModal = useCallback((item: RecommendationItem) => {
-        setOpenItem(item);
+        setOpenIndex(recommendations.indexOf(item));
     }, []);
 
-    const closeModal = useCallback(() => setOpenItem(null), []);
+    const closeModal = useCallback(() => setOpenIndex(null), []);
+
+    /* Circula nas pontas, como o carrossel.
+
+       A página do carrossel NÃO acompanha: o focus-trap guarda o nó do
+       card que abriu o modal para devolver o foco no fechamento, e
+       trocar de página desmontaria esse nó — o foco cairia no body. */
+    const navigateModal = useCallback(
+        (delta: number) =>
+            setOpenIndex((i) => (i === null ? i : (i + delta + total) % total)),
+        [total],
+    );
 
     const trackStyle = useMemo(
         () => ({ transform: `translateX(-${currentPage * 100}%)` }),
@@ -218,9 +231,14 @@ export const Recommendations: React.FC = () => {
                 )}
             </div>
 
-            {openItem && (
+            {openIndex !== null && (
                 <Suspense fallback={null}>
-                    <RecommendationModal item={openItem} onClose={closeModal} />
+                    <RecommendationModal
+                        items={recommendations}
+                        index={openIndex}
+                        onNavigate={navigateModal}
+                        onClose={closeModal}
+                    />
                 </Suspense>
             )}
         </section>

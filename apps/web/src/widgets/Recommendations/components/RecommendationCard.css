@@ -133,6 +133,14 @@
     line-height: 1.65;
     color: var(--color-text-2);
 
+    /* Justificado como o resto do texto corrido do site, e como o mesmo
+       depoimento aparece no modal. A hifenização não é enfeite: a coluna
+       aqui tem ~300px no celular, e justificar sem hifenizar abriria
+       buracos entre as palavras. O dicionário sai do `lang` do
+       documento. */
+    text-align: justify;
+    hyphens: auto;
+
     display: -webkit-box;
     -webkit-line-clamp: 5;
     line-clamp: 5;
