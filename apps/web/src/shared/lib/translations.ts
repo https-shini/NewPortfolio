@@ -339,7 +339,7 @@ const pt: Translations = {
     /* EDUCATION (Formações) */
     "education.title": "Formações",
     "education.sub":
-        "Confira minhas formações acadêmicas e profissionais, incluindo graduação em Ciência da Computação e técnico em Desenvolvimento de Sistemas. Busco aprimoramento contínuo por meio de cursos e certificações em áreas como cibersegurança, desenvolvimento de software, modelagem de dados e qualidade de software, mantendo meus conhecimentos atualizados e evoluindo constantemente.",
+        "Confira minhas formações acadêmicas e profissionais, incluindo graduação em Ciência da Computação e técnico em Desenvolvimento de Sistemas. Busco aprimoramento contínuo por meio de cursos e certificações em áreas como cibersegurança, Linux e infraestrutura, desenvolvimento de software, modelagem de dados e qualidade de software, mantendo meus conhecimentos atualizados e evoluindo constantemente.",
     "education.eyebrow": "Acadêmico",
     "education.edu.title": "Formação Acadêmica",
     "education.cert.title": "Certificações",
@@ -634,7 +634,7 @@ const en: Translations = {
     /* EDUCATION */
     "education.title": "Education",
     "education.sub":
-        "Check out my academic and professional education, including a Computer Science degree and a technical degree in Systems Development. I pursue continuous improvement through courses and certifications in areas such as cybersecurity, software development, data modeling and software quality, keeping my knowledge up to date and constantly evolving.",
+        "Check out my academic and professional education, including a Computer Science degree and a technical degree in Systems Development. I pursue continuous improvement through courses and certifications in areas such as cybersecurity, Linux and infrastructure, software development, data modeling and software quality, keeping my knowledge up to date and constantly evolving.",
     "education.eyebrow": "Academic",
     "education.edu.title": "Academic Education",
     "education.cert.title": "Certifications",

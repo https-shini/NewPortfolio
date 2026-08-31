@@ -294,11 +294,18 @@
 
 /* ── Description ───────────────────────────────────────────────── */
 .formation-card__desc {
-    flex: 1 1 auto;
+    /* Não cresce: `flex: 1 1 auto` esticava a caixa junto com o cartão mais
+       alto da linha, e aí o `-webkit-line-clamp` punha as reticências na
+       terceira linha mas continuava desenhando o resto — saía "criptografia
+       e… testes de intrusão", com o corte no meio da frase. Sem crescer, o
+       corte acontece onde as reticências estão. O `margin-bottom: auto`
+       mantém o rodapé colado embaixo, que era o efeito colateral útil do
+       `flex-grow`. */
+    flex: 0 0 auto;
     font-size: var(--text-sm);
     line-height: var(--lh-base);
     color: var(--color-text-2);
-    margin: 0;
+    margin: 0 0 auto;
 
     display: -webkit-box;
     -webkit-line-clamp: 3;

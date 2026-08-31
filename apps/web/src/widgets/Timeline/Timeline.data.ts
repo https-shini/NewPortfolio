@@ -1,5 +1,6 @@
 import type {
     TimelineRawData,
+    TimelineItem,
     CareerCompany,
     CareerBullet,
 } from "./Timeline.types";
@@ -366,6 +367,71 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
         certUrl: "/docs/etec.pdf",
     },
     {
+        id: "cert-fiap-cybersecurity",
+        category: "cert",
+        title: { pt: "Cybersecurity", en: "Cybersecurity" },
+        institution: "FIAP",
+        institutionUrl: "https://www.fiap.com.br",
+        period: { pt: "Ago 2026", en: "Aug 2026" },
+        startDate: "2026-08",
+        endDate: "2026-08",
+        statusType: "done",
+        description: {
+            pt: "Fundamentos de segurança da informação: TCP/IP e modelo OSI, análise de pacotes, ataques e vulnerabilidades, criptografia e testes de intrusão.",
+            en: "Information-security fundamentals: TCP/IP and the OSI model, packet analysis, attacks and vulnerabilities, cryptography and penetration testing.",
+        },
+        tags: [
+            { pt: "Cibersegurança", en: "Cybersecurity" },
+            { pt: "Segurança de Redes", en: "Network Security" },
+            {
+                pt: "Testes de Intrusão (Pentest)",
+                en: "Penetration Testing",
+            },
+            { pt: "Criptografia", en: "Cryptography" },
+            { pt: "TCP/IP e Modelo OSI", en: "TCP/IP & OSI Model" },
+            {
+                pt: "Análise de Vulnerabilidades",
+                en: "Vulnerability Assessment",
+            },
+            { pt: "Engenharia Social", en: "Social Engineering" },
+            { pt: "Norma ISO 27001", en: "ISO 27001" },
+        ],
+        techIcons: ["linux", "bash", "python"],
+        certUrl:
+            "https://on.fiap.com.br/local/nanocourses/gerar_certificado.php?chave=22d6fd101c84c6a620ec77f2f3987658&action=view",
+    },
+    {
+        id: "cert-fiap-linux",
+        category: "cert",
+        title: { pt: "Linux Fundamentos", en: "Linux Fundamentals" },
+        institution: "FIAP",
+        institutionUrl: "https://www.fiap.com.br",
+        period: { pt: "Ago 2026", en: "Aug 2026" },
+        startDate: "2026-08",
+        endDate: "2026-08",
+        statusType: "done",
+        description: {
+            pt: "Arquitetura do Linux e administração pela linha de comando: kernel, permissões, usuários, processos, Shell/Bash e fundamentos de rede.",
+            en: "Linux architecture and command-line administration: kernel, permissions, users, processes, Shell/Bash and networking fundamentals.",
+        },
+        tags: [
+            { pt: "Linux", en: "Linux" },
+            { pt: "Shell Script e Bash", en: "Shell Scripting & Bash" },
+            {
+                pt: "Linha de Comando (CLI)",
+                en: "Command-Line Interface (CLI)",
+            },
+            { pt: "Kernel Linux", en: "Linux Kernel" },
+            {
+                pt: "Administração de Sistemas",
+                en: "System Administration",
+            },
+        ],
+        techIcons: ["linux", "bash", "git"],
+        certUrl:
+            "https://on.fiap.com.br/local/nanocourses/gerar_certificado.php?chave=52629b31ed0de9d84e0b22e17c0804a2&action=view",
+    },
+    {
         id: "cert-1",
         category: "cert",
         title: {
@@ -542,9 +608,21 @@ export const ALL_TIMELINE_ITEMS: TimelineRawData = [
 ];
 
 /* ── Derived exports ───────────────────────────────────── */
+
+/**
+ * Mais recente primeiro, pelo término (ou pelo início, quando não há).
+ *
+ * A ordem era a do array, mantida à mão. Funciona até o dia em que um
+ * certificado novo entra no lugar errado — e aí a lista mente sobre a
+ * cronologia sem que nada reprove. `sort` é estável, então empates
+ * (dois cursos no mesmo mês) preservam a ordem em que foram escritos.
+ */
+const maisRecentePrimeiro = (a: TimelineItem, b: TimelineItem): number =>
+    (b.endDate ?? b.startDate).localeCompare(a.endDate ?? a.startDate);
+
 export const educationItems = ALL_TIMELINE_ITEMS.filter(
     (i) => i.category === "edu",
-);
+).sort(maisRecentePrimeiro);
 export const certificationItems = ALL_TIMELINE_ITEMS.filter(
     (i) => i.category === "cert",
-);
+).sort(maisRecentePrimeiro);
