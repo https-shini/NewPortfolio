@@ -75,6 +75,26 @@ describe("LinksPage — social tree", () => {
         expect(img.getAttribute("src")).toMatch(/hero/);
     });
 
+    /* O avatar tem 134px e carregava o arquivo de 960×960 — 86 dos 87 KiB
+       desperdiçados, numa imagem `eager` no caminho crítico da página.
+       As larguras não são fixadas aqui: vêm do próprio srcset, para que
+       reajustar a receita em `scripts/imagens.mjs` não exija mexer no
+       teste. O que se cobra é a propriedade — há escolha, e a escolha
+       padrão não é a foto inteira. */
+    it("serve o avatar em variante do tamanho da tela, não a foto inteira", () => {
+        setup();
+        const img = screen.getByAltText(PROFILE.name) as HTMLImageElement;
+
+        const larguras = (img.getAttribute("srcset") ?? "")
+            .split(",")
+            .map((p) => Number(p.trim().split(/\s+/)[1]?.replace("w", "")))
+            .filter(Number.isFinite);
+
+        expect(larguras.length).toBeGreaterThan(1);
+        expect(Math.max(...larguras)).toBeLessThan(600);
+        expect(img.getAttribute("sizes")).toBeTruthy();
+    });
+
     it("renderiza um cartão por link primário", () => {
         setup();
         PRIMARY_LINKS.forEach((link) => {

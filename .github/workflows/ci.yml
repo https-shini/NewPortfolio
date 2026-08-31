@@ -49,6 +49,11 @@ jobs:
       - name: Ícones em dia com a fonte
         run: npm run icones:check
 
+      # Mesmo arranjo: confere a assinatura das fotos de origem. Trocar a
+      # foto sem regenerar deixaria as variantes mostrando a antiga.
+      - name: Variantes de imagem em dia com as fotos
+        run: npm run imagens:check
+
       - name: Build
         run: npm run build
 

@@ -17,7 +17,13 @@ import {
     IconLinkedIn,
     IconGmail,
 } from "@/shared/ui/Icons";
-import avatarImg from "@/assets/avatar.webp";
+/* Variantes geradas por `scripts/imagens.mjs`. O avatar mede 200px no
+   celular e 380px a partir de 1440px; 480, 620 e 760 cobrem as combinações
+   reais de tamanho × densidade. É imagem `eager` com prioridade alta — os bytes dela estão
+   no caminho da LCP. */
+import avatar480 from "@/assets/gerado/avatar-480.webp";
+import avatar620 from "@/assets/gerado/avatar-620.webp";
+import avatar760 from "@/assets/gerado/avatar-760.webp";
 
 /* Stack em destaque no hero — nomes próprios, não traduzidos. */
 const HERO_STACK = ["React", "Node.js", "Python", "SQL", "Docker", "Git"];
@@ -154,7 +160,9 @@ export const Hero: React.FC = () => {
                         <div className="hero__avatar-frame" />
 
                         <img
-                            src={avatarImg}
+                            src={avatar760}
+                            srcSet={`${avatar480} 480w, ${avatar620} 620w, ${avatar760} 760w`}
+                            sizes="(min-width: 1440px) 380px, (min-width: 768px) 240px, 200px"
                             alt="Guilherme Cruz"
                             className="hero__avatar"
                             width={380}

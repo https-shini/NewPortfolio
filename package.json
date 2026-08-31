@@ -31,6 +31,8 @@
     "audit:perf": "node scripts/perf.mjs",
     "audit:layers": "node scripts/layers.mjs",
     "audit:identity": "node scripts/identity.mjs",
+    "imagens": "node scripts/imagens.mjs",
+    "imagens:check": "node scripts/imagens.mjs --check",
     "icones": "node scripts/icones.mjs",
     "icones:check": "node scripts/icones.mjs --check",
     "changelog": "node --experimental-strip-types --no-warnings scripts/changelog.mjs",

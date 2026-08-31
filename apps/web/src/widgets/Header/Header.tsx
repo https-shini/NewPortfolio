@@ -40,7 +40,7 @@ export const Header: React.FC = () => {
     );
     const [langSwitching, setLangSwitching] = useState(false);
 
-    const mobileNavRef = useRef<HTMLElement>(null);
+    const mobileNavRef = useRef<HTMLDivElement>(null);
     const hamburgerRef = useRef<HTMLButtonElement>(null);
 
     /* ── Scroll sentinel ───────────────────────────────────────────── */
@@ -248,8 +248,13 @@ export const Header: React.FC = () => {
             {createPortal(
                 /* Clique no backdrop é afordância redundante de dismiss —
                    Escape e o botão hamburger cobrem teclado (focus trap ativo). */
+                /* Era um <nav role="dialog">, e o Lighthouse reprovava nas
+                   três rotas: <nav> já carrega o papel `navigation` e não
+                   aceita `dialog` por cima. O overlay é o diálogo; a
+                   navegação é o bloco de links lá dentro. O CSS não sente —
+                   todo seletor dele é de classe. */
                 /* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */
-                <nav
+                <div
                     ref={mobileNavRef}
                     id="mobile-nav"
                     className={`mobile-nav${isMenuOpen ? " is-open" : ""}`}
@@ -308,7 +313,10 @@ export const Header: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="mobile-nav__links">
+                    <nav
+                        className="mobile-nav__links"
+                        aria-label={navMenuLabel}
+                    >
                         {NAV_LINKS.map(({ href, key }, i) => (
                             <a
                                 key={href}
@@ -323,7 +331,7 @@ export const Header: React.FC = () => {
                                 {t(key)}
                             </a>
                         ))}
-                    </div>
+                    </nav>
 
                     <a
                         href={`#${SECTION_IDS.CONTACT}`}
@@ -333,7 +341,7 @@ export const Header: React.FC = () => {
                         <span>{ctaLabel}</span>
                         <span aria-hidden="true">↗</span>
                     </a>
-                </nav>,
+                </div>,
                 document.body,
             )}
         </>

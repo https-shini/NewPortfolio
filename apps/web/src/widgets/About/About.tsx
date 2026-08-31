@@ -28,7 +28,13 @@ import {
 import { useGithubStats } from "@/shared/hooks/useGithubStats";
 
 /* ── Foto (import estático resolvido pelo Vite — sem path relativo frágil) ── */
-import heroImg from "@/assets/hero.webp";
+/* Variantes geradas por `scripts/imagens.mjs`. A foto mede de 286px
+   (320px de viewport) a 478px, então 420 cobre 1×, 600 cobre densidade
+   média e 960 cobre 2×. É `lazy` e abaixo da dobra — não entra no caminho da LCP,
+   mas 87 KiB continuavam descendo para desenhar 470px. */
+import foto420 from "@/assets/gerado/hero-420.webp";
+import foto600 from "@/assets/gerado/hero-600.webp";
+import foto960 from "@/assets/gerado/hero-960.webp";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DADOS ESTÁTICOS
@@ -472,7 +478,9 @@ export const About: React.FC = () => {
                         {/* 1. Foto ──────────────────────────────────────────── */}
                         <div className="about__photo-wrap">
                             <img
-                                src={heroImg}
+                                src={foto960}
+                                srcSet={`${foto420} 420w, ${foto600} 600w, ${foto960} 960w`}
+                                sizes="(min-width: 768px) 478px, calc(100vw - 36px)"
                                 alt="Guilherme Cruz em ambiente de trabalho"
                                 className="about__photo"
                                 loading="lazy"

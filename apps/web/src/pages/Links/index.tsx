@@ -12,7 +12,13 @@ import { PROFILE } from "@/shared/config/profile";
 import { ROUTES } from "@/shared/config/routes";
 import { getCvUrl } from "@/shared/config/constants";
 import { PRIMARY_LINKS } from "@/shared/config/links";
-import avatarImg from "@/assets/hero.webp";
+/* Variantes geradas por `scripts/imagens.mjs`. O avatar aqui tem 134px
+   (148px a partir de 1024px), e carregava o arquivo de 960×960: o
+   PageSpeed mediu 86 dos 87 KiB desperdiçados, numa imagem `eager` no
+   caminho crítico desta página. 300px cobre 2× de densidade e 420px
+   cobre 3×. */
+import avatar300 from "@/assets/gerado/hero-300.webp";
+import avatar420 from "@/assets/gerado/hero-420.webp";
 
 /* Ícones de tecnologia — skill-icons (tandpfun, MIT); sql-* criado no
    mesmo modelo. Variante por tema (dark/light); Docker e Git têm fundo
@@ -136,7 +142,9 @@ export const LinksPage: React.FC = () => {
                             />
                             <div className="linktree__avatar-frame">
                                 <img
-                                    src={avatarImg}
+                                    src={avatar300}
+                                    srcSet={`${avatar300} 300w, ${avatar420} 420w`}
+                                    sizes="(min-width: 1024px) 148px, 134px"
                                     alt={PROFILE.name}
                                     className="linktree__avatar-img"
                                     width={120}
