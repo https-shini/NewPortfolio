@@ -1,5 +1,4 @@
 import React, { Suspense, lazy } from "react";
-import { HomePage } from "@/pages/Home";
 import { useRoute } from "@/shared/hooks/useRoute";
 import { ROUTES } from "@/shared/config/constants";
 import { RELEASE_NOTES_PAGE_SEGMENT } from "@/shared/config/routes";
@@ -8,12 +7,21 @@ import { AmbientBackground } from "@/shared/ui/AmbientBackground/AmbientBackgrou
 /**
  * Routes — mapeia pathname → página.
  *
- * A home é síncrona (destino da maioria das visitas e fallback de rota
- * desconhecida); páginas secundárias entram por lazy, como já se faz com os
- * modais. Para adicionar uma página: crie-a em `pages/`, registre o pathname
- * em ROUTES (shared/config/routes.ts), acrescente um caso aqui e o rewrite
+ * As quatro entram por `lazy`, como já se faz com os modais. Isso não
+ * significa uma ida à rede a mais: cada rota é servida por um documento
+ * próprio cuja entrada importa a sua página de forma estática (ver
+ * `src/entradas/comum.tsx`), então o módulo já está no registro quando o
+ * `lazy` o pede, e o pedaço e a folha da rota vêm ligados no HTML.
+ *
+ * Para adicionar uma página: crie-a em `pages/`, registre o pathname em
+ * ROUTES (shared/config/routes.ts), acrescente um caso aqui, uma entrada
+ * em `src/entradas/`, a rota em `ROTAS_HTML` (vite.config.ts) e o rewrite
  * correspondente no vercel.json da raiz.
  */
+const HomePage = lazy(() =>
+    import("@/pages/Home").then((m) => ({ default: m.HomePage })),
+);
+
 const LinksPage = lazy(() =>
     import("@/pages/Links").then((m) => ({ default: m.LinksPage })),
 );
@@ -101,7 +109,9 @@ export const Routes: React.FC = () => {
                 </Suspense>
             ) : (
                 /* Rota desconhecida cai na home — não há 404 própria. */
-                <HomePage />
+                <Suspense fallback={null}>
+                    <HomePage />
+                </Suspense>
             )}
         </>
     );

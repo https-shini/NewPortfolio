@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import { writeFile } from "node:fs/promises";
+import { writeFile, readFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -172,9 +172,7 @@ function sitemapPlugin() {
                não entra na paginação. Sem ele a conta daqui divergia da do
                widget e o sitemap chegava a anunciar uma página que o site
                devolve como a anterior. */
-            const totalPages = releaseNotesTotalPages(
-                RELEASE_NOTES.length - 1,
-            );
+            const totalPages = releaseNotesTotalPages(RELEASE_NOTES.length - 1);
             for (let page = 2; page <= totalPages; page++) {
                 entries.push({
                     loc: `${SITE_URL}${releaseNotesPagePath(page)}`,
@@ -237,11 +235,137 @@ function sitemapPlugin() {
     };
 }
 
+/* ── Um documento por rota ───────────────────────────────────────────────
+ *
+ * Havia um `index.html` só, e o `vercel.json` reescrevia as três rotas
+ * para ele. Duas consequências, as duas medidas:
+ *
+ *   1. quem abria `/links` baixava e compilava a home inteira — 21 KiB de
+ *      JS e 22 KiB de CSS que o PageSpeed contava como não usados;
+ *   2. título, descrição e canônica eram os da home para todo mundo, e só
+ *      o `useDocumentMeta` corrigia, depois do JavaScript.
+ *
+ * Com um documento por rota, cada uma recebe o seu pedaço e a sua folha
+ * ligados no HTML — e as fichas de SEO certas antes de qualquer script.
+ *
+ * Por que não bastava pôr a home em `lazy`: com `cssCodeSplit`, a folha de
+ * um pedaço dinâmico não entra no HTML — quem a pede é o carregador, em
+ * execução. A folha da home passaria a ser descoberta depois de baixar e
+ * executar 54 KB de JavaScript, o que no celular é regressão de FCP na
+ * rota de maior tráfego.
+ */
+const ROTAS_HTML = [
+    {
+        arquivo: "index.html",
+        entrada: "/src/main.tsx",
+        caminho: "/",
+        titulo: "Guilherme Cruz — Desenvolvedor de Software | React, TypeScript & Node.js",
+        tituloCurto: "Guilherme Cruz — Desenvolvedor de Software",
+        descricao:
+            "Portfólio profissional de Guilherme Cruz — Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e Python. Projetos reais, experiência e formação.",
+        resumo: "Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e interfaces de alta performance.",
+    },
+    {
+        arquivo: "links.html",
+        entrada: "/src/entradas/links.tsx",
+        caminho: "/links",
+        titulo: "Links — Guilherme Cruz",
+        tituloCurto: "Links — Guilherme Cruz",
+        descricao:
+            "Todos os canais de contato e presença de Guilherme Cruz — portfólio, GitHub, LinkedIn, currículo e e-mail, em um lugar só.",
+        resumo: "Portfólio, GitHub, LinkedIn, currículo e contato de Guilherme Cruz, em um lugar só.",
+    },
+    {
+        arquivo: "release-notes.html",
+        entrada: "/src/entradas/release-notes.tsx",
+        caminho: "/release-notes",
+        titulo: "Notas de versão — Guilherme Cruz",
+        tituloCurto: "Notas de versão — Guilherme Cruz",
+        descricao:
+            "Histórico de versões de gcruz.dev.br: o que mudou em cada release, com as decisões por trás de cada uma.",
+        resumo: "O que mudou em cada versão de gcruz.dev.br, com as decisões por trás de cada uma.",
+    },
+] as const;
+
+/** Os HTML derivados moram no diretório do app, ao lado do index.html. */
+const htmlDe = (arquivo: string) => path.resolve(__dirname, arquivo);
+
+function rotaHtmlPlugin() {
+    return {
+        name: "documento-por-rota",
+
+        /* `serve.json` no dist para que o servidor estático das
+           auditorias reescreva como a Vercel reescreve. Sem isto o
+           `/release-notes/v2.0.0` devolve 404 no `serve`, e a auditoria
+           mediria um erro achando que media a página.
+
+           Só esta regra: o `cleanUrls` do `serve` já mapeia `/links` e
+           `/release-notes` para os arquivos de mesmo nome sozinho, e a
+           Vercel faz o equivalente pelos rewrites do `vercel.json`. O que
+           nenhum dos dois cobre por padrão é o segmento a mais. */
+        async closeBundle() {
+            await writeFile(
+                path.resolve(__dirname, "./dist/serve.json"),
+                JSON.stringify(
+                    {
+                        rewrites: [
+                            {
+                                source: "/release-notes/**",
+                                destination: "/release-notes.html",
+                            },
+                        ],
+                    },
+                    null,
+                    2,
+                ) + "\n",
+                "utf8",
+            );
+        },
+
+        /* Os derivados nascem antes do Rollup ler as entradas. São cópias
+           do index.html com o `src` do módulo trocado — o resto (fontes,
+           JSON-LD, bootstrap de tema) continua com fonte única. */
+        async buildStart() {
+            const modelo = await readFile(htmlDe("index.html"), "utf8");
+            for (const rota of ROTAS_HTML) {
+                if (rota.arquivo === "index.html") continue;
+                await writeFile(
+                    htmlDe(rota.arquivo),
+                    modelo.replace("/src/main.tsx", rota.entrada),
+                    "utf8",
+                );
+            }
+        },
+
+        /* As fichas `__ROTA_*__` do modelo viram os valores da rota. O
+           `ctx.filename` é o caminho absoluto do HTML em processamento. */
+        transformIndexHtml: {
+            order: "pre" as const,
+            handler(html: string, ctx: { filename: string }) {
+                const rota =
+                    ROTAS_HTML.find((r) => ctx.filename.endsWith(r.arquivo)) ??
+                    ROTAS_HTML[0];
+
+                return html
+                    .replaceAll("__ROTA_TITULO_CURTO__", rota.tituloCurto)
+                    .replaceAll("__ROTA_TITULO__", rota.titulo)
+                    .replaceAll("__ROTA_DESCRICAO__", rota.descricao)
+                    .replaceAll("__ROTA_RESUMO__", rota.resumo)
+                    .replaceAll(
+                        "__ROTA_CAMINHO__",
+                        rota.caminho === "/" ? "/" : rota.caminho,
+                    );
+            },
+        },
+    };
+}
+
 export default defineConfig({
     plugins: [
         react({
             jsxRuntime: "automatic",
         }),
+        rotaHtmlPlugin(),
         siteUrlHtmlPlugin(),
         sitemapPlugin(),
     ],
@@ -285,6 +409,14 @@ export default defineConfig({
         cssCodeSplit: true,
 
         rollupOptions: {
+            /* Uma entrada por documento — ver `rotaHtmlPlugin`. */
+            input: Object.fromEntries(
+                ROTAS_HTML.map((r) => [
+                    r.arquivo.replace(/\.html$/, ""),
+                    htmlDe(r.arquivo),
+                ]),
+            ),
+
             output: {
                 /* React/ReactDOM raramente mudam — isolá-los preserva o
                    cache do usuário entre deploys do código da aplicação. */
@@ -330,9 +462,6 @@ export default defineConfig({
         /* A pasta api/ mora na raiz do repositório (é de lá que a Vercel
            lê as funções), mas o conversor de markdown é código de
            segurança e precisa da mesma suíte. */
-        include: [
-            "src/**/*.test.{ts,tsx}",
-            "../../api/**/*.test.ts",
-        ],
+        include: ["src/**/*.test.{ts,tsx}", "../../api/**/*.test.ts"],
     },
 });

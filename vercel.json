@@ -43,23 +43,23 @@
     },
     {
       "source": "/links",
-      "destination": "/index.html"
+      "destination": "/links.html"
     },
     {
       "source": "/links/",
-      "destination": "/index.html"
+      "destination": "/links.html"
     },
     {
       "source": "/release-notes",
-      "destination": "/index.html"
+      "destination": "/release-notes.html"
     },
     {
       "source": "/release-notes/",
-      "destination": "/index.html"
+      "destination": "/release-notes.html"
     },
     {
       "source": "/release-notes/(.*)",
-      "destination": "/index.html"
+      "destination": "/release-notes.html"
     }
   ],
   "headers": [

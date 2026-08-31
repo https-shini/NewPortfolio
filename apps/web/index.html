@@ -4,18 +4,17 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <!-- ── SEO primário ─────────────────────────────────────────── -->
-        <title>
-            Guilherme Cruz — Desenvolvedor de Software | React, TypeScript &
-            Node.js
-        </title>
-        <meta
-            name="description"
-            content="Portfólio profissional de Guilherme Cruz — Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e Python. Projetos reais, experiência e formação."
-        />
+        <!-- ── SEO primário ───────────────────────────────────────────
+          As fichas `__ROTA_*__` são preenchidas por rota em
+          `rotaHtmlPlugin` (vite.config.ts). Cada rota é servida por um
+          documento próprio, então título, descrição e canônica chegam
+          certos no HTML — antes, vinham os da home para todo mundo e só
+          o `useDocumentMeta` corrigia, depois do JavaScript. -->
+        <title>__ROTA_TITULO__</title>
+        <meta name="description" content="__ROTA_DESCRICAO__" />
         <meta name="author" content="Guilherme Cruz" />
         <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="__SITE_URL__/" />
+        <link rel="canonical" href="__SITE_URL____ROTA_CAMINHO__" />
 
         <!-- Notas de versão em Atom; leitores de feed descobrem por aqui. -->
         <link
@@ -27,36 +26,21 @@
 
         <!-- ── Open Graph ───────────────────────────────────────────── -->
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="__SITE_URL__/" />
+        <meta property="og:url" content="__SITE_URL____ROTA_CAMINHO__" />
         <meta property="og:site_name" content="Guilherme Cruz — Portfolio" />
         <meta property="og:locale" content="pt_BR" />
         <meta property="og:locale:alternate" content="en_US" />
-        <meta
-            property="og:title"
-            content="Guilherme Cruz — Desenvolvedor de Software"
-        />
-        <meta
-            property="og:description"
-            content="Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e interfaces de alta performance."
-        />
+        <meta property="og:title" content="__ROTA_TITULO_CURTO__" />
+        <meta property="og:description" content="__ROTA_RESUMO__" />
         <meta property="og:image" content="__SITE_URL__/og-preview.jpg" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta
-            property="og:image:alt"
-            content="Guilherme Cruz — Desenvolvedor de Software"
-        />
+        <meta property="og:image:alt" content="__ROTA_TITULO_CURTO__" />
 
         <!-- ── Twitter Cards ────────────────────────────────────────── -->
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-            name="twitter:title"
-            content="Guilherme Cruz — Desenvolvedor de Software"
-        />
-        <meta
-            name="twitter:description"
-            content="Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e interfaces de alta performance."
-        />
+        <meta name="twitter:title" content="__ROTA_TITULO_CURTO__" />
+        <meta name="twitter:description" content="__ROTA_RESUMO__" />
         <meta name="twitter:image" content="__SITE_URL__/og-preview.jpg" />
 
         <meta name="theme-color" content="#040710" />

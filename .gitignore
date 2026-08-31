@@ -19,3 +19,8 @@ apps/mobile/ios/
 # Saída intermediária da pré-renderização (scripts/prerender.mjs).
 # O script a apaga ao terminar; isto cobre o build interrompido no meio.
 .prerender/
+
+# Documentos por rota — derivados do index.html em build.
+# Ver `rotaHtmlPlugin` em apps/web/vite.config.ts.
+apps/web/links.html
+apps/web/release-notes.html

@@ -110,9 +110,14 @@ jobs:
 
       - name: Serve the build
         # O vite preview exige o app instalado; um servidor estático
-        # entrega o mesmo dist/ sem esse custo. O SPA precisa que toda rota
-        # desconhecida caia no index.html.
-        run: npx --yes serve@14 -s apps/web/dist -l 4173 &
+        # entrega o mesmo dist/ sem esse custo.
+        #
+        # Sem `-s` de propósito: cada rota tem o seu documento, e o `-s`
+        # reescreve TUDO para o index.html — as auditorias mediriam a home
+        # três vezes achando que mediam três rotas. O `cleanUrls` do serve
+        # mapeia /links e /release-notes sozinho, e o `dist/serve.json`
+        # gerado no build cobre o `/release-notes/vX.Y.Z`.
+        run: npx --yes serve@14 apps/web/dist -l 4173 &
 
       - name: Wait for the server
         run: npx --yes wait-on@7 http://localhost:4173 --timeout 60000
