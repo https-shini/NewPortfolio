@@ -143,17 +143,30 @@ diferente do resto.
 Rótulo é **área e natureza**; nunca prioridade nem status (esses são
 campos).
 
-| Rótulo     | Uso                                                    |
-| ---------- | ------------------------------------------------------ |
-| `perf`     | tempo de carregamento, orçamento de bundle, Lighthouse |
-| `a11y`     | acessibilidade, axe, navegação por teclado             |
-| `seo`      | metadados, sitemap, dados estruturados                 |
-| `security` | headers, CSP, dependências vulneráveis, segredos       |
-| `docs`     | documentação e README                                  |
-| `ci`       | pipeline, scripts de auditoria                         |
-| `content`  | texto, posicionamento, curadoria de projetos           |
-| `chore`    | manutenção sem mudança de comportamento                |
-| `refactor` | reorganização de código a comportamento constante      |
+Os rótulos abaixo existem no repositório e espelham a coluna `Categoria`
+do backlog em `docs/AUDITORIA-2026-08.md` §22 — não são uma taxonomia
+nova.
+
+| Rótulo      | Uso                                                             |
+| ----------- | --------------------------------------------------------------- |
+| `perf`      | tempo de carregamento, orçamento de bundle, custo de estilo     |
+| `a11y`      | acessibilidade, axe, navegação por teclado                      |
+| `seo`       | metadados, sitemap, dados estruturados, indexação               |
+| `security`  | headers, CSP, dependências vulneráveis, segredos, rate limiting |
+| `docs`      | documentação, README, registro de decisão                       |
+| `ci`        | pipeline e arranjos de auditoria                                |
+| `content`   | texto, posicionamento, curadoria de projetos                    |
+| `ux`        | afordância, hierarquia visual, caminhos de conversão            |
+| `analytics` | instrumentação e eventos                                        |
+| `arch`      | estrutura de dados e organização de camadas                     |
+| `data`      | curadoria e integridade de dado                                 |
+| `test`      | cobertura de teste                                              |
+| `chore`     | manutenção sem mudança de comportamento                         |
+| `refactor`  | reorganização de código a comportamento constante               |
+
+Todos nasceram com a cor cinza padrão do GitHub. Colorir por família —
+uma para qualidade, outra para conteúdo, outra para infraestrutura —
+é trabalho de painel, e ajuda a ler o board de relance.
 
 Um item pode ter mais de um. Item sem rótulo nenhum não deveria sair de
 `Backlog`.
@@ -232,21 +245,37 @@ Project as executa.
 
 ### Correções pendentes
 
-1. **Issue #4 — `Status`.** Está `Ready` no board. Decidir e aplicar um dos
-   dois; o corpo já não afirma mais status nenhum.
-2. **Preencher os campos com o dado que já existia nos corpos:**
+1. **Issue [#4](https://github.com/https-shini/NewPortfolio/issues/4) — `Status`.**
+   Está `Ready` no board. O corpo dizia `Backlog`, e os dois estavam
+   publicados se contradizendo. O corpo já não afirma status nenhum — falta
+   decidir qual dos dois valia e deixar o campo certo.
 
-   | issue                    | `Priority`                                               | `Size`            |
-   | ------------------------ | -------------------------------------------------------- | ----------------- |
-   | #4 — Backend de contato  | `Alta`                                                   | o maior da escala |
-   | #8 — Página `/projetos`  | `Média`                                                  | o segundo maior   |
-   | #9 — Refatoração do Work | **decidir** — o corpo dizia `Média-alta`, fora da escala | médio             |
+2. **Preencher `Priority` e `Size` com o dado que já existia nos corpos:**
+
+   | issue                                                                            | `Priority`                                                         | `Size`            |
+   | -------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------- |
+   | [#4](https://github.com/https-shini/NewPortfolio/issues/4) — Backend de contato  | `Alta`                                                             | o maior da escala |
+   | [#8](https://github.com/https-shini/NewPortfolio/issues/8) — Página `/projetos`  | `Média`                                                            | o segundo maior   |
+   | [#9](https://github.com/https-shini/NewPortfolio/issues/9) — Refatoração do Work | **decidir** — o corpo dizia `Média-alta`, que não existe na escala | médio             |
 
    `Estimate` fica vazio até a pendência da seção 3 ser decidida.
 
-3. **`Type`** em #5, #6, #7, #8 e #9 — só #4 tem.
-4. **`Assignee`** em todas.
-5. **Datas** — só onde houver compromisso real.
+3. **`Priority` e `Size` dos itens T01–T33.** Os corpos trazem a prioridade
+   original da auditoria (`P0`–`P3`) e o esforço, mas essa escala não é a do
+   board. Mapear as duas, ou preencher item a item.
+
+4. **`Assignee`** em todas — hoje nenhuma tem dono.
+
+5. **Datas.** Só onde houver compromisso real. Nenhum documento do
+   repositório traz prazo, e prazo inventado é pior que campo vazio.
+
+### Adicionar os cartões ao board
+
+O repositório passou de 6 para 46 issues. Se a automação de auto-add
+existir, elas entraram sozinhas; se não, precisam ser adicionadas — e criar
+a automação vale mais que adicionar 40 cartões à mão.
+
+`Type` e rótulos já estão preenchidos em todas as issues, novas e antigas.
 
 ### Verificações
 
@@ -257,16 +286,22 @@ Project as executa.
 
    Sem a primeira, cada issue nova precisa ser adicionada ao board à mão.
 
-7. **Views.** Uma por status (o board) já existe. Vale uma view por rótulo
-   `perf`/`a11y`/`security` para as revisões de qualidade, e uma agrupada
-   por `Priority` para o planejamento.
+7. **Views.** Uma por status (o board) já existe. Com 46 itens, vale uma
+   view por rótulo (`perf`, `a11y`, `security`) para as revisões de
+   qualidade, e uma agrupada por `Priority` para o planejamento.
+
+8. **Cor dos rótulos.** Os 14 nasceram cinza. Colorir por família ajuda a
+   ler o board de relance.
 
 ### Decisões em aberto
 
-| #   | decisão                                                                     |
-| --- | --------------------------------------------------------------------------- |
-| 1   | `Estimate` × `Size` — aposentar um ou dar significado próprio ao outro      |
-| 2   | Namespace de rota: `/projetos` (lista) × `/projetos/:slug` (estudo de caso) |
-| 3   | O diretório `backend/` — remover ou manter reservado                        |
-| 4   | Voltar a trabalhar por PR                                                   |
-| 5   | `Priority` e `Size` de #5, #6, #7 e dos itens T01–T33                       |
+| #   | decisão                                                                                                                                                                                                                                                                                | onde                                                                                                                                                                                 |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | `Estimate` × `Size` — aposentar um, ou dar significado próprio ao outro                                                                                                                                                                                                                | seção 3                                                                                                                                                                              |
+| 2   | **Namespace de rota.** Três documentos propõem três URLs para o mesmo território: `/projetos` (a lista), `/projetos/:slug` (o estudo de caso) e `/case/[slug]` (o mesmo case, outro prefixo). Decidir antes de implementar qualquer uma — trocar URL depois custa redirect e canonical | [#6](https://github.com/https-shini/NewPortfolio/issues/6), [#8](https://github.com/https-shini/NewPortfolio/issues/8), [#23](https://github.com/https-shini/NewPortfolio/issues/23) |
+| 3   | O diretório `backend/` — remover, ou manter reservado com justificativa escrita. Hoje o repositório afirma as duas coisas                                                                                                                                                              | [#11](https://github.com/https-shini/NewPortfolio/issues/11)                                                                                                                         |
+| 4   | **Voltar a trabalhar por PR.** Sem isso `In review` continua decorativo e `Done` não tem porta de entrada                                                                                                                                                                              | seção 6                                                                                                                                                                              |
+| 5   | Consolidar a página de estudo de caso: [#6](https://github.com/https-shini/NewPortfolio/issues/6) e os itens T12, T13 e T14 descrevem a mesma entrega em granularidades diferentes                                                                                                     | [#6](https://github.com/https-shini/NewPortfolio/issues/6)                                                                                                                           |
+| 6   | O item "Blog técnico integrado", que existia só no README §Roadmap e não tinha issue: vira cartão, ou sai                                                                                                                                                                              | —                                                                                                                                                                                    |
+| 7   | Se a suíte E2E entra no job de auditoria do CI ou ganha um próprio                                                                                                                                                                                                                     | [#5](https://github.com/https-shini/NewPortfolio/issues/5)                                                                                                                           |
+| 8   | Onde mora a apresentação das automações de `scripts/` — seção na home, item da vitrine, ou página própria                                                                                                                                                                              | [#36](https://github.com/https-shini/NewPortfolio/issues/36)                                                                                                                         |

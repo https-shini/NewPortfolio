@@ -624,41 +624,51 @@ disponibilidade do autor (CLT + faculdade em ano de formatura) não é conhecida
 
 ## 22. Backlog
 
-| ID | Tarefa | Categoria | Prior. | Impacto | Esforço | Dependências | Fase |
-| -- | ------ | --------- | ------ | ------- | ------- | ------------ | ---- |
-| T01 | Corrigir as 11 referências a `frontend/` no README e documentar os 8 scripts `audit:*` | Docs | P1 | Alto | Baixo | — | 0 |
-| T02 | Remover o diretório `backend/` | Higiene | P3 | Baixo | Baixo | — | 0 |
-| T03 | Remover as 8 URLs de âncora do sitemap em `vite.config.ts` | SEO | P2 | Médio | Baixo | — | 0 |
-| T04 | Resolver as 2 vulnerabilidades altas de `@vercel/og`/`sharp` | Segurança | P1 | Médio | Baixo | — | 0 |
-| T05 | Remover o `:hover` de elevação dos chips em `Links.css` | UX | P3 | Baixo | Baixo | — | 0 |
-| T06 | Reescrever `roles` e bio do herói em torno do domínio ERP fiscal | Conteúdo | P0 | Muito alto | Baixo | **T33** | 1 |
-| T07 | Reescrever a seção Sobre conectando suporte em ERP a desenvolvimento | Conteúdo | P0 | Alto | Baixo | T06 | 1 |
-| T08 | Tirar `devlinksRocketseat` da vitrine ou marcá-lo como exercício | Conteúdo | P1 | Alto | Baixo | — | 1 |
-| T09 | Desdobrar o CTA em dois caminhos: oportunidade e orçamento | UX | P2 | Médio | Baixo | T15 | 1/5 |
-| T10 | Instalar analytics sem cookies | Instrum. | P1 | Alto | Baixo | coordenar T16 | 3 |
-| T11 | Definir os 5 eventos a medir (rolagem, CTA, CV, projeto, envio) | Instrum. | P1 | Médio | Baixo | T10 | 3 |
-| T12 | Definir a estrutura de dados dos cases | Arquit. | P0 | Alto | Médio | T06 | 4 |
-| T13 | Criar a rota `/case/[slug]` usando `pages/ReleaseNote/` como molde | Feature | P1 | Alto | Médio | T12 | 4 |
-| T14 | Escrever 2 a 3 cases (contexto → decisão → resultado) | Conteúdo | P0 | Muito alto | Grande | T12 | 4 |
-| T15 | Criar `/servicos` com 3–4 serviços e processo, sem tabela de preços | Feature | P1 | Muito alto | Médio | T14 | 5 |
-| T16 | Adicionar `headers` ao `vercel.json`, com CSP em `Report-Only` primeiro | Segurança | P1 | Alto | Médio | T10 | 6 |
-| T17 | Promover a CSP de `Report-Only` para aplicada | Segurança | P1 | Alto | Baixo | T16 | 6 |
-| T18 | Escrever testes para `Header`, `Work`, `Featured`, `About`, `Formacoes` | Testes | P2 | Alto | Médio | — | 6 |
-| T19 | Estender `audit:a11y` a menu aberto, modal aberto e formulário em erro | A11y | P2 | Alto | Médio | — | 6 |
-| T20 | Medir e atribuir o custo de estilo na rolagem da home | Perf | P2 | Alto | Médio | — | 7 |
-| T21 | Aplicar a correção que a medição indicar e comparar com a linha de base | Perf | P2 | Alto | Médio | T20 | 7 |
-| T22 | Reconciliar `docs/ROADMAP.md` com a direção atual | Docs | P3 | Baixo | Baixo | — | 7 |
-| T23 | Verificar o domínio no Google Search Console | SEO | P2 | Médio | Baixo | — | 3 |
-| T24 | Verificar rate limiting do endpoint de formulário | Segurança | P2 | Médio | Baixo | — | 6 |
-| T25 | ~~Definir o destino do eixo "AI & Automation"~~ — **DECIDIDO:** o eixo permanece e o lastro será construído (T26–T33) | Conteúdo | — | — | — | encerrado | — |
-| T26 | Apresentar `scripts/` como item de vitrine — 11 automações, o que cada família mede e por que existe | Conteúdo | P1 | Alto | Baixo | — | 1.5 |
-| T27 | Curar a tabela de motivos de ocorrência CNAB 240/400 de fontes públicas, em formato estruturado e versionado | Dados | P0 | Alto | Médio | — | 1.5 |
-| T28 | Repositório novo com a recuperação sobre a tabela — **sem LLM ainda**, provando que o caminho funciona sem ele | Feature | P0 | Alto | Médio | T27 | 1.5 |
-| T29 | Camada de LLM só para redação, respondendo "não encontrado" quando a recuperação falha | Feature | P0 | Muito alto | Médio | T28 | 1.5 |
-| T30 | Função serverless com a chave no servidor, limite por IP e teto de gasto | Segurança | P0 | Alto | Médio | T29 | 1.5 |
-| T31 | Interface mínima da demo, reusando os tokens do design system | UX | P1 | Médio | Médio | T30 | 1.5 |
-| T32 | README do projeto explicando a decisão de recuperação-antes-de-LLM | Docs | P1 | Alto | Baixo | T29 | 1.5 |
-| T33 | Entrar na vitrine do portfólio com demo e repositório | Conteúdo | P1 | Muito alto | Baixo | T31 | 1.5 |
+> **Cada item tem issue.** A coluna `Issue` liga o T ao cartão no
+> [Project #3](https://github.com/users/https-shini/projects/3), que é o
+> planejamento ativo — o andamento é lá, não aqui. Esta tabela permanece
+> como a **origem** do backlog: é onde a decisão de cada item foi tomada, e
+> com que evidência.
+>
+> Os oito itens da fase 1.5 (T26–T33) entram como sub-issues do épico
+> [#35](https://github.com/https-shini/NewPortfolio/issues/35), porque
+> formam um projeto encadeado e não tarefas independentes.
+
+| ID | Issue | Tarefa | Categoria | Prior. | Impacto | Esforço | Dependências | Fase |
+| -- | ----- | ------ | --------- | ------ | ------- | ------- | ------------ | ---- |
+| T01 | #10 | ~~Corrigir as 11 referências a `frontend/` no README e documentar os 8 scripts `audit:*`~~ — **entregue** | Docs | P1 | Alto | Baixo | — | 0 |
+| T02 | #11 | Remover o diretório `backend/` | Higiene | P3 | Baixo | Baixo | — | 0 |
+| T03 | #12 | Remover as 8 URLs de âncora do sitemap em `vite.config.ts` | SEO | P2 | Médio | Baixo | — | 0 |
+| T04 | #13 | Resolver as 2 vulnerabilidades altas de `@vercel/og`/`sharp` | Segurança | P1 | Médio | Baixo | — | 0 |
+| T05 | #14 | Remover o `:hover` de elevação dos chips em `Links.css` | UX | P3 | Baixo | Baixo | — | 0 |
+| T06 | #15 | Reescrever `roles` e bio do herói em torno do domínio ERP fiscal | Conteúdo | P0 | Muito alto | Baixo | **T33** | 1 |
+| T07 | #16 | Reescrever a seção Sobre conectando suporte em ERP a desenvolvimento | Conteúdo | P0 | Alto | Baixo | T06 | 1 |
+| T08 | #17 | Tirar `devlinksRocketseat` da vitrine ou marcá-lo como exercício | Conteúdo | P1 | Alto | Baixo | — | 1 |
+| T09 | #18 | Desdobrar o CTA em dois caminhos: oportunidade e orçamento | UX | P2 | Médio | Baixo | T15 | 1/5 |
+| T10 | #19 | Instalar analytics sem cookies | Instrum. | P1 | Alto | Baixo | coordenar T16 | 3 |
+| T11 | #20 | Definir os 5 eventos a medir (rolagem, CTA, CV, projeto, envio) | Instrum. | P1 | Médio | Baixo | T10 | 3 |
+| T12 | #22 | Definir a estrutura de dados dos cases | Arquit. | P0 | Alto | Médio | T06 | 4 |
+| T13 | #23 | Criar a rota `/case/[slug]` usando `pages/ReleaseNote/` como molde | Feature | P1 | Alto | Médio | T12 | 4 |
+| T14 | #24 | Escrever 2 a 3 cases (contexto → decisão → resultado) | Conteúdo | P0 | Muito alto | Grande | T12 | 4 |
+| T15 | #25 | Criar `/servicos` com 3–4 serviços e processo, sem tabela de preços | Feature | P1 | Muito alto | Médio | T14 | 5 |
+| T16 | #26 | Adicionar `headers` ao `vercel.json`, com CSP em `Report-Only` primeiro | Segurança | P1 | Alto | Médio | T10 | 6 |
+| T17 | #27 | Promover a CSP de `Report-Only` para aplicada | Segurança | P1 | Alto | Baixo | T16 | 6 |
+| T18 | #28 | Escrever testes para `Header`, `Work`, `Featured`, `About`, `Formacoes` | Testes | P2 | Alto | Médio | — | 6 |
+| T19 | #29 | Estender `audit:a11y` a menu aberto, modal aberto e formulário em erro | A11y | P2 | Alto | Médio | — | 6 |
+| T20 | #31 | Medir e atribuir o custo de estilo na rolagem da home | Perf | P2 | Alto | Médio | — | 7 |
+| T21 | #32 | Aplicar a correção que a medição indicar e comparar com a linha de base | Perf | P2 | Alto | Médio | T20 | 7 |
+| T22 | #33 | ~~Reconciliar `docs/ROADMAP.md` com a direção atual~~ — **entregue** | Docs | P3 | Baixo | Baixo | — | 7 |
+| T23 | #21 | Verificar o domínio no Google Search Console | SEO | P2 | Médio | Baixo | — | 3 |
+| T24 | #30 | Verificar rate limiting do endpoint de formulário | Segurança | P2 | Médio | Baixo | — | 6 |
+| T25 | #34 | ~~Definir o destino do eixo "AI & Automation"~~ — **DECIDIDO:** o eixo permanece e o lastro será construído (T26–T33) | Conteúdo | — | — | — | encerrado | — |
+| T26 | #36 | Apresentar `scripts/` como item de vitrine — 11 automações, o que cada família mede e por que existe | Conteúdo | P1 | Alto | Baixo | — | 1.5 |
+| T27 | #37 | Curar a tabela de motivos de ocorrência CNAB 240/400 de fontes públicas, em formato estruturado e versionado | Dados | P0 | Alto | Médio | — | 1.5 |
+| T28 | #38 | Repositório novo com a recuperação sobre a tabela — **sem LLM ainda**, provando que o caminho funciona sem ele | Feature | P0 | Alto | Médio | T27 | 1.5 |
+| T29 | #39 | Camada de LLM só para redação, respondendo "não encontrado" quando a recuperação falha | Feature | P0 | Muito alto | Médio | T28 | 1.5 |
+| T30 | #40 | Função serverless com a chave no servidor, limite por IP e teto de gasto | Segurança | P0 | Alto | Médio | T29 | 1.5 |
+| T31 | #41 | Interface mínima da demo, reusando os tokens do design system | UX | P1 | Médio | Médio | T30 | 1.5 |
+| T32 | #42 | README do projeto explicando a decisão de recuperação-antes-de-LLM | Docs | P1 | Alto | Baixo | T29 | 1.5 |
+| T33 | #43 | Entrar na vitrine do portfólio com demo e repositório | Conteúdo | P1 | Muito alto | Baixo | T31 | 1.5 |
 
 ---
 
