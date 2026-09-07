@@ -403,37 +403,18 @@ afirmava algo que a entrega desmentiu.
 
 ---
 
-## 9. O que precisa ser feito no painel do Project
+## 9. O que só o painel executa
 
-Estas ações não têm equivalente em arquivo do repositório — só o painel do
-Project as executa.
+**A lista está em [`github-project-setup.md`](github-project-setup.md).**
 
-### Correções pendentes
+Ela vivia aqui e lá ao mesmo tempo, com dez dos doze itens repetidos nos
+dois. Duas listas do mesmo trabalho envelhecem em ritmos diferentes — a
+regra da seção 1 aplicada a este próprio documento.
 
-1. **Issue [#4](https://github.com/https-shini/NewPortfolio/issues/4) — `Status`.**
-   **Resolvido:** o corpo dizia `Backlog` enquanto o board dizia `Ready`, os
-   dois publicados se contradizendo. O corpo já não afirma status nenhum, e
-   a decisão foi manter `Ready`. A exceção está registrada na seção 2, com o
-   motivo — as três decisões pendentes no corpo continuam abertas.
+Aqui ficam **as regras**; lá fica **o que clicar**, na ordem.
 
-2. **Preencher `Priority` e `Size` com o dado que já existia nos corpos:**
-
-   | issue                                                                            | `Priority`                                                         | `Size`            |
-   | -------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------- |
-   | [#4](https://github.com/https-shini/NewPortfolio/issues/4) — Backend de contato  | `Alta`                                                             | o maior da escala |
-   | [#8](https://github.com/https-shini/NewPortfolio/issues/8) — Página `/projetos`  | `Média`                                                            | o segundo maior   |
-   | [#9](https://github.com/https-shini/NewPortfolio/issues/9) — Refatoração do Work | **decidir** — o corpo dizia `Média-alta`, que não existe na escala | médio             |
-
-   `Estimate` fica vazio: existe, mas ainda não há base para preenchê-lo (seção 3).
-
-3. **`Priority` e `Size` dos itens T01–T33.** Os corpos trazem a prioridade
-   original da auditoria (`P0`–`P3`) e o esforço, mas essa escala não é a do
-   board. Mapear as duas, ou preencher item a item.
-
-4. **`Assignee`** em todas — hoje nenhuma tem dono.
-
-5. **Datas.** Só onde houver compromisso real. Nenhum documento do
-   repositório traz prazo, e prazo inventado é pior que campo vazio.
+O que esta seção conserva é o que não é instrução de configuração: o estado
+verificado das automações, que é registro de medição.
 
 ### Automações — o que está verificado
 
@@ -481,51 +462,6 @@ distingue as duas.
 
 Todas essas são transições factuais: pertencem à automação nativa ou ao CI,
 nunca ao julgamento de uma pessoa ou de um modelo.
-
-### Verificações
-
-6. **Corrigir a automação de PR aberto.** Ela existe, mas move o item para
-   `In progress` em vez de `In review` (ver acima). Enquanto não for
-   corrigida, `In review` não tem porta de entrada.
-   Verificar também `PR mergeado → Done`.
-
-7. **Proteção de `main`.** Decidida em 07/09/2026 e ainda não configurada:
-
-   | regra                            | valor                                                                       |
-   | -------------------------------- | --------------------------------------------------------------------------- |
-   | Pull Request obrigatório         | **sim**                                                                     |
-   | Checks obrigatórios              | `Lint · Type-check · Test · Build` e `Acessibilidade · Rolagem · Orçamento` |
-   | Branch atualizada antes do merge | **sim**                                                                     |
-   | Aprovação de revisor             | **não** — há um único CODEOWNER, e exigir aprovação travaria todo merge     |
-   | Histórico linear                 | **não** — quebraria o squash já usado nos PRs #1 e #3                       |
-
-8. **Views.** Uma por status (o board) já existe. Com 46 itens, vale uma
-   view por rótulo (`perf`, `a11y`, `security`) para as revisões de
-   qualidade, e uma agrupada por `Priority` para o planejamento.
-
-9. **Cor dos rótulos.** Os 13 em uso nasceram cinza. Colorir por família
-   ajuda a ler o board de relance.
-
-10. ~~Criar `status:blocked`~~ — **feito em 07/09/2026.** O rótulo existe e
-    está aplicado nas issues que atendem ao critério da seção 5. Não há
-    ferramenta de criar rótulo neste ambiente: ele nasceu ao ser aplicado,
-    como os outros treze.
-
-11. **Remover os nove rótulos padrão do GitHub** listados na seção 5.
-    Nenhum está aplicado a issue alguma; seis duplicam Issue Type, rótulo
-    ou `state_reason`. Ação destrutiva — aguarda aprovação.
-
-12. **Apagar duas branches sem trabalho pendente**, verificado por
-    conteúdo e não por histórico:
-    - a branch de análise em `5096bae` — zero commits que `main` não tenha;
-      está atrás dela. **O nome dela carrega um prefixo de ferramenta**, o
-      que por si só contraria a regra de autoria do `CONTRIBUTING.md`;
-      apagá-la resolve as duas coisas de uma vez;
-    - `docs/registrar-automacoes-verificadas` — `git diff` contra `main`
-      **vazio**. Os dois commits dela não aparecem no histórico de `main`
-      porque o merge foi squash, mas o conteúdo está integralmente lá.
-
-    Ação destrutiva — aguarda aprovação.
 
 ### Decisões em aberto
 
