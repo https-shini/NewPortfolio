@@ -303,24 +303,42 @@ suposição: foram verificadas por comportamento, em 07/09/2026.
 Consequência prática: **cartão novo não precisa ser adicionado à mão.** As
 40 issues criadas em 07/09 entraram no board sozinhas.
 
-Duas ainda **não** foram verificadas, por não haver PR desde 23/07 para
-exercê-las:
+### E uma que existe, mas aponta para a coluna errada
 
-- `PR aberto` ligado a uma issue → `In review`;
-- `PR mergeado` → `Done` (parcialmente coberta pela automação de fechamento,
-  já que `Closes #N` fecha a issue no merge).
+Abrir o PR desta mudança exercitou a terceira automação, e o resultado
+**não** é o que o fluxo desta seção descreve.
 
-Ambas são transições factuais: pertencem à automação nativa ou ao CI, nunca
-ao julgamento de uma pessoa ou de um modelo.
+A issue [#50](https://github.com/https-shini/NewPortfolio/issues/50) foi
+para **`In progress`** quando o PR foi aberto. Pela tabela da seção 2,
+`In progress` significa "alguém está trabalhando nele agora" e `In review`
+significa "existe PR aberto ligado à issue". A automação está mandando o
+item para a etapa anterior à correta, e o `In review` continua sem porta de
+entrada — que era exatamente o problema que este documento apontava.
+
+> **Limite desta observação.** Não conferi o `Status` da #50 antes de abrir
+> o PR. Sei que toda issue nova nasce em `Backlog` (verificado em #28 e
+> #44) e que a #50 está em `In progress`; o único evento entre a criação e
+> a leitura foi a abertura do PR. A conclusão é sólida, mas é **inferência**,
+> não observação direta do antes e do depois.
+
+**Pendente de decisão:** reconfigurar a automação para `In review`, ou
+mudar o significado das colunas. A primeira preserva o fluxo documentado; a
+segunda exigiria reescrever a seção 2. Recomendo a primeira.
+
+Falta verificar `PR mergeado → Done`. Ela é parcialmente coberta pela
+automação de fechamento, já que `Closes #N` fecha a issue no merge.
+
+Todas essas são transições factuais: pertencem à automação nativa ou ao CI,
+nunca ao julgamento de uma pessoa ou de um modelo.
 
 `Type` e rótulos estão preenchidos em todas as issues, novas e antigas.
 
 ### Verificações
 
-6. **Automações que faltam.** As duas primeiras já existem (ver acima).
-   Criar, se não existirem:
-   - PR aberto ligado à issue → `In review`;
-   - PR mergeado → `Done`.
+6. **Corrigir a automação de PR aberto.** Ela existe, mas move o item para
+   `In progress` em vez de `In review` (ver acima). Enquanto não for
+   corrigida, `In review` não tem porta de entrada.
+   Verificar também `PR mergeado → Done`.
 
 7. **Proteção de `main`.** Decidida em 07/09/2026 e ainda não configurada:
 
