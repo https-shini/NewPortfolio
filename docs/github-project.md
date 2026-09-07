@@ -58,9 +58,9 @@ a regra apodrece em silêncio. E precisa de **gatilho de encerramento**, não
 de prazo: data marcada em item que depende de decisão só produz data
 vencida. O que encerra a exceção é o evento, e ele fica nomeado.
 
-| data       | item                                                       | exceção                                                | motivo                     | gatilho de encerramento                                                                                                                                                                                                                                                                                                                                                                                              |
-| ---------- | ---------------------------------------------------------- | ------------------------------------------------------ | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 07/09/2026 | [#4](https://github.com/https-shini/NewPortfolio/issues/4) | permanece em `Ready` sem atender a Definition of Ready | decisão do dono do projeto | eram três decisões pendentes; **o namespace de rota saiu em 07/09** (seção 10). Restam duas, e as duas vivem em sub-issues próprias: o formulário passar a aparecer sempre em produção ([#45](https://github.com/https-shini/NewPortfolio/issues/45)) e o honeypot entrar ou não no corpo JSON ([#47](https://github.com/https-shini/NewPortfolio/issues/47)). A exceção se encerra quando as duas forem respondidas |
+| data       | item                                                       | exceção                                                | motivo                     | gatilho de encerramento                                                                                                                                                                                                                                                                                                                   |
+| ---------- | ---------------------------------------------------------- | ------------------------------------------------------ | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 07/09/2026 | [#4](https://github.com/https-shini/NewPortfolio/issues/4) | permanece em `Ready` sem atender a Definition of Ready | decisão do dono do projeto | duas decisões pendentes, ambas já em sub-issues próprias: o formulário passar a aparecer sempre em produção ([#45](https://github.com/https-shini/NewPortfolio/issues/45)) e o honeypot entrar ou não no corpo JSON ([#47](https://github.com/https-shini/NewPortfolio/issues/47)). A exceção se encerra quando as duas forem respondidas |
 
 ### Voltar é normal
 
@@ -489,6 +489,16 @@ produto, não de nomenclatura, e vive na issue
 mostrar todos, apenas alguns terão estudo de caso — o card leva ao caso
 quando existir, e ao repositório quando não.
 
-**Aplicado retroativamente** nas issues #6, #8, #22, #23 e #24 em
-07/09/2026: o bloco de "decisão pendente" saiu de cada uma, e todas usam a
-mesma rota.
+**Aplicado retroativamente** em 07/09/2026 nas issues que citavam a rota:
+[#6](https://github.com/https-shini/NewPortfolio/issues/6) e
+[#23](https://github.com/https-shini/NewPortfolio/issues/23) tiveram título e
+corpo alinhados, e o bloco de "decisão pendente" saiu de ambas.
+
+A issue [#8](https://github.com/https-shini/NewPortfolio/issues/8) já usava
+`/projetos` e não precisou de mudança de rota — só perde a menção ao
+conflito.
+
+> **Correção.** Uma versão anterior da auditoria dizia que a #4 tinha o
+> namespace entre as suas decisões pendentes. Não tinha: `/contato` não
+> divide território com `/projetos`, e a leitura do corpo confirma duas
+> pendências, não três. O erro era meu.
