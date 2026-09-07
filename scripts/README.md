@@ -252,14 +252,40 @@ meses depois quando alguém reparar que o arquivo mente.
 
 Roda em Node puro com `--experimental-strip-types`, sem o Vite no caminho.
 
+## `icones.mjs` e `imagens.mjs`
+
+Os dois destoam do resto: não medem o site construído, **geram** arquivo —
+os ícones de tecnologia e as variantes responsivas das fotos — e o
+resultado é commitado.
+
+```bash
+npm run icones          # regenera
+npm run icones:check    # reprova se o commitado estiver velho
+npm run imagens
+npm run imagens:check
+```
+
+Por que commitar o derivado, em vez de gerar no build: a Vercel roda
+`npm install` e o build, e não tem o Chromium do Playwright, que é instalado
+à parte. Gerar durante o build simplesmente não roda lá.
+
+O `--check` **não redesenha**. Dois Chromium de versões diferentes produzem
+bytes diferentes para os mesmos pixels, então comparar arquivo por arquivo
+reprovaria por causa do runner, e não da imagem. Ele confere a assinatura
+das fontes contra a da última geração e a presença de cada derivado.
+
 ## No CI
 
 O job `audit` do `.github/workflows/ci.yml` roda a acessibilidade, a
-rolagem horizontal, o roteiro das notas de versão, os overlays e o
-orçamento contra o artefato de build que o job de qualidade publica — o
-que se mede é exatamente o que seria publicado, sem construir duas vezes.
+rolagem horizontal, as camadas, a identidade, o roteiro das notas de
+versão, os overlays e o orçamento contra o artefato de build que o job de
+qualidade publica — o que se mede é exatamente o que seria publicado, sem
+construir duas vezes. O `icones:check` e o `imagens:check` rodam no job de
+qualidade, antes do build.
 
-O `geometry.mjs` fica de fora, pelo motivo descrito acima.
+Ficam de fora, cada um pelo seu motivo: o `geometry.mjs`, pelo descrito
+acima, e o `perf.mjs`, porque mede tempo — e tempo varia demais entre
+execuções de runner para servir de porta.
 
 ## `docs/a11y-baseline.json`
 

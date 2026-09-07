@@ -1,11 +1,24 @@
-# Roadmap das 15 melhorias
+# Roadmap das 15 melhorias — **histórico, encerrado**
 
-> **Estado: 14 de 15 entregues.** Só o item 3 segue aberto, e por
-> impedimento de ambiente, não de código — ver a seção logo abaixo.
+> **Este documento não abre trabalho.** Ele registra as 15 melhorias de
+> agosto de 2026 e o que a execução ensinou. O planejamento ativo é o
+> **[Project #3](https://github.com/users/https-shini/projects/3)**; as
+> regras estão em [`github-project.md`](github-project.md).
 >
-> Verificação atual: **277 testes**, **16/16** combinações do axe sem
-> violação, **20/20** sem rolagem horizontal, orçamento de bundle dentro
-> do teto (108,9 KB de JS e 30,7 KB de CSS).
+> **Estado: 14 de 15 entregues.** Só o item 3 — publicar a tag e a release
+> `v2.0.0` — segue aberto, e por impedimento de ambiente, não de código.
+> Ele foi migrado para o board; os comandos continuam abaixo, para quem for
+> executá-los.
+>
+> Verificação **na época**: 277 testes, 16/16 combinações do axe sem
+> violação, 20/20 sem rolagem horizontal, orçamento de bundle dentro do
+> teto (108,9 KB de JS e 30,7 KB de CSS).
+>
+> Verificação **hoje**: **322 testes em 38 arquivos**. O orçamento deixou de
+> ser um teto único e passou a ser medido **por documento** — a divisão por
+> rota fez a soma dos pedaços deixar de corresponder ao que uma visita
+> baixa. Os números da linha acima ficam como estavam em agosto, e não
+> devem ser lidos como estado atual.
 
 ## O que só apareceu ao executar
 

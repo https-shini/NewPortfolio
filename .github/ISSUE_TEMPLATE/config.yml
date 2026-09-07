@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Planejamento e prioridades
+    url: https://github.com/users/https-shini/projects/3
+    about: O board é o único planejamento ativo. Antes de abrir, veja se o item já está lá.
+  - name: Como este repositório é planejado
+    url: https://github.com/https-shini/NewPortfolio/blob/main/docs/github-project.md
+    about: Fluxo, campos, rótulos e critérios de Done.

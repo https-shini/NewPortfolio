@@ -1,0 +1,45 @@
+name: Task
+description: Manutenção, documentação, infraestrutura — sem mudança visível de comportamento.
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prioridade e status vivem nos campos do Project.
+        Ver `docs/github-project.md`.
+
+  - type: textarea
+    id: contexto
+    attributes:
+      label: Contexto
+      description: O estado atual e por que ele incomoda.
+    validations:
+      required: true
+
+  - type: input
+    id: objetivo
+    attributes:
+      label: Objetivo
+      description: Uma frase.
+    validations:
+      required: true
+
+  - type: textarea
+    id: aceite
+    attributes:
+      label: Critérios de aceite
+      value: |
+        - [ ]
+    validations:
+      required: true
+
+  - type: textarea
+    id: arquivos
+    attributes:
+      label: Arquivos envolvidos
+
+  - type: input
+    id: dependencias
+    attributes:
+      label: Dependências
+      placeholder: "Nenhuma."

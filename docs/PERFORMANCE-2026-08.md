@@ -157,3 +157,31 @@ passo é reavaliar com JS ligado no painel do Semrush; o que sobrar depois disso
 é que merece conserto.
 
 Pendente e sem contrapartida: `llms.txt` não existe.
+
+## Estado dos itens abertos, em 07/09/2026
+
+O que foi entregue desde as capturas de agosto, medido:
+
+| entrega                                                     | resultado                                                                                   |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Variantes responsivas de imagem (`scripts/imagens.mjs`)     | a foto de `/links` caiu de **87,4 para 22,5 KiB**                                           |
+| Um documento HTML por rota                                  | FCP: `/` **1632 → 1128 ms**, `/links` 1164 → 1048, `/release-notes` 1148 → 988              |
+| Orçamento por documento                                     | de 127,8 KB em qualquer rota para **110,0 / 80,1 / 82,0 KB**                                |
+| `title`, `description`, `canonical` e OG estáticos por rota | ganho de SEO como efeito colateral: deixam de ser corrigidos por JavaScript depois da carga |
+
+O que continua aberto, e por quê:
+
+| item                                                            | estado                                                                                                                                               |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fontes auto-hospedadas                                          | **bloqueado no ambiente** — o proxy recusa o Fontshare. JetBrains Mono é viável; Cabinet Grotesk e General Sans dependem de baixar os `.woff2` à mão |
+| Ícones de tecnologia a partir do fork `https-shini/skill-icons` | aberto — 433 SVGs sob MIT, os 20 slugs necessários presentes                                                                                         |
+| A11y de `/links` 98 → 100                                       | aberto — `<h3 class="footer__col-title">` pula um nível de cabeçalho, e há dois links "Contact" com destinos diferentes                              |
+| Medir o bootstrap com trace                                     | aberto — é o pré-requisito de qualquer intervenção na alavanca arquitetural                                                                          |
+| Headers de segurança e CSP                                      | aberto — hoje o `vercel.json` só tem `Cache-Control`                                                                                                 |
+| `llms.txt`                                                      | aberto, e sem contrapartida medida                                                                                                                   |
+| Semrush                                                         | aberto — reavaliar com `JS rendering` ligado **antes** de agir nos quatro avisos                                                                     |
+
+Cada um desses itens tem issue no
+[Project #3](https://github.com/users/https-shini/projects/3). Este documento
+continua sendo o registro da medição — o que foi medido, o que foi reprovado
+e o que não repetir; o acompanhamento é do board.

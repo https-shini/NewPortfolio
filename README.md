@@ -42,7 +42,7 @@
 
 Portfólio pessoal de **segunda geração** — SPA construída em **React 18 + TypeScript 5 + Vite 5**, evoluindo a versão anterior em HTML/CSS/JS puro. O projeto tem arquitetura por camadas (app → pages → widgets → shared), design system próprio com tokens CSS, internacionalização completa (PT-BR/EN), tema dark/light persistente e **zero dependências de UI externas** — todos os componentes e os 60+ ícones SVG são do próprio design system.
 
-O repositório é um monorepo simples: a raiz orquestra os scripts e `frontend/` contém toda a aplicação. Na raiz ficam também as duas peças que a Vercel lê a partir do Root Directory: `vercel.json` (rewrites das rotas) e `api/`, com duas **Vercel Serverless Functions** que falam com o GitHub sem expor token ao browser — `/api/github-stats` (métricas do perfil) e `/api/release-notes` (releases publicadas, já convertidas de markdown para HTML no servidor). A pasta `backend/` segue reservada para uma API própria no futuro.
+O repositório é um monorepo simples: a raiz orquestra os scripts e `apps/web/` contém toda a aplicação. Na raiz ficam também as duas peças que a Vercel lê a partir do Root Directory: `vercel.json` (rewrites das rotas) e `api/`, com as **Vercel Serverless Functions** — `/api/github-stats` (métricas do perfil) e `/api/release-notes` (releases publicadas, já convertidas de markdown para HTML no servidor) falam com o GitHub sem expor token ao browser; `/api/feed` publica o RSS, `/api/og` gera a imagem social e `/api/crawler` entrega HTML pronto aos robôs de rede social. A pasta `backend/` segue reservada para uma API própria no futuro.
 
 ---
 
@@ -107,17 +107,19 @@ casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
 > tempo de execução pelo mesmo merge do índice, não por uma lista estática.
 
 > **Deploy — atenção ao Root Directory.** O `vercel.json` fica na **raiz do
-> repositório**, não em `frontend/`: o Root Directory do projeto na Vercel é a
-> raiz, e um `vercel.json` dentro de `frontend/` é simplesmente ignorado. Ele
-> reescreve `/links` e `/release-notes/*` para `index.html`; sem isso o acesso
-> direto retorna 404. Ao criar uma rota nova, acrescente-a ali também.
+> repositório**, não em `apps/web/`: o Root Directory do projeto na Vercel é a
+> raiz, e um `vercel.json` dentro de `apps/web/` é simplesmente ignorado. Ele
+> reescreve `/links` para `links.html` e `/release-notes/*` para
+> `release-notes.html` — cada rota tem o seu próprio documento desde a divisão
+> por rota; sem isso o acesso direto retorna 404. Ao criar uma rota nova,
+> acrescente-a ali também.
 >
 > Pela mesma razão, as funções serverless vivem em **`api/` na raiz** do
-> repositório, e não em `frontend/api/` — de onde nunca chegaram a ser
+> repositório, e não em `apps/web/api/` — de onde nunca chegaram a ser
 > compiladas. Vale para qualquer função nova.
 >
 > **A raiz precisa de uma TypeScript 5.x explícita.** O builder das funções
-> resolve a `typescript` do `node_modules` da raiz, não a do `frontend/`. Sem
+> resolve a `typescript` do `node_modules` da raiz, não a do `apps/web/`. Sem
 > uma dependência direta, quem ficava lá era a **7.0.2** que o `@commitlint/cli`
 > puxa por transitividade — a reescrita nativa, cuja API JS mudou —, e o deploy
 > morria em `Cannot read properties of undefined (reading 'readFile')` depois de
@@ -169,9 +171,13 @@ casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
 ├── api/                         # Serverless (token server-only, cache de CDN)
 │   ├── github-stats.ts          #   Métricas do perfil
 │   ├── release-notes.ts         #   Releases publicadas, já em HTML
+│   ├── feed.ts                  #   RSS das notas de versão
+│   ├── og.ts                    #   Imagem social por rota
+│   ├── crawler.ts               #   HTML pronto para robôs de rede social
+│   ├── _releases.ts             #   Busca e normaliza as releases do GitHub
 │   └── _markdown.ts             #   Markdown → HTML sem dependências; escapa antes de converter
 │
-frontend/
+apps/web/
 │
 ├── public/                      # Assets estáticos publicados na raiz do site
 │   ├── favicon.svg · favicon.ico · apple-touch-icon.png
@@ -293,11 +299,11 @@ Utilitários globais: `.btn`, `.badge`, `.section*`, `.container`, `.social-link
 git clone https://github.com/https-shini/NewPortfolio.git
 cd NewPortfolio
 
-# 2. Instale as dependências (raiz + frontend)
+# 2. Instale as dependências (raiz + apps/web)
 npm run install:all
 
 # 3. (Opcional) Configure as variáveis de ambiente
-cp frontend/.env.example frontend/.env.local
+cp apps/web/.env.example apps/web/.env.local
 
 # 4. Inicie o servidor de desenvolvimento
 npm run dev            # http://localhost:5173
@@ -306,7 +312,7 @@ npm run dev            # http://localhost:5173
 **Build para produção:**
 
 ```bash
-npm run build          # type-check + build otimizado em frontend/dist
+npm run build          # type-check + build otimizado em apps/web/dist
 npm run preview        # prévia local do build (porta 4173)
 ```
 
@@ -314,7 +320,7 @@ npm run preview        # prévia local do build (porta 4173)
 
 ## 📜 Scripts
 
-Todos os scripts funcionam na raiz (delegam ao frontend):
+Todos os scripts funcionam na raiz (delegam a `apps/web/`):
 
 | Script                 | Descrição                          |
 | ---------------------- | ---------------------------------- |
@@ -341,8 +347,20 @@ Detalhes e o porquê de cada uma em [`scripts/README.md`](scripts/README.md).
 | `npm run audit:overflow`     | rolagem horizontal em 4 rotas × 5 larguras                   |
 | `npm run audit:release-notes`| 28 verificações do índice e da página de versão              |
 | `npm run audit:modals`       | trava de rolagem, fundo inerte, diálogo em tela deitada      |
-| `npm run audit:bundle`       | tetos de tamanho do bundle                                   |
-| `npm run changelog`          | regenera o `CHANGELOG.md` a partir de `RELEASE_NOTES`        |
+| `npm run audit:bundle`       | tetos de tamanho — medidos **por documento**, não pela soma   |
+| `npm run audit:layers`       | ordem das camadas da atmosfera                               |
+| `npm run audit:identity`     | identidade visual das superfícies — bordas, vidro, elevação  |
+| `npm run audit:perf`         | tempo de carregamento por rota — **fora do CI**              |
+
+O `audit:perf` fica de fora do CI porque mede tempo, e tempo varia demais
+entre execuções de runner para servir de porta.
+
+Três verificações não medem o site construído, e sim se o derivado
+commitado ainda corresponde à origem — `npm run icones:check`,
+`npm run imagens:check` e `npm run changelog:check`. Quem troca uma foto, um
+ícone ou uma nota de versão roda a versão sem `:check` (`npm run imagens`,
+`npm run icones`, `npm run changelog`) e commita o resultado; o CI reprova
+quem esquecer.
 
 O `scripts/geometry.mjs` fica fora do CI de propósito: compara a caixa de
 ~93 mil elementos contra uma base gravada, o que exige regravá-la a cada
@@ -352,7 +370,7 @@ mudança visual proposital. É ferramenta manual, para refatoração de CSS.
 
 ## 🔐 Variáveis de ambiente
 
-Definidas em `frontend/.env.local` (ver `frontend/.env.example`):
+Definidas em `apps/web/.env.local` (ver `apps/web/.env.example`):
 
 | Variável             | Obrigatória | Descrição                                                                                                                                                                   |
 | -------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -366,7 +384,7 @@ Definidas em `frontend/.env.local` (ver `frontend/.env.example`):
 
 ## 🔗 Como adicionar um link
 
-Toda URL pública do site mora em **`frontend/src/shared/config/links.ts`**. É o
+Toda URL pública do site mora em **`apps/web/src/shared/config/links.ts`**. É o
 único arquivo a tocar: nem a página `/links`, nem o Footer, nem o Contato têm
 URL escrita à mão.
 
@@ -451,7 +469,7 @@ A versão exibida no badge do rodapé vem do `package.json`, injetada no build c
 
 O corpo de uma release do GitHub é monolíngue e sem mídia. Para uma versão que
 mereça destaque, acrescente uma entrada em
-`frontend/src/shared/config/releaseNotes.ts`:
+`apps/web/src/shared/config/releaseNotes.ts`:
 
 ```ts
 {
@@ -479,7 +497,7 @@ local. O selo de sincronização no cabeçalho informa o estado.
 
 ## 🧪 Testes
 
-Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **245 testes em 29 arquivos**, cobrindo também as funções serverless em `api/`:
+Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **322 testes em 38 arquivos**, cobrindo também as funções serverless em `api/`:
 
 - **Utils** — `dateUtils` (durações e data por extenso), `academicDates`, `text`, `richText`, `mailto`, `careerDates`, `cache` (TTL e storage indisponível), `mergeReleaseNotes` (precedência GitHub × local, ordenação, imutabilidade)
 - **Serverless** — `_markdown` (conversão sem dependências; o escape do HTML **antecede** a transformação, e é isso que sanitiza — protocolos perigosos em links, atributos injetados, blockquote e headings limitados a h2–h4)
@@ -548,22 +566,37 @@ reprovava o AA em todas as páginas; hoje essas regras usam `--color-text-3`
 
 ## 🗺 Roadmap
 
-- [ ] Backend próprio para o formulário de contato (`backend/`)
-- [ ] Testes E2E com Playwright
-- [ ] Página de estudo de caso por projeto
-- [ ] Blog técnico integrado
-- [ ] Deploy preview automático por PR
+O planejamento vive num lugar só: o
+**[Project #3 — Controle de Danos](https://github.com/users/https-shini/projects/3)**.
+
+Esta seção listava cinco itens que já eram issues do board, num formato pior
+e sem prioridade nem dono — e um deles contradizia a issue correspondente.
+Duas listas do mesmo plano envelhecem em ritmos diferentes, e quem lê não
+tem como saber qual está certa.
+
+O fluxo, os campos e o que significa cada etapa estão em
+**[`docs/github-project.md`](docs/github-project.md)**.
+
+| Onde                                                         | Papel                                                                      |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| [Project #3](https://github.com/users/https-shini/projects/3) | o único planejamento ativo                                                 |
+| [`docs/AUDITORIA-2026-08.md`](docs/AUDITORIA-2026-08.md)      | auditoria técnica e de posicionamento; a §22 é a origem do backlog T01–T33 |
+| [`docs/PERFORMANCE-2026-08.md`](docs/PERFORMANCE-2026-08.md)  | o que foi medido, o que foi reprovado e o que não repetir                  |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md)                          | **histórico** das 15 melhorias de agosto, encerrado                        |
 
 ---
 
 ## 🤝 Contribuição
 
-Este é um projeto pessoal, mas sugestões são bem-vindas:
+Este é um projeto pessoal, mas sugestão e correção são bem-vindas. O fluxo
+completo — ambiente, o que o CI verifica, o que fazer quando uma auditoria
+reprova e como mexer nos derivados — está em
+**[`CONTRIBUTING.md`](CONTRIBUTING.md)**. O resumo:
 
-1. Abra uma issue descrevendo a melhoria
+1. Abra ou encontre a issue no [board](https://github.com/users/https-shini/projects/3)
 2. Fork + branch a partir de `main`
 3. Commits no padrão Conventional Commits (validados pelo commitlint)
-4. Abra um PR — o CI precisa passar (lint, tipos, testes, build)
+4. Abra o PR com `Closes #N` — o CI precisa passar
 
 ### Autoria dos commits
 

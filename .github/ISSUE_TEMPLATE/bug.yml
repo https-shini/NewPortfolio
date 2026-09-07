@@ -1,0 +1,61 @@
+name: Bug
+description: Comportamento errado — algo que já existe e não faz o que deveria.
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prioridade e status vivem nos campos do Project, não aqui.
+        Ver `docs/github-project.md`.
+
+  - type: textarea
+    id: reproduzir
+    attributes:
+      label: Como reproduzir
+      description: Passo a passo, com rota, tema e idioma quando fizer diferença.
+      value: |
+        1. 
+        2.
+    validations:
+      required: true
+
+  - type: input
+    id: esperado
+    attributes:
+      label: O que deveria acontecer
+    validations:
+      required: true
+
+  - type: input
+    id: acontece
+    attributes:
+      label: O que acontece
+    validations:
+      required: true
+
+  - type: input
+    id: ambiente
+    attributes:
+      label: Onde acontece
+      description: Navegador, tamanho de tela, tema, e se é produção ou local.
+      placeholder: "Chrome 140, 412px, tema escuro, gcruz.dev.br"
+    validations:
+      required: true
+
+  - type: textarea
+    id: origem
+    attributes:
+      label: Onde parece estar
+      description: >
+        Caminho de arquivo, se você localizou. Opcional — um bug bem descrito
+        vale mais que um palpite de causa.
+
+  - type: textarea
+    id: aceite
+    attributes:
+      label: Critérios de aceite
+      value: |
+        - [ ] O passo a passo acima deixa de reproduzir o defeito
+        - [ ] Teste cobrindo o caso, para não voltar
+    validations:
+      required: true

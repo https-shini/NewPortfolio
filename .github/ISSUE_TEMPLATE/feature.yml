@@ -1,0 +1,81 @@
+name: Feature
+description: Comportamento novo, visível para quem usa o site.
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prioridade, tamanho, estimativa e status **não** entram aqui — eles
+        vivem nos campos do Project. Ver `docs/github-project.md`.
+
+  - type: textarea
+    id: contexto
+    attributes:
+      label: Contexto atual
+      description: >
+        O estado de hoje, com caminho de arquivo quando existir. Afirmação
+        sobre o código vem lida do código; se não deu para verificar, diga
+        que não deu.
+      placeholder: |
+        O botão "ver mais" (`work.more`, em `apps/web/src/widgets/Work/Work.tsx`)
+        é hoje um `<a href={GITHUB_URL}>` que sai do site.
+    validations:
+      required: true
+
+  - type: input
+    id: objetivo
+    attributes:
+      label: Objetivo
+      description: Uma frase.
+    validations:
+      required: true
+
+  - type: textarea
+    id: especificacao
+    attributes:
+      label: Especificação
+      description: >
+        O suficiente para alguém que não escreveu esta issue executar sem
+        perguntar.
+    validations:
+      required: true
+
+  - type: textarea
+    id: aceite
+    attributes:
+      label: Critérios de aceite
+      description: >
+        Caixas de seleção, cada uma verificável por quem não escreveu o item.
+      value: |
+        - [ ] 
+        - [ ]
+    validations:
+      required: true
+
+  - type: textarea
+    id: arquivos
+    attributes:
+      label: Arquivos envolvidos
+      placeholder: |
+        - `apps/web/src/...`
+    validations:
+      required: true
+
+  - type: input
+    id: dependencias
+    attributes:
+      label: Dependências
+      description: Outras issues, por número. "Nenhuma" também é resposta.
+      placeholder: "Depende de #8. Complementa #9."
+    validations:
+      required: true
+
+  - type: textarea
+    id: pronto
+    attributes:
+      label: Definição de pronto
+      description: O que se testa, e como.
+      placeholder: |
+        - `npm run test` e `npm run audit:a11y` continuam limpos.
+    validations:
+      required: true
