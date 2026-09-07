@@ -575,7 +575,9 @@ Duas listas do mesmo plano envelhecem em ritmos diferentes, e quem lê não
 tem como saber qual está certa.
 
 O fluxo, os campos e o que significa cada etapa estão em
-**[`docs/github-project.md`](docs/github-project.md)**.
+**[`docs/github-project.md`](docs/github-project.md)**, e o roteiro de
+configuração do board em
+**[`docs/github-project-setup.md`](docs/github-project-setup.md)**.
 
 | Onde                                                         | Papel                                                                      |
 | ------------------------------------------------------------ | -------------------------------------------------------------------------- |
