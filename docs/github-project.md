@@ -4,6 +4,10 @@ Fonte de verdade do planejamento do NewPortfolio. Se algo aqui divergir do
 board, do README ou de uma issue, **este documento vale** e a divergência é
 um defeito a corrigir.
 
+Este documento traz **as regras**. O que clicar para configurar o board —
+campos, views, filtros, milestones, automações — está em
+[`github-project-setup.md`](github-project-setup.md).
+
 - **Project #3 — "Controle de Danos - NewPortfolio"**, público, do usuário
   `https-shini`.
 - **Repositório:** `https-shini/NewPortfolio`, branch padrão `main`.
@@ -38,9 +42,40 @@ Backlog  →  Ready  →  In progress  →  In review  →  Done
 | --------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | **Backlog**     | Registrado, ainda não comprometido                   | Toda issue nova nasce aqui                                                                                           |
 | **Ready**       | Entendido o bastante para começar sem perguntar nada | O corpo tem critérios de aceite verificáveis, as dependências estão fechadas e `Priority` e `Size` estão preenchidos |
-| **In progress** | Alguém está trabalhando nele agora                   | Existe branch. Só entra com `Assignee` preenchido                                                                    |
-| **In review**   | O trabalho existe e está sendo revisado              | Existe **PR aberto** ligado à issue, e o CI está rodando ou passou                                                   |
-| **Done**        | Entregue e verificado                                | O PR foi mergeado em `main` e os critérios de aceite estão todos marcados                                            |
+| **In progress** | Alguém está trabalhando nele agora                   | **Depois da aprovação do dono** (porta 1). Existe branch. Só entra com `Assignee` preenchido                         |
+| **In review**   | A implementação existe e está sendo verificada       | Existe **PR aberto** ligado à issue, e o CI está rodando ou passou                                                   |
+| **Done**        | Entregue e verificado                                | **Depois da aprovação do dono** (porta 2), com os nove pontos da seção 7 conferidos e o PR mergeado                  |
+
+### As duas portas de aprovação
+
+O fluxo tem dois pontos em que um item **não avança sozinho**. Não é
+burocracia: é onde o dono do projeto decide o que entra em execução e o que
+é dado por pronto.
+
+**Porta 1 · `Ready` → `In progress`.** `Ready` é fila de espera, não
+autorização. Um item pode ficar ali indefinidamente. O que o tira dali é o
+dono olhar, comentar, pedir alteração ou aprovar. **Mover o cartão é o ato
+de aprovar** — não existe campo separado para isso, e não deveria existir:
+um campo "aprovado" que discorda da coluna é mais uma coisa para divergir.
+
+**Porta 2 · `In review` → `Done`.** A implementação estar pronta e o CI
+verde **não fecham** o item. Antes disso o dono precisa conseguir testar e
+verificar o funcionamento — o que significa que a entrega tem de estar
+executável antes de ser considerada final. Os nove pontos verificados
+estão na seção 7.
+
+### Quando a revisão reprova
+
+`In review` → **`In progress`**. É o caminho normal, não a exceção.
+
+Bug, inconsistência, divergência em relação ao que foi pedido, critério de
+aceite não atendido: qualquer um deles devolve o item ao desenvolvimento.
+As correções necessárias ficam **registradas na issue** — não no PR, que
+some do caminho quando fecha —, e o item repete o ciclo até todos os
+critérios passarem.
+
+Um item pode fazer essa volta quantas vezes for preciso. Voltar não é
+fracasso; `Done` com defeito conhecido é.
 
 ### As transições que não podem acontecer
 
@@ -90,17 +125,17 @@ não é fracasso; item parado em `In progress` por semanas é.
 
 ## 3. Os campos
 
-| Campo            | Tipo                    | Quem preenche, e quando                                                   |
-| ---------------- | ----------------------- | ------------------------------------------------------------------------- |
-| **Status**       | seleção única, 5 opções | Move-se pelo board. Nunca escrito no corpo                                |
-| **Priority**     | seleção única           | Ao promover para `Ready`                                                  |
-| **Size**         | seleção única           | Ao promover para `Ready`                                                  |
-| ~~**Estimate**~~ | —                       | **Aposentado** em 07/09/2026 — ver a nota abaixo                          |
-| **Start date**   | data                    | Ao entrar em `In progress`                                                |
-| **Target date**  | data                    | Só quando existe compromisso real. Sem prazo é melhor que prazo inventado |
-| **Type**         | Issue Type nativo       | Na abertura                                                               |
-| **Assignee**     | pessoa                  | Obrigatório a partir de `In progress`                                     |
-| **Labels**       | rótulos                 | Na abertura — ver a seção 5                                               |
+| Campo           | Tipo                    | Quem preenche, e quando                                                   |
+| --------------- | ----------------------- | ------------------------------------------------------------------------- |
+| **Status**      | seleção única, 5 opções | Move-se pelo board. Nunca escrito no corpo                                |
+| **Priority**    | seleção única           | Ao promover para `Ready`                                                  |
+| **Size**        | seleção única           | Ao promover para `Ready`                                                  |
+| **Estimate**    | número (horas)          | Só quando houver base para medir — ver a nota abaixo                      |
+| **Start date**  | data                    | Ao entrar em `In progress`                                                |
+| **Target date** | data                    | Só quando existe compromisso real. Sem prazo é melhor que prazo inventado |
+| **Type**        | Issue Type nativo       | Na abertura                                                               |
+| **Assignee**    | pessoa                  | Obrigatório a partir de `In progress`                                     |
+| **Labels**      | rótulos                 | Na abertura — ver a seção 5                                               |
 
 ### `Priority`
 
@@ -108,23 +143,30 @@ não é fracasso; item parado em `In progress` por semanas é.
 não caber na escala, o problema costuma ser que ele mistura duas coisas de
 urgência diferente — divida.
 
-### `Estimate` — aposentado
+### `Estimate` — existe, e fica vazio
 
-**Decidido em 07/09/2026: o campo sai. `Size` é o único medidor de dimensão
-do trabalho.**
+**Revisto em 07/09/2026.** Uma decisão anterior aposentou o campo por
+duplicar `Size`. Ele volta, com significado próprio:
 
-Os dois mediam a mesma coisa. A escala que emergiu nos corpos das issues
-(`5 (Muito grande)`, `4 (Grande)`, `3 (Médio)`) era de 1 a 5 mapeando para
-tamanho — exatamente o que `Size` já faz. Dois campos dizendo a mesma coisa
-divergem no dia em que um dos dois não é atualizado, e a partir daí ninguém
-sabe qual está certo.
+| campo      | mede                                       |
+| ---------- | ------------------------------------------ |
+| `Size`     | **escopo** — quanto do sistema o item toca |
+| `Estimate` | **esforço em horas** — quanto tempo custa  |
 
-A decisão saiu agora porque **nenhum item usava `Estimate`**: não houve
-migração, e o custo nunca mais seria tão baixo.
+São coisas diferentes: um item `S` que exige pesquisar layout de banco pode
+custar mais horas que um `M` mecânico.
 
-Se um dia fizer falta uma medida diferente de tamanho — horas, ou pontos —,
-ela volta como campo novo **com a metodologia escrita antes do primeiro
-preenchimento**. Campo sem metodologia definida vira palpite registrado.
+**E fica vazio até haver base.** O projeto não tem histórico de itens
+fechados com `Size` marcado, então qualquer número hoje seria chute com
+aparência de dado — e a auditoria de agosto já tinha registrado isso ao
+escolher a escala Pequeno/Médio/Grande, "sem inventar precisão em horas".
+
+**Gatilho para começar a preencher:** ~10 itens fechados com `Size`
+preenchido. Aí dá para medir quanto um `M` custou de verdade, e a
+estimativa nasce de medição em vez de intuição.
+
+Campo vazio se lê como "não sei". Campo com chute se lê como "sei" — e é
+por isso que o segundo é pior.
 
 ### `Type`
 
@@ -301,16 +343,38 @@ no merge. Um PR que não fecha a issue inteira usa `Refs #N`.
 
 ## 7. Critérios de `Done`
 
-Um item só é `Done` quando **todos** valem:
+`Done` é aprovação do dono, não conclusão do desenvolvedor. A implementação
+pronta e o CI verde qualificam o item para **revisão**, não para
+encerramento.
 
-- [ ] Todos os critérios de aceite marcados.
-- [ ] O CI passou na branch mergeada.
-- [ ] O comportamento foi verificado em produção, quando visível ao usuário.
-- [ ] A documentação afetada foi atualizada no mesmo PR.
-- [ ] Nenhum critério foi removido para caber no prazo — se o escopo
-      encolheu, o que saiu virou issue nova, ligada.
+### Os nove pontos verificados antes de aprovar
 
----
+- [ ] **Funciona conforme especificado** — o comportamento é o que a issue descreve, não o que o código faz
+- [ ] **Sem bug conhecido** — nenhum defeito identificado e deixado para depois sem virar issue própria
+- [ ] **Sem inconsistência** — nada que contradiga outra parte do sistema ou da documentação
+- [ ] **Critérios de aceite atendidos** — todos marcados, nenhum removido para caber
+- [ ] **Qualidade da implementação** — passa pelas regras do projeto sem supressão não justificada
+- [ ] **Documentação atualizada** — no mesmo PR, não depois
+- [ ] **Compatível com o resto** — nada quebrou em outra rota, tema, idioma ou tamanho de tela
+- [ ] **Impactos e efeitos colaterais avaliados** — o que mudou fora do escopo direto está dito
+- [ ] **Padrões cumpridos** — autoria, nomenclatura, estrutura de camadas, orçamento de bundle
+
+### O pré-requisito da revisão
+
+Antes de qualquer entrega ser considerada final, a implementação precisa
+estar **em condição de ser testada pelo dono**. Isso significa: rodando,
+alcançável, com o que precisa ser verificado dito na issue ou no PR.
+
+Revisão que depende de ler o diff para adivinhar o comportamento não é
+revisão — é leitura de código, que o CI já faz melhor em tudo que é
+automatizável.
+
+### Se qualquer ponto falhar
+
+O item **volta para `In progress`**, com o que falhou registrado na issue.
+Não existe `Done` parcial, nem `Done` com ressalva. Se algo do escopo não
+vai ser entregue, o que saiu vira issue nova e ligada — e aí o que ficou
+pode ser aprovado pelo que é.
 
 ## 8. Manutenção deste arranjo
 
@@ -360,7 +424,7 @@ Project as executa.
    | [#8](https://github.com/https-shini/NewPortfolio/issues/8) — Página `/projetos`  | `Média`                                                            | o segundo maior   |
    | [#9](https://github.com/https-shini/NewPortfolio/issues/9) — Refatoração do Work | **decidir** — o corpo dizia `Média-alta`, que não existe na escala | médio             |
 
-   `Estimate` não é preenchido: o campo foi aposentado (seção 3).
+   `Estimate` fica vazio: existe, mas ainda não há base para preenchê-lo (seção 3).
 
 3. **`Priority` e `Size` dos itens T01–T33.** Os corpos trazem a prioridade
    original da auditoria (`P0`–`P3`) e o esforço, mas essa escala não é a do

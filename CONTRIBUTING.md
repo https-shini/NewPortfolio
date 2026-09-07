@@ -133,12 +133,13 @@ commitar:
 npx prettier --write README.md CONTRIBUTING.md "docs/**/*.md" ".github/**/*.{yml,md}"
 ```
 
-| documento                                                    | papel                                                                    |
-| ------------------------------------------------------------ | ------------------------------------------------------------------------ |
-| [`docs/github-project.md`](docs/github-project.md)           | fluxo, campos e regras do board                                          |
-| [`docs/AUDITORIA-2026-08.md`](docs/AUDITORIA-2026-08.md)     | auditoria técnica e de posicionamento; §22 é a origem do backlog T01–T33 |
-| [`docs/PERFORMANCE-2026-08.md`](docs/PERFORMANCE-2026-08.md) | o que foi medido, o que foi reprovado e o que não repetir                |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md)                         | **histórico**, encerrado — não abra trabalho a partir dele               |
+| documento                                                      | papel                                                                    |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [`docs/github-project.md`](docs/github-project.md)             | fluxo, campos e regras do board                                          |
+| [`docs/github-project-setup.md`](docs/github-project-setup.md) | o que clicar para configurar o board, e como usá-lo no dia a dia         |
+| [`docs/AUDITORIA-2026-08.md`](docs/AUDITORIA-2026-08.md)       | auditoria técnica e de posicionamento; §22 é a origem do backlog T01–T33 |
+| [`docs/PERFORMANCE-2026-08.md`](docs/PERFORMANCE-2026-08.md)   | o que foi medido, o que foi reprovado e o que não repetir                |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md)                           | **histórico**, encerrado — não abra trabalho a partir dele               |
 
 ---
 
