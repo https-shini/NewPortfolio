@@ -54,11 +54,13 @@ Backlog  →  Ready  →  In progress  →  In review  →  Done
 ### Exceções registradas
 
 Exceção que não vira regra precisa ficar escrita, com data e motivo — senão
-a regra apodrece em silêncio.
+a regra apodrece em silêncio. E precisa de **gatilho de encerramento**, não
+de prazo: data marcada em item que depende de decisão só produz data
+vencida. O que encerra a exceção é o evento, e ele fica nomeado.
 
-| data       | item                                                       | exceção                                                   | motivo                                                                                                                                                                                         |
-| ---------- | ---------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 07/09/2026 | [#4](https://github.com/https-shini/NewPortfolio/issues/4) | permanece em `Ready` com três decisões pendentes no corpo | decisão do dono do projeto. A Definition of Ready acima segue **não atendida** para este item: o formulário sempre visível, o honeypot no corpo JSON e o namespace de rota continuam em aberto |
+| data       | item                                                       | exceção                                                | motivo                     | gatilho de encerramento                                                                                                                                                                                                                                                                                                                   |
+| ---------- | ---------------------------------------------------------- | ------------------------------------------------------ | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 07/09/2026 | [#4](https://github.com/https-shini/NewPortfolio/issues/4) | permanece em `Ready` sem atender a Definition of Ready | decisão do dono do projeto | duas decisões pendentes, ambas já em sub-issues próprias: o formulário passar a aparecer sempre em produção ([#45](https://github.com/https-shini/NewPortfolio/issues/45)) e o honeypot entrar ou não no corpo JSON ([#47](https://github.com/https-shini/NewPortfolio/issues/47)). A exceção se encerra quando as duas forem respondidas |
 
 ### Voltar é normal
 
@@ -156,12 +158,16 @@ diferente do resto.
 
 ## 5. Rótulos
 
-Rótulo é **área e natureza**; nunca prioridade nem status (esses são
-campos).
+Rótulo é **área e natureza técnica**. Nunca prioridade, nunca status —
+esses são campos do Project, e rótulo que duplica campo diverge dele no dia
+em que um dos dois não é atualizado.
 
-Os rótulos abaixo existem no repositório e espelham a coluna `Categoria`
-do backlog em `docs/AUDITORIA-2026-08.md` §22 — não são uma taxonomia
-nova.
+Há **uma exceção deliberada**, justificada abaixo: `status:blocked`.
+
+### Em uso
+
+Espelham a coluna `Categoria` do backlog em `docs/AUDITORIA-2026-08.md`
+§22 — não são taxonomia nova.
 
 | Rótulo      | Uso                                                             |
 | ----------- | --------------------------------------------------------------- |
@@ -178,16 +184,64 @@ nova.
 | `data`      | curadoria e integridade de dado                                 |
 | `test`      | cobertura de teste                                              |
 | `chore`     | manutenção sem mudança de comportamento                         |
-| `refactor`  | reorganização de código a comportamento constante               |
-
-Todos nasceram com a cor cinza padrão do GitHub. Colorir por família —
-uma para qualidade, outra para conteúdo, outra para infraestrutura —
-é trabalho de painel, e ajuda a ler o board de relance.
 
 Um item pode ter mais de um. Item sem rótulo nenhum não deveria sair de
 `Backlog`.
 
----
+> **`refactor` não existe.** Uma versão anterior desta tabela o listava.
+> Rótulo no GitHub só nasce quando é aplicado a alguma issue, e nenhuma o
+> usou. Ou ele passa a ser aplicado, ou some da tabela — documentar rótulo
+> inexistente é o mesmo defeito que esta seção existe para evitar.
+
+### `status:blocked` — o único rótulo de estado, e por quê
+
+"Bloqueado" **não é uma das cinco etapas**, e não deveria ser: um item
+bloqueado continua pertencendo à etapa em que parou. Um `Status` próprio
+para bloqueio criaria uma sexta coluna por onde todo item travado passaria
+a vazar, perdendo a informação de onde ele estava.
+
+Por isso o bloqueio é rótulo. Para não virar rótulo subjetivo, tem gatilho
+verificável dos dois lados.
+
+**Entra quando** — e só quando — existe, **escrita na issue**, uma
+dependência não resolvida que impede o trabalho de começar ou continuar, e
+ela é uma destas três:
+
+1. outra issue deste repositório, citada por número, ainda aberta;
+2. uma decisão registrada como pendente no corpo, sem resposta;
+3. um impedimento externo nomeado — acesso, credencial, resposta de
+   terceiro, limitação de ambiente.
+
+**Sai quando** a dependência nomeada deixa de existir: a issue citada
+fecha, a decisão é respondida, ou o impedimento é removido.
+
+**Não entra** por "está difícil", "falta tempo" ou "tem coisa mais
+importante". Isso não é bloqueio — é ordem de fila, e ordem de fila é o
+campo `Priority`.
+
+Regra prática: se não dá para escrever numa linha **o que precisa
+acontecer para o rótulo sair**, o item não está bloqueado.
+
+### Os padrões do GitHub que sobraram
+
+O repositório carrega **nove rótulos** criados pelo GitHub na origem e
+nunca aplicados a issue nenhuma. Seis duplicam algo que já tem lugar
+próprio:
+
+| Rótulo             | Problema                                                                                           |
+| ------------------ | -------------------------------------------------------------------------------------------------- |
+| `bug`              | duplica o **Issue Type** `Bug`                                                                     |
+| `enhancement`      | duplica o Issue Type `Feature` — e era o vocabulário que a #9 usava no corpo sem existir como tipo |
+| `documentation`    | duplica o rótulo `docs`                                                                            |
+| `duplicate`        | duplica o `state_reason` nativo de fechamento                                                      |
+| `invalid`          | idem — é `not planned`                                                                             |
+| `wontfix`          | idem                                                                                               |
+| `question`         | não é área nem natureza técnica                                                                    |
+| `good first issue` | sem sentido num repositório de mantenedor único                                                    |
+| `help wanted`      | idem                                                                                               |
+
+**Proposta: remover os nove.** Nenhum está aplicado. Remover rótulo é ação
+destrutiva e depende de aprovação — fica registrado aqui, não executado.
 
 ## 6. Pull requests, e por que `In review` existe
 
@@ -305,33 +359,37 @@ Consequência prática: **cartão novo não precisa ser adicionado à mão.** As
 
 ### E uma que existe, mas aponta para a coluna errada
 
-Abrir o PR desta mudança exercitou a terceira automação, e o resultado
-**não** é o que o fluxo desta seção descreve.
+A automação de PR aberto move o item para **`In progress`**, não para
+`In review`. Pela tabela da seção 2, `In progress` significa "alguém está
+trabalhando nele agora" e `In review` significa "existe PR aberto ligado à
+issue". A automação está uma coluna atrás da correta, e o `In review`
+continua sem porta de entrada — que era exatamente o problema que este
+documento apontava.
 
-A issue [#50](https://github.com/https-shini/NewPortfolio/issues/50) foi
-para **`In progress`** quando o PR foi aberto. Pela tabela da seção 2,
-`In progress` significa "alguém está trabalhando nele agora" e `In review`
-significa "existe PR aberto ligado à issue". A automação está mandando o
-item para a etapa anterior à correta, e o `In review` continua sem porta de
-entrada — que era exatamente o problema que este documento apontava.
+**Evidência de antes e depois**, medida em 07/09/2026 com a issue
+[#52](https://github.com/https-shini/NewPortfolio/issues/52):
 
-> **Limite desta observação.** Não conferi o `Status` da #50 antes de abrir
-> o PR. Sei que toda issue nova nasce em `Backlog` (verificado em #28 e
-> #44) e que a #50 está em `In progress`; o único evento entre a criação e
-> a leitura foi a abertura do PR. A conclusão é sólida, mas é **inferência**,
-> não observação direta do antes e do depois.
+| momento                                                                                          | `Status`          |
+| ------------------------------------------------------------------------------------------------ | ----------------- |
+| logo após a criação, sem branch nem PR                                                           | `Backlog`         |
+| logo após abrir o PR [#53](https://github.com/https-shini/NewPortfolio/pull/53) com `Closes #52` | **`In progress`** |
+
+> A primeira vez que isto apareceu, com a issue #50 e o PR #51, o `Status`
+> anterior não tinha sido conferido — era **inferência**. O teste com a #52
+> registrou o baseline antes de abrir o PR, então agora é observação. A
+> distinção importa: só o segundo caso é evidência.
 
 **Pendente de decisão:** reconfigurar a automação para `In review`, ou
 mudar o significado das colunas. A primeira preserva o fluxo documentado; a
 segunda exigiria reescrever a seção 2. Recomendo a primeira.
 
-Falta verificar `PR mergeado → Done`. Ela é parcialmente coberta pela
-automação de fechamento, já que `Closes #N` fecha a issue no merge.
+Falta verificar `PR mergeado → Done` de forma isolada. Ela é encoberta pela
+automação de fechamento, já que `Closes #N` fecha a issue no merge e o
+fechamento por si só já move para `Done` — então o efeito observado não
+distingue as duas.
 
 Todas essas são transições factuais: pertencem à automação nativa ou ao CI,
 nunca ao julgamento de uma pessoa ou de um modelo.
-
-`Type` e rótulos estão preenchidos em todas as issues, novas e antigas.
 
 ### Verificações
 
@@ -354,16 +412,93 @@ nunca ao julgamento de uma pessoa ou de um modelo.
    view por rótulo (`perf`, `a11y`, `security`) para as revisões de
    qualidade, e uma agrupada por `Priority` para o planejamento.
 
-9. **Cor dos rótulos.** Os 14 nasceram cinza. Colorir por família ajuda a
-   ler o board de relance.
+9. **Cor dos rótulos.** Os 13 em uso nasceram cinza. Colorir por família
+   ajuda a ler o board de relance.
+
+10. **Criar `status:blocked`** e aplicá-lo conforme o critério da seção 5.
+
+11. **Remover os nove rótulos padrão do GitHub** listados na seção 5.
+    Nenhum está aplicado a issue alguma; seis duplicam Issue Type, rótulo
+    ou `state_reason`. Ação destrutiva — aguarda aprovação.
+
+12. **Apagar duas branches sem trabalho pendente**, verificado por
+    conteúdo e não por histórico:
+    - a branch de análise em `5096bae` — zero commits que `main` não tenha;
+      está atrás dela. **O nome dela carrega um prefixo de ferramenta**, o
+      que por si só contraria a regra de autoria do `CONTRIBUTING.md`;
+      apagá-la resolve as duas coisas de uma vez;
+    - `docs/registrar-automacoes-verificadas` — `git diff` contra `main`
+      **vazio**. Os dois commits dela não aparecem no histórico de `main`
+      porque o merge foi squash, mas o conteúdo está integralmente lá.
+
+    Ação destrutiva — aguarda aprovação.
 
 ### Decisões em aberto
 
-| #   | decisão                                                                                                                                                                                                                                                                                | onde                                                                                                                                                                                 |
-| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | **Namespace de rota.** Três documentos propõem três URLs para o mesmo território: `/projetos` (a lista), `/projetos/:slug` (o estudo de caso) e `/case/[slug]` (o mesmo case, outro prefixo). Decidir antes de implementar qualquer uma — trocar URL depois custa redirect e canonical | [#6](https://github.com/https-shini/NewPortfolio/issues/6), [#8](https://github.com/https-shini/NewPortfolio/issues/8), [#23](https://github.com/https-shini/NewPortfolio/issues/23) |
-| 2   | O diretório `backend/` — remover, ou manter reservado com justificativa escrita. Hoje o repositório afirma as duas coisas                                                                                                                                                              | [#11](https://github.com/https-shini/NewPortfolio/issues/11)                                                                                                                         |
-| 3   | Consolidar a página de estudo de caso: [#6](https://github.com/https-shini/NewPortfolio/issues/6) e os itens T12, T13 e T14 descrevem a mesma entrega em granularidades diferentes                                                                                                     | [#6](https://github.com/https-shini/NewPortfolio/issues/6)                                                                                                                           |
-| 4   | O item "Blog técnico integrado", que existia só no README §Roadmap e não tinha issue: vira cartão, ou sai                                                                                                                                                                              | —                                                                                                                                                                                    |
-| 5   | Se a suíte E2E entra no job de auditoria do CI ou ganha um próprio                                                                                                                                                                                                                     | [#5](https://github.com/https-shini/NewPortfolio/issues/5)                                                                                                                           |
-| 6   | Onde mora a apresentação das automações de `scripts/` — seção na home, item da vitrine, ou página própria                                                                                                                                                                              | [#36](https://github.com/https-shini/NewPortfolio/issues/36)                                                                                                                         |
+| #   | decisão                                                                                                                                                                            | onde                                                         |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| 1   | O diretório `backend/` — remover, ou manter reservado com justificativa escrita. Hoje o repositório afirma as duas coisas                                                          | [#11](https://github.com/https-shini/NewPortfolio/issues/11) |
+| 2   | Consolidar a página de estudo de caso: [#6](https://github.com/https-shini/NewPortfolio/issues/6) e os itens T12, T13 e T14 descrevem a mesma entrega em granularidades diferentes | [#6](https://github.com/https-shini/NewPortfolio/issues/6)   |
+| 3   | O item "Blog técnico integrado", que existia só no README §Roadmap e não tinha issue: vira cartão, ou sai                                                                          | —                                                            |
+| 4   | Se a suíte E2E entra no job de auditoria do CI ou ganha um próprio                                                                                                                 | [#5](https://github.com/https-shini/NewPortfolio/issues/5)   |
+| 5   | Onde mora a apresentação das automações de `scripts/` — seção na home, item da vitrine, ou página própria                                                                          | [#36](https://github.com/https-shini/NewPortfolio/issues/36) |
+
+Saíram desta tabela por terem sido decididas: `Estimate` × `Size` (seção 3),
+voltar a trabalhar por PR (seção 6) e o namespace de rota (seção 10).
+
+---
+
+## 10. Decisões de arquitetura tomadas aqui
+
+Decisão que atravessa várias issues não cabe no corpo de nenhuma delas —
+ela vive aqui, e as issues apontam para cá.
+
+### Namespace de rota — decidido em 07/09/2026
+
+**`/projetos` é a lista. `/projetos/<slug>` é o estudo de caso.
+`/case/[slug]` está descartado.**
+
+Três documentos propunham três URLs para o mesmo território:
+
+| origem                                                                          | proposta                                               |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| issue [#8](https://github.com/https-shini/NewPortfolio/issues/8)                | `/projetos` — a lista de repositórios                  |
+| issue [#6](https://github.com/https-shini/NewPortfolio/issues/6)                | `/projetos/:slug` — o estudo de caso                   |
+| backlog T13, issue [#23](https://github.com/https-shini/NewPortfolio/issues/23) | `/case/[slug]` — o mesmo estudo de caso, outro prefixo |
+
+**Por que `/projetos/<slug>` e não `/case/<slug>`:**
+
+- **Um namespace só.** Duas raízes para o mesmo assunto obrigam quem lê a
+  saber qual usar, e obrigam o sitemap, o canonical e os links internos a
+  conhecerem as duas.
+- **A hierarquia diz a verdade.** Um estudo de caso é o detalhe de um
+  projeto. `/projetos/<slug>` diz isso pela própria URL; `/case/<slug>`
+  esconde a relação.
+- **A lista vira o índice dos casos** de graça, sem página de índice
+  própria.
+- **Sem dívida de redirect.** Trocar URL publicada depois custa redirect
+  permanente e canonical, para sempre.
+- **Consistência de forma.** As rotas do site são minúsculas e em
+  português onde o assunto é português (`/links`, `/release-notes`). O
+  `<slug>` segue o mesmo padrão.
+
+**O que continua em aberto, e é outra pergunta:** se `/projetos` lista
+**todos** os repositórios públicos ou só os curados. Isso é escopo de
+produto, não de nomenclatura, e vive na issue
+[#8](https://github.com/https-shini/NewPortfolio/issues/8). Se a lista
+mostrar todos, apenas alguns terão estudo de caso — o card leva ao caso
+quando existir, e ao repositório quando não.
+
+**Aplicado retroativamente** em 07/09/2026 nas issues que citavam a rota:
+[#6](https://github.com/https-shini/NewPortfolio/issues/6) e
+[#23](https://github.com/https-shini/NewPortfolio/issues/23) tiveram título e
+corpo alinhados, e o bloco de "decisão pendente" saiu de ambas.
+
+A issue [#8](https://github.com/https-shini/NewPortfolio/issues/8) já usava
+`/projetos` e não precisou de mudança de rota — só perde a menção ao
+conflito.
+
+> **Correção.** Uma versão anterior da auditoria dizia que a #4 tinha o
+> namespace entre as suas decisões pendentes. Não tinha: `/contato` não
+> divide território com `/projetos`, e a leitura do corpo confirma duas
+> pendências, não três. O erro era meu.
