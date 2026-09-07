@@ -51,6 +51,15 @@ Backlog  →  Ready  →  In progress  →  In review  →  Done
   decoração — ver a seção 6.
 - **Qualquer coisa → `Done`** com critério de aceite desmarcado.
 
+### Exceções registradas
+
+Exceção que não vira regra precisa ficar escrita, com data e motivo — senão
+a regra apodrece em silêncio.
+
+| data       | item                                                       | exceção                                                   | motivo                                                                                                                                                                                         |
+| ---------- | ---------------------------------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 07/09/2026 | [#4](https://github.com/https-shini/NewPortfolio/issues/4) | permanece em `Ready` com três decisões pendentes no corpo | decisão do dono do projeto. A Definition of Ready acima segue **não atendida** para este item: o formulário sempre visível, o honeypot no corpo JSON e o namespace de rota continuam em aberto |
+
 ### Voltar é normal
 
 `In review` → `In progress` quando a revisão pede mudança. `Ready` →
@@ -61,17 +70,17 @@ não é fracasso; item parado em `In progress` por semanas é.
 
 ## 3. Os campos
 
-| Campo           | Tipo                    | Quem preenche, e quando                                                   |
-| --------------- | ----------------------- | ------------------------------------------------------------------------- |
-| **Status**      | seleção única, 5 opções | Move-se pelo board. Nunca escrito no corpo                                |
-| **Priority**    | seleção única           | Ao promover para `Ready`                                                  |
-| **Size**        | seleção única           | Ao promover para `Ready`                                                  |
-| **Estimate**    | número                  | Ver a nota abaixo                                                         |
-| **Start date**  | data                    | Ao entrar em `In progress`                                                |
-| **Target date** | data                    | Só quando existe compromisso real. Sem prazo é melhor que prazo inventado |
-| **Type**        | Issue Type nativo       | Na abertura                                                               |
-| **Assignee**    | pessoa                  | Obrigatório a partir de `In progress`                                     |
-| **Labels**      | rótulos                 | Na abertura — ver a seção 5                                               |
+| Campo            | Tipo                    | Quem preenche, e quando                                                   |
+| ---------------- | ----------------------- | ------------------------------------------------------------------------- |
+| **Status**       | seleção única, 5 opções | Move-se pelo board. Nunca escrito no corpo                                |
+| **Priority**     | seleção única           | Ao promover para `Ready`                                                  |
+| **Size**         | seleção única           | Ao promover para `Ready`                                                  |
+| ~~**Estimate**~~ | —                       | **Aposentado** em 07/09/2026 — ver a nota abaixo                          |
+| **Start date**   | data                    | Ao entrar em `In progress`                                                |
+| **Target date**  | data                    | Só quando existe compromisso real. Sem prazo é melhor que prazo inventado |
+| **Type**         | Issue Type nativo       | Na abertura                                                               |
+| **Assignee**     | pessoa                  | Obrigatório a partir de `In progress`                                     |
+| **Labels**       | rótulos                 | Na abertura — ver a seção 5                                               |
 
 ### `Priority`
 
@@ -79,16 +88,23 @@ não é fracasso; item parado em `In progress` por semanas é.
 não caber na escala, o problema costuma ser que ele mistura duas coisas de
 urgência diferente — divida.
 
-### `Estimate` e `Size` — pendência declarada
+### `Estimate` — aposentado
 
-Hoje os dois medem a mesma coisa. A escala que emergiu nos corpos das
-issues (`5 (Muito grande)`, `4 (Grande)`, `3 (Médio)`) é de 1 a 5 mapeando
-para tamanho, exatamente o que `Size` já faz.
+**Decidido em 07/09/2026: o campo sai. `Size` é o único medidor de dimensão
+do trabalho.**
 
-**Decisão em aberto:** aposentar um dos dois, ou dar a `Estimate` um
-significado próprio (horas, pontos). Enquanto não decidido, preencha
-**apenas `Size`** e deixe `Estimate` vazio — dois campos dizendo a mesma
-coisa divergem no dia em que um dos dois não é atualizado.
+Os dois mediam a mesma coisa. A escala que emergiu nos corpos das issues
+(`5 (Muito grande)`, `4 (Grande)`, `3 (Médio)`) era de 1 a 5 mapeando para
+tamanho — exatamente o que `Size` já faz. Dois campos dizendo a mesma coisa
+divergem no dia em que um dos dois não é atualizado, e a partir daí ninguém
+sabe qual está certo.
+
+A decisão saiu agora porque **nenhum item usava `Estimate`**: não houve
+migração, e o custo nunca mais seria tão baixo.
+
+Se um dia fizer falta uma medida diferente de tamanho — horas, ou pontos —,
+ela volta como campo novo **com a metodologia escrita antes do primeiro
+preenchimento**. Campo sem metodologia definida vira palpite registrado.
 
 ### `Type`
 
@@ -183,13 +199,17 @@ O fluxo previsto é **issue → branch → PR → CI → merge**. O CI já roda 
 `audit:layers` · `audit:identity` · `audit:release-notes` ·
 `audit:modals` · `audit:bundle`
 
-**Estado real, registrado aqui de propósito:** o histórico tem 64 commits
-diretos em `main` nos últimos 30 dias, zero merges e nenhum PR desde julho.
-Nenhuma issue tem branch ou PR ligado. Enquanto isso continuar, `In review`
-não tem porta de entrada e `Done` é marcado à mão.
+**Estado real, registrado aqui de propósito:** o trabalho vem entrando em
+`main` por push direto, e **nenhum PR foi aberto desde 23/07/2026**. Nenhuma
+issue tem branch ou PR ligado. Enquanto isso continuar, `In review` não tem
+porta de entrada e `Done` é marcado à mão.
 
-Não é um defeito do board — é a prática divergindo do fluxo. Registrado
-como decisão pendente, não como regra quebrada.
+> Uma versão anterior desta seção dizia "zero merges no histórico". Era
+> impreciso: são zero **commits de merge**. Dos três PRs do repositório,
+> **dois foram mergeados** — o #1 em 22/05 e o #3 em 23/07 —, por squash ou
+> rebase, que não produzem commit de merge. O #2 foi fechado sem merge.
+
+Não é um defeito do board — é a prática divergindo do fluxo.
 
 ### Ligar PR e issue
 
@@ -246,9 +266,10 @@ Project as executa.
 ### Correções pendentes
 
 1. **Issue [#4](https://github.com/https-shini/NewPortfolio/issues/4) — `Status`.**
-   Está `Ready` no board. O corpo dizia `Backlog`, e os dois estavam
-   publicados se contradizendo. O corpo já não afirma status nenhum — falta
-   decidir qual dos dois valia e deixar o campo certo.
+   **Resolvido:** o corpo dizia `Backlog` enquanto o board dizia `Ready`, os
+   dois publicados se contradizendo. O corpo já não afirma status nenhum, e
+   a decisão foi manter `Ready`. A exceção está registrada na seção 2, com o
+   motivo — as três decisões pendentes no corpo continuam abertas.
 
 2. **Preencher `Priority` e `Size` com o dado que já existia nos corpos:**
 
@@ -258,7 +279,7 @@ Project as executa.
    | [#8](https://github.com/https-shini/NewPortfolio/issues/8) — Página `/projetos`  | `Média`                                                            | o segundo maior   |
    | [#9](https://github.com/https-shini/NewPortfolio/issues/9) — Refatoração do Work | **decidir** — o corpo dizia `Média-alta`, que não existe na escala | médio             |
 
-   `Estimate` fica vazio até a pendência da seção 3 ser decidida.
+   `Estimate` não é preenchido: o campo foi aposentado (seção 3).
 
 3. **`Priority` e `Size` dos itens T01–T33.** Os corpos trazem a prioridade
    original da auditoria (`P0`–`P3`) e o esforço, mas essa escala não é a do
@@ -269,39 +290,80 @@ Project as executa.
 5. **Datas.** Só onde houver compromisso real. Nenhum documento do
    repositório traz prazo, e prazo inventado é pior que campo vazio.
 
-### Adicionar os cartões ao board
+### Automações — o que está verificado
 
-O repositório passou de 6 para 46 issues. Se a automação de auto-add
-existir, elas entraram sozinhas; se não, precisam ser adicionadas — e criar
-a automação vale mais que adicionar 40 cartões à mão.
+Duas automações nativas do Project **existem e funcionam**. Não são
+suposição: foram verificadas por comportamento, em 07/09/2026.
 
-`Type` e rótulos já estão preenchidos em todas as issues, novas e antigas.
+| automação              | evidência                                                                                                                                                                                                                   |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| item novo → `Backlog`  | as issues [#28](https://github.com/https-shini/NewPortfolio/issues/28) e [#44](https://github.com/https-shini/NewPortfolio/issues/44) foram criadas por API sem nenhum campo ser tocado, e apareceram com `Status: Backlog` |
+| issue fechada → `Done` | as issues [#10](https://github.com/https-shini/NewPortfolio/issues/10) e [#34](https://github.com/https-shini/NewPortfolio/issues/34) foram fechadas por API e apareceram com `Status: Done`                                |
+
+Consequência prática: **cartão novo não precisa ser adicionado à mão.** As
+40 issues criadas em 07/09 entraram no board sozinhas.
+
+### E uma que existe, mas aponta para a coluna errada
+
+Abrir o PR desta mudança exercitou a terceira automação, e o resultado
+**não** é o que o fluxo desta seção descreve.
+
+A issue [#50](https://github.com/https-shini/NewPortfolio/issues/50) foi
+para **`In progress`** quando o PR foi aberto. Pela tabela da seção 2,
+`In progress` significa "alguém está trabalhando nele agora" e `In review`
+significa "existe PR aberto ligado à issue". A automação está mandando o
+item para a etapa anterior à correta, e o `In review` continua sem porta de
+entrada — que era exatamente o problema que este documento apontava.
+
+> **Limite desta observação.** Não conferi o `Status` da #50 antes de abrir
+> o PR. Sei que toda issue nova nasce em `Backlog` (verificado em #28 e
+> #44) e que a #50 está em `In progress`; o único evento entre a criação e
+> a leitura foi a abertura do PR. A conclusão é sólida, mas é **inferência**,
+> não observação direta do antes e do depois.
+
+**Pendente de decisão:** reconfigurar a automação para `In review`, ou
+mudar o significado das colunas. A primeira preserva o fluxo documentado; a
+segunda exigiria reescrever a seção 2. Recomendo a primeira.
+
+Falta verificar `PR mergeado → Done`. Ela é parcialmente coberta pela
+automação de fechamento, já que `Closes #N` fecha a issue no merge.
+
+Todas essas são transições factuais: pertencem à automação nativa ou ao CI,
+nunca ao julgamento de uma pessoa ou de um modelo.
+
+`Type` e rótulos estão preenchidos em todas as issues, novas e antigas.
 
 ### Verificações
 
-6. **Automações do Project.** Confirmar se existem, e criar as que faltarem:
-   - item novo no repositório → entra em `Backlog`;
-   - PR aberto ligado à issue → `In review`;
-   - PR mergeado → `Done`.
+6. **Corrigir a automação de PR aberto.** Ela existe, mas move o item para
+   `In progress` em vez de `In review` (ver acima). Enquanto não for
+   corrigida, `In review` não tem porta de entrada.
+   Verificar também `PR mergeado → Done`.
 
-   Sem a primeira, cada issue nova precisa ser adicionada ao board à mão.
+7. **Proteção de `main`.** Decidida em 07/09/2026 e ainda não configurada:
 
-7. **Views.** Uma por status (o board) já existe. Com 46 itens, vale uma
+   | regra                            | valor                                                                       |
+   | -------------------------------- | --------------------------------------------------------------------------- |
+   | Pull Request obrigatório         | **sim**                                                                     |
+   | Checks obrigatórios              | `Lint · Type-check · Test · Build` e `Acessibilidade · Rolagem · Orçamento` |
+   | Branch atualizada antes do merge | **sim**                                                                     |
+   | Aprovação de revisor             | **não** — há um único CODEOWNER, e exigir aprovação travaria todo merge     |
+   | Histórico linear                 | **não** — quebraria o squash já usado nos PRs #1 e #3                       |
+
+8. **Views.** Uma por status (o board) já existe. Com 46 itens, vale uma
    view por rótulo (`perf`, `a11y`, `security`) para as revisões de
    qualidade, e uma agrupada por `Priority` para o planejamento.
 
-8. **Cor dos rótulos.** Os 14 nasceram cinza. Colorir por família ajuda a
+9. **Cor dos rótulos.** Os 14 nasceram cinza. Colorir por família ajuda a
    ler o board de relance.
 
 ### Decisões em aberto
 
 | #   | decisão                                                                                                                                                                                                                                                                                | onde                                                                                                                                                                                 |
 | --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1   | `Estimate` × `Size` — aposentar um, ou dar significado próprio ao outro                                                                                                                                                                                                                | seção 3                                                                                                                                                                              |
-| 2   | **Namespace de rota.** Três documentos propõem três URLs para o mesmo território: `/projetos` (a lista), `/projetos/:slug` (o estudo de caso) e `/case/[slug]` (o mesmo case, outro prefixo). Decidir antes de implementar qualquer uma — trocar URL depois custa redirect e canonical | [#6](https://github.com/https-shini/NewPortfolio/issues/6), [#8](https://github.com/https-shini/NewPortfolio/issues/8), [#23](https://github.com/https-shini/NewPortfolio/issues/23) |
-| 3   | O diretório `backend/` — remover, ou manter reservado com justificativa escrita. Hoje o repositório afirma as duas coisas                                                                                                                                                              | [#11](https://github.com/https-shini/NewPortfolio/issues/11)                                                                                                                         |
-| 4   | **Voltar a trabalhar por PR.** Sem isso `In review` continua decorativo e `Done` não tem porta de entrada                                                                                                                                                                              | seção 6                                                                                                                                                                              |
-| 5   | Consolidar a página de estudo de caso: [#6](https://github.com/https-shini/NewPortfolio/issues/6) e os itens T12, T13 e T14 descrevem a mesma entrega em granularidades diferentes                                                                                                     | [#6](https://github.com/https-shini/NewPortfolio/issues/6)                                                                                                                           |
-| 6   | O item "Blog técnico integrado", que existia só no README §Roadmap e não tinha issue: vira cartão, ou sai                                                                                                                                                                              | —                                                                                                                                                                                    |
-| 7   | Se a suíte E2E entra no job de auditoria do CI ou ganha um próprio                                                                                                                                                                                                                     | [#5](https://github.com/https-shini/NewPortfolio/issues/5)                                                                                                                           |
-| 8   | Onde mora a apresentação das automações de `scripts/` — seção na home, item da vitrine, ou página própria                                                                                                                                                                              | [#36](https://github.com/https-shini/NewPortfolio/issues/36)                                                                                                                         |
+| 1   | **Namespace de rota.** Três documentos propõem três URLs para o mesmo território: `/projetos` (a lista), `/projetos/:slug` (o estudo de caso) e `/case/[slug]` (o mesmo case, outro prefixo). Decidir antes de implementar qualquer uma — trocar URL depois custa redirect e canonical | [#6](https://github.com/https-shini/NewPortfolio/issues/6), [#8](https://github.com/https-shini/NewPortfolio/issues/8), [#23](https://github.com/https-shini/NewPortfolio/issues/23) |
+| 2   | O diretório `backend/` — remover, ou manter reservado com justificativa escrita. Hoje o repositório afirma as duas coisas                                                                                                                                                              | [#11](https://github.com/https-shini/NewPortfolio/issues/11)                                                                                                                         |
+| 3   | Consolidar a página de estudo de caso: [#6](https://github.com/https-shini/NewPortfolio/issues/6) e os itens T12, T13 e T14 descrevem a mesma entrega em granularidades diferentes                                                                                                     | [#6](https://github.com/https-shini/NewPortfolio/issues/6)                                                                                                                           |
+| 4   | O item "Blog técnico integrado", que existia só no README §Roadmap e não tinha issue: vira cartão, ou sai                                                                                                                                                                              | —                                                                                                                                                                                    |
+| 5   | Se a suíte E2E entra no job de auditoria do CI ou ganha um próprio                                                                                                                                                                                                                     | [#5](https://github.com/https-shini/NewPortfolio/issues/5)                                                                                                                           |
+| 6   | Onde mora a apresentação das automações de `scripts/` — seção na home, item da vitrine, ou página própria                                                                                                                                                                              | [#36](https://github.com/https-shini/NewPortfolio/issues/36)                                                                                                                         |
