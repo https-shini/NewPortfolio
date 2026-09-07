@@ -58,9 +58,27 @@ a regra apodrece em silêncio. E precisa de **gatilho de encerramento**, não
 de prazo: data marcada em item que depende de decisão só produz data
 vencida. O que encerra a exceção é o evento, e ele fica nomeado.
 
-| data       | item                                                       | exceção                                                | motivo                     | gatilho de encerramento                                                                                                                                                                                                                                                                                                                   |
-| ---------- | ---------------------------------------------------------- | ------------------------------------------------------ | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 07/09/2026 | [#4](https://github.com/https-shini/NewPortfolio/issues/4) | permanece em `Ready` sem atender a Definition of Ready | decisão do dono do projeto | duas decisões pendentes, ambas já em sub-issues próprias: o formulário passar a aparecer sempre em produção ([#45](https://github.com/https-shini/NewPortfolio/issues/45)) e o honeypot entrar ou não no corpo JSON ([#47](https://github.com/https-shini/NewPortfolio/issues/47)). A exceção se encerra quando as duas forem respondidas |
+**Nenhuma exceção aberta hoje.**
+
+### Encerradas
+
+| aberta     | item                                                       | exceção                                                                                       | como encerrou                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 07/09/2026 | [#4](https://github.com/https-shini/NewPortfolio/issues/4) | permanecia em `Ready` sem atender a Definition of Ready, por duas decisões pendentes no corpo | **encerrada em 07/09/2026.** As duas foram analisadas contra o código e nenhuma era decisão de produto: a visibilidade do formulário é consequência da implementação, e o honeypot no servidor não pega a ameaça para a qual foi proposto. Registrado nas issues [#4](https://github.com/https-shini/NewPortfolio/issues/4), [#45](https://github.com/https-shini/NewPortfolio/issues/45) e [#47](https://github.com/https-shini/NewPortfolio/issues/47) |
+
+Uma lição que vale guardar: das duas pendências, **nenhuma precisava de
+decisão**. Uma pergunta apresentava uma consequência da implementação como
+se fosse escolha; a outra propunha uma técnica que não funcionava contra a
+ameaça citada. Item parado em `Ready` "esperando decisão" merece essa
+leitura antes de virar exceção — às vezes o que falta é análise, não
+resposta.
+
+> **O que sobrou na #4**, e que **não** é motivo para devolver o cartão:
+> `Priority` e `Size` seguem vazios. A Definition of Ready pede os dois, e
+> preenchê-los é ação de painel, de trinta segundos. O item está entendido
+> o bastante para alguém começar sem perguntar nada — que é o que a etapa
+> significa. Campo vazio aqui é pendência de escrituração, não de
+> entendimento.
 
 ### Voltar é normal
 
