@@ -240,6 +240,15 @@ campo `Priority`.
 Regra prática: se não dá para escrever numa linha **o que precisa
 acontecer para o rótulo sair**, o item não está bloqueado.
 
+**Como manter.** O rótulo não se atualiza sozinho. Quando uma issue fecha,
+os itens que dependiam dela param de estar bloqueados — e alguém precisa
+tirar o rótulo. Enquanto não houver a verificação automática da seção 9,
+isso é trabalho manual: ao fechar uma issue, procurar quem a citava.
+
+**Quem NÃO recebe o rótulo:** item que precisa de uma decisão _durante_ a
+execução, e não _antes_ dela. A escolha entre duas saídas registrada como
+critério de aceite é trabalho do item, não impedimento para começá-lo.
+
 ### Os padrões do GitHub que sobraram
 
 O repositório carrega **nove rótulos** criados pelo GitHub na origem e
@@ -433,7 +442,10 @@ nunca ao julgamento de uma pessoa ou de um modelo.
 9. **Cor dos rótulos.** Os 13 em uso nasceram cinza. Colorir por família
    ajuda a ler o board de relance.
 
-10. **Criar `status:blocked`** e aplicá-lo conforme o critério da seção 5.
+10. ~~Criar `status:blocked`~~ — **feito em 07/09/2026.** O rótulo existe e
+    está aplicado nas issues que atendem ao critério da seção 5. Não há
+    ferramenta de criar rótulo neste ambiente: ele nasceu ao ser aplicado,
+    como os outros treze.
 
 11. **Remover os nove rótulos padrão do GitHub** listados na seção 5.
     Nenhum está aplicado a issue alguma; seis duplicam Issue Type, rótulo
