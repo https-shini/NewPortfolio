@@ -162,6 +162,25 @@ preenchido.
 
 ---
 
+### Cor dos rótulos
+
+Os treze em uso nasceram com o cinza padrão do GitHub. Colorir por família
+faz o board ser lido de relance, em vez de palavra por palavra:
+
+| família        | rótulos                        | sugestão                                        |
+| -------------- | ------------------------------ | ----------------------------------------------- |
+| qualidade      | `perf` `a11y` `test`           | um tom só, frio                                 |
+| risco          | `security`                     | vermelho, sozinho — é o que precisa saltar      |
+| conteúdo       | `content` `ux` `seo`           | um tom quente                                   |
+| infraestrutura | `ci` `arch` `data` `analytics` | um tom neutro                                   |
+| manutenção     | `docs` `chore`                 | cinza, o padrão atual, já serve                 |
+| estado         | `status:blocked`               | amarelo ou laranja, distinto de todos os outros |
+
+`status:blocked` é o único que descreve estado e não área — a cor dele
+deveria destoar de propósito.
+
+---
+
 ## 5. Views
 
 Seis, cada uma respondendo uma pergunta que você faz de fato. View sem
@@ -305,6 +324,28 @@ nem verificação, e é onde o board apodrece se ninguém olhar.
    próprio merge.
 8. Remover os nove rótulos padrão do GitHub listados em
    `github-project.md` §5.
+9. Colorir os treze em uso, pela seção 4.
+
+### Higiene de branch
+
+Branch de PR mergeado não se apaga sozinha aqui. O
+"Automatically delete head branches" das configurações do repositório **não
+resolve o caso**: ele só age em merge feito pelo botão do GitHub, e os
+merges deste projeto são locais. Ligá-lo prometeria algo que não entrega.
+
+Então a limpeza é manual, e o critério de segurança é um só: **existe em
+`main` o commit de squash daquele PR?** Se existe, a branch não guarda
+trabalho pendente.
+
+```bash
+git log origin/main --oneline --grep="(#<número-do-PR>)"
+git push origin --delete <a-branch>
+```
+
+Não use `git diff` contra `main` para decidir isso. Ele responde a pergunta
+errada: assim que `main` avança, o diff passa a mostrar diferença mesmo
+quando nada se perdeu — o que aparece é o texto antigo, legitimamente
+superado por PRs posteriores.
 
 Os passos 1 a 5 são o grosso. Feitos eles, o board responde às nove
 perguntas da seção 7.

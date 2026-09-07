@@ -48,6 +48,42 @@ npx playwright install --with-deps chromium
    board e move o cartão. Se o PR não fecha a issue inteira, use `Refs #N`.
 4. **O CI precisa passar.** Ele roda sozinho no PR; a lista está abaixo.
 
+### Merge em `main` é local
+
+**Nunca pelo botão nem pela API do GitHub.** Os dois gravam:
+
+```
+autor:     Guilherme Cruz <100307080+https-shini@users.noreply.github.com>
+committer: GitHub <noreply@github.com>
+```
+
+— trocam o e-mail do autor pelo alias `noreply` e põem `GitHub` como
+committer, contrariando a regra da seção seguinte.
+
+Isso não é hipótese. O commit `6c0567b` é o único do histórico recente com
+autoria errada, e foi o único mergeado pela API; os seguintes foram locais e
+saíram corretos nos dois campos.
+
+Com o CI verde no PR:
+
+```bash
+git checkout main && git pull origin main
+git merge --squash <a-branch-do-PR>
+git commit                    # a mensagem descreve a entrega, e fecha com Closes #N
+git push origin main
+```
+
+E confira antes de seguir:
+
+```bash
+git log -1 --format='%an <%ae> | %cn <%ce>'   # sua identidade nos dois
+git log -1 --format='%(trailers)'             # vazio
+```
+
+O squash é proposital: a branch guarda os passos do caminho, e `main` guarda
+a entrega. O histórico dos passos não se perde — fica no PR, junto da
+discussão.
+
 ### Autoria dos commits
 
 Todo o histórico deste repositório é assinado exclusivamente por
