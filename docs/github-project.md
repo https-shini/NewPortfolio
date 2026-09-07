@@ -359,33 +359,37 @@ Consequência prática: **cartão novo não precisa ser adicionado à mão.** As
 
 ### E uma que existe, mas aponta para a coluna errada
 
-Abrir o PR desta mudança exercitou a terceira automação, e o resultado
-**não** é o que o fluxo desta seção descreve.
+A automação de PR aberto move o item para **`In progress`**, não para
+`In review`. Pela tabela da seção 2, `In progress` significa "alguém está
+trabalhando nele agora" e `In review` significa "existe PR aberto ligado à
+issue". A automação está uma coluna atrás da correta, e o `In review`
+continua sem porta de entrada — que era exatamente o problema que este
+documento apontava.
 
-A issue [#50](https://github.com/https-shini/NewPortfolio/issues/50) foi
-para **`In progress`** quando o PR foi aberto. Pela tabela da seção 2,
-`In progress` significa "alguém está trabalhando nele agora" e `In review`
-significa "existe PR aberto ligado à issue". A automação está mandando o
-item para a etapa anterior à correta, e o `In review` continua sem porta de
-entrada — que era exatamente o problema que este documento apontava.
+**Evidência de antes e depois**, medida em 07/09/2026 com a issue
+[#52](https://github.com/https-shini/NewPortfolio/issues/52):
 
-> **Limite desta observação.** Não conferi o `Status` da #50 antes de abrir
-> o PR. Sei que toda issue nova nasce em `Backlog` (verificado em #28 e
-> #44) e que a #50 está em `In progress`; o único evento entre a criação e
-> a leitura foi a abertura do PR. A conclusão é sólida, mas é **inferência**,
-> não observação direta do antes e do depois.
+| momento                                                                                          | `Status`          |
+| ------------------------------------------------------------------------------------------------ | ----------------- |
+| logo após a criação, sem branch nem PR                                                           | `Backlog`         |
+| logo após abrir o PR [#53](https://github.com/https-shini/NewPortfolio/pull/53) com `Closes #52` | **`In progress`** |
+
+> A primeira vez que isto apareceu, com a issue #50 e o PR #51, o `Status`
+> anterior não tinha sido conferido — era **inferência**. O teste com a #52
+> registrou o baseline antes de abrir o PR, então agora é observação. A
+> distinção importa: só o segundo caso é evidência.
 
 **Pendente de decisão:** reconfigurar a automação para `In review`, ou
 mudar o significado das colunas. A primeira preserva o fluxo documentado; a
 segunda exigiria reescrever a seção 2. Recomendo a primeira.
 
-Falta verificar `PR mergeado → Done`. Ela é parcialmente coberta pela
-automação de fechamento, já que `Closes #N` fecha a issue no merge.
+Falta verificar `PR mergeado → Done` de forma isolada. Ela é encoberta pela
+automação de fechamento, já que `Closes #N` fecha a issue no merge e o
+fechamento por si só já move para `Done` — então o efeito observado não
+distingue as duas.
 
 Todas essas são transições factuais: pertencem à automação nativa ou ao CI,
 nunca ao julgamento de uma pessoa ou de um modelo.
-
-`Type` e rótulos estão preenchidos em todas as issues, novas e antigas.
 
 ### Verificações
 
