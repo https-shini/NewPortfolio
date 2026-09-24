@@ -543,4 +543,6 @@ Cada critério é medido, não afirmado:
 - Reescrever o autor dos 108 commits antigos para a forma curta do nome.
 - Purgar do GitHub os 5 commits órfãos que ainda resolvem por SHA direto —
   depende de chamado ao suporte.
-- Backend próprio na pasta `backend/`, hoje reservada.
+- Backend próprio. A pasta `backend/` que o reservava foi removida
+  ([#11](https://github.com/https-shini/NewPortfolio/issues/11)); a API que o
+  site consome continua sendo a de `api/`, na Vercel.

@@ -42,7 +42,7 @@
 
 Portfólio pessoal de **segunda geração** — SPA construída em **React 18 + TypeScript 5 + Vite 5**, evoluindo a versão anterior em HTML/CSS/JS puro. O projeto tem arquitetura por camadas (app → pages → widgets → shared), design system próprio com tokens CSS, internacionalização completa (PT-BR/EN), tema dark/light persistente e **zero dependências de UI externas** — todos os componentes e os 60+ ícones SVG são do próprio design system.
 
-O repositório é um monorepo simples: a raiz orquestra os scripts e `apps/web/` contém toda a aplicação. Na raiz ficam também as duas peças que a Vercel lê a partir do Root Directory: `vercel.json` (rewrites das rotas) e `api/`, com as **Vercel Serverless Functions** — `/api/github-stats` (métricas do perfil) e `/api/release-notes` (releases publicadas, já convertidas de markdown para HTML no servidor) falam com o GitHub sem expor token ao browser; `/api/feed` publica o RSS, `/api/og` gera a imagem social e `/api/crawler` entrega HTML pronto aos robôs de rede social. A pasta `backend/` segue reservada para uma API própria no futuro.
+O repositório é um monorepo simples: a raiz orquestra os scripts e `apps/web/` contém toda a aplicação. Na raiz ficam também as duas peças que a Vercel lê a partir do Root Directory: `vercel.json` (rewrites das rotas) e `api/`, com as **Vercel Serverless Functions** — `/api/github-stats` (métricas do perfil) e `/api/release-notes` (releases publicadas, já convertidas de markdown para HTML no servidor) falam com o GitHub sem expor token ao browser; `/api/feed` publica o RSS, `/api/og` gera a imagem social e `/api/crawler` entrega HTML pronto aos robôs de rede social.
 
 ---
 

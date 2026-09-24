@@ -117,11 +117,6 @@ const PROJECT_ITEMS: ProjectItem[] = [
         href: PROJECT_URLS.finances.live,
         external: true,
     },
-    {
-        label: "HomeMade Gourmet",
-        href: PROJECT_URLS.homemadeGourmet.live,
-        external: true,
-    },
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════════
