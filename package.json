@@ -40,8 +40,11 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "frontend/src/**/*.{ts,tsx,css}": [
-      "frontend/node_modules/.bin/prettier --write"
+    "apps/web/src/**/*.{ts,tsx,css}": [
+      "prettier --write"
+    ],
+    "apps/web/*.{json,md,html}": [
+      "prettier --write"
     ]
   },
   "devDependencies": {
