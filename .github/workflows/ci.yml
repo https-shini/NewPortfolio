@@ -54,6 +54,12 @@ jobs:
       - name: Variantes de imagem em dia com as fotos
         run: npm run imagens:check
 
+      # O CHANGELOG é derivado de RELEASE_NOTES.ts, como os ícones são
+      # derivados do icon.svg. Sem esta porta, os dois divergem em
+      # silêncio — e o histórico de versões passa a mentir.
+      - name: CHANGELOG em dia com as release notes
+        run: npm run changelog:check
+
       - name: Build
         run: npm run build
 

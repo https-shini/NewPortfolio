@@ -54,10 +54,6 @@ export const PROJECT_URLS = {
         live: "https://financas-reactjs.vercel.app",
         repo: repo("financas-reactjs"),
     },
-    homemadeGourmet: {
-        live: "https://https-shini.github.io/homemade-gourmet",
-        repo: repo("homemade-gourmet"),
-    },
     devlinksRocketseat: {
         live: "https://devlinks-rocketseat-five.vercel.app",
         repo: repo("devlinks-rocketseat"),

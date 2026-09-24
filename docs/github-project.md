@@ -467,14 +467,15 @@ nunca ao julgamento de uma pessoa ou de um modelo.
 
 | #   | decisão                                                                                                                                                                            | onde                                                         |
 | --- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| 1   | O diretório `backend/` — remover, ou manter reservado com justificativa escrita. Hoje o repositório afirma as duas coisas                                                          | [#11](https://github.com/https-shini/NewPortfolio/issues/11) |
-| 2   | Consolidar a página de estudo de caso: [#6](https://github.com/https-shini/NewPortfolio/issues/6) e os itens T12, T13 e T14 descrevem a mesma entrega em granularidades diferentes | [#6](https://github.com/https-shini/NewPortfolio/issues/6)   |
-| 3   | O item "Blog técnico integrado", que existia só no README §Roadmap e não tinha issue: vira cartão, ou sai                                                                          | —                                                            |
-| 4   | Se a suíte E2E entra no job de auditoria do CI ou ganha um próprio                                                                                                                 | [#5](https://github.com/https-shini/NewPortfolio/issues/5)   |
-| 5   | Onde mora a apresentação das automações de `scripts/` — seção na home, item da vitrine, ou página própria                                                                          | [#36](https://github.com/https-shini/NewPortfolio/issues/36) |
+| 1   | Consolidar a página de estudo de caso: [#6](https://github.com/https-shini/NewPortfolio/issues/6) e os itens T12, T13 e T14 descrevem a mesma entrega em granularidades diferentes | [#6](https://github.com/https-shini/NewPortfolio/issues/6)   |
+| 2   | O item "Blog técnico integrado", que existia só no README §Roadmap e não tinha issue: vira cartão, ou sai                                                                          | —                                                            |
+| 3   | Se a suíte E2E entra no job de auditoria do CI ou ganha um próprio                                                                                                                 | [#5](https://github.com/https-shini/NewPortfolio/issues/5)   |
+| 4   | Onde mora a apresentação das automações de `scripts/` — seção na home, item da vitrine, ou página própria                                                                          | [#36](https://github.com/https-shini/NewPortfolio/issues/36) |
 
 Saíram desta tabela por terem sido decididas: `Estimate` × `Size` (seção 3),
-voltar a trabalhar por PR (seção 6) e o namespace de rota (seção 10).
+voltar a trabalhar por PR (seção 6), o namespace de rota (seção 10) e o
+diretório `backend/` — removido, e com ele a contradição entre a auditoria e
+o README ([#11](https://github.com/https-shini/NewPortfolio/issues/11)).
 
 ---
 
