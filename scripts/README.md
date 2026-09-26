@@ -274,6 +274,35 @@ bytes diferentes para os mesmos pixels, então comparar arquivo por arquivo
 reprovaria por causa do runner, e não da imagem. Ele confere a assinatura
 das fontes contra a da última geração e a presença de cada derivado.
 
+## `csp.mjs`
+
+Também destoa: não mede o site, confere um **valor gravado** contra o que o
+build produziu — o hash SHA-256 do script inline de bootstrap de tema, que a
+CSP do `vercel.json` libera.
+
+```bash
+npm run build           # o hash é do HTML gerado
+npm run csp             # imprime o hash de cada documento
+npm run csp:check       # reprova se o vercel.json estiver velho
+```
+
+A CSP libera aquele script por **hash**, não por `'unsafe-inline'`. Hash é
+preciso — autoriza aquele script e nenhum outro — e é frágil pela mesma
+razão: um espaço a mais no `apps/web/index.html` muda o hash, o navegador
+bloqueia o script, e o site abre no tema errado. Sem esta porta, isso
+aconteceria em silêncio.
+
+Medido: acrescentar um único espaço ao bootstrap fez o `--check` sair com
+código 1, nomeando o hash que falta e o que sobrou.
+
+Por que o valor mora no `vercel.json` em vez de ser gerado: a Vercel lê esse
+arquivo da **raiz do repositório**, não do `dist/`. O que ela aplica é o que
+está commitado, então gerar no build não teria efeito.
+
+Só o bootstrap de tema entra. Cada documento tem outro script inline, o
+`type="application/ld+json"` do schema.org, que **não executa** — `script-src`
+não se aplica a tipo não executável, e dar hash a ele seria ruído.
+
 ## No CI
 
 O job `audit` do `.github/workflows/ci.yml` roda a acessibilidade, a
@@ -281,7 +310,8 @@ rolagem horizontal, as camadas, a identidade, o roteiro das notas de
 versão, os overlays e o orçamento contra o artefato de build que o job de
 qualidade publica — o que se mede é exatamente o que seria publicado, sem
 construir duas vezes. O `icones:check` e o `imagens:check` rodam no job de
-qualidade, antes do build.
+qualidade, antes do build; o `changelog:check` junto deles, e o `csp:check`
+**depois** do build, porque o hash é do HTML gerado.
 
 Ficam de fora, cada um pelo seu motivo: o `geometry.mjs`, pelo descrito
 acima, e o `perf.mjs`, porque mede tempo — e tempo varia demais entre

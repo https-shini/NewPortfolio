@@ -63,6 +63,13 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Depois do build, e não antes: o hash é do HTML gerado. A CSP libera
+      # o bootstrap de tema por hash, então um espaço a mais no index.html
+      # muda o hash, o navegador bloqueia o script e o site abre no tema
+      # errado — em silêncio, porque nada mais reprova isso.
+      - name: CSP em dia com os scripts inline
+        run: npm run csp:check
+
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
