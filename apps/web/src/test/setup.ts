@@ -13,6 +13,21 @@ afterEach(() => {
     if (!temDom) return;
     cleanup();
     localStorage.clear();
+
+    /* `sessionStorage` também, e não é simetria gratuita: shared/lib/cache.ts
+       guarda respostas de rede ali, com validade. O useGithubStats usa esse
+       cache com TTL de uma hora, então um caso que resolve as métricas
+       envenenava o seguinte — o readCache devolvia o valor anterior e o fetch
+       nem era tentado. Não mordia ninguém enquanto nada testava a área. */
+    sessionStorage.clear();
+
+    /* E a URL. O LangProvider sincroniza o idioma na query por
+       `history.replaceState` (app/LangContext.tsx:84), e o getInitialLang lê
+       a URL ANTES do localStorage. Sem esta linha, um caso que renderiza em
+       inglês deixa `?lang=en` para trás e o caso seguinte nasce em inglês
+       mesmo tendo pedido português. Medido: foi o que fez dois casos do Work
+       compararem inglês com inglês. */
+    window.history.replaceState({}, "", "/");
 });
 
 if (temDom) {
