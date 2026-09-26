@@ -254,6 +254,35 @@ oscila com a máquina ensina a ignorar o job. Aqui o que serve é comparar
 duas execuções na mesma máquina, antes e depois de uma mudança — como o
 `geometry.mjs`.
 
+## `rolagem.mjs`
+
+Atribuição, não medição. O `perf.mjs` responde **quanto** a rolagem custa; este
+responde **quem**.
+
+```bash
+npm run build
+npm run rolagem          # tabela comparativa
+npm run rolagem -- --json
+```
+
+Home, CPU 4×, mediana de três por cenário. Cada cenário desliga um suspeito por
+CSS injetado no fim da cascata, e a diferença de `RecalcStyleDuration` contra o
+base é a atribuição.
+
+CSS injetado, e não build por cenário: um build diferente mudaria o bundle, o
+hash dos arquivos e a ordem de carga, e a comparação passaria a medir isso
+também.
+
+**A tabela imprime a amplitude do base entre execuções, e ela é a régua.**
+Delta menor que a amplitude não é atribuição — é a máquina. Sem esse número,
+qualquer diferença parece conclusão; foi o que a série de performance aprendeu
+tirando duas conclusões de execução única, uma delas errada.
+
+Não roda no CI, pelo mesmo motivo do `perf.mjs`: mede tempo.
+
+O resultado da primeira investigação está em
+[`docs/reference/ROLAGEM-2026-09.md`](../docs/reference/ROLAGEM-2026-09.md).
+
 ## `changelog.mjs`
 
 Gera o `CHANGELOG.md` da raiz a partir de `RELEASE_NOTES`.
