@@ -19,8 +19,8 @@
     "type-check": "npm run type-check --workspace apps/web",
     "lint": "npm run lint --workspace apps/web",
     "lint:fix": "npm run lint:fix --workspace apps/web",
-    "format": "npm run format --workspace apps/web",
-    "format:check": "npm run format:check --workspace apps/web",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "npm run test --workspace apps/web",
     "test:watch": "npm run test:watch --workspace apps/web",
     "audit:a11y": "node scripts/a11y.mjs",
@@ -40,11 +40,8 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "apps/web/src/**/*.{ts,tsx,css}": [
-      "prettier --write"
-    ],
-    "apps/web/*.{json,md,html}": [
-      "prettier --write"
+    "*": [
+      "prettier --write --ignore-unknown"
     ]
   },
   "devDependencies": {

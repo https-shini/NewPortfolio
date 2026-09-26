@@ -330,8 +330,8 @@ Todos os scripts funcionam na raiz (delegam a `apps/web/`):
 | `npm run type-check`   | Verificação de tipos sem emitir    |
 | `npm run lint`         | ESLint em `src/`                   |
 | `npm run lint:fix`     | ESLint com auto-fix                |
-| `npm run format`       | Prettier (write)                   |
-| `npm run format:check` | Prettier (check — usado no CI)     |
+| `npm run format`       | Prettier no repositório inteiro     |
+| `npm run format:check` | o mesmo, em modo conferência (CI)  |
 | `npm run test`         | Vitest (run único)                 |
 | `npm run test:watch`   | Vitest em watch mode               |
 

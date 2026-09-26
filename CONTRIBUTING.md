@@ -107,7 +107,7 @@ Dois jobs, em `push` para `main` e em todo `pull_request`.
 | ----------------------- | ---------------------------------------------------- |
 | `npm run lint`          | ESLint, incluindo as regras de acessibilidade em JSX |
 | `npm run type-check`    | TypeScript sem `any` implícito                       |
-| `npm run format:check`  | Prettier — **inclui os arquivos Markdown**           |
+| `npm run format:check`  | Prettier no repositório inteiro, Markdown incluído   |
 | `npm test`              | a suíte do Vitest                                    |
 | `npm run icones:check`  | ícones derivados em dia com a fonte                  |
 | `npm run imagens:check` | variantes de imagem em dia com as fotos de origem    |
@@ -160,13 +160,17 @@ e commite o resultado junto. O `--check` no CI reprova quem esquecer.
 
 Documentação afetada muda **no mesmo PR**.
 
-Ressalva de escopo: `npm run format:check` roda apenas dentro de
-`apps/web` (`src/**` e os `*.md` de lá). **`README.md`, `docs/` e
-`.github/` na raiz ficam de fora do CI** — formate-os à mão antes de
-commitar:
+O `format:check` cobre o **repositório inteiro** — `README.md`, `docs/`,
+`.github/`, `scripts/` e `apps/web/src`. A configuração é uma só, na raiz:
+`.prettierrc.json` e `.prettierignore`. O Prettier resolve configuração
+subindo a partir de cada arquivo, e é por isso que ela mora lá e não em
+`apps/web` — de onde não alcançaria nada da raiz.
+
+O gancho de pre-commit já formata o que você preparou, então na prática não
+há nada a rodar à mão. Se quiser formatar tudo de uma vez:
 
 ```bash
-npx prettier --write README.md CONTRIBUTING.md "docs/**/*.md" ".github/**/*.{yml,md}"
+npm run format
 ```
 
 | documento                                                      | papel                                                                    |
