@@ -5,8 +5,21 @@
  *   node scripts/a11y.mjs --json       saída legível por máquina
  *   node scripts/a11y.mjs --baseline   grava a contagem em docs/reference/a11y-baseline.json
  *
- * Sai com código 1 se houver violação `serious` ou `critical`. As `moderate`
- * viram aviso: valem correção, não valem barrar uma entrega.
+ * Duas portas, e elas pegam coisas diferentes.
+ *
+ * ABSOLUTA — sai com código 1 se houver violação `serious` ou `critical`, ou
+ * se o idioma declarado divergir do renderizado. As `moderate` viram aviso:
+ * valem correção, não valem barrar uma entrega.
+ *
+ * CONTRA A LINHA DE BASE — sai com código 1 se a leitura de hoje for pior que
+ * a gravada em `docs/reference/a11y-baseline.json`. Existe porque a porta
+ * absoluta tem um ponto cego: se uma rota sair do arranjo, este script mede 12
+ * combinações em vez de 16 e PASSA, porque zero violação em 12 também é zero.
+ * A contagem de combinações é justamente o que a base guarda.
+ *
+ * Melhora não barra — é reportada, com o pedido de regravar a base. Base
+ * ausente barra, com a instrução de gravá-la ANTES de qualquer alteração:
+ * depois dela, a base já nasce contaminada.
  */
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -21,6 +34,9 @@ import {
 
 const require = createRequire(import.meta.url);
 const AXE = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
+
+/** A linha de base: gravada com --baseline, conferida em toda execução. */
+const BASE = new URL("../docs/reference/a11y-baseline.json", import.meta.url);
 
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 const BLOQUEIA = new Set(["serious", "critical"]);
@@ -134,6 +150,78 @@ if (avisos.length)
 
 if (asJson) console.log(JSON.stringify(resultados, null, 2));
 
+/* ── Porta contra a linha de base ────────────────────────────────────────
+   Só regressão barra. Expansão legítima — uma rota nova muda a contagem de
+   combinações para cima — é reportada, não reprovada, com o pedido de
+   regravar. Ver o cabeçalho para o ponto cego que isto cobre. */
+const regressoes = [];
+const desatualizada = [];
+
+if (!gravarBase) {
+    let base;
+    try {
+        base = JSON.parse(readFileSync(BASE, "utf8"));
+    } catch {
+        console.error(
+            "\nFALHA  não há linha de base em docs/reference/a11y-baseline.json.\n" +
+                "       Rode 'node scripts/a11y.mjs --baseline' ANTES de qualquer\n" +
+                "       alteração — depois dela, a base já nasce contaminada.",
+        );
+        process.exit(1);
+    }
+
+    const compara = (rotulo, hoje, gravado, piorQuando) => {
+        if (hoje === gravado) return;
+        const frase = `${rotulo}: base ${gravado}, hoje ${hoje}`;
+        (piorQuando(hoje, gravado) ? regressoes : desatualizada).push(frase);
+    };
+
+    compara(
+        "combinações medidas",
+        resultados.length,
+        base.combinacoes,
+        (h, g) => h < g,
+    );
+    compara(
+        "violações no total",
+        totalViolacoes,
+        base.totalViolacoes,
+        (h, g) => h > g,
+    );
+    compara(
+        "combinações sem violação",
+        limpos,
+        base.semViolacao,
+        (h, g) => h < g,
+    );
+    compara(
+        "idioma divergente",
+        langErrado.length,
+        base.idiomaDivergente,
+        (h, g) => h > g,
+    );
+
+    if (regressoes.length) {
+        log("");
+        log(
+            "FALHA  pior que a linha de base gravada em " +
+                base.gravadoEm +
+                ":",
+        );
+        regressoes.forEach((r) => log(`         ${r}`));
+    }
+    if (desatualizada.length) {
+        log("");
+        log(
+            `aviso  melhor que a base de ${base.gravadoEm} — regrave com --baseline:`,
+        );
+        desatualizada.forEach((r) => log(`         ${r}`));
+    }
+    if (!regressoes.length && !desatualizada.length) {
+        log(`base de ${base.gravadoEm} conferida — nenhuma diferença`);
+    }
+}
+
 if (gravarBase) {
     const base = {
         gravadoEm: new Date().toISOString().slice(0, 10),
@@ -152,11 +240,10 @@ if (gravarBase) {
             .map(([id, n]) => ({ id, ocorrencias: n })),
         idiomaDivergente: langErrado.length,
     };
-    writeFileSync(
-        "docs/reference/a11y-baseline.json",
-        JSON.stringify(base, null, 2) + "\n",
-    );
+    writeFileSync(BASE, JSON.stringify(base, null, 2) + "\n");
     log(`\nlinha de base gravada em docs/reference/a11y-baseline.json`);
 }
 
-process.exit(bloqueantes.length || langErrado.length ? 1 : 0);
+process.exit(
+    bloqueantes.length || langErrado.length || regressoes.length ? 1 : 0,
+);

@@ -48,6 +48,11 @@ Estão no `.prettierignore` de propósito: os dois scripts os gravam com
 `JSON.stringify(_, null, 2)`, e formatá-los à mão poria duas portas do CI
 em contradição — a que confere formatação e a que regrava o arquivo.
 
+E os dois são **lidos** em toda execução, não só gravados: `a11y.mjs` e
+`identity.mjs` comparam a leitura de hoje contra o que está aqui, e saem com
+erro se for pior. Regravar é `--baseline`, e se faz **antes** de qualquer
+alteração — depois dela, a base já nasce contaminada.
+
 ---
 
 ## As pastas que ainda não existem

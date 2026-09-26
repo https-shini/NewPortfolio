@@ -289,6 +289,24 @@ execuções de runner para servir de porta.
 
 ## `docs/reference/a11y-baseline.json`
 
-O estado que se quer preservar, não um alvo a perseguir. Hoje é zero
-violação em 16 combinações; qualquer regressão futura aparece como diferença
-contra este arquivo.
+O estado que se quer preservar, não um alvo a perseguir. Hoje é zero violação
+em 16 combinações.
+
+O `a11y.mjs` lê este arquivo em toda execução e confere quatro números contra
+a leitura de hoje: combinações medidas, violações no total, combinações sem
+violação e idioma divergente.
+
+**Piorar barra; melhorar não.** Menos combinações medidas, mais violações ou
+mais divergência de idioma saem com código 1 e a diferença nomeada. Mais
+combinações — uma rota nova — sai como aviso, pedindo `--baseline` para
+regravar. Base ausente barra, com a instrução de gravá-la antes de qualquer
+alteração.
+
+A comparação existe por um ponto cego da porta absoluta: **se uma rota sair do
+arranjo, o audit mede 12 combinações em vez de 16 e passa**, porque zero
+violação em 12 também é zero. A contagem de combinações é o que este arquivo
+guarda, e é o que fecha esse buraco.
+
+> Até a #66 este documento afirmava que "qualquer regressão futura aparece
+> como diferença contra este arquivo" — e o `a11y.mjs` nunca lia o arquivo.
+> Era write-only. A afirmação passou a ser verdade em vez de ser removida.
