@@ -91,8 +91,20 @@ const ProfileLink: React.FC<React.PropsWithChildren<{ href: string }>> = ({
 /* ═══════════════════════════════════════════════════════════════════════════
    COMPONENTE PRINCIPAL
 ═══════════════════════════════════════════════════════════════════════════ */
-export const Contact: React.FC = () => {
+interface ContactProps {
+    /**
+     * 2 na home, onde esta é uma seção entre outras; 1 em `/contato`, onde
+     * ela é a manchete do documento. Mesmo arranjo do `ReleaseNotes`, e pelo
+     * mesmo motivo: um documento com dois h1, ou nenhum, é violação de
+     * estrutura que o axe pega — e a entrega é a mesma nos dois lugares, o
+     * que muda é o papel dela na página.
+     */
+    headingLevel?: 1 | 2;
+}
+
+export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
     const { t, lang } = useLang();
+    const Heading = `h${headingLevel}` as "h1" | "h2";
 
     /* Subject e body pré-preenchidos no mailto, adaptados ao idioma */
     const mailtoHref = buildMailtoHref(lang);
@@ -122,9 +134,9 @@ export const Contact: React.FC = () => {
                         {t("hero.status")}
                     </div>
 
-                    <h2 className="section-title" id="contact-title">
+                    <Heading className="section-title" id="contact-title">
                         {t("contact.title")}
-                    </h2>
+                    </Heading>
 
                     <p className="section-subtitle" id="subtitle-contact">
                         {t("contact.sub")}

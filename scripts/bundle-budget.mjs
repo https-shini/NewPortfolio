@@ -42,6 +42,7 @@ const TETOS_POR_DOCUMENTO = [
     { documento: "index.html", limite: 126 },
     { documento: "links.html", limite: 92 },
     { documento: "release-notes.html", limite: 94 },
+    { documento: "contato.html", limite: 93 },
 ];
 
 /* O que não está em documento nenhum: modais, galeria, as páginas que o

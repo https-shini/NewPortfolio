@@ -42,6 +42,17 @@
             "destination": "/api/crawler?path=/release-notes/:rest*"
         },
         {
+            "source": "/contato",
+            "has": [
+                {
+                    "type": "header",
+                    "key": "user-agent",
+                    "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+                }
+            ],
+            "destination": "/api/crawler?path=/contato"
+        },
+        {
             "source": "/links",
             "destination": "/links.html"
         },
@@ -60,6 +71,14 @@
         {
             "source": "/release-notes/(.*)",
             "destination": "/release-notes.html"
+        },
+        {
+            "source": "/contato",
+            "destination": "/contato.html"
+        },
+        {
+            "source": "/contato/",
+            "destination": "/contato.html"
         }
     ],
     "headers": [

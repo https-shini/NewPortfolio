@@ -13,9 +13,10 @@ export const ROUTES = {
     HOME: "/",
     LINKS: "/links",
     RELEASE_NOTES: "/release-notes",
-    /* Destino do QR code do rodapé. Serve uma página provisória até a
-       página real existir — o endereço é o mesmo desde já, para que um QR
-       já compartilhado continue valendo quando o conteúdo chegar. */
+    /* A seção `#contato` da home continua existindo — esta é a mesma
+       entrega com endereço próprio, para poder ser compartilhada, indexada
+       e linkada de fora sem arrastar a home inteira atrás. */
+    CONTACT: "/contato",
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];

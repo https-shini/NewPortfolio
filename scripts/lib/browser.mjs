@@ -19,6 +19,7 @@ export const LANG_KEY = "portfolio-lang";
 export const ROUTES = {
     home: "/",
     links: "/links",
+    contato: "/contato",
     releaseNotes: "/release-notes",
     releaseVersion: "/release-notes/v2.0.0",
 };

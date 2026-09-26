@@ -151,6 +151,7 @@ export type TranslationKey =
     | "contact.cta.sending"
     | "contact.cta.success"
     | "contact.cta.error"
+    | "contact.meta.description"
     | "contact.meta.response"
     | "contact.meta.linkedin"
     | "contact.meta.github"
@@ -420,6 +421,8 @@ const pt: Translations = {
     "contact.title": "Vamos trabalhar juntos",
     "contact.sub":
         "Desenvolvedor em início de carreira, com base sólida em programação e engenharia de software. Busco minha primeira oportunidade para contribuir com projetos reais e evoluir continuamente como profissional de tecnologia.",
+    "contact.meta.description":
+        "Fale com Guilherme Cruz — e-mail, LinkedIn, GitHub e central de links, com tempo de resposta e localização.",
     "contact.hook": "Tem uma ideia ou oportunidade? Vamos conversar!",
     "contact.share": "Conecte-se comigo através das plataformas abaixo:",
     "contact.send": "Enviar mensagem",
@@ -715,6 +718,8 @@ const en: Translations = {
     "contact.title": "Let's work together",
     "contact.sub":
         "Developer at the start of my career, with a solid foundation in programming and software engineering. I'm looking for my first opportunity to contribute to real projects and continuously grow as a technology professional.",
+    "contact.meta.description":
+        "Get in touch with Guilherme Cruz — email, LinkedIn, GitHub and link hub, with response time and location.",
     "contact.hook": "Have an idea or an opportunity? Let's talk!",
     "contact.share": "Connect with me through the platforms below:",
     "contact.send": "Send message",

@@ -148,6 +148,17 @@ function sitemapPlugin() {
                     priority: "0.9",
                 },
                 {
+                    loc: `${SITE_URL}/contato`,
+                    lastmod: lastModified([
+                        "apps/web/src/pages/Contact",
+                        "apps/web/src/widgets/Contact",
+                    ]),
+                    changefreq: "monthly",
+                    /* Abaixo da home e da /links, acima das notas de versão:
+                       é uma página de conversão, não de conteúdo. */
+                    priority: "0.8",
+                },
+                {
                     loc: `${SITE_URL}/release-notes`,
                     lastmod: lastModified([
                         "apps/web/src/pages/ReleaseNotes",
@@ -286,6 +297,16 @@ const ROTAS_HTML = [
         descricao:
             "Histórico de versões de gcruz.dev.br: o que mudou em cada release, com as decisões por trás de cada uma.",
         resumo: "O que mudou em cada versão de gcruz.dev.br, com as decisões por trás de cada uma.",
+    },
+    {
+        arquivo: "contato.html",
+        entrada: "/src/entradas/contato.tsx",
+        caminho: "/contato",
+        titulo: "Contato — Guilherme Cruz",
+        tituloCurto: "Contato — Guilherme Cruz",
+        descricao:
+            "Fale com Guilherme Cruz — e-mail, LinkedIn, GitHub e central de links, com tempo de resposta e localização.",
+        resumo: "E-mail, LinkedIn, GitHub e central de links de Guilherme Cruz, com tempo de resposta.",
     },
 ] as const;
 

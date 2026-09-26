@@ -60,6 +60,22 @@ describe("/api/crawler", () => {
         expect(meta(corpo, "og:type")).toBe("website");
     });
 
+    it("dá título e descrição próprios à página de contato", async () => {
+        const { corpo } = await pedir("/contato");
+        expect(meta(corpo, "og:title")).toContain("Contato");
+        expect(meta(corpo, "og:url")).toMatch(/\/contato$/);
+        expect(meta(corpo, "og:type")).toBe("website");
+    });
+
+    it("a variante com barra final de /contato cai no mesmo cartão", async () => {
+        /* A reescrita do vercel.json atende /contato e /contato/, então as
+           duas chegam aqui. Sem a segunda no `resolverMeta`, um link com
+           barra final entregaria o cartão da home. */
+        const semBarra = meta((await pedir("/contato")).corpo, "og:title");
+        const comBarra = meta((await pedir("/contato/")).corpo, "og:title");
+        expect(comBarra).toBe(semBarra);
+    });
+
     it("dá título próprio ao índice de notas de versão", async () => {
         const { corpo } = await pedir("/release-notes");
         expect(meta(corpo, "og:title")).toContain("Notas de versão");
@@ -78,12 +94,16 @@ describe("/api/crawler", () => {
     it("cada rota rende um cartão diferente", async () => {
         /* É a razão de o arquivo existir: hoje as três compartilham o
            mesmo título, a mesma descrição e a mesma imagem. */
+        const rotas = [
+            "/links",
+            "/contato",
+            "/release-notes",
+            "/release-notes/v2.0.0",
+        ];
         const titulos = await Promise.all(
-            ["/links", "/release-notes", "/release-notes/v2.0.0"].map(
-                async (p) => meta((await pedir(p)).corpo, "og:title"),
-            ),
+            rotas.map(async (p) => meta((await pedir(p)).corpo, "og:title")),
         );
-        expect(new Set(titulos).size).toBe(3);
+        expect(new Set(titulos).size).toBe(rotas.length);
     });
 
     it("versão inexistente cai no cartão padrão, sem quebrar", async () => {

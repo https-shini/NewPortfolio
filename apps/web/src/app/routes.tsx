@@ -32,6 +32,10 @@ const ReleaseNotesPage = lazy(() =>
     })),
 );
 
+const ContactPage = lazy(() =>
+    import("@/pages/Contact").then((m) => ({ default: m.ContactPage })),
+);
+
 const ReleaseNotePage = lazy(() =>
     import("@/pages/ReleaseNote").then((m) => ({
         default: m.ReleaseNotePage,
@@ -42,7 +46,8 @@ export const Routes: React.FC = () => {
     const { path } = useRoute();
 
     const ehLinks = path === ROUTES.LINKS;
-    const releaseNotes = ehLinks ? null : matchReleaseNotes(path);
+    const ehContato = path === ROUTES.CONTACT;
+    const releaseNotes = ehLinks || ehContato ? null : matchReleaseNotes(path);
 
     /* UMA instância para todas as rotas, montada aqui e não em cada
        página. É o que faz a atmosfera sobreviver à troca de rota: as
@@ -59,6 +64,10 @@ export const Routes: React.FC = () => {
             {ehLinks ? (
                 <Suspense fallback={null}>
                     <LinksPage />
+                </Suspense>
+            ) : ehContato ? (
+                <Suspense fallback={null}>
+                    <ContactPage />
                 </Suspense>
             ) : releaseNotes ? (
                 <Suspense fallback={null}>

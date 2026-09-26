@@ -84,6 +84,16 @@ async function resolverMeta(pathname: string): Promise<Meta> {
         };
     }
 
+    if (pathname === "/contato" || pathname === "/contato/") {
+        return {
+            ...PADRAO,
+            titulo: `Contato — ${AUTHOR}`,
+            descricao:
+                "Fale com Guilherme Cruz — e-mail, LinkedIn, GitHub e central de links, com tempo de resposta e localização.",
+            url: `${SITE_URL}/contato`,
+        };
+    }
+
     if (/^\/release-notes\/?$/.test(pathname)) {
         return {
             ...PADRAO,
