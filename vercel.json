@@ -1,76 +1,76 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "npm install",
-  "buildCommand": "npm run build",
-  "outputDirectory": "apps/web/dist",
-  "rewrites": [
-    {
-      "source": "/feed.xml",
-      "destination": "/api/feed"
-    },
-    {
-      "source": "/links",
-      "has": [
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "installCommand": "npm install",
+    "buildCommand": "npm run build",
+    "outputDirectory": "apps/web/dist",
+    "rewrites": [
         {
-          "type": "header",
-          "key": "user-agent",
-          "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
-        }
-      ],
-      "destination": "/api/crawler?path=/links"
-    },
-    {
-      "source": "/release-notes",
-      "has": [
+            "source": "/feed.xml",
+            "destination": "/api/feed"
+        },
         {
-          "type": "header",
-          "key": "user-agent",
-          "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
-        }
-      ],
-      "destination": "/api/crawler?path=/release-notes"
-    },
-    {
-      "source": "/release-notes/:rest*",
-      "has": [
+            "source": "/links",
+            "has": [
+                {
+                    "type": "header",
+                    "key": "user-agent",
+                    "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+                }
+            ],
+            "destination": "/api/crawler?path=/links"
+        },
         {
-          "type": "header",
-          "key": "user-agent",
-          "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
-        }
-      ],
-      "destination": "/api/crawler?path=/release-notes/:rest*"
-    },
-    {
-      "source": "/links",
-      "destination": "/links.html"
-    },
-    {
-      "source": "/links/",
-      "destination": "/links.html"
-    },
-    {
-      "source": "/release-notes",
-      "destination": "/release-notes.html"
-    },
-    {
-      "source": "/release-notes/",
-      "destination": "/release-notes.html"
-    },
-    {
-      "source": "/release-notes/(.*)",
-      "destination": "/release-notes.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/assets/(.*)",
-      "headers": [
+            "source": "/release-notes",
+            "has": [
+                {
+                    "type": "header",
+                    "key": "user-agent",
+                    "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+                }
+            ],
+            "destination": "/api/crawler?path=/release-notes"
+        },
         {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
+            "source": "/release-notes/:rest*",
+            "has": [
+                {
+                    "type": "header",
+                    "key": "user-agent",
+                    "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+                }
+            ],
+            "destination": "/api/crawler?path=/release-notes/:rest*"
+        },
+        {
+            "source": "/links",
+            "destination": "/links.html"
+        },
+        {
+            "source": "/links/",
+            "destination": "/links.html"
+        },
+        {
+            "source": "/release-notes",
+            "destination": "/release-notes.html"
+        },
+        {
+            "source": "/release-notes/",
+            "destination": "/release-notes.html"
+        },
+        {
+            "source": "/release-notes/(.*)",
+            "destination": "/release-notes.html"
         }
-      ]
-    }
-  ]
+    ],
+    "headers": [
+        {
+            "source": "/assets/(.*)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
+                }
+            ]
+        }
+    ]
 }

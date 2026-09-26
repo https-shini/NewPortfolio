@@ -56,14 +56,14 @@ O repositório é um monorepo simples: a raiz orquestra os scripts e `apps/web/`
 
 ## 🧭 Páginas e rotas
 
-| Rota              | Página             | Conteúdo                                                        |
-| ----------------- | ------------------ | --------------------------------------------------------------- |
-| `/`               | `HomePage`         | Portfólio completo — as seções abaixo, navegadas por âncora     |
-| `/links`          | `LinksPage`        | **Social tree** (link-in-bio): perfil, stack e links públicos   |
-| `/release-notes`  | `ReleaseNotesPage` | Linha do tempo das versões (ver *Como publicar uma versão*)      |
-| `/release-notes/page/2` | `ReleaseNotesPage` | Páginas seguintes do histórico, de 50 em 50                |
-| `/release-notes/v2.0.0` | `ReleaseNotePage`  | Uma versão, com endereço próprio e conteúdo completo       |
-| `/feed.xml`       | `api/feed`         | Atom das notas de versão (função, não arquivo de build)         |
+| Rota                    | Página             | Conteúdo                                                      |
+| ----------------------- | ------------------ | ------------------------------------------------------------- |
+| `/`                     | `HomePage`         | Portfólio completo — as seções abaixo, navegadas por âncora   |
+| `/links`                | `LinksPage`        | **Social tree** (link-in-bio): perfil, stack e links públicos |
+| `/release-notes`        | `ReleaseNotesPage` | Linha do tempo das versões (ver _Como publicar uma versão_)   |
+| `/release-notes/page/2` | `ReleaseNotesPage` | Páginas seguintes do histórico, de 50 em 50                   |
+| `/release-notes/v2.0.0` | `ReleaseNotePage`  | Uma versão, com endereço próprio e conteúdo completo          |
+| `/feed.xml`             | `api/feed`         | Atom das notas de versão (função, não arquivo de build)       |
 
 Qualquer rota aceita `?lang=en` para abrir em inglês — é o que permite
 compartilhar um link no idioma de quem compartilha. O padrão (português)
@@ -139,8 +139,8 @@ casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
 | 06  | **Work**            | Grid de projetos com thumbnail local (WebP), badges de tecnologia e ações              |
 | 07  | **Recommendations** | Depoimentos em carrossel paginado (2 por página · 1 no mobile) com modal de leitura    |
 | 08  | **Contact**         | CTA de e-mail, formulário com validação (via env), links e perfil ATS-friendly         |
-| —   | **Links**           | Página `/links`: social tree autônoma, fora do menu (ver *Páginas e rotas*)             |
-| —   | **Release Notes**   | Linha do tempo das versões, aberta pelo badge de versão no rodapé                       |
+| —   | **Links**           | Página `/links`: social tree autônoma, fora do menu (ver _Páginas e rotas_)            |
+| —   | **Release Notes**   | Linha do tempo das versões, aberta pelo badge de versão no rodapé                      |
 | —   | **Header**          | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile               |
 | —   | **Footer**          | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV            |
 
@@ -330,8 +330,8 @@ Todos os scripts funcionam na raiz (delegam a `apps/web/`):
 | `npm run type-check`   | Verificação de tipos sem emitir    |
 | `npm run lint`         | ESLint em `src/`                   |
 | `npm run lint:fix`     | ESLint com auto-fix                |
-| `npm run format`       | Prettier (write)                   |
-| `npm run format:check` | Prettier (check — usado no CI)     |
+| `npm run format`       | Prettier no repositório inteiro    |
+| `npm run format:check` | o mesmo, em modo conferência (CI)  |
 | `npm run test`         | Vitest (run único)                 |
 | `npm run test:watch`   | Vitest em watch mode               |
 
@@ -341,16 +341,16 @@ Rodam contra o `dist/`, então exigem `npm run build` antes. Sobem o
 preview sozinhas; aponte `BASE_URL` para reaproveitar um servidor de pé.
 Detalhes e o porquê de cada uma em [`scripts/README.md`](scripts/README.md).
 
-| Script                       | O que verifica                                              |
-| ---------------------------- | ----------------------------------------------------------- |
-| `npm run audit:a11y`         | axe-core em 4 rotas × 2 temas × 2 idiomas                    |
-| `npm run audit:overflow`     | rolagem horizontal em 4 rotas × 5 larguras                   |
-| `npm run audit:release-notes`| 28 verificações do índice e da página de versão              |
-| `npm run audit:modals`       | trava de rolagem, fundo inerte, diálogo em tela deitada      |
-| `npm run audit:bundle`       | tetos de tamanho — medidos **por documento**, não pela soma   |
-| `npm run audit:layers`       | ordem das camadas da atmosfera                               |
-| `npm run audit:identity`     | identidade visual das superfícies — bordas, vidro, elevação  |
-| `npm run audit:perf`         | tempo de carregamento por rota — **fora do CI**              |
+| Script                        | O que verifica                                              |
+| ----------------------------- | ----------------------------------------------------------- |
+| `npm run audit:a11y`          | axe-core em 4 rotas × 2 temas × 2 idiomas                   |
+| `npm run audit:overflow`      | rolagem horizontal em 4 rotas × 5 larguras                  |
+| `npm run audit:release-notes` | 28 verificações do índice e da página de versão             |
+| `npm run audit:modals`        | trava de rolagem, fundo inerte, diálogo em tela deitada     |
+| `npm run audit:bundle`        | tetos de tamanho — medidos **por documento**, não pela soma |
+| `npm run audit:layers`        | ordem das camadas da atmosfera                              |
+| `npm run audit:identity`      | identidade visual das superfícies — bordas, vidro, elevação |
+| `npm run audit:perf`          | tempo de carregamento por rota — **fora do CI**             |
 
 O `audit:perf` fica de fora do CI porque mede tempo, e tempo varia demais
 entre execuções de runner para servir de porta.
@@ -372,10 +372,10 @@ mudança visual proposital. É ferramenta manual, para refatoração de CSS.
 
 Definidas em `apps/web/.env.local` (ver `apps/web/.env.example`):
 
-| Variável             | Obrigatória | Descrição                                                                                                                                                                   |
-| -------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_FORM_ENDPOINT` | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail.                                                         |
-| `VITE_SITE_URL`      | Não         | Domínio canônico injetado no `index.html` no build (canonical, Open Graph, JSON-LD). Default: `https://gcruz.dev.br`.                                                       |
+| Variável             | Obrigatória | Descrição                                                                                                                                                                                                                                                              |
+| -------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_FORM_ENDPOINT` | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail.                                                                                                                                                    |
+| `VITE_SITE_URL`      | Não         | Domínio canônico injetado no `index.html` no build (canonical, Open Graph, JSON-LD). Default: `https://gcruz.dev.br`.                                                                                                                                                  |
 | `GITHUB_TOKEN`       | Não         | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Usado pelas duas serverless: `/api/github-stats` (sem ela o card de commits cai no valor de fallback) e `/api/release-notes` (sem ela a lista vem vazia e a linha do tempo se sustenta na camada local). |
 
 > Variáveis com prefixo `VITE_` são expostas ao browser — nunca coloque segredos.
@@ -417,8 +417,8 @@ Nunca reescreva uma URL que o projeto já conhece:
 - rotas internas → `ROUTES` (`shared/config/routes.ts`)
 
 ```ts
-href: PROFILE.social.github.url;         // ✅
-href: "https://github.com/https-shini";  // ❌ duplica a fonte
+href: PROFILE.social.github.url; // ✅
+href: "https://github.com/https-shini"; // ❌ duplica a fonte
 ```
 
 ### 3. Ícone
@@ -538,7 +538,7 @@ npm run test:watch    # watch mode
 | Formulário            | Labels reais, `aria-invalid`, `aria-describedby` por erro, status com `role="status"`      |
 | Movimento reduzido    | `prefers-reduced-motion` remove animações e autoplay                                       |
 | Alvos de toque        | Mínimo de 24px em qualquer ponteiro (2.5.8) e 44px no toque (2.5.5)                        |
-| Hierarquia de títulos | Um `h1` por página; a timeline ajusta seu nível conforme o contexto (`headingLevel`)        |
+| Hierarquia de títulos | Um `h1` por página; a timeline ajusta seu nível conforme o contexto (`headingLevel`)       |
 | Lint de a11y          | `eslint-plugin-jsx-a11y` no CI                                                             |
 
 **Contraste e o token `--color-brand-text`.** O crimson da marca (`--color-brand`,
@@ -579,8 +579,8 @@ O fluxo, os campos e o que significa cada etapa estão em
 configuração do board em
 **[`docs/github-project-setup.md`](docs/github-project-setup.md)**.
 
-| Onde                                                         | Papel                                                                      |
-| ------------------------------------------------------------ | -------------------------------------------------------------------------- |
+| Onde                                                          | Papel                                                                      |
+| ------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | [Project #3](https://github.com/users/https-shini/projects/3) | o único planejamento ativo                                                 |
 | [`docs/AUDITORIA-2026-08.md`](docs/AUDITORIA-2026-08.md)      | auditoria técnica e de posicionamento; a §22 é a origem do backlog T01–T33 |
 | [`docs/PERFORMANCE-2026-08.md`](docs/PERFORMANCE-2026-08.md)  | o que foi medido, o que foi reprovado e o que não repetir                  |
