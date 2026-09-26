@@ -73,7 +73,11 @@ export default tseslint.config(
 
     /* Arquivos de configuração e testes — ambiente Node/menos restrito */
     {
-        files: ["*.config.{js,ts,mjs}", "src/**/*.test.{ts,tsx}", "src/test/**"],
+        files: [
+            "*.config.{js,ts,mjs}",
+            "src/**/*.test.{ts,tsx}",
+            "src/test/**",
+        ],
         rules: {
             "react-refresh/only-export-components": "off",
         },

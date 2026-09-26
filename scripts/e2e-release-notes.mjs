@@ -153,8 +153,9 @@ try {
         check(
             "um ponto por página, um deles marcado",
             (await dots.count()) >= 2 &&
-                (await page.locator(".release-notes__dot.is-current").count()) ===
-                    1,
+                (await page
+                    .locator(".release-notes__dot.is-current")
+                    .count()) === 1,
             `${await dots.count()} pontos`,
         );
 

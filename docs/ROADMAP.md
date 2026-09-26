@@ -40,29 +40,28 @@ registradas porque mudaram o trabalho:
    dependência de runtime; a saída foi separar cliente de servidor na regra,
    com justificativa escrita, e não contorná-la.
 
-
 Três fases encadeadas. A fase 1 cria o arranjo de auditoria, a fase 2 o
 transforma em regra automática, e a fase 3 constrói coisa nova sobre uma base
 que já se defende sozinha.
 
-| Fase | Itens | Tema | Depende de |
-| --- | --- | --- | --- |
-| **1** | 1–5 | Consertar o que está quebrado | — |
-| **2** | 6–10 | Proteger o que já funciona | fase 1 (o ferramental nasce nela) |
-| **3** | 11–15 | Estender a ideia | fase 2 (o CI vira a rede de segurança) |
+| Fase  | Itens | Tema                          | Depende de                             |
+| ----- | ----- | ----------------------------- | -------------------------------------- |
+| **1** | 1–5   | Consertar o que está quebrado | —                                      |
+| **2** | 6–10  | Proteger o que já funciona    | fase 1 (o ferramental nasce nela)      |
+| **3** | 11–15 | Estender a ideia              | fase 2 (o CI vira a rede de segurança) |
 
 ---
 
 ## Decisões tomadas
 
-| # | Decisão | Escolha |
-| --- | --- | --- |
-| 1 | Escopo do texto | as 5 chaves vivas |
-| 2 | Posicionamento | **Full Stack, sem citar o cargo atual** |
-| 3 | Chaves de tradução mortas | removidas |
-| 4 | Ferramental de auditoria | versionado em `scripts/` |
-| 5 | Geometria no CI | só a asserção de zero-overflow |
-| 6 | OG image | completo — imagem e meta por rota |
+| #   | Decisão                   | Escolha                                 |
+| --- | ------------------------- | --------------------------------------- |
+| 1   | Escopo do texto           | as 5 chaves vivas                       |
+| 2   | Posicionamento            | **Full Stack, sem citar o cargo atual** |
+| 3   | Chaves de tradução mortas | removidas                               |
+| 4   | Ferramental de auditoria  | versionado em `scripts/`                |
+| 5   | Geometria no CI           | só a asserção de zero-overflow          |
+| 6   | OG image                  | completo — imagem e meta por rota       |
 
 A decisão 5 dispensou o diff completo de propósito: ele exige regravar a
 base a cada mudança visual proposital, e sem essa disciplina o job falha
@@ -147,13 +146,13 @@ Tudo em `frontend/src/shared/lib/translations.ts`, PT e EN no mesmo módulo.
 
 ### Vivas (renderizadas hoje)
 
-| Chave | Onde aparece | Texto atual (PT) |
-| --- | --- | --- |
-| `footer.tagline` | rodapé de **toda** página · `Footer.tsx:124` | "**Desenvolvedor Júnior em transição**, com prática real em React, Node.js…" |
-| `about.bio` | Sobre · `About.tsx:386` | "…**Júnior em transição de carreira**, hoje atuando como Analista de Suporte Técnico…" |
-| `about.goal.body` | Sobre · `About.tsx:450` | "Busco minha **primeira oportunidade** como **Júnior** ou **Estagiário**…" |
-| `contact.cta.lead` | Contato · `Contact.tsx:163` | "Estou pronto para **iniciar minha trajetória** como **Júnior** ou **Estagiário**…" |
-| `career.aside.seniority` | Carreira · `CareerStats.tsx:114` | "Júnior" |
+| Chave                    | Onde aparece                                 | Texto atual (PT)                                                                       |
+| ------------------------ | -------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `footer.tagline`         | rodapé de **toda** página · `Footer.tsx:124` | "**Desenvolvedor Júnior em transição**, com prática real em React, Node.js…"           |
+| `about.bio`              | Sobre · `About.tsx:386`                      | "…**Júnior em transição de carreira**, hoje atuando como Analista de Suporte Técnico…" |
+| `about.goal.body`        | Sobre · `About.tsx:450`                      | "Busco minha **primeira oportunidade** como **Júnior** ou **Estagiário**…"             |
+| `contact.cta.lead`       | Contato · `Contact.tsx:163`                  | "Estou pronto para **iniciar minha trajetória** como **Júnior** ou **Estagiário**…"    |
+| `career.aside.seniority` | Carreira · `CareerStats.tsx:114`             | "Júnior"                                                                               |
 
 Referência canônica já em uso: `hero.role` = "Desenvolvedor Full Stack";
 `index.html:87` com `"jobTitle": "Desenvolvedor Full Stack"`.
@@ -250,12 +249,12 @@ frontend/src/pages/ReleaseNotes → 2026-08-04
 
 **Mapa rota → caminhos observados** (data = a mais recente entre eles):
 
-| Rota | Caminhos |
-| --- | --- |
-| `/` | `pages/Home`, `widgets`, `shared/lib/translations.ts` |
-| `/links` | `pages/Links`, `shared/config/links*` |
-| `/release-notes` | `pages/ReleaseNotes`, `shared/config/releaseNotes.ts` |
-| âncoras `/#secao` | o widget da seção |
+| Rota              | Caminhos                                              |
+| ----------------- | ----------------------------------------------------- |
+| `/`               | `pages/Home`, `widgets`, `shared/lib/translations.ts` |
+| `/links`          | `pages/Links`, `shared/config/links*`                 |
+| `/release-notes`  | `pages/ReleaseNotes`, `shared/config/releaseNotes.ts` |
+| âncoras `/#secao` | o widget da seção                                     |
 
 **Cuidados:**
 
@@ -304,14 +303,14 @@ do projeto é **artesanal e efêmera**.
 
 **Só seis merecem virar código do projeto:**
 
-| Arranjo | Linhas | O que prova |
-| --- | --- | --- |
-| `geometry.mjs` | 244 | Diff de geometria — 92.820 caixas em 288 cenários |
-| `verify.mjs` | 170 | 26 verificações do índice de release notes |
-| `audit2.mjs` | 154 | axe-core + alvos de toque em 11 perfis |
-| `modais.mjs` | 153 | Modais rolam por dentro em tela deitada |
-| `scrolllock.mjs` | 122 | Trava de rolagem e restauração de posição |
-| `versionpage.mjs` | 113 | 28 verificações da página de versão |
+| Arranjo           | Linhas | O que prova                                       |
+| ----------------- | ------ | ------------------------------------------------- |
+| `geometry.mjs`    | 244    | Diff de geometria — 92.820 caixas em 288 cenários |
+| `verify.mjs`      | 170    | 26 verificações do índice de release notes        |
+| `audit2.mjs`      | 154    | axe-core + alvos de toque em 11 perfis            |
+| `modais.mjs`      | 153    | Modais rolam por dentro em tela deitada           |
+| `scrolllock.mjs`  | 122    | Trava de rolagem e restauração de posição         |
+| `versionpage.mjs` | 113    | 28 verificações da página de versão               |
 
 Estrutura proposta:
 
@@ -357,12 +356,12 @@ Nenhuma verificação de acessibilidade.
 
 Estado atual medido:
 
-| Chunk | gzip | Teto proposto |
-| --- | --- | --- |
-| `vendor` (react + react-dom) | 44,2 KB | 50 KB |
-| `index` (aplicação) | 45,7 KB | — |
-| `ReleaseCard` (lazy) | 4,8 KB | — |
-| **Total JS** | **106,5 KB** | **125 KB** |
+| Chunk                        | gzip         | Teto proposto |
+| ---------------------------- | ------------ | ------------- |
+| `vendor` (react + react-dom) | 44,2 KB      | 50 KB         |
+| `index` (aplicação)          | 45,7 KB      | —             |
+| `ReleaseCard` (lazy)         | 4,8 KB       | —             |
+| **Total JS**                 | **106,5 KB** | **125 KB**    |
 
 Folga de ~15%, para o orçamento pegar tendência e não oscilação.
 
@@ -407,14 +406,14 @@ comparar gravado × restaurado.
 
 ## Ordem sugerida da fase 2
 
-| # | Trabalho | Por quê nesta ordem |
-| --- | --- | --- |
-| 1 | Item 6 — versionar os seis arranjos | tudo o mais depende deles |
-| 2 | Item 8a — asserção de dependências de runtime | mais barato, valor imediato |
-| 3 | Item 7 — axe no CI | usa o arranjo do passo 1 |
-| 4 | Item 8b — teto de tamanho | precisa do CI já ajustado |
-| 5 | Item 10 — investigar o `scrolllock` | independente, sem pressa |
-| 6 | Item 9 — geometria no CI | decidir antes se o fluxo de base é viável |
+| #   | Trabalho                                      | Por quê nesta ordem                       |
+| --- | --------------------------------------------- | ----------------------------------------- |
+| 1   | Item 6 — versionar os seis arranjos           | tudo o mais depende deles                 |
+| 2   | Item 8a — asserção de dependências de runtime | mais barato, valor imediato               |
+| 3   | Item 7 — axe no CI                            | usa o arranjo do passo 1                  |
+| 4   | Item 8b — teto de tamanho                     | precisa do CI já ajustado                 |
+| 5   | Item 10 — investigar o `scrolllock`           | independente, sem pressa                  |
+| 6   | Item 9 — geometria no CI                      | decidir antes se o fluxo de base é viável |
 
 ---
 
@@ -426,10 +425,10 @@ comparar gravado × restaurado.
 de duas fontes — releases do GitHub e a camada editorial local
 (`mergeReleaseNotes.ts`). Dois caminhos incompatíveis:
 
-| Abordagem | Vantagem | Custo |
-| --- | --- | --- |
-| **Serverless** `api/feed.xml` | Reflete o merge real; release publicada só no GitHub entra sem tocar em código | Mais uma função; precisa de cache de CDN |
-| **Build-time**, no `closeBundle` | Estático, zero runtime, mesmo molde do sitemap | **Perde releases publicadas depois do último deploy** — quebra a promessa central |
+| Abordagem                        | Vantagem                                                                       | Custo                                                                             |
+| -------------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| **Serverless** `api/feed.xml`    | Reflete o merge real; release publicada só no GitHub entra sem tocar em código | Mais uma função; precisa de cache de CDN                                          |
+| **Build-time**, no `closeBundle` | Estático, zero runtime, mesmo molde do sitemap                                 | **Perde releases publicadas depois do último deploy** — quebra a promessa central |
 
 **Recomendo a serverless.** O build-time contradiz a razão de o sistema existir.
 Reaproveita `mergeReleaseNotes` e `renderMarkdown` (`api/_markdown.ts`), então o
@@ -469,10 +468,10 @@ textos existentes com crase passariam a renderizar diferente.
 
 O mais caro da fase 3, e o único que exige dependência nova.
 
-| Abordagem | Custo |
-| --- | --- |
+| Abordagem             | Custo                                                                 |
+| --------------------- | --------------------------------------------------------------------- |
 | `@vercel/og` (Satori) | Dependência nova, mas só no servidor — não entra no bundle do cliente |
-| SVG → PNG no build | Sem dependência de runtime, mas só cobre versões conhecidas no build |
+| SVG → PNG no build    | Sem dependência de runtime, mas só cobre versões conhecidas no build  |
 
 > **Obstáculo maior que a geração:** meta tags Open Graph são lidas por crawlers
 > **sem executar JavaScript**. Como o site é uma SPA com `index.html` único, o
