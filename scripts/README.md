@@ -20,9 +20,28 @@ aponte `PW_CHROMIUM_PATH` para um binário existente.
 
 ## `a11y.mjs`
 
-axe-core nas quatro rotas, nos dois temas e nos dois idiomas — 16
-combinações. Sai com código 1 se houver violação `serious` ou `critical`, ou
-se o idioma declarado no documento divergir do renderizado.
+axe-core nas quatro rotas, em três estados, nos dois temas e nos dois
+idiomas — **36 combinações**. Sai com código 1 se houver violação `serious`
+ou `critical`, se o idioma declarado no documento divergir do renderizado, ou
+se a leitura for pior que a linha de base.
+
+| estado         | onde                                                  | largura                                                  |
+| -------------- | ----------------------------------------------------- | -------------------------------------------------------- |
+| `fechado`      | as quatro rotas                                       | 1280px                                                   |
+| `menu-aberto`  | as quatro rotas                                       | 390px — o `.header__hamburger` só existe abaixo de 901px |
+| `modal-aberto` | só a home, que é quem monta o widget de recomendações | 1280px                                                   |
+
+Os estados abertos existem porque **o axe não abre nada por conta própria**, e
+foi nos estados fechados que se esconderam os quatro defeitos do `Header`. O
+menu vai nas quatro rotas porque o `Header` tem duas formas: com `isHome`
+verdadeiro observa a seção ativa e rola, falso navega — medir só a home
+cobriria metade do componente.
+
+> Um estado ainda não existe: **formulário de contato em erro**. O
+> `ContactForm` retorna `null` sem `VITE_FORM_ENDPOINT`, e essa variável não
+> está configurada na Vercel — o formulário não existe em produção. Ele entra
+> quando a [#45](https://github.com/https-shini/NewPortfolio/issues/45)
+> publicar o endpoint.
 
 ```bash
 node scripts/a11y.mjs             # relatório legível

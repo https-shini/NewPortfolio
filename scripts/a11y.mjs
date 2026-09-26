@@ -49,49 +49,127 @@ const preview = await startPreview();
 const browser = await launchBrowser();
 const resultados = [];
 
+/* ── Os estados, e por que cada um está aqui ──────────────────────────
+   O axe não abre nada por conta própria, e foi nos estados fechados que
+   se esconderam os quatro defeitos do Header — o X que não fechava, o
+   menu invisível sob prefers-reduced-motion, o foco que não voltava, o
+   logotipo sobre o primeiro item. Abrir o modal à mão revelou outras duas
+   violações reais que a auditoria não via.
+
+   `abrir` recebe a página já visitada e deixa o estado montado. Devolver
+   `false` significa "este estado não existe aqui" e a combinação é
+   pulada, em vez de falhar: é o que permite o modal medir só a home.
+
+   O menu vai nas quatro rotas porque o Header tem DUAS formas — com
+   `isHome` verdadeiro ele observa a seção ativa e rola; falso, ele
+   navega. Medir só a home cobriria metade do componente. */
+/* O estado que NÃO está aqui, e não é esquecimento: "formulário de contato
+   em erro". O ContactForm começa com `if (!FORM_ENDPOINT) return null`, e
+   FORM_ENDPOINT vem de VITE_FORM_ENDPOINT em tempo de build.
+
+   Essa variável não está configurada no projeto da Vercel — ele declara uma
+   só, GITHUB_TOKEN. Então o formulário não existe em produção, e auditar o
+   estado de erro dele seria medir uma tela que visitante nenhum alcança.
+
+   Ele entra quando a #45 publicar `api/contact.ts` e a variável: aí o estado
+   passa a existir, e este array ganha uma entrada. */
+const ESTADOS = [
+    {
+        nome: "fechado",
+        viewport: { width: 1280, height: 900 },
+        abrir: null,
+    },
+    {
+        /* 390x844 é um telefone real, e está abaixo dos 901px em que o
+           `.header__hamburger` deixa de ser display:none (Header.css). Numa
+           largura de desktop o gatilho não existe e não haveria o que
+           abrir. */
+        nome: "menu-aberto",
+        viewport: { width: 390, height: 844 },
+        async abrir(page) {
+            await page.locator("#site-hamburger").click();
+            await page.waitForSelector("#mobile-nav.is-open", {
+                timeout: 8000,
+            });
+            /* O painel entra por transform; sob reducedMotion ele assenta
+               na hora, mas o inert do fundo é aplicado num efeito. */
+            await page.waitForTimeout(150);
+            return true;
+        },
+    },
+    {
+        /* O cartão de recomendação É o botão (`<button class="rec-card">`),
+           e o `tabIndex` controla quais estão alcançáveis — daí filtrar por
+           tabindex="0" em vez de pegar qualquer um. Só a home monta o
+           widget. */
+        nome: "modal-aberto",
+        viewport: { width: 1280, height: 900 },
+        async abrir(page) {
+            const gatilho = page.locator('.rec-card[tabindex="0"]').first();
+            if (!(await gatilho.count())) return false;
+            /* As seções abaixo da dobra usam content-visibility: auto e só
+               existem depois de entrarem na tela. */
+            await gatilho.scrollIntoViewIfNeeded();
+            await gatilho.click();
+            await page.waitForSelector(".modal-dialog", { timeout: 8000 });
+            await page.waitForTimeout(150);
+            return true;
+        },
+    },
+];
+
 try {
     for (const [nome, route] of Object.entries(ROUTES)) {
-        for (const theme of ["dark", "light"]) {
-            for (const lang of ["pt", "en"]) {
-                const { ctx, page } = await newContext(browser, {
-                    baseUrl: preview.url,
-                    theme,
-                    lang,
-                    viewport: { width: 1280, height: 900 },
-                });
-
-                await visit(page, preview.url, route);
-                await page.addScriptTag({ content: AXE });
-
-                const violacoes = await page.evaluate(async (tags) => {
-                    const r = await window.axe.run(document, {
-                        runOnly: { type: "tag", values: tags },
+        for (const estado of ESTADOS) {
+            for (const theme of ["dark", "light"]) {
+                for (const lang of ["pt", "en"]) {
+                    const { ctx, page } = await newContext(browser, {
+                        baseUrl: preview.url,
+                        theme,
+                        lang,
+                        viewport: estado.viewport,
                     });
-                    return r.violations.map((v) => ({
-                        id: v.id,
-                        impact: v.impact,
-                        nodes: v.nodes.length,
-                        alvo: v.nodes[0]?.target?.join(" ") ?? "",
-                        ajuda: v.help,
-                    }));
-                }, TAGS);
 
-                /* O idioma declarado precisa bater com o renderizado — é o
-                   critério 3.1.1, e o axe não pega quando o atributo existe
-                   mas está errado. */
-                const langDeclarado = await page.evaluate(
-                    () => document.documentElement.lang,
-                );
+                    await visit(page, preview.url, route);
 
-                resultados.push({
-                    rota: nome,
-                    route,
-                    theme,
-                    lang,
-                    langDeclarado,
-                    violacoes,
-                });
-                await ctx.close();
+                    if (estado.abrir && !(await estado.abrir(page))) {
+                        await ctx.close();
+                        continue;
+                    }
+
+                    await page.addScriptTag({ content: AXE });
+
+                    const violacoes = await page.evaluate(async (tags) => {
+                        const r = await window.axe.run(document, {
+                            runOnly: { type: "tag", values: tags },
+                        });
+                        return r.violations.map((v) => ({
+                            id: v.id,
+                            impact: v.impact,
+                            nodes: v.nodes.length,
+                            alvo: v.nodes[0]?.target?.join(" ") ?? "",
+                            ajuda: v.help,
+                        }));
+                    }, TAGS);
+
+                    /* O idioma declarado precisa bater com o renderizado — é
+                       o critério 3.1.1, e o axe não pega quando o atributo
+                       existe mas está errado. */
+                    const langDeclarado = await page.evaluate(
+                        () => document.documentElement.lang,
+                    );
+
+                    resultados.push({
+                        rota: nome,
+                        route,
+                        estado: estado.nome,
+                        theme,
+                        lang,
+                        langDeclarado,
+                        violacoes,
+                    });
+                    await ctx.close();
+                }
             }
         }
     }
@@ -107,7 +185,7 @@ const avisos = [];
 const langErrado = [];
 
 for (const r of resultados) {
-    const rotulo = `${r.route} · ${r.theme} · ${r.lang}`;
+    const rotulo = `${r.route} · ${r.estado} · ${r.theme} · ${r.lang}`;
     const graves = r.violacoes.filter((v) => BLOQUEIA.has(v.impact));
     const leves = r.violacoes.filter((v) => !BLOQUEIA.has(v.impact));
 
