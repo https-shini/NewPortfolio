@@ -33,8 +33,13 @@ function isLang(value: string | null): value is Lang {
     return value === "pt" || value === "en";
 }
 
+/* Não exportada de propósito: só este arquivo a usa (duas chamadas, nas
+   linhas abaixo), e exportá-la de um arquivo que também exporta o
+   LangProvider custaria o Fast Refresh do módulo inteiro. Se um dia
+   alguém de fora precisar dela, ela sai para um módulo próprio — como o
+   `matchReleaseNotes` saiu de `routes.tsx`. */
 /** Idioma pedido na URL, se houver e se for um dos suportados. */
-export function langFromSearch(search: string): Lang | null {
+function langFromSearch(search: string): Lang | null {
     const pedido = new URLSearchParams(search).get(LANG_PARAM);
     return isLang(pedido) ? pedido : null;
 }
@@ -138,6 +143,12 @@ export const LangProvider: React.FC<{ children: React.ReactNode }> = ({
     );
 };
 
+/* O hook fica no mesmo arquivo que o Provider de propósito: quem lê o
+   provider lê o contrato de consumo na mesma tela, e separá-los criaria um
+   módulo de três linhas que só existe para agradar o linter. O custo é real
+   e conhecido — este arquivo perde o Fast Refresh em desenvolvimento —, e é
+   menor que o de espalhar o par por dois arquivos. */
+/* eslint-disable-next-line react-refresh/only-export-components */
 export function useLangContext(): LangContextValue {
     const ctx = useContext(LangContext);
     if (!ctx)

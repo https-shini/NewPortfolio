@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { matchReleaseNotes } from "./routes";
+import { matchReleaseNotes } from "./releaseNotesRoute";
 import { releaseNotePath, releaseNotesPagePath } from "@/shared/config/routes";
 
 describe("construtores de rota das notas", () => {

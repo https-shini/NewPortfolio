@@ -81,6 +81,9 @@ export const RouterProvider: React.FC<{ children: React.ReactNode }> = ({
     );
 };
 
+/* Mesma decisão do LangContext: o hook mora junto do Provider, e o preço é
+   este arquivo não ter Fast Refresh. Ver a justificativa longa lá. */
+/* eslint-disable-next-line react-refresh/only-export-components */
 export function useRouterContext(): RouterContextValue {
     const ctx = useContext(RouterContext);
     if (!ctx)
