@@ -42,6 +42,10 @@ function siteUrlHtmlPlugin() {
  * `SECTION_IDS` letra por letra. Agora o arquivo inteiro nasce do build, e
  * o `<lastmod>` vem do git — a única fonte que não depende de alguém
  * lembrar de atualizar.
+ *
+ * As âncoras saíram de vez depois disso: gerá-las de `SECTION_IDS` resolvia
+ * a duplicação de texto, mas não a pergunta se elas deviam estar lá. Não
+ * deviam — ver o comentário no laço que sobrou.
  */
 
 /** Data do último commit que tocou qualquer um dos caminhos (YYYY-MM-DD). */
@@ -112,7 +116,6 @@ function sitemapPlugin() {
             const { RELEASE_NOTES } =
                 await import("./src/shared/config/releaseNotes");
             const {
-                SECTION_IDS,
                 releaseNotePath,
                 releaseNotesPagePath,
                 releaseNotesTotalPages,
@@ -155,15 +158,14 @@ function sitemapPlugin() {
                 },
             ];
 
-            /* Âncoras da home — geradas de SECTION_IDS, não copiadas. */
-            for (const id of Object.values(SECTION_IDS)) {
-                entries.push({
-                    loc: `${SITE_URL}/#${id}`,
-                    lastmod: homeDate,
-                    changefreq: "monthly",
-                    priority: "0.8",
-                });
-            }
+            /* As âncoras da home NÃO entram. Elas entravam, geradas de
+               SECTION_IDS, e enchiam o sitemap com 8 das 19 URLs. Mas
+               buscador não indexa fragmento como URL distinta: `/#sobre` é
+               a mesma página que `/`, e anunciar as duas divide sinal de uma
+               página só entre nove entradas idênticas.
+
+               Se um dia uma seção virar rota de verdade, ela entra aqui como
+               rota — não como fragmento. */
 
             /* Índice paginado: a página 1 é o próprio /release-notes, já
                listado acima, então o laço começa na 2.
@@ -203,7 +205,7 @@ function sitemapPlugin() {
                 '<?xml version="1.0" encoding="UTF-8"?>',
                 "<!--",
                 `    Gerado no build por vite.config.ts — não editar à mão.`,
-                `    As datas vêm do git; as âncoras, de SECTION_IDS.`,
+                `    As datas vêm do git. Só rotas — fragmento não é URL.`,
                 "-->",
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
                 '        xmlns:xhtml="http://www.w3.org/1999/xhtml">',

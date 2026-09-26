@@ -250,6 +250,13 @@
     margin-inline: auto;
     list-style: none;
 }
+/* Sem `:hover`, e isso é a decisão — não um esquecimento.
+   O chip é um `<li>` de TECH_STACK: sem href, sem onClick, sem tabIndex
+   (ver pages/Links/index.tsx). Ele tinha `translateY(-2px)` e borda de
+   marca no hover, que é o mesmo par que os cartões clicáveis desta página
+   usam — então ensinava o visitante que dava para clicar, e o clique não
+   fazia nada. Elevação aqui é afordância falsa.
+   A `transition` saiu junto: sem estado de hover, ela não animava nada. */
 .linktree__chip {
     display: inline-flex;
     align-items: center;
@@ -260,12 +267,6 @@
     color: var(--color-text-2);
     border: 1px solid var(--color-border-2);
     border-radius: var(--radius-md);
-    transition: var(--transition-base);
-}
-.linktree__chip:hover {
-    color: var(--color-text-1);
-    border-color: var(--color-border-brand);
-    transform: translateY(-2px);
 }
 /* O ícone é o que se reconhece à distância — o rótulo em mono de 12px só
    confirma. A 18px ele era menor que a caixa de texto ao lado e a marca
