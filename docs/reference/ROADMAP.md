@@ -3,7 +3,7 @@
 > **Este documento não abre trabalho.** Ele registra as 15 melhorias de
 > agosto de 2026 e o que a execução ensinou. O planejamento ativo é o
 > **[Project #3](https://github.com/users/https-shini/projects/3)**; as
-> regras estão em [`github-project.md`](github-project.md).
+> regras estão em [`github-project.md`](../guides/github-project.md).
 >
 > **Estado: 14 de 15 entregues.** Só o item 3 — publicar a tag e a release
 > `v2.0.0` — segue aberto, e por impedimento de ambiente, não de código.
@@ -193,7 +193,7 @@ de código:
 git fetch origin
 git tag -a v2.0.0 60e3377 -m "v2.0.0 — Segunda geração do portfólio"
 git push origin v2.0.0
-gh release create v2.0.0 --notes-file docs/release-v2.0.0.md
+gh release create v2.0.0 --notes-file docs/reference/release-v2.0.0.md
 ```
 
 A tag aponta para `60e3377` de propósito, e não para o HEAD: todo o
@@ -220,7 +220,7 @@ vazia se o GitHub responder não-OK, isto é, sob rate limit. Onde pesa de verda
 commits cai no fallback.
 
 1. Criar a tag `v2.0.0` e publicar a release com o corpo pronto em
-   `docs/release-v2.0.0.md`.
+   `docs/reference/release-v2.0.0.md`.
 2. Confirmar que a serverless passa a devolvê-la e que o selo de sincronização
    muda de estado.
 3. **`GITHUB_TOKEN` continua com você** — painel da Vercel, escopo `public_repo`.
@@ -441,7 +441,8 @@ HTML. `<link rel="alternate" type="application/atom+xml">` no `index.html`.
 
 ## Item 12 · `CHANGELOG.md` na raiz
 
-Hoje há um arquivo por versão em `docs/`, e só `release-v2.0.0.md` existe. Um
+Hoje há um arquivo por versão em `docs/reference/`, e só
+`release-v2.0.0.md` existe. Um
 índice único no padrão Keep a Changelog é o que se procura primeiro num
 repositório.
 

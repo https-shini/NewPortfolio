@@ -3,7 +3,7 @@
  *
  *   node scripts/a11y.mjs              4 rotas x 2 temas x 2 idiomas
  *   node scripts/a11y.mjs --json       saída legível por máquina
- *   node scripts/a11y.mjs --baseline   grava a contagem em docs/a11y-baseline.json
+ *   node scripts/a11y.mjs --baseline   grava a contagem em docs/reference/a11y-baseline.json
  *
  * Sai com código 1 se houver violação `serious` ou `critical`. As `moderate`
  * viram aviso: valem correção, não valem barrar uma entrega.
@@ -153,10 +153,10 @@ if (gravarBase) {
         idiomaDivergente: langErrado.length,
     };
     writeFileSync(
-        "docs/a11y-baseline.json",
+        "docs/reference/a11y-baseline.json",
         JSON.stringify(base, null, 2) + "\n",
     );
-    log(`\nlinha de base gravada em docs/a11y-baseline.json`);
+    log(`\nlinha de base gravada em docs/reference/a11y-baseline.json`);
 }
 
 process.exit(bloqueantes.length || langErrado.length ? 1 : 0);

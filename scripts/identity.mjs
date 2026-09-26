@@ -28,7 +28,10 @@ import {
     ROUTES,
 } from "./lib/browser.mjs";
 
-const BASE = new URL("../docs/identity-baseline.json", import.meta.url);
+const BASE = new URL(
+    "../docs/reference/identity-baseline.json",
+    import.meta.url,
+);
 
 /**
  * Tudo o que define cor e formato. A ausência de `boxShadow` aqui é a

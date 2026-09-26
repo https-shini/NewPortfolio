@@ -226,7 +226,7 @@ Há **uma exceção deliberada**, justificada abaixo: `status:blocked`.
 
 ### Em uso
 
-Espelham a coluna `Categoria` do backlog em `docs/AUDITORIA-2026-08.md`
+Espelham a coluna `Categoria` do backlog em `docs/reference/AUDITORIA-2026-08.md`
 §22 — não são taxonomia nova.
 
 | Rótulo      | Uso                                                             |
@@ -393,13 +393,13 @@ afirmava algo que a entrega desmentiu.
 
 **Onde mais o projeto planeja:**
 
-| lugar                           | papel                                                                          |
-| ------------------------------- | ------------------------------------------------------------------------------ |
-| **Project #3**                  | o único planejamento ativo                                                     |
-| `docs/AUDITORIA-2026-08.md` §22 | origem do backlog técnico T01–T33; cada T tem issue e a tabela traz o número   |
-| `docs/PERFORMANCE-2026-08.md`   | registro de medição — o que foi medido, o que foi reprovado, o que não repetir |
-| `docs/ROADMAP.md`               | **histórico**, encerrado. Não abrir trabalho novo a partir dele                |
-| `README.md` §Roadmap            | aponta para o board. Não lista item                                            |
+| lugar                                     | papel                                                                          |
+| ----------------------------------------- | ------------------------------------------------------------------------------ |
+| **Project #3**                            | o único planejamento ativo                                                     |
+| `docs/reference/AUDITORIA-2026-08.md` §22 | origem do backlog técnico T01–T33; cada T tem issue e a tabela traz o número   |
+| `docs/reference/PERFORMANCE-2026-08.md`   | registro de medição — o que foi medido, o que foi reprovado, o que não repetir |
+| `docs/reference/ROADMAP.md`               | **histórico**, encerrado. Não abrir trabalho novo a partir dele                |
+| `README.md` §Roadmap                      | aponta para o board. Não lista item                                            |
 
 ---
 

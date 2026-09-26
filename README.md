@@ -575,16 +575,17 @@ Duas listas do mesmo plano envelhecem em ritmos diferentes, e quem lê não
 tem como saber qual está certa.
 
 O fluxo, os campos e o que significa cada etapa estão em
-**[`docs/github-project.md`](docs/github-project.md)**, e o roteiro de
-configuração do board em
-**[`docs/github-project-setup.md`](docs/github-project-setup.md)**.
+**[`docs/guides/github-project.md`](docs/guides/github-project.md)**, e o
+roteiro de configuração do board em
+**[`docs/guides/github-project-setup.md`](docs/guides/github-project-setup.md)**.
 
-| Onde                                                          | Papel                                                                      |
-| ------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| [Project #3](https://github.com/users/https-shini/projects/3) | o único planejamento ativo                                                 |
-| [`docs/AUDITORIA-2026-08.md`](docs/AUDITORIA-2026-08.md)      | auditoria técnica e de posicionamento; a §22 é a origem do backlog T01–T33 |
-| [`docs/PERFORMANCE-2026-08.md`](docs/PERFORMANCE-2026-08.md)  | o que foi medido, o que foi reprovado e o que não repetir                  |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md)                          | **histórico** das 15 melhorias de agosto, encerrado                        |
+| Onde                                                                             | Papel                                                                      |
+| -------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| [Project #3](https://github.com/users/https-shini/projects/3)                    | o único planejamento ativo                                                 |
+| [`docs/reference/AUDITORIA-2026-08.md`](docs/reference/AUDITORIA-2026-08.md)     | auditoria técnica e de posicionamento; a §22 é a origem do backlog T01–T33 |
+| [`docs/reference/PERFORMANCE-2026-08.md`](docs/reference/PERFORMANCE-2026-08.md) | o que foi medido, o que foi reprovado e o que não repetir                  |
+| [`docs/reference/ROADMAP.md`](docs/reference/ROADMAP.md)                         | **histórico** das 15 melhorias de agosto, encerrado                        |
+| [`docs/README.md`](docs/README.md)                                               | o índice: o que cada pasta guarda, e o que é vivo e o que é congelado      |
 
 ---
 

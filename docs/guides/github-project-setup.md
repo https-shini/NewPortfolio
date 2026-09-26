@@ -107,7 +107,7 @@ Entram numa fase quando a consolidação de #6 × T12/T13/T14 for decidida.
 ## 3. Preenchimento de `Priority` e `Size`
 
 **A fonte é documentada, não inventada:** as colunas `Prior.` e `Esforço`
-da §22 de [`AUDITORIA-2026-08.md`](AUDITORIA-2026-08.md).
+da §22 de [`AUDITORIA-2026-08.md`](../reference/AUDITORIA-2026-08.md).
 
 **A conversão de prioridade**, e por que ela é assim:
 
