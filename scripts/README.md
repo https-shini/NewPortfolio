@@ -27,7 +27,7 @@ se o idioma declarado no documento divergir do renderizado.
 ```bash
 node scripts/a11y.mjs             # relatório legível
 node scripts/a11y.mjs --json      # saída para máquina
-node scripts/a11y.mjs --baseline  # regrava docs/a11y-baseline.json
+node scripts/a11y.mjs --baseline  # regrava docs/reference/a11y-baseline.json
 ```
 
 As `moderate` viram aviso e não barram: valem correção, não valem travar uma
@@ -287,7 +287,7 @@ Ficam de fora, cada um pelo seu motivo: o `geometry.mjs`, pelo descrito
 acima, e o `perf.mjs`, porque mede tempo — e tempo varia demais entre
 execuções de runner para servir de porta.
 
-## `docs/a11y-baseline.json`
+## `docs/reference/a11y-baseline.json`
 
 O estado que se quer preservar, não um alvo a perseguir. Hoje é zero
 violação em 16 combinações; qualquer regressão futura aparece como diferença

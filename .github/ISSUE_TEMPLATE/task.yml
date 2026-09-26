@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Prioridade e status vivem nos campos do Project.
-        Ver `docs/github-project.md`.
+        Ver `docs/guides/github-project.md`.
 
   - type: textarea
     id: contexto

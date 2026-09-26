@@ -48,7 +48,7 @@ node scripts/geometry.mjs diff /tmp/antes.json /tmp/depois.json
 O diff tem de sair **vazio**. A migração é de pastas e de caminhos de ferramenta; qualquer
 pixel que se mova é defeito, não progresso.
 
-O que É durável e já está versionado: `docs/identity-baseline.json`, com as 66 superfícies
+O que É durável e já está versionado: `docs/reference/identity-baseline.json`, com as 66 superfícies
 de cor, borda, raio, espaçamento e tipo. Ele atravessa a migração e não deve ser regravado
 por causa dela — se `audit:identity` acusar diferença, é porque algo se moveu de verdade.
 

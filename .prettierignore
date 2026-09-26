@@ -16,5 +16,5 @@ package-lock.json
 # `JSON.stringify(_, null, 2)` em scripts/a11y.mjs e scripts/identity.mjs.
 # Formatá-las à mão poria duas portas do CI em contradição — a que confere
 # formatação e a que regrava o arquivo.
-docs/a11y-baseline.json
-docs/identity-baseline.json
+docs/reference/a11y-baseline.json
+docs/reference/identity-baseline.json

@@ -3,7 +3,7 @@
 Projeto pessoal, mas sugestão e correção são bem-vindas. Este documento é o
 fluxo real; o planejamento fica no
 [Project #3](https://github.com/users/https-shini/projects/3) e as regras do
-board em [`docs/github-project.md`](docs/github-project.md).
+board em [`docs/guides/github-project.md`](docs/guides/github-project.md).
 
 ---
 
@@ -173,13 +173,16 @@ há nada a rodar à mão. Se quiser formatar tudo de uma vez:
 npm run format
 ```
 
-| documento                                                      | papel                                                                    |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| [`docs/github-project.md`](docs/github-project.md)             | fluxo, campos e regras do board                                          |
-| [`docs/github-project-setup.md`](docs/github-project-setup.md) | o que clicar para configurar o board, e como usá-lo no dia a dia         |
-| [`docs/AUDITORIA-2026-08.md`](docs/AUDITORIA-2026-08.md)       | auditoria técnica e de posicionamento; §22 é a origem do backlog T01–T33 |
-| [`docs/PERFORMANCE-2026-08.md`](docs/PERFORMANCE-2026-08.md)   | o que foi medido, o que foi reprovado e o que não repetir                |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md)                           | **histórico**, encerrado — não abra trabalho a partir dele               |
+O índice está em [`docs/README.md`](docs/README.md). Os que se usa no dia a
+dia:
+
+| documento                                                                        | papel                                                                    |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [`docs/guides/github-project.md`](docs/guides/github-project.md)                 | fluxo, campos e regras do board                                          |
+| [`docs/guides/github-project-setup.md`](docs/guides/github-project-setup.md)     | o que clicar para configurar o board, e como usá-lo no dia a dia         |
+| [`docs/reference/AUDITORIA-2026-08.md`](docs/reference/AUDITORIA-2026-08.md)     | auditoria técnica e de posicionamento; §22 é a origem do backlog T01–T33 |
+| [`docs/reference/PERFORMANCE-2026-08.md`](docs/reference/PERFORMANCE-2026-08.md) | o que foi medido, o que foi reprovado e o que não repetir                |
+| [`docs/reference/ROADMAP.md`](docs/reference/ROADMAP.md)                         | **histórico**, encerrado — não abra trabalho a partir dele               |
 
 ---
 

@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Prioridade, tamanho, estimativa e status **não** entram aqui — eles
-        vivem nos campos do Project. Ver `docs/github-project.md`.
+        vivem nos campos do Project. Ver `docs/guides/github-project.md`.
 
   - type: textarea
     id: contexto

@@ -316,7 +316,7 @@ i18n tipado — `TranslationKey` é união fechada, então chave inexistente nã
   `added/improved/design/performance/architecture/content` e as tags seguem
   `design/feature/perf/a11y/fix`. Dois vocabulários próximos e não coincidentes convidam a
   confusão. _P3 · Impacto Baixo · Esforço Baixo_
-- **`docs/ROADMAP.md`** descreve um plano anterior à mudança de direção. _P3 — reconciliar ou
+- **`docs/reference/ROADMAP.md`** descreve um plano anterior à mudança de direção. _P3 — reconciliar ou
   remover._
 
 ---
@@ -673,7 +673,7 @@ disponibilidade do autor (CLT + faculdade em ano de formatura) não é conhecida
 | T19 | #29   | Estender `audit:a11y` a menu aberto, modal aberto e formulário em erro                                                | A11y      | P2     | Alto       | Médio   | —             | 6    |
 | T20 | #31   | Medir e atribuir o custo de estilo na rolagem da home                                                                 | Perf      | P2     | Alto       | Médio   | —             | 7    |
 | T21 | #32   | Aplicar a correção que a medição indicar e comparar com a linha de base                                               | Perf      | P2     | Alto       | Médio   | T20           | 7    |
-| T22 | #33   | ~~Reconciliar `docs/ROADMAP.md` com a direção atual~~ — **entregue**                                                  | Docs      | P3     | Baixo      | Baixo   | —             | 7    |
+| T22 | #33   | ~~Reconciliar `docs/reference/ROADMAP.md` com a direção atual~~ — **entregue**                                        | Docs      | P3     | Baixo      | Baixo   | —             | 7    |
 | T23 | #21   | Verificar o domínio no Google Search Console                                                                          | SEO       | P2     | Médio      | Baixo   | —             | 3    |
 | T24 | #30   | Verificar rate limiting do endpoint de formulário                                                                     | Segurança | P2     | Médio      | Baixo   | —             | 6    |
 | T25 | #34   | ~~Definir o destino do eixo "AI & Automation"~~ — **DECIDIDO:** o eixo permanece e o lastro será construído (T26–T33) | Conteúdo  | —      | —          | —       | encerrado     | —    |
