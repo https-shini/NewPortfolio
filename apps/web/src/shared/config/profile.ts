@@ -76,8 +76,13 @@ export const PROFILE = {
             handle: "/in/oguilherme-cruz",
             url: "https://linkedin.com/in/oguilherme-cruz",
         },
-        /* Central de links do próprio site (página /links). O app externo que
-           ocupava este lugar virou um dos itens listados lá — ver links.ts. */
+        /* Central de links do próprio site (página /links) — `url` é rota
+           interna, não endereço externo.
+
+           Não confundir com o `devlinksRocketseat` que existiu em
+           PROJECT_URLS: era o exercício do curso da Rocketseat, outro
+           projeto. Ele saiu, e não foi substituído por nenhum item de
+           TREE_LINKS — o comentário anterior afirmava isso e estava errado. */
         devlinks: {
             label: "Social Links",
             handle: "Social Links",

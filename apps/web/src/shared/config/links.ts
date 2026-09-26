@@ -54,10 +54,6 @@ export const PROJECT_URLS = {
         live: "https://financas-reactjs.vercel.app",
         repo: repo("financas-reactjs"),
     },
-    devlinksRocketseat: {
-        live: "https://devlinks-rocketseat-five.vercel.app",
-        repo: repo("devlinks-rocketseat"),
-    },
 } as const;
 
 /* ═════════════════════════════════════════════════════════
