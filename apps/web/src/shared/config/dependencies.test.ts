@@ -34,6 +34,25 @@ const SERVIDOR: Record<string, string> = {
         "executam JavaScript, então a imagem precisa sair pronta do servidor",
 };
 
+/**
+ * Versões fixadas, e o motivo de cada uma. Fixar sem dizer por quê é como
+ * comentar código: alguém vai desfazer por parecer resíduo.
+ */
+const FIXADAS: Record<string, { versao: string; porque: string }> = {
+    "@vercel/og": {
+        versao: "1.0.1",
+        porque:
+            "1.0.1 é a única versão sem vulnerabilidade conhecida em produção. " +
+            "A 0.11.1 traz sharp 0.34.5, com duas ALTAS herdadas de libvips e " +
+            "libheif. A 1.0.2 e a 1.0.3 corrigem isso (sharp ^0.35.3 → 0.35.4) " +
+            "mas sobem o satori para 0.33.x, que depende de fflate 0.7.3 e " +
+            "reintroduz três MODERADAS. A 1.0.1 usa satori 0.29.0, que não " +
+            "depende de fflate, e a mesma sharp corrigida: npm audit --omit=dev " +
+            "devolve zero. Quando o satori 0.33.x soltar o fflate corrigido, " +
+            "este alfinete sai e a faixa volta a ser ^1.0.x.",
+    },
+};
+
 /* O vitest roda com a raiz em apps/web/. */
 function lerPackageJson(caminho: string) {
     return JSON.parse(
@@ -54,6 +73,16 @@ describe("dependências de runtime", () => {
         expect(Object.keys(dependencies ?? {}).sort()).toEqual(
             Object.keys(SERVIDOR).sort(),
         );
+    });
+
+    it("as versões fixadas continuam fixas, e exatamente na que se escolheu", () => {
+        /* Sem isto, um `npm update` ou um bot de dependências sobe a versão e
+           reintroduz a vulnerabilidade em silêncio — o `npm audit` não roda no
+           CI, então nada reprovaria. O teste roda. */
+        const { dependencies } = lerPackageJson("../../package.json");
+        for (const [nome, { versao }] of Object.entries(FIXADAS)) {
+            expect(dependencies?.[nome]).toBe(versao);
+        }
     });
 
     it("nenhuma dependência de servidor vazou para o cliente", () => {
