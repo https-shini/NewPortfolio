@@ -90,7 +90,7 @@ node scripts/bundle-budget.mjs --print            # mostra sem julgar
 ```
 
 O peso é consequência. A causa — a contagem de dependências de runtime —
-é vigiada por `frontend/src/shared/config/dependencies.test.ts`, que
+é vigiada por `apps/web/src/shared/config/dependencies.test.ts`, que
 falha se `package.json` ganhar qualquer coisa além de `react` e
 `react-dom`.
 
@@ -261,27 +261,41 @@ responde **quem**.
 
 ```bash
 npm run build
-npm run rolagem          # tabela comparativa
+npm run rolagem             # os nove cenários de diagnóstico
+npm run rolagem -- --contagem   # só a curva de quantas partículas animam
 npm run rolagem -- --json
 ```
 
 Home, CPU 4×, mediana de três por cenário. Cada cenário desliga um suspeito por
-CSS injetado no fim da cascata, e a diferença de `RecalcStyleDuration` contra o
-base é a atribuição.
+CSS injetado no fim da cascata — e dois deles rolam **sem mover o ponteiro**,
+para separar a animação CSS da escrita inline por partícula que o
+`useAmbientMotion` faz num laço de quadro.
 
 CSS injetado, e não build por cenário: um build diferente mudaria o bundle, o
 hash dos arquivos e a ordem de carga, e a comparação passaria a medir isso
 também.
 
-**A tabela imprime a amplitude do base entre execuções, e ela é a régua.**
-Delta menor que a amplitude não é atribuição — é a máquina. Sem esse número,
-qualquer diferença parece conclusão; foi o que a série de performance aprendeu
-tirando duas conclusões de execução única, uma delas errada.
+**A grandeza comparada é `estilo/s`, não o milissegundo absoluto.** Isso não é
+firula: medindo, o cenário "sem ponteiro" deu `+268 ms` de estilo absoluto, o
+que parecia dizer que mover o ponteiro _alivia_ o custo. Não alivia — sem
+eventos de ponteiro sobra orçamento para mais quadros de animação na mesma
+janela de relógio, e mais quadros é mais recálculo. Cenários de densidade
+diferente têm janelas diferentes, e comparar o absoluto compara a densidade. A
+tabela imprime a janela medida junto, para o leitor conferir.
+
+**A tabela imprime também a amplitude do base entre execuções, e ela é a
+régua.** Delta menor que a amplitude não é atribuição — é a máquina. Sem esse
+número, qualquer diferença parece conclusão; foi o que a série de performance
+aprendeu tirando duas conclusões de execução única, uma delas errada. As
+sessões deram amplitudes de 55, 33 e 8 ms/s — ela varia muito, e é por isso que
+é reportada e não assumida.
 
 Não roda no CI, pelo mesmo motivo do `perf.mjs`: mede tempo.
 
-O resultado da primeira investigação está em
-[`docs/reference/ROLAGEM-2026-09.md`](../docs/reference/ROLAGEM-2026-09.md).
+O resultado está em
+[`docs/reference/ROLAGEM-2026-09.md`](../docs/reference/ROLAGEM-2026-09.md):
+o vidro absolvido, o ponteiro absolvido, e as 39 partículas animadas como a
+única alavanca que a variância sustenta.
 
 ## `changelog.mjs`
 
@@ -294,7 +308,7 @@ npm run changelog:check    # confere; sai 1 se divergir
 
 O arquivo é derivado, não uma segunda fonte de verdade. Mas derivado só
 continua derivado enquanto alguém regenera, então
-`frontend/src/shared/config/changelog.test.ts` roda o modo de conferência
+`apps/web/src/shared/config/changelog.test.ts` roda o modo de conferência
 na suíte de sempre: acrescentar versão sem regenerar falha ali, e não
 meses depois quando alguém reparar que o arquivo mente.
 
