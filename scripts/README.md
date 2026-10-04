@@ -294,8 +294,9 @@ Não roda no CI, pelo mesmo motivo do `perf.mjs`: mede tempo.
 
 O resultado está em
 [`docs/reference/ROLAGEM-2026-09.md`](../docs/reference/ROLAGEM-2026-09.md):
-o vidro absolvido, o ponteiro absolvido, e as 39 partículas animadas como a
-única alavanca que a variância sustenta.
+o vidro absolvido em seis medições, o ponteiro absolvido, e as partículas
+animadas como a única alavanca que a variância sustenta — reduzidas de 39 para
+20, com o antes e o depois medidos no mesmo dia.
 
 ## `changelog.mjs`
 

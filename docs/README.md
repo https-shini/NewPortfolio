@@ -33,7 +33,7 @@ ativo é o [Project #3](https://github.com/users/https-shini/projects/3).
 | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | [`AUDITORIA-2026-08.md`](reference/AUDITORIA-2026-08.md)         | auditoria técnica e de posicionamento de agosto de 2026; a §22 é a origem do backlog T01–T33          |
 | [`PERFORMANCE-2026-08.md`](reference/PERFORMANCE-2026-08.md)     | quatro capturas do PageSpeed, o que funcionou e **o que foi reprovado** — existe para ninguém refazer |
-| [`ROLAGEM-2026-09.md`](reference/ROLAGEM-2026-09.md)             | **quem** custa na rolagem da home: o vidro absolvido, as 39 partículas animadas culpadas              |
+| [`ROLAGEM-2026-09.md`](reference/ROLAGEM-2026-09.md)             | **quem** custa na rolagem da home: o vidro absolvido, as partículas animadas culpadas — e a correção  |
 | [`ROADMAP.md`](reference/ROADMAP.md)                             | as 15 melhorias de agosto e o que a execução ensinou. Encerrado                                       |
 | [`baseline-pre-monorepo.md`](reference/baseline-pre-monorepo.md) | leitura de cada porta de qualidade em `6cd2733`, antes de `frontend/` virar `apps/web/`               |
 | [`release-v2.0.0.md`](reference/release-v2.0.0.md)               | as notas da segunda geração do portfólio                                                              |

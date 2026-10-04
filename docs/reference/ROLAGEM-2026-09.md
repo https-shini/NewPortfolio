@@ -1,37 +1,60 @@
-# Custo de estilo na rolagem da home — atribuição, setembro de 2026
+# Custo de estilo na rolagem da home — atribuição e correção, setembro de 2026
 
-Este documento responde **quem** custa, não quanto. O quanto já estava medido:
-a home ocupava ~80 % da thread principal durante a rolagem sob CPU 4×, com o
-custo em recálculo de estilo e não em script.
+Este documento responde **quem** custa, e registra o que foi feito a respeito.
+O quanto já estava medido: a home ocupava ~80 % da thread principal durante a
+rolagem sob CPU 4×, com o custo em recálculo de estilo e não em script.
 
 A hipótese registrada na
 [#31](https://github.com/https-shini/NewPortfolio/issues/31) era
 `backdrop-filter` (o vidro) somado ao `AmbientBackground`. **A primeira metade
-está errada**, e a segunda precisa de recorte.
+está errada.** A segunda estava certa, e virou a correção da
+[#32](https://github.com/https-shini/NewPortfolio/issues/32): a contagem de
+partículas caiu de **39 para 20**.
 
-Nenhuma correção foi aplicada. Isso é critério da #31, e acabou sendo também a
-conclusão para a [#32](https://github.com/https-shini/NewPortfolio/issues/32) —
-ver **O que a #32 deve fazer**, no fim.
+**O resultado, medido antes e depois no mesmo dia:**
+
+|                     | antes (39) | depois (20)               |
+| ------------------- | ---------- | ------------------------- |
+| recálculo de estilo | 337 ms/s   | **242 ms/s** (−95, −28 %) |
+| ocupação da thread  | 79,6 %     | **61,3 %** (−18,3 pontos) |
+| amplitude da sessão | 18 ms/s    | 15 ms/s                   |
+
+O ganho é de cinco a seis vezes a amplitude das duas sessões. É a primeira vez
+nesta série que uma correção sai do piso de ruído com folga.
 
 ---
 
-## Correção de método, aplicada a este documento
+## Duas correções de método, aplicadas a este documento
 
-> A primeira versão deste arquivo comparava **milissegundos absolutos** de
-> `RecalcStyleDuration` entre cenários. **Isso estava errado**, e eu descobri
-> medindo: o cenário "sem ponteiro" deu **+268 ms** de estilo, o que parecia
-> dizer que mover o ponteiro _alivia_ o custo.
+As duas vieram de medir, não de reler.
+
+> **1 · Comparar milissegundos absolutos entre cenários estava errado.** A
+> primeira versão deste arquivo fazia isso, e o cenário "sem ponteiro" deu
+> **+268 ms** de estilo — o que parecia dizer que mover o ponteiro _alivia_ o
+> custo.
 >
 > Não alivia. Sem eventos de ponteiro o navegador gasta menos em hit-testing e
-> sobra orçamento para **mais quadros de animação na mesma janela de relógio** —
-> e mais quadros é mais recálculo. Os cenários tinham densidade diferente, e
-> comparar o absoluto comparava a densidade.
+> sobra orçamento para **mais quadros de animação na mesma janela de relógio**
+> — e mais quadros é mais recálculo. Os cenários tinham densidade diferente, e
+> comparar o absoluto comparava a densidade. O arranjo passou a reportar
+> **estilo por segundo** e a duração da janela.
+
+> **2 · Eu afirmei que a metade `transform` das keyframes "dá para cozinhar", e
+> não dá.** O texto dizia: "`--mx`/`--dx`/`--dy` são **constantes por
+> partícula**, escritas na semeadura" — e concluía que por isso poderiam virar
+> número literal.
 >
-> O arranjo passou a reportar **estilo por segundo** e a duração da janela, e a
-> mediana passou a ser tirada sobre a grandeza normalizada. Os números abaixo
-> são os novos. As **conclusões** da primeira versão sobreviveram — vidro
-> absolvido, partículas culpadas —, porque as duas se sustentavam também na
-> ocupação, que já era normalizada. As **magnitudes** não sobreviveram.
+> Constante **por partícula** é exatamente o que impede. Cada partícula recebe
+> seu próprio vetor na semeadura (`AmbientBackground.tsx:215-222`:
+> `dy` depende de `chance(0.75)` e do número de células, `dx` de
+> `randInt(-2, 2)`, `mx` de `-dx * rand(0.4, 0.9)`), e a regra
+> `@keyframes ambient-float` é **uma só, compartilhada pelas 39**. Um literal
+> na keyframe daria a todas o mesmo caminho — que é precisamente a aparência
+> que o `var()` existe para evitar.
+>
+> O cenário "transform literal" do arranjo, portanto, **não mede uma correção
+> disponível**: ele mede uma home em que todas as partículas derivam em
+> paralelo. O ganho que ele mostra é real e **não é colhível**.
 
 ## Método
 
@@ -41,37 +64,49 @@ cenário desliga um suspeito por CSS injetado no fim da cascata — não por bui
 separado, que mudaria bundle, hash e ordem de carga junto.
 
 A régua é a **amplitude do base entre execuções** na mesma sessão: delta menor
-que ela é a máquina, não atribuição. As sessões deram 55, 33 e 8 ms/s — a
-amplitude varia muito, e é por isso que ela é reportada junto e não assumida.
+que ela é a máquina, não atribuição. As sessões desta investigação deram 55,
+33, 18, 15 e 8 ms/s — a amplitude varia muito, e é por isso que ela é
+reportada junto e não assumida.
 
 Mede thread principal, não quadros: em contêiner não há GPU e o Chromium
 rasteriza por software, então contar quadros mediria o rasterizador.
 
-## O diagnóstico
+## O diagnóstico, na sessão de régua mais fina antes da correção
 
-Sessão com amplitude de **55 ms/s**, base em **334 ms/s** e ocupação 78,4 %:
+Amplitude de **18 ms/s**, base em **337 ms/s**, ocupação 79,6 %:
 
-| cenário            | estilo/s | Δ/s      | ocupação | veredito                      |
-| ------------------ | -------- | -------- | -------- | ----------------------------- |
-| **base**           | 334      | —        | 78,4 %   | —                             |
-| sem vidro          | 324      | −10      | 76,9 %   | **absolvido**                 |
-| sem ponteiro       | 371      | +37      | 78,1 %   | **absolvido**                 |
-| transform literal  | 276      | −58      | 80,8 %   | na fronteira do ruído         |
-| opacidade literal  | 283      | −51      | 73,8 %   | dentro do ruído               |
-| keyframes literais | 243      | **−91**  | 75,2 %   | real, e modesto               |
-| sem partículas     | 155      | **−179** | 60,1 %   | **a alavanca**                |
-| sem animação       | 156      | **−178** | 72,7 %   | é o movimento, não a presença |
+| cenário            | estilo/s | Δ/s      | ocupação   | faixa   | veredito       |
+| ------------------ | -------- | -------- | ---------- | ------- | -------------- |
+| **base**           | 337      | —        | 79,6 %     | 323–341 | —              |
+| sem vidro          | 288      | −49      | 81,1 %     | 271–298 | ver abaixo     |
+| sem ponteiro       | 371      | +34      | 89,9 %     | 370–374 | **absolvido**  |
+| opacidade literal  | 287      | −50      | 76,2 %     | 276–296 | não colhível   |
+| transform literal  | 275      | −62      | 84,9 %     | 265–280 | não colhível   |
+| keyframes literais | 240      | −97      | 75,4 %     | 231–241 | não colhível   |
+| sem animação       | 148      | −189     | 75,0 %     | 143–162 | é o movimento  |
+| **sem partículas** | 146      | **−191** | **49,6 %** | 141–153 | **a alavanca** |
 
-### O vidro está absolvido
+### O vidro: seis medições, e a sexta resolve a quinta
 
-Quatro medições, em quatro sessões: **−10, −4, +15, +2 ms/s**. Nenhuma
-consistente, todas dentro da amplitude da sessão. Desligar `backdrop-filter`
-nos 16 elementos que de fato pintavam vidro na home — de 30 declarações em 11
-arquivos — **não reduz o recálculo de estilo**.
+| sessão     | 1   | 2   | 3   | 4   | 5       | 6   |
+| ---------- | --- | --- | --- | --- | ------- | --- |
+| Δ estilo/s | −10 | −4  | +15 | +2  | **−49** | −3  |
+| amplitude  | 55  | 33  | —   | —   | **18**  | 15  |
 
-Isso não diz que vidro é grátis: parte do custo dele é compositor, que este
-arranjo deliberadamente não mede. Diz que **não é ele** que explica o custo na
-rolagem.
+A quinta medição foi a única a passar da amplitude da sua sessão, e por isso
+**precisou de uma sexta** antes de eu escrever qualquer coisa. A sexta deu
+**−3 ms/s** contra amplitude de 15. Seis medições com delta que troca de sinal
+não descrevem um custo: descrevem ruído.
+
+Há um segundo argumento, independente da régua: **desligar o vidro fez a
+ocupação da thread SUBIR** nas duas sessões finais (79,6 → 81,1 % e 61,3 →
+71,8 %). Um suspeito que, removido, deixa a thread mais ocupada não é o que
+estava ocupando a thread.
+
+Desligar `backdrop-filter` nos 16 elementos que de fato pintavam vidro na home
+— de 30 declarações em 11 arquivos — **não reduz o recálculo de estilo**. Isso
+não diz que vidro é grátis: parte do custo dele é compositor, que este arranjo
+deliberadamente não mede. Diz que **não é ele** que explica o custo na rolagem.
 
 ### O ponteiro está absolvido
 
@@ -79,30 +114,32 @@ rolagem.
 de quadro, para as próximas ao cursor. Parecia suspeito: escrever estilo inline
 num elemento com animação rodando invalida o estilo dele.
 
-Não é. Rolar **sem mover o ponteiro** deu `+37 ms/s` e ocupação idêntica
-(78,1 % contra 78,4 %). O empurrão por proximidade não é o custo.
+Não é. Rolar **sem mover o ponteiro** deu `+34 ms/s` nas duas sessões — custo
+negativo, ou seja, mais estilo sem o ponteiro. É o efeito de densidade descrito
+na correção de método 1, e não um alívio.
 
-### As 39 partículas animadas são a alavanca
+### As partículas animadas são a alavanca
 
-`−179 ms/s`, mais de três vezes a amplitude, e a ocupação cai de 78,4 % para
-60,1 %. Neutralizar só `animation` — **deixando os elementos no lugar** —
-recupera praticamente o mesmo (`−178`). **O custo é o movimento, não a
-presença.**
+`−191 ms/s`, dez vezes a amplitude, e a ocupação caindo de 79,6 % para 49,6 % —
+**o único cenário em que a thread de fato desocupa**. Neutralizar só
+`animation`, deixando os elementos no lugar, recupera praticamente o mesmo
+(`−189`). **O custo é o movimento, não a presença.**
 
-Contado no DOM da home a 1280×900: **39 `.ambient__particle`**,
-5 `.ambient__bokeh b`, 1 aurora. As partículas são **39 dos 44 elementos
-animados** dentro do `.ambient` — e é essa proporção que explica por que
-desligar o bokeh (5 elementos) não moveu nada.
+Contado no DOM da home a 1280×900 antes da correção: **39
+`.ambient__particle`**, 5 `.ambient__bokeh b`, 1 aurora. As partículas eram
+**39 dos 44 elementos animados** dentro do `.ambient` — e é essa proporção que
+explica por que desligar o bokeh (5 elementos) não moveu nada.
 
 ## Por que nenhuma auditoria viu isto
 
 As partículas **não existem** sob `prefers-reduced-motion: reduce` — o efeito
 sai antecipado em `AmbientBackground.tsx:124` e nem semeia:
 
-|                  | partículas | bokeh | animando na página |
-| ---------------- | ---------- | ----- | ------------------ |
-| movimento normal | 39         | 5     | **71**             |
-| `reduce`         | **0**      | **0** | **3**              |
+|                           | partículas | bokeh | animando na página |
+| ------------------------- | ---------- | ----- | ------------------ |
+| movimento normal (antes)  | 39         | 5     | **71**             |
+| movimento normal (depois) | 20         | 5     | **52**             |
+| `reduce`                  | **0**      | **0** | **3**              |
 
 E o `newContext` de `scripts/lib/browser.mjs` força `reducedMotion: "reduce"`
 por padrão — com razão, porque mede cor assentada e não meio de transição.
@@ -112,45 +149,44 @@ A consequência é que **`audit:a11y`, `audit:identity`, `audit:overflow`,
 Só o `perf.mjs` e este arranjo montam contexto próprio e veem o que a maioria
 de quem visita vê.
 
+Isso tem uma segunda consequência, que vale dizer em voz alta: **essas portas
+passando não é evidência de que a aparência está certa** depois de uma mudança
+nas partículas. Elas continuam cegas para ela. Quem verifica é a medição acima
+e o olho de quem decide.
+
 Não é defeito das auditorias. É o ponto cego que explica como um custo desse
 tamanho sobreviveu a sete portas de CI.
 
-## A correção por compositação, e por que ela não vale
+## A correção por compositação, e por que ela não é colhível
 
 As keyframes interpolam `transform` **e** `opacity` através de `calc()` sobre
 `var()` (`AmbientBackground.css:352-400`). O navegador não compõe animação cujo
 valor de keyframe depende de propriedade personalizada: a substituição acontece
-na resolução de estilo, na thread principal.
+na resolução de estilo, na thread principal. O mecanismo está certo, e o ganho
+de reescrever as duas com número literal é real — `−97 ms/s` com amplitude 18.
 
-Reescrever as duas com número literal rende **−91 ms/s numa sessão e −64 em
-outra** — real, mas 20 a 27 % do custo, contra os 54 % que desligar a animação
-rende.
+Mas nenhuma das duas metades pode ser cozinhada:
 
-E não dá para colher isso sem efeito colateral:
+| metade                                                      | por que não dá                                                                                                                                                                                                 |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `transform`, sobre `--mx`/`--dx`/`--dy`                     | os três são **diferentes em cada partícula** (`AmbientBackground.tsx:215-222`), e a `@keyframes` é **uma só para todas**. Literal daria a todas o mesmo caminho — a aparência que o `var()` existe para evitar |
+| `opacity`, sobre `--peak`/`--ambient-peak`/`--ambient-gain` | `--ambient-peak` vem do **tema** (`[data-theme="light"] .ambient`, linha 418). Cozinhar quebraria a troca de tema ao vivo                                                                                      |
 
-| metade                                                      | dá para cozinhar?                                                                                                                 | rende sozinha                    |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
-| `transform`, sobre `--mx`/`--dx`/`--dy`                     | **sim** — são constantes por partícula, escritas na semeadura                                                                     | −58 ms/s, contra amplitude de 55 |
-| `opacity`, sobre `--peak`/`--ambient-peak`/`--ambient-gain` | **não** — `--ambient-peak` vem do tema (`[data-theme="light"] .ambient`, linha 418), e cozinhar quebraria a troca de tema ao vivo | −51 ms/s, dentro do ruído        |
+Dar a cada partícula uma keyframe literal própria seria trocar recálculo de
+estilo por 39 regras no CSSOM — não medi, e não vou afirmar que compensa.
 
-**A metade que dá para consertar sem efeito colateral não limpa o piso de
-ruído.** Aplicá-la seria reivindicar um ganho que a variância não sustenta — e
-a #32 é explícita sobre isso: "se o ganho não sobreviver à variância, reverter
-e registrar".
+**Fica registrado como mecanismo compreendido e correção indisponível.**
 
-Fica registrado, e não aplicado.
-
-## A curva da contagem
+## A curva da contagem, e a decisão
 
 A alavanca que a atribuição isolou. Medida por `npm run rolagem -- --contagem`,
-numa sessão com amplitude de **8 ms/s** — cada passo abaixo está muito acima
-dela.
+numa sessão com amplitude de **8 ms/s** — cada passo está muito acima dela.
 
 | partículas    | estilo/s | Δ/s  | ocupação |
 | ------------- | -------- | ---- | -------- |
-| **39 (hoje)** | 299      | —    | 79,0 %   |
+| 39 (então)    | 299      | —    | 79,0 %   |
 | 28            | 260      | −39  | 79,0 %   |
-| 20            | 253      | −46  | 72,5 %   |
+| **20 (hoje)** | 253      | −46  | 72,5 %   |
 | 12            | 223      | −76  | 72,9 %   |
 | 6             | 196      | −103 | 62,9 %   |
 | 0             | 151      | −148 | 56,9 %   |
@@ -158,30 +194,52 @@ dela.
 Duas leituras que a curva dá e a média não daria:
 
 - **O estilo cai desde o primeiro corte**, em cerca de 4 ms/s por partícula.
-- **A ocupação não.** Ela fica em 79 % até 28 partículas, cai para ~72 % entre
-  20 e 12, e só desaba em 6. Entre 20 e 12 o estilo melhora e a ocupação não
-  muda — ou seja, há um trecho da curva em que cortar partícula melhora o
-  número e não melhora a experiência.
+- **A ocupação não.** Ficava em 79 % até 28 partículas e só então cedia. Foi
+  por isso que **20** foi o alvo escolhido, e não 28: 28 melhorava o número e
+  não a experiência.
 
 > A redução foi medida por `:nth-child`, não pela prop `count`: mudar a prop
 > exigiria remontar a página por cenário, e a comparação mediria a remontagem
-> também. O que importa é quantos elementos **animam**, e é isso que o seletor
-> controla. A distribuição espacial fica ligeiramente diferente de uma
-> semeadura com `count` menor — é aproximação, e está dito.
+> também.
 
-## O que a #32 deve fazer
+### A correção aplicada rendeu mais do que a curva previa
 
-1. **Não mexer no `backdrop-filter`.** Quatro medições o absolvem.
-2. **Não mexer no empurrão por ponteiro.** Absolvido.
-3. **Não aplicar a compositação.** A metade sem efeito colateral não limpa o
-   ruído; a outra quebra a troca de tema.
-4. **A única alavanca que a medição sustenta é a contagem de partículas** — e
-   ela muda a aparência da home. É decisão de produto, não de engenharia, e
-   está com a curva acima para ser tomada com número em vez de sensação.
+`AmbientBackground.tsx` — `count = 39` passou a `count = 20`. Uma linha.
 
-Se a escolha for mexer na contagem, o alvo natural é **28 ou 20**: os dois
-primeiros passos rendem 13 % e 15 % do estilo, e o de 20 é onde a ocupação
-começa a ceder.
+A curva previa `253 ms/s`. O build com `count = 20` deu **242 ms/s**, e a
+ocupação **61,3 %** contra os 72,5 % previstos. **A previsão errou para baixo**,
+e a razão é a aproximação declarada acima: esconder por `:nth-child` deixa as 20
+primeiras posições de um campo semeado para 39, enquanto `count = 20` semeia 20
+posições pela caixa inteira — com a sua própria distribuição de tamanho,
+duração e de orbes (`chance(0.2)`), que são os elementos mais caros.
+
+O que o antes e o depois dizem, lado a lado, nas duas sessões de régua fina:
+
+|             | base | sem partículas | custo das partículas | por partícula |
+| ----------- | ---- | -------------- | -------------------- | ------------- |
+| antes (39)  | 337  | 146            | **191 ms/s**         | 4,9 ms/s      |
+| depois (20) | 242  | 157            | **85 ms/s**          | 4,3 ms/s      |
+
+O piso — o que custa tudo que **não** é partícula — ficou em 146 e 157 ms/s nas
+duas sessões. É a consistência interna que dá confiança no resto: o arranjo
+mediu a mesma home nas duas vezes, e só a parte que mudou mudou.
+
+### O que a redução faz em cada tela, e por que não é proporcional
+
+A semeadura é `Math.max(8, Math.round(count * fracaoDeDensidade()))`
+(`AmbientBackground.tsx:129`), e a fração multiplica por largura e por sinais
+do aparelho (`:83-108`):
+
+| contexto                    | com 39 | com 20                       |
+| --------------------------- | ------ | ---------------------------- |
+| ≥ 1100px                    | 39     | **20**                       |
+| 700–1099px                  | 29     | **15**                       |
+| < 700px                     | 20     | **10**                       |
+| < 700px + 4 GB de RAM       | 12     | **8** ← o piso passa a valer |
+| < 700px + economia de dados | 8      | **8** (já no piso)           |
+
+O desktop perde mais, e o piso de 8 protege o celular fraco — que já recebia
+menos. A leitura intuitiva ("todo mundo perde metade") está errada.
 
 ## O que este documento NÃO afirma
 
@@ -195,3 +253,6 @@ começa a ceder.
 - **Nada sobre as outras rotas.** Só a home. A atmosfera é uma instância para
   todas as rotas (`app/routes.tsx`), então o custo provavelmente acompanha —
   mas "provavelmente" não é medição.
+- **Nada sobre a aparência.** Que 20 partículas sejam suficientes para a
+  atmosfera é decisão de produto, tomada por quem é dono dela. Este documento
+  só garante que a decisão foi tomada com número.

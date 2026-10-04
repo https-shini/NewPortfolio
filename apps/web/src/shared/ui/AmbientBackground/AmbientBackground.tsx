@@ -40,6 +40,19 @@ interface AmbientBackgroundProps {
      * correção da deriva deu à caixa uma sangria de 130px em cada extremo,
      * e para 39 na calibragem feita no modelo — os cortes por tela e por
      * aparelho continuam valendo em cima disso.
+     *
+     * Baixou para 20 por MEDIÇÃO, não por gosto: a atribuição em
+     * `docs/reference/ROLAGEM-2026-09.md` isolou estas partículas como a
+     * única alavanca real do custo de estilo na rolagem da home —
+     * desligá-las derruba o recálculo em ~57 % e a ocupação da thread de
+     * 79,6 % para 49,6 %, enquanto todos os outros suspeitos ficam na
+     * ordem do ruído. 20 é o primeiro passo da curva em que a ocupação de
+     * fato cede, e não só o número de estilo.
+     *
+     * Note que a redução NÃO é proporcional em toda tela, por causa do
+     * piso de 8 em `semear`: no desktop vai de 39 para 20, mas num
+     * celular de 4 GB vai de 12 para 8. Quem perde mais é quem tinha mais
+     * folga.
      */
     count?: number;
     /** Marca a variante no CSS, para ajustes pontuais por página. */
@@ -109,7 +122,7 @@ function fracaoDeDensidade(): number {
 }
 
 export const AmbientBackground: React.FC<AmbientBackgroundProps> = ({
-    count = 39,
+    count = 20,
     variant = "site",
 }) => {
     const boxRef = useRef<HTMLDivElement>(null);
