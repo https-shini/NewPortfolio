@@ -429,6 +429,21 @@ export default defineConfig({
         target: "es2020",
         minify: "esbuild",
 
+        /* Nenhum ativo embutido como base64, e isto é medido.
+           Os 34 SVGs de `assets/skills/` têm de 824 a 3.389 bytes — todos
+           abaixo do limite padrão de 4096 —, então o Vite os transformava em
+           `data:image/svg+xml;base64` DENTRO do JS: antes desta linha não
+           havia um único `.svg` em `dist/assets/`. Com 32 ícones a mais na
+           home, isso entraria no bundle de entrada e estouraria o teto do
+           documento, que tem 15 KB de folga.
+           Como arquivo, o SVG sai da conta: `scripts/bundle-budget.mjs` mede
+           o que o documento REFERENCIA — entrada, modulepreload e folhas —, e
+           imagem não está nessa lista. É a mesma armadilha que o cabeçalho de
+           `scripts/imagens.mjs` registra de uma tentativa com `sharp`: as
+           variantes ficaram abaixo do limite, viraram base64 e estouraram o
+           orçamento sem economizar um byte. */
+        assetsInlineLimit: 0,
+
         cssCodeSplit: true,
 
         rollupOptions: {

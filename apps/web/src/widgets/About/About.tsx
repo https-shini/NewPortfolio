@@ -14,6 +14,8 @@ import {
 } from "@/shared/ui/Icons";
 
 /* ── Hook de i18n ────────────────────────────────────────────────────────── */
+import { SkillIcon } from "@/shared/ui/SkillIcon/SkillIcon";
+import type { SkillIconId } from "@/shared/config/skillIcons";
 import { useLang } from "@/shared/hooks/useLang";
 import { renderRichParagraphs } from "@/shared/lib/richText";
 import { type TranslationKey } from "@/shared/lib/translations";
@@ -41,7 +43,7 @@ import foto960 from "@/assets/gerado/hero-960.webp";
 ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Tech stack — ícones exibidos no grid da sidebar ────────────────────── */
-const TECH_STACK = [
+const TECH_STACK: readonly { icon: SkillIconId; label: string }[] = [
     { icon: "html", label: "HTML5" },
     { icon: "css", label: "CSS3" },
     { icon: "js", label: "JavaScript" },
@@ -358,9 +360,6 @@ const AboutStats: React.FC = () => {
 export const About: React.FC = () => {
     const { t, lang } = useLang();
 
-    // URL base da CDN de ícones SVG pelo nome da tecnologia
-    const skilliconsBase = "https://skillicons.dev/icons?i=";
-
     return (
         <section
             id="sobre"
@@ -509,13 +508,10 @@ export const About: React.FC = () => {
                                         key={tech.icon}
                                         title={tech.label}
                                     >
-                                        <img
-                                            src={`${skilliconsBase}${tech.icon}`}
+                                        <SkillIcon
+                                            id={tech.icon}
+                                            size={32}
                                             alt={tech.label}
-                                            width={32}
-                                            height={32}
-                                            loading="lazy"
-                                            decoding="async"
                                         />
                                         <span>{tech.label}</span>
                                     </div>

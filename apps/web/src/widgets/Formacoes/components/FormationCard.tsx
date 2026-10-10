@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import "./FormationCard.css";
+import { SkillIcon } from "@/shared/ui/SkillIcon/SkillIcon";
 import { useLang } from "@/shared/hooks/useLang";
 import {
     IconGraduationCap,
@@ -34,8 +35,6 @@ function calcProgress(startDate: string, endDate?: string): number {
     if (total <= 0) return 1;
     return Math.max(0, Math.min(1, elapsed / total));
 }
-
-const SKILLICONS_BASE = "https://skillicons.dev/icons?i=";
 
 export const FormationCard: React.FC<FormationCardProps> = ({
     item,
@@ -174,14 +173,7 @@ export const FormationCard: React.FC<FormationCardProps> = ({
                             className="formation-card__tech-icon"
                             aria-hidden="true"
                         >
-                            <img
-                                src={`${SKILLICONS_BASE}${icon}`}
-                                alt=""
-                                width={20}
-                                height={20}
-                                loading="lazy"
-                                decoding="async"
-                            />
+                            <SkillIcon id={icon} size={20} />
                         </span>
                     ))}
                 </div>

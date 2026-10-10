@@ -6,6 +6,7 @@
    (employmentType, modality, statusType) são traduzidos via
    `t('career.*')` no idioma corrente.
 ───────────────────────────────────────────────────────── */
+import type { SkillIconId } from "@/shared/config/skillIcons";
 import type { Localized } from "@/shared/lib/localized";
 
 /* ── Enumerations ──────────────────────────────────────── */
@@ -65,7 +66,7 @@ export interface TimelineItem {
 
     /** Tags/competências (bilíngue). */
     tags: Localized[];
-    techIcons?: string[];
+    techIcons?: SkillIconId[];
 
     certUrl?: string | null;
     projectLinks?: TimelineProjectLink[];

@@ -3,6 +3,7 @@
    URLs em shared/config/links.ts (fonte única).
 ───────────────────────────────────────────────────────── */
 
+import type { SkillIconId } from "@/shared/config/skillIcons";
 import { PROJECT_URLS } from "@/shared/config/links";
 import loginImg from "@/assets/authservice/login.webp";
 import cadastroImg from "@/assets/authservice/cadastro.webp";
@@ -24,7 +25,8 @@ export interface ProjectBadge {
 }
 
 export interface ProjectTech {
-    key: string; // skillicons key
+    /** ID do ícone local — ver `shared/config/skillIcons.ts`. */
+    key: SkillIconId;
     label: string; // display name
     variant: "brand" | "accent" | "neutral";
 }

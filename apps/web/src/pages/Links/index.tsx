@@ -5,7 +5,6 @@ import { Header } from "@/widgets/Header/Header";
 import { Footer } from "@/widgets/Footer/Footer";
 import { ScrollUtils } from "@/shared/ui/ScrollUtils";
 import { useLang } from "@/shared/hooks/useLang";
-import { useTheme } from "@/shared/hooks/useTheme";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
 import { IconShare, IconCheck, IconDownload } from "@/shared/ui/Icons";
 import { PROFILE } from "@/shared/config/profile";
@@ -20,19 +19,13 @@ import { PRIMARY_LINKS } from "@/shared/config/links";
 import avatar300 from "@/assets/gerado/hero-300.webp";
 import avatar420 from "@/assets/gerado/hero-420.webp";
 
-/* Ícones de tecnologia — skill-icons (tandpfun, MIT); sql-* criado no
-   mesmo modelo. Variante por tema (dark/light); Docker e Git têm fundo
-   de marca próprio e não variam. Ver src/assets/skills/CREDITS.md. */
-import reactDark from "@/assets/skills/react-dark.svg";
-import reactLight from "@/assets/skills/react-light.svg";
-import nodejsDark from "@/assets/skills/nodejs-dark.svg";
-import nodejsLight from "@/assets/skills/nodejs-light.svg";
-import pythonDark from "@/assets/skills/python-dark.svg";
-import pythonLight from "@/assets/skills/python-light.svg";
-import sqlDark from "@/assets/skills/sql-dark.svg";
-import sqlLight from "@/assets/skills/sql-light.svg";
-import dockerIcon from "@/assets/skills/docker.svg";
-import gitIcon from "@/assets/skills/git.svg";
+/* Ícones de tecnologia — o mapeamento e a variante por tema vivem em
+   `shared/config/skillIcons.ts` e `shared/ui/SkillIcon`, usados também
+   pela home. Antes esta página tinha os dez imports e escolhia a
+   variante com `useTheme`, que é estado próprio: o botão do Header
+   trocava o tema e estes seis ícones não acompanhavam. */
+import { SkillIcon } from "@/shared/ui/SkillIcon/SkillIcon";
+import type { SkillIconId } from "@/shared/config/skillIcons";
 
 /* ─────────────────────────────────────────────────────────
    /links — a social tree dentro da casca do site
@@ -54,31 +47,21 @@ import gitIcon from "@/assets/skills/git.svg";
    comentário da grade em Links.css.
 ───────────────────────────────────────────────────────── */
 
-/* Stack em destaque — ícones skill-icons, variante conforme o tema.
-   `light`/`dark` apontam para o mesmo asset quando não há variante. */
-interface Tech {
-    label: string;
-    dark: string;
-    light: string;
-}
-
-const TECH_STACK: readonly Tech[] = [
-    { label: "React", dark: reactDark, light: reactLight },
-    { label: "Node.js", dark: nodejsDark, light: nodejsLight },
-    { label: "Python", dark: pythonDark, light: pythonLight },
-    { label: "SQL", dark: sqlDark, light: sqlLight },
-    { label: "Docker", dark: dockerIcon, light: dockerIcon },
-    { label: "Git", dark: gitIcon, light: gitIcon },
+/* Stack em destaque. Só ID e rótulo: qual arquivo e qual variante é
+   assunto do SkillIcon. */
+const TECH_STACK: readonly { id: SkillIconId; label: string }[] = [
+    { id: "react", label: "React" },
+    { id: "nodejs", label: "Node.js" },
+    { id: "python", label: "Python" },
+    { id: "sql", label: "SQL" },
+    { id: "docker", label: "Docker" },
+    { id: "git", label: "Git" },
 ];
 
 export const LinksPage: React.FC = () => {
     const { lang, t } = useLang();
-    /* Só para escolher a variante do ícone de stack — a troca de tema
-       agora é botão do Header. */
-    const { theme } = useTheme();
     const [copied, setCopied] = useState(false);
 
-    const isDark = theme === "dark";
     const shareUrl = `${PROFILE.siteUrl}${ROUTES.LINKS}`;
 
     useDocumentMeta({
@@ -219,14 +202,10 @@ export const LinksPage: React.FC = () => {
                         >
                             {TECH_STACK.map((tech) => (
                                 <li key={tech.label} className="linktree__chip">
-                                    <img
+                                    <SkillIcon
+                                        id={tech.id}
+                                        size={22}
                                         className="linktree__chip-ic"
-                                        src={isDark ? tech.dark : tech.light}
-                                        alt=""
-                                        width={22}
-                                        height={22}
-                                        loading="lazy"
-                                        decoding="async"
                                     />
                                     {tech.label}
                                 </li>

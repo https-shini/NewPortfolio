@@ -7,6 +7,7 @@ import React, {
     Suspense,
 } from "react";
 import "./Featured.css";
+import { SkillIcon } from "@/shared/ui/SkillIcon/SkillIcon";
 import { useLang } from "@/shared/hooks/useLang";
 import {
     IconStar,
@@ -44,8 +45,6 @@ const ARCH_ICON: Record<
     shield: IconShield,
     package: IconPackage,
 };
-
-const SKILLICONS_BASE = "https://skillicons.dev/icons?i=";
 
 export const Featured: React.FC = () => {
     const { lang, t } = useLang();
@@ -520,15 +519,7 @@ export const Featured: React.FC = () => {
                                         key={item.key}
                                         className={`featured__tech-chip featured__tech-chip--${item.variant}`}
                                     >
-                                        <img
-                                            src={`${SKILLICONS_BASE}${item.key}`}
-                                            alt=""
-                                            width={18}
-                                            height={18}
-                                            loading="lazy"
-                                            decoding="async"
-                                            aria-hidden="true"
-                                        />
+                                        <SkillIcon id={item.key} size={18} />
                                         <span>{item.label}</span>
                                     </li>
                                 ))}

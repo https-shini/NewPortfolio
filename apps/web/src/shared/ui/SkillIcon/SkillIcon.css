@@ -1,0 +1,38 @@
+/* ─────────────────────────────────────────────────────────────────────
+   SkillIcon — a variante por tema, resolvida aqui e não em JavaScript.
+
+   `useTheme` escreve `data-theme` no `<html>` (ver `applyTheme`), e é só
+   disso que estas regras dependem. Sem estado em React, sem re-render, e
+   sem a possibilidade de um componente ficar com o tema velho — que é o
+   que acontecia na /links, onde o hook era chamado em paralelo com o
+   Header.
+
+   O padrão é ESCURO, para casar com o `<body class="dark-mode">` e o
+   `data-theme="dark"` que o `index.html` já declara antes do React montar.
+   Assim o ícone certo aparece no primeiro quadro, sem piscar.
+
+   `display: none` — e não `visibility` nem `opacity` — porque além de
+   esconder, tira o elemento da árvore de acessibilidade: o `alt` do par
+   oculto não é anunciado, e o leitor de tela vê um ícone, não dois.
+   ───────────────────────────────────────────────────────────────────── */
+
+.skill-icon {
+    /* A caixa é quadrada e os atributos width/height já a reservam; isto
+       só garante que um CSS de contexto não a distorça. */
+    display: block;
+    flex: none;
+}
+
+/* ── Escuro: o padrão ───────────────────────────────────────────────── */
+.skill-icon--light {
+    display: none;
+}
+
+/* ── Claro: inverte o par ───────────────────────────────────────────── */
+:root[data-theme="light"] .skill-icon--dark {
+    display: none;
+}
+
+:root[data-theme="light"] .skill-icon--light {
+    display: block;
+}

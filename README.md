@@ -159,7 +159,25 @@ casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
 | **Husky + lint-staged** | 9 / 16 | Hooks de pre-commit (lint + format)                |
 | **Commitlint**          | 20+    | Conventional Commits obrigatórios                  |
 | **CSS puro (tokens)**   | —      | Design system próprio, um `.css` por widget        |
-| **skillicons.dev**      | —      | Ícones de tecnologias na seção About               |
+
+### Ícones de tecnologia
+
+Os SVGs de `apps/web/src/assets/skills/` vêm de
+[**skill-icons**](https://github.com/tandpfun/skill-icons) de _tandpfun_,
+licença **MIT** (© 2022 tandpfun), pela
+[fork deste projeto](https://github.com/https-shini/skill-icons). Os
+**logotipos pertencem aos respectivos donos** e a licença MIT cobre o
+empacotamento, não as marcas.
+
+Os arquivos são servidos do próprio domínio, com o nome original da fork —
+atualizar é copiar por cima. Antes vinham de `skillicons.dev` em tempo de
+execução: 46 requisições a terceiro na home, que desapareciam junto com a
+página quando aquele host falhava.
+
+`SQL-Dark.svg` e `SQL-Light.svg` são a exceção e **não** vêm da fork: ela não
+tem ícone SQL genérico, só SQLite, MySQL e PostgreSQL. Foram feitos neste
+projeto no mesmo modelo — ver
+[`CREDITS.md`](apps/web/src/assets/skills/CREDITS.md).
 
 ---
 
