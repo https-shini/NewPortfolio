@@ -294,27 +294,57 @@ Utilitários globais: `.btn`, `.badge`, `.section*`, `.container`, `.social-link
 
 ## 🚀 Como executar
 
+Node >= 18 e npm >= 9 (campo `engines`). Não há `.nvmrc`: qualquer
+versão que atenda serve.
+
 ```bash
 # 1. Clone o repositório
 git clone https://github.com/https-shini/NewPortfolio.git
 cd NewPortfolio
 
-# 2. Instale as dependências (raiz + apps/web)
-npm run install:all
+# 2. Instale as dependências — uma chamada só, na raiz
+npm ci                 # ~16s; os workspaces cobrem apps/web junto
 
-# 3. (Opcional) Configure as variáveis de ambiente
-cp apps/web/.env.example apps/web/.env.local
-
-# 4. Inicie o servidor de desenvolvimento
-npm run dev            # http://localhost:5173
+# 3. Inicie o servidor de desenvolvimento
+npm run dev            # http://localhost:5173, abre o navegador sozinho
 ```
 
-**Build para produção:**
+**Nenhum passo de configuração é necessário.** As três variáveis `VITE_*`
+de `apps/web/.env.example` são opcionais, e o site funciona inteiro sem
+elas — só com menos: o formulário de contato não aparece (é o que
+`VITE_FORM_ENDPOINT` liga), a inscrição da newsletter abre um e-mail
+pronto em vez de enviar direto, e a canônica assume `https://gcruz.dev.br`.
+Para mexer nisso: `cp apps/web/.env.example apps/web/.env.local`.
+
+**Build e prévia de produção:**
 
 ```bash
 npm run build          # type-check + build otimizado em apps/web/dist
-npm run preview        # prévia local do build (porta 4173)
+npm run preview        # http://localhost:4173 — serve o dist/
 ```
+
+### Três coisas que economizam tempo de quem roda
+
+**A porta 5173 é `strictPort`.** Se já houver algo nela, o Vite **falha**
+em vez de subir na 5174 — e a mensagem não diz que foi isso. É
+deliberado: porta que muda sozinha quebra as auditorias, que esperam
+endereço fixo. Libere a porta, ou rode
+`npm run dev --workspace apps/web -- --port 5174`.
+
+**O contador de commits mostra `1000+` em dev, e está certo.** O número
+real vem de `/api/github-stats`, que é função serverless da Vercel e não
+existe no `vite dev` — o caminho cai no fallback de SPA e devolve o HTML
+da home com status 200, o `.json()` falha, e o `useGithubStats` aplica o
+valor de reserva sem mostrar erro a ninguém. É o contrato do hook
+funcionando, não defeito.
+
+**`dev` e `preview` servem a mesma estrutura, e é raro.** Este projeto
+entrega **um documento HTML por rota** (`ROTAS_HTML` em
+`apps/web/vite.config.ts`), e os derivados nascem quando o servidor sobe
+— então `/contato` em dev já vem de `contato.html`, com o seu próprio
+`<title>` e a sua própria entrada, igual à Vercel. Use `dev` para mexer,
+com HMR; use `preview` quando quiser conferir o artefato real — bundle
+dividido, hashes, CSP.
 
 ---
 
