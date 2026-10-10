@@ -75,6 +75,17 @@ const QUALIDADE = 0.8;
 const RECEITA = [
     { fonte: "hero.webp", larguras: [300, 420, 600, 960] },
     { fonte: "avatar.webp", larguras: [480, 620, 760] },
+    /* A screenshot do primeiro slide do Destaque. A fonte tem 1600px e
+       pesa 17,7 KiB; medido no navegador, o slide exibe de 355px (390px de
+       viewport) a 958px (1024px de viewport), passando por 602px no
+       desktop de 1366 e 1920.
+       1440 é a largura que cobre o desktop a 2× (precisa de 1204) e o
+       tablet de 768 a 2× (1420) sem sobra inútil, por 11,7 KiB — 6,0 a
+       menos. Não desce de 1440: a 1200 já deixa o tablet de 768 curto, e a
+       960 deixa o desktop a 2× visivelmente mole.
+       O caso de 1024px a 2× pede 1916 e NÃO é coberto — nem era pelos 1600
+       de antes. Resolver aquele exigiria `srcset`, que muda a marcação. */
+    { fonte: "authservice/login.webp", larguras: [1440] },
 ];
 
 function acharChromium() {
@@ -92,8 +103,11 @@ function acharChromium() {
     return undefined;
 }
 
+/* O basename, e não o caminho: `authservice/login.webp` vira
+   `login-1200.webp`, plano em `gerado/` como os outros derivados — sem
+   precisar criar subdiretório na saída. */
 const nomeDe = (fonte, largura) =>
-    `${fonte.replace(/\.webp$/, "")}-${largura}.webp`;
+    `${fonte.replace(/^.*\//, "").replace(/\.webp$/, "")}-${largura}.webp`;
 
 const esperados = RECEITA.flatMap(({ fonte, larguras }) =>
     larguras.map((l) => nomeDe(fonte, l)),

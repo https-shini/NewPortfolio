@@ -5,7 +5,10 @@
 
 import type { SkillIconId } from "@/shared/config/skillIcons";
 import { PROJECT_URLS } from "@/shared/config/links";
-import loginImg from "@/assets/authservice/login.webp";
+/* A variante de 1440px, e não a fonte de 1600: o slide exibe no máximo
+   958px (viewport de 1024), então 1600 era sobra. Ver a receita em
+   scripts/imagens.mjs. O `loading` e a ordem de carregamento não mudam. */
+import loginImg from "@/assets/gerado/login-1440.webp";
 import cadastroImg from "@/assets/authservice/cadastro.webp";
 import homeImg from "@/assets/authservice/home.webp";
 import statusImg from "@/assets/authservice/status.webp";
