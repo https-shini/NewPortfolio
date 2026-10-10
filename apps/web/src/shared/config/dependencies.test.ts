@@ -42,14 +42,23 @@ const FIXADAS: Record<string, { versao: string; porque: string }> = {
     "@vercel/og": {
         versao: "1.0.1",
         porque:
-            "1.0.1 é a única versão sem vulnerabilidade conhecida em produção. " +
             "A 0.11.1 traz sharp 0.34.5, com duas ALTAS herdadas de libvips e " +
-            "libheif. A 1.0.2 e a 1.0.3 corrigem isso (sharp ^0.35.3 → 0.35.4) " +
-            "mas sobem o satori para 0.33.x, que depende de fflate 0.7.3 e " +
-            "reintroduz três MODERADAS. A 1.0.1 usa satori 0.29.0, que não " +
-            "depende de fflate, e a mesma sharp corrigida: npm audit --omit=dev " +
-            "devolve zero. Quando o satori 0.33.x soltar o fflate corrigido, " +
-            "este alfinete sai e a faixa volta a ser ^1.0.x.",
+            "libheif — e é por ela que este alfinete nasceu. " +
+            "O motivo original de não subir para 1.0.3 era o satori 0.33.x, " +
+            "que depende de fflate 0.7.3 e reintroduzia três MODERADAS. ISSO " +
+            "DEIXOU DE VALER: o fflate não tem advisory nenhum hoje, então a " +
+            "1.0.3 está liberada. A 1.0.1 continua sendo a escolha por ser a " +
+            "mudança menor — ela e a 1.0.3 declaram a MESMA faixa de sharp " +
+            "(optionalDependency ^0.35.3), então subir a og move satori e " +
+            "fflate sem resolver nada que a faixa já não resolva. " +
+            "O CVE-2026-96889 (ALTA, librsvg via sharp <0.35.5) foi fechado " +
+            "subindo só o sharp para 0.35.5 DENTRO da faixa ^0.35.3, no " +
+            "lockfile: package.json intacto, og em 1.0.1, satori em 0.29.0. " +
+            "npm audit --omit=dev devolve zero. " +
+            "Nota de alcance: api/og.ts monta uma árvore de divs e texto e não " +
+            "passa imagem nenhuma ao ImageResponse, então o decodificador de " +
+            "SVG do librsvg não é alimentado por este uso — o que baixa a " +
+            "urgência, não a obrigação de manter a porta verde.",
     },
 };
 
