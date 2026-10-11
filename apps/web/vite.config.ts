@@ -429,20 +429,33 @@ export default defineConfig({
         target: "es2020",
         minify: "esbuild",
 
-        /* Nenhum ativo embutido como base64, e isto é medido.
+        /* O inline desligado para SVG, e SÓ para ele.
            Os 34 SVGs de `assets/skills/` têm de 824 a 3.389 bytes — todos
            abaixo do limite padrão de 4096 —, então o Vite os transformava em
-           `data:image/svg+xml;base64` DENTRO do JS: antes desta linha não
+           `data:image/svg+xml,` DENTRO do JS: houve um momento em que não
            havia um único `.svg` em `dist/assets/`. Com 32 ícones a mais na
            home, isso entraria no bundle de entrada e estouraria o teto do
-           documento, que tem 15 KB de folga.
+           documento, que tem ~13 KB de folga.
+
+           Nota de medição: SVG embutido pelo Vite é URL-encoded, NÃO base64.
+           Procurar `;base64` devolve zero esteja embutido ou não — é métrica
+           vazia, e eu já a usei por engano como prova. O que serve é contar
+           os arquivos `.svg` em `dist/assets/img/` (34 como arquivo, 0 se
+           embutidos) ou procurar `data:image/svg+xml` sem o `;base64`.
            Como arquivo, o SVG sai da conta: `scripts/bundle-budget.mjs` mede
            o que o documento REFERENCIA — entrada, modulepreload e folhas —, e
            imagem não está nessa lista. É a mesma armadilha que o cabeçalho de
            `scripts/imagens.mjs` registra de uma tentativa com `sharp`: as
            variantes ficaram abaixo do limite, viraram base64 e estouraram o
-           orçamento sem economizar um byte. */
-        assetsInlineLimit: 0,
+           orçamento sem economizar um byte.
+
+           Isto já foi `0` — global, para todo ativo. A função devolve `false`
+           só para `.svg` e `undefined` para o resto, que é o jeito de dizer
+           "volte ao padrão": assim o limite de 4096 continua valendo para
+           qualquer outro arquivo pequeno, onde embutir de fato economiza uma
+           requisição. `undefined` e não `true`, que forçaria o inline. */
+        assetsInlineLimit: (filePath) =>
+            filePath.endsWith(".svg") ? false : undefined,
 
         cssCodeSplit: true,
 
