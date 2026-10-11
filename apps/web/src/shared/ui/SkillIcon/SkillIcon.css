@@ -23,7 +23,35 @@
     flex: none;
 }
 
-/* ── Escuro: o padrão ───────────────────────────────────────────────── */
+/* ── Por que as DUAS regras são prefixadas por :root[data-theme] ──────
+   Especificidade, e isto foi medido no navegador.
+
+   A primeira versão escondia o claro com `.skill-icon--light { display:
+   none }`, confiando no escuro como padrão. Especificidade (0,1,0) — e
+   três widgets declaram `display: block` em seletores (0,1,1):
+
+     .featured__tech-chip img          Featured.css:769
+     .formation-card__tech-icon img    FormationCard.css:340
+     .about__tech-item img             About.css:611
+
+   (0,1,1) vence (0,1,0), então no TEMA ESCURO as duas variantes do par
+   ficavam visíveis ao mesmo tempo — 41 ícones na home em vez de 33. No
+   claro não aparecia, porque lá quem esconde é a regra prefixada, que já
+   era (0,2,0) e vencia. Foi assim que o defeito passou pela conferência
+   anterior: ela mediu logo depois de um toggle que deixou a página clara.
+
+   Prefixando as duas, ambas ficam em (0,2,0) e nenhum `display` de widget
+   as alcança. O `data-theme` está no <html> antes da primeira pintura — o
+   script inline do index.html o escreve —, então não há quadro sem tema.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* ── Escuro ─────────────────────────────────────────────────────────── */
+:root[data-theme="dark"] .skill-icon--light {
+    display: none;
+}
+
+/* Piso para o caso improvável de `data-theme` ausente: sem ele, o par
+   apareceria dobrado. Fica depois da regra do escuro e antes das do claro. */
 .skill-icon--light {
     display: none;
 }
