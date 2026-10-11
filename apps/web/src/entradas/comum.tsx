@@ -18,6 +18,27 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+/* ── A JetBrains Mono, servida do próprio domínio ────────────────────
+   Antes vinha do Google Fonts por <link> no index.html. Agora é npm:
+   quatro pesos (os mesmos que aquele link pedia), subconjunto `latin`,
+   WOFF2, `font-display: swap` — que o @fontsource já declara no arquivo.
+
+   `latin-NNN.css` e não `NNN.css`: o genérico traz seis @font-face (latin,
+   latin-ext, cyrillic, cyrillic-ext, greek, vietnamese). O `unicode-range`
+   impediria o download dos não usados, mas o CSS deles viajaria à toa, e
+   `latin` cobre o português inteiro — os acentos de ã, ç, õ e companhia
+   estão no Latin-1 Supplement.
+
+   Antes destes imports, de propósito: o @font-face precisa estar
+   declarado quando os tokens que referenciam a família forem aplicados.
+
+   As outras duas famílias (Cabinet Grotesk e General Sans) continuam
+   remotas, no Fontshare — ver o comentário no index.html. */
+import "@fontsource/jetbrains-mono/latin-400.css";
+import "@fontsource/jetbrains-mono/latin-500.css";
+import "@fontsource/jetbrains-mono/latin-600.css";
+import "@fontsource/jetbrains-mono/latin-700.css";
+
 /* Ordem obrigatória: primitivos e semânticos, reset e utilitários, e por
    último os ajustes de tema claro por seção. */
 import "@/shared/styles/tokens.css";

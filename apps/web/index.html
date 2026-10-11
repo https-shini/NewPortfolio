@@ -65,19 +65,34 @@
           onload devolve para `all` assim que chega. O <noscript> cobre quem
           não roda JavaScript, e aí bloquear é o comportamento correto.
 
-          A troca de fonte aparece — mas já aparecia: as três famílias usam
+          A troca de fonte aparece — mas já aparecia: as famílias usam
           `display=swap` e todas têm pilha de sistema em tokens.css. A escolha
           é entre ver o texto na fonte de sistema por um instante ou não ver
           texto nenhum.
+
+          ── Sobrou só o Fontshare, e por quê ──────────────────────────
+          A JetBrains Mono saiu daqui: virou `@fontsource/jetbrains-mono`,
+          importado em `entradas/comum.tsx`, servido do próprio domínio. Com
+          ela foram os dois preconnect do Google e as entradas dele na CSP.
+
+          Cabinet Grotesk e General Sans continuam remotas porque NÃO HÁ
+          pacote npm delas (não existe `@fontsource/cabinet-grotesk` nem
+          `@fontsource/general-sans` no registro) e porque o host do Fontshare
+          não responde do ambiente onde esta mudança foi feita — nem o CDN,
+          nem a página de licença. Trazê-las exige baixar os WOFF2 e conferir
+          que a licença ITF permite autoalojar; as duas coisas ficam para
+          quem tiver rede até lá.
+
+          Consequência que vale saber: a fonte do HERO é a Cabinet Grotesk,
+          então o elemento de LCP continua dependendo de terceiro.
         -->
-        <!-- Sem `crossorigin`: este host serve a FOLHA, buscada por um
-          <link rel="stylesheet"> comum, que não é requisição CORS. Um
+        <!-- Sem `crossorigin` no primeiro: este host serve a FOLHA, buscada
+          por um <link rel="stylesheet"> comum, que não é requisição CORS. Um
           preconnect com o atributo abre a conexão em modo CORS, que a folha
           não reaproveita — o navegador abre uma segunda para o mesmo host e o
-          Lighthouse marca a primeira como "pré-conexão não usada". O par do
-          Google logo abaixo sempre esteve certo: googleapis (CSS) sem o
-          atributo, gstatic (fontes) com ele. Aqui o `crossorigin` do host de
-          fontes tinha sido copiado para o host de CSS. -->
+          Lighthouse marca a primeira como "pré-conexão não usada". O segundo
+          serve os arquivos de fonte, que SÃO CORS, e por isso leva o
+          atributo. -->
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
         <link
@@ -86,21 +101,9 @@
             media="print"
             onload="this.media = 'all'"
         />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
-            media="print"
-            onload="this.media = 'all'"
-        />
         <noscript>
             <link
                 href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,600,700&f[]=general-sans@400,500,600&display=swap"
-                rel="stylesheet"
-            />
-            <link
-                href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
                 rel="stylesheet"
             />
         </noscript>
