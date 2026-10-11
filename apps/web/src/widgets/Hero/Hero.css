@@ -46,7 +46,8 @@
     gap: clamp(var(--space-4), 2vw, var(--space-6));
     max-width: 650px;
     padding-block: var(--space-4);
-    animation: hero-content-fade 0.8s ease 0.2s both;
+    /* Só `transform`, e isto foi medido. Ver as keyframes abaixo. */
+    animation: hero-content-rise 0.8s ease 0.2s both;
     margin-bottom: 10px;
 }
 
@@ -60,13 +61,33 @@
     opacity: 0.4;
 }
 
-@keyframes hero-content-fade {
+/* ── Por que esta animação não tem mais `opacity` ────────────────────
+   Ela ia de `opacity: 0` a `1`, com `both` e 0,2s de atraso — então o
+   `.hero__content`, que contém o `.hero__headline`, ficava INVISÍVEL nos
+   primeiros 200ms e só terminava de aparecer em 1,0s. O headline é o
+   elemento de LCP da página, e o LCP só conta quando o conteúdo pinta.
+
+   Atribuído por ablação, no build de produção, mediana de 7 por cenário:
+
+     base                        LCP 1068 (1016–1100, amplitude  84)
+     sem a animação              LCP  804 ( 772– 888, amplitude 116)
+     só transform                LCP  808 ( 616– 848, amplitude 232)
+
+   −264ms contra amplitudes de 84 a 232: muito acima do ruído. E tirar só
+   a `opacity` recupera praticamente tudo o que tirar a animação inteira
+   recuperaria — 808 contra 804. A opacidade era o problema completo.
+
+   O estado FINAL é idêntico: `translateY(0)` e opacidade plena, que é o
+   que já era. O que mudou é a entrada, que agora desliza sem surgir do
+   nada. `transform` não participa do layout, então o deslocamento durante
+   os 0,2s de atraso não gera CLS — conferido em 0.
+
+   O nome deixou de ser `-fade` porque não há mais fade. */
+@keyframes hero-content-rise {
     from {
-        opacity: 0;
         transform: translateY(16px);
     }
     to {
-        opacity: 1;
         transform: translateY(0);
     }
 }
@@ -560,6 +581,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    /* O deslize de entrada também é movimento. Antes a regra não o
+       cobria porque a animação de então era sobretudo um fade; agora que
+       ela é só translação, desligá-la aqui é o que a preferência pede. */
+    .hero__content {
+        animation: none;
+    }
+
     .hero__role {
         animation: none;
         background-size: 100% 100%;
