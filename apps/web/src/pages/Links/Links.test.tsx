@@ -2,8 +2,10 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
-import { LangProvider } from "@/app/LangContext";
-import { RouterProvider } from "@/app/RouterContext";
+/* A árvore inteira, e não dois providers à mão: foi o que fez estes
+   arquivos reprovarem quando o ThemeProvider entrou. O `Providers` é o
+   mesmo que o App monta, então um provider novo não quebra isto de novo. */
+import { Providers } from "@/app/providers";
 import { LinksPage } from "./index";
 import { PROFILE } from "@/shared/config/profile";
 import { PRIMARY_LINKS } from "@/shared/config/links";
@@ -20,11 +22,9 @@ import { ROUTES } from "@/shared/config/routes";
 const setup = () => {
     localStorage.setItem("portfolio-lang", "pt");
     return render(
-        <RouterProvider>
-            <LangProvider>
-                <LinksPage />
-            </LangProvider>
-        </RouterProvider>,
+        <Providers>
+            <LinksPage />
+        </Providers>,
     );
 };
 

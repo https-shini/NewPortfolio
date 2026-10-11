@@ -1,8 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import React from "react";
-import { LangProvider } from "@/app/LangContext";
-import { RouterProvider } from "@/app/RouterContext";
+/* A árvore inteira, e não dois providers à mão: foi o que fez estes
+   arquivos reprovarem quando o ThemeProvider entrou. O `Providers` é o
+   mesmo que o App monta, então um provider novo não quebra isto de novo. */
+import { Providers } from "@/app/providers";
 import { ReleaseNotePage } from "./index";
 import { PROFILE } from "@/shared/config/profile";
 import { RELEASE_NOTES } from "@/shared/config/releaseNotes";
@@ -15,11 +17,9 @@ const setup = (version: string) => {
     window.history.replaceState({}, "", releaseNotePath(version));
 
     return render(
-        <RouterProvider>
-            <LangProvider>
-                <ReleaseNotePage version={version} />
-            </LangProvider>
-        </RouterProvider>,
+        <Providers>
+            <ReleaseNotePage version={version} />
+        </Providers>,
     );
 };
 
