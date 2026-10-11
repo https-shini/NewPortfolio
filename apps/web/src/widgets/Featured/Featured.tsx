@@ -26,6 +26,9 @@ import {
     FEATURED_PROJECT,
     METHOD_COLOR,
     type HttpMethod,
+    SLIDE_SIZES,
+    SLIDE_W,
+    SLIDE_H,
 } from "./Featured.data";
 /* Lightbox só abre sob clique — carregado sob demanda para ficar
    fora do bundle inicial (JS + CSS). */
@@ -296,6 +299,10 @@ export const Featured: React.FC = () => {
                                         >
                                             <img
                                                 src={slide.src}
+                                                srcSet={slide.srcSet}
+                                                sizes={SLIDE_SIZES}
+                                                width={SLIDE_W}
+                                                height={SLIDE_H}
                                                 alt={`${project.name} — ${slide.label[lang]}`}
                                                 className="featured__slide-img"
                                                 loading={

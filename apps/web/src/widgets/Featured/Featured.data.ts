@@ -5,13 +5,76 @@
 
 import type { SkillIconId } from "@/shared/config/skillIcons";
 import { PROJECT_URLS } from "@/shared/config/links";
-/* A variante de 1440px, e não a fonte de 1600: o slide exibe no máximo
-   958px (viewport de 1024), então 1600 era sobra. Ver a receita em
-   scripts/imagens.mjs. O `loading` e a ordem de carregamento não mudam. */
-import loginImg from "@/assets/gerado/login-1440.webp";
-import cadastroImg from "@/assets/authservice/cadastro.webp";
-import homeImg from "@/assets/authservice/home.webp";
-import statusImg from "@/assets/authservice/status.webp";
+/* ── As cinco variantes de cada slide, para o `srcset` ───────────────
+   Geradas por `scripts/imagens.mjs`, que documenta a escolha das larguras.
+   Medido no navegador: o slide exibe de 326px (viewport 360) a 958px
+   (viewport 1024) e trava em 602px acima de 1200 — a virada está no
+   `@media (min-width: 1025px)` do Featured.css.
+
+   As fontes têm 1600x900; a maior variante é 1920 para cobrir 958 a 2x
+   (1916). O `src` aponta para a de 1440 como reserva de quem não entende
+   `srcset`. */
+import login400 from "@/assets/gerado/login-400.webp";
+import login720 from "@/assets/gerado/login-720.webp";
+import login1024 from "@/assets/gerado/login-1024.webp";
+import login1440 from "@/assets/gerado/login-1440.webp";
+import login1920 from "@/assets/gerado/login-1920.webp";
+import cadastro400 from "@/assets/gerado/cadastro-400.webp";
+import cadastro720 from "@/assets/gerado/cadastro-720.webp";
+import cadastro1024 from "@/assets/gerado/cadastro-1024.webp";
+import cadastro1440 from "@/assets/gerado/cadastro-1440.webp";
+import cadastro1920 from "@/assets/gerado/cadastro-1920.webp";
+import home400 from "@/assets/gerado/home-400.webp";
+import home720 from "@/assets/gerado/home-720.webp";
+import home1024 from "@/assets/gerado/home-1024.webp";
+import home1440 from "@/assets/gerado/home-1440.webp";
+import home1920 from "@/assets/gerado/home-1920.webp";
+import status400 from "@/assets/gerado/status-400.webp";
+import status720 from "@/assets/gerado/status-720.webp";
+import status1024 from "@/assets/gerado/status-1024.webp";
+import status1440 from "@/assets/gerado/status-1440.webp";
+import status1920 from "@/assets/gerado/status-1920.webp";
+
+/** Monta o `srcset` a partir das cinco variantes, na ordem das larguras. */
+const jogo = (...urls: readonly string[]): string =>
+    urls.map((u, i) => `${u} ${[400, 720, 1024, 1440, 1920][i]}w`).join(", ");
+
+const SRCSET = {
+    login: jogo(login400, login720, login1024, login1440, login1920),
+    cadastro: jogo(
+        cadastro400,
+        cadastro720,
+        cadastro1024,
+        cadastro1440,
+        cadastro1920,
+    ),
+    home: jogo(home400, home720, home1024, home1440, home1920),
+    status: jogo(status400, status720, status1024, status1440, status1920),
+} as const;
+
+/**
+ * `sizes` — a largura de exibição, conforme medida.
+ *
+ *   <= 1024px    92vw   (326 a 958px, conferido de 360 a 1024)
+ *   <= 1250px    50vw   (548 em 1100, 602 em 1200)
+ *   acima       602px   (travado, de 1280 a 1920)
+ *
+ * Sem isto o navegador assume 100vw e escolhe sempre a variante maior —
+ * que é exatamente o que acontecia antes.
+ *
+ * 92vw e não 94: as medições deram 91vw a 360 e 390, 92vw de 480 a 768,
+ * 93vw a 900 e 94vw a 1024. Com 94 o cálculo em 768 dava 1444px e o
+ * navegador subia para a variante de 1920 onde a de 1440 bastava — 17,1 KB
+ * em vez de 11,7. Com 92, 768 cai em 1440 e 1024 continua em 1920, porque
+ * 92vw de 1024 são 942px, que a 2x pedem 1884 e ainda passam de 1440.
+ * Subestimar um pouco é o lado seguro: a variante seguinte cobre.
+ */
+export const SLIDE_SIZES =
+    "(max-width: 1024px) 92vw, (max-width: 1250px) 50vw, 602px";
+
+/** As dimensões intrínsecas das quatro fontes, para a proporção 16:9. */
+export const SLIDE_W = 1600;
+export const SLIDE_H = 900;
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
@@ -35,7 +98,9 @@ export interface ProjectTech {
 }
 
 export interface ProjectSlide {
-    src: string; // image URL
+    src: string; // reserva para quem não entende srcset
+    /** As cinco variantes com descritor `w` — ver SRCSET acima. */
+    srcSet: string;
     label: { pt: string; en: string };
     sub: { pt: string; en: string };
     /** Descrição rica para exibir no lightbox (texto contextual) */
@@ -120,7 +185,8 @@ export const FEATURED_PROJECT = {
 
     slides: [
         {
-            src: loginImg,
+            src: login1440,
+            srcSet: SRCSET.login,
             label: { pt: "Tela de Login", en: "Login Screen" },
             sub: { pt: "Autenticação JWT", en: "JWT Authentication" },
             description: {
@@ -129,7 +195,8 @@ export const FEATURED_PROJECT = {
             },
         },
         {
-            src: cadastroImg,
+            src: cadastro1440,
+            srcSet: SRCSET.cadastro,
             label: { pt: "Cadastro", en: "Registration" },
             sub: {
                 pt: "Medidor de força de senha",
@@ -141,7 +208,8 @@ export const FEATURED_PROJECT = {
             },
         },
         {
-            src: homeImg,
+            src: home1440,
+            srcSet: SRCSET.home,
             label: { pt: "Dashboard", en: "Dashboard" },
             sub: { pt: "Perfil + token JWT", en: "Profile + JWT token" },
             description: {
@@ -150,7 +218,8 @@ export const FEATURED_PROJECT = {
             },
         },
         {
-            src: statusImg,
+            src: status1440,
+            srcSet: SRCSET.status,
             label: { pt: "Monitor da API", en: "API Monitor" },
             sub: {
                 pt: "Status, latência e logs",

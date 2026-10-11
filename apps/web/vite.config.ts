@@ -450,12 +450,30 @@ export default defineConfig({
            orçamento sem economizar um byte.
 
            Isto já foi `0` — global, para todo ativo. A função devolve `false`
-           só para `.svg` e `undefined` para o resto, que é o jeito de dizer
-           "volte ao padrão": assim o limite de 4096 continua valendo para
-           qualquer outro arquivo pequeno, onde embutir de fato economiza uma
-           requisição. `undefined` e não `true`, que forçaria o inline. */
+           para o que não deve ser embutido NUNCA e `undefined` para o resto,
+           que é o jeito de dizer "volte ao padrão": assim o limite de 4096
+           continua valendo para qualquer outro arquivo pequeno, onde embutir
+           de fato economiza uma requisição. `undefined` e não `true`, que
+           forçaria o inline.
+
+           Duas exclusões, cada uma por um motivo medido:
+
+           · `.svg` — os 34 ícones de skill (ver acima).
+
+           · `assets/gerado/` — as variantes de `scripts/imagens.mjs`. Elas
+             existem PARA SER arquivos separados: é o `srcset` que escolhe
+             qual baixar, e embutir uma no JS faz todo visitante pagar por
+             ela mesmo sem usá-la. As de 400px têm de 1.572 a 3.380 bytes e
+             caíam abaixo do limite: ao acrescentá-las para o srcset do
+             Destaque, quatro foram embutidas e o `index.html` passou de
+             112,7 para 131,0 KB gzip — 5,0 acima do teto de 126. O
+             cabeçalho de `scripts/imagens.mjs` já registrava essa mesma
+             armadilha de uma tentativa com `sharp`; ela voltou por outro
+             caminho. */
         assetsInlineLimit: (filePath) =>
-            filePath.endsWith(".svg") ? false : undefined,
+            filePath.endsWith(".svg") || filePath.includes("/gerado/")
+                ? false
+                : undefined,
 
         cssCodeSplit: true,
 

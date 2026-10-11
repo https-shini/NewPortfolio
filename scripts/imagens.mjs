@@ -75,17 +75,26 @@ const QUALIDADE = 0.8;
 const RECEITA = [
     { fonte: "hero.webp", larguras: [300, 420, 600, 960] },
     { fonte: "avatar.webp", larguras: [480, 620, 760] },
-    /* A screenshot do primeiro slide do Destaque. A fonte tem 1600px e
-       pesa 17,7 KiB; medido no navegador, o slide exibe de 355px (390px de
-       viewport) a 958px (1024px de viewport), passando por 602px no
-       desktop de 1366 e 1920.
-       1440 é a largura que cobre o desktop a 2× (precisa de 1204) e o
-       tablet de 768 a 2× (1420) sem sobra inútil, por 11,7 KiB — 6,0 a
-       menos. Não desce de 1440: a 1200 já deixa o tablet de 768 curto, e a
-       960 deixa o desktop a 2× visivelmente mole.
-       O caso de 1024px a 2× pede 1916 e NÃO é coberto — nem era pelos 1600
-       de antes. Resolver aquele exigiria `srcset`, que muda a marcação. */
-    { fonte: "authservice/login.webp", larguras: [1440] },
+    /* As quatro screenshots do carrossel do Destaque, para `srcset`.
+       Medido no navegador, o slide exibe 355px (viewport 390), 602px (1366
+       e 1920), 710px (768) e 958px (1024). Com 1x e 2x, os alvos reais
+       são 355, 602, 710, 958, 1204, 1420 e 1916.
+
+       Estas cinco larguras cobrem cada um deles pela de cima, que é o
+       critério do cabeçalho:
+
+         355@1x -> 400      710@2x -> 1440
+         602@1x -> 720      602@2x -> 1440
+         710@1x -> 720      958@2x -> 1920
+         958@1x -> 1024     355@2x ->  720
+
+       1024 e não 960 porque 958 passaria raspando; 1440 cobre 1204 e 1420
+       de uma vez, e acrescentar um passo entre os dois renderia poucos KB
+       por quatro arquivos a mais no repositório. */
+    ...["login", "cadastro", "home", "status"].map((n) => ({
+        fonte: `authservice/${n}.webp`,
+        larguras: [400, 720, 1024, 1440, 1920],
+    })),
 ];
 
 function acharChromium() {
