@@ -1,44 +1,47 @@
 # Ícones de tecnologia (skill-icons)
 
-Os SVGs deste diretório vêm de **skill-icons**, de tandpfun —
-https://github.com/tandpfun/skill-icons — licença MIT
-(Copyright © 2022 tandpfun), obtidos pela fork
-https://github.com/https-shini/skill-icons.
+**Todos os 34 SVGs deste diretório vêm da fork
+https://github.com/https-shini/skill-icons** — fork de **skill-icons**, de
+tandpfun (https://github.com/tandpfun/skill-icons), licença MIT
+(Copyright © 2022 tandpfun).
 
 **Os logotipos pertencem aos respectivos donos.** A licença MIT cobre o
 empacotamento em SVG, não as marcas representadas.
 
+Conferido por SHA-256, arquivo por arquivo: **34 de 34 são byte-idênticos** aos
+do diretório `icons/` da fork. Não há ícone local sem origem na fork, e nenhum
+arquivo aqui deve ser editado à mão — atualizar é copiar da fork por cima.
+
 ## Por que os nomes são os da fork
 
 `NodeJS-Dark.svg` e não `nodejs-dark.svg`: o nome é o mesmo do diretório
-`icons/` da fork, então atualizar um ícone é copiar o arquivo por cima, sem
-traduzir nome nenhum. Os dez arquivos que já estavam aqui em minúsculas foram
-renomeados para esta convenção — e os oito que vinham da fork eram
-**byte-idênticos** aos de lá, conferido por SHA-256, então a renomeação não
-trocou um pixel.
+`icons/` da fork, então atualizar é cópia direta, sem traduzir nome nenhum.
 
 ## Os 21 ícones em uso
 
-Com variante por tema (par `-Dark` / `-Light`), 12:
+Com variante por tema (par `-Dark` / `-Light`), 13:
 
 `Bash` · `Figma` · `Firebase` · `Java` · `Linux` · `MySQL` · `NodeJS` ·
-`PHP` · `Python` · `React` · `Vite` · `VSCode`
+`PHP` · `Python` · `React` · `SQL` · `Vite` · `VSCode`
 
 Arquivo único — logotipo com fundo de marca próprio, igual nos dois temas, 8:
 
 `CSS` · `Docker` · `FastAPI` · `Git` · `HTML` · `JavaScript` · `Oracle` · `Sass`
 
-Mais `SQL`, abaixo. O mapeamento ID → arquivo é
-`src/shared/config/skillIcons.ts`, e quem renderiza é `src/shared/ui/SkillIcon`.
+O mapeamento ID → arquivo é `src/shared/config/skillIcons.ts`, e quem renderiza
+é `src/shared/ui/SkillIcon`, que emite os dois `<img>` do par e deixa o CSS
+escolher pelo `data-theme`.
 
-## As duas exceções
+## Duas notas de história, para ninguém refazer o caminho errado
 
-**`SQL-Dark.svg` / `SQL-Light.svg` não vêm da fork.** Ela não possui um ícone
-"SQL" genérico — só SQLite, MySQL e PostgreSQL. Estes dois foram criados neste
-projeto seguindo o mesmo modelo (256×256, `rect rx="60"`, glifo no bloco
-central). Não os sobrescreva ao atualizar da fork.
+**O `SQL` já foi local, e não é mais.** Houve aqui um `sql-dark.svg` /
+`sql-light.svg` de 824 bytes, feito neste projeto porque uma verificação não
+achou `SQL.svg` na fork. **A verificação estava errada**: a fork tem o ícone
+como par temático, `SQL-Dark.svg` e `SQL-Light.svg` — só não como arquivo
+único. Os dois foram substituídos pelos da fork (1192 e 1213 bytes), que são um
+desenho diferente do que havia aqui.
 
-**`Oracle.svg` existe só na fork.** O upstream não o tem (404), e é por isso
-que ele era uma imagem quebrada enquanto os ícones vinham de `skillicons.dev`:
-aquele domínio nunca o serviu. Foi a tipagem fechada de `SkillIconId` que
-expôs o problema.
+**O `Oracle` existe só na fork.** O upstream não o tem (404), e é por isso que
+ele era imagem quebrada enquanto os ícones vinham de `skillicons.dev`: aquele
+domínio nunca o serviu. Foi a tipagem fechada de `SkillIconId` que expôs o
+problema.
