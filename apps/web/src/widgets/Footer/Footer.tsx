@@ -100,6 +100,11 @@ function rotuloSocial(nome: string, href: string, lang: "pt" | "en"): string {
    de fora: ela já é o logo da coluna Brand e a primeira âncora. */
 const PAGE_ITEMS: PageItem[] = [
     { to: ROUTES.LINKS, key: "nav.links" },
+    /* A âncora `#contato` desta mesma lista social continua existindo e
+       continua levando à seção da home. Esta entrada é o endereço próprio,
+       e as duas coexistem de propósito: na home, rolar até a seção é melhor
+       que trocar de documento; de fora dela, a página é o destino direto. */
+    { to: ROUTES.CONTACT, key: "nav.contact" },
     { to: ROUTES.RELEASE_NOTES, key: "releaseNotes.title" },
 ];
 
@@ -116,11 +121,6 @@ const PROJECT_ITEMS: ProjectItem[] = [
     {
         label: "Controle Financeiro",
         href: PROJECT_URLS.finances.live,
-        external: true,
-    },
-    {
-        label: "HomeMade Gourmet",
-        href: PROJECT_URLS.homemadeGourmet.live,
         external: true,
     },
 ];
@@ -280,14 +280,14 @@ const FooterContact = memo<FooterContactProps>(
                 </span>
 
                 {/* CTA compacto de e-mail */}
-                <ProfileLink
+                <a
                     href={mailtoHref}
                     className="footer__contact-cta btn btn--primary btn--sm"
                     aria-label={`${ctaLabel} — ${AUTHOR_EMAIL}`}
                 >
                     <IconGmail width={14} height={14} />
                     <span>{ctaLabel}</span>
-                </ProfileLink>
+                </a>
             </address>
 
             {/* Fica fora do <address>: uma caixa de inscrição não é dado
