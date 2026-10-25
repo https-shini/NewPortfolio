@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- ── SEO primário ─────────────────────────────────────────── -->
+        <title>Codex — Code Validator | Guilherme Cruz</title>
+        <meta
+            name="description"
+            content="Conheça o TCC Codex: análise estática e revisão por IA para avaliar a qualidade de repositórios do GitHub."
+        />
+        <meta name="author" content="Guilherme Cruz" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="__SITE_URL__/projects/codex/readme.html" />
+
+        <!-- Notas de versão em Atom; leitores de feed descobrem por aqui. -->
+        <link
+            rel="alternate"
+            type="application/atom+xml"
+            title="Notas de versão"
+            href="__SITE_URL__/feed.xml"
+        />
+
+        <!-- ── Open Graph ───────────────────────────────────────────── -->
+        <meta property="og:type" content="website" />
+        <meta
+            property="og:url"
+            content="__SITE_URL__/projects/codex/readme.html"
+        />
+        <meta property="og:site_name" content="Guilherme Cruz — Portfolio" />
+        <meta property="og:locale" content="pt_BR" />
+        <meta property="og:locale:alternate" content="en_US" />
+        <meta
+            property="og:title"
+            content="Codex — Code Validator | Guilherme Cruz"
+        />
+        <meta
+            property="og:description"
+            content="TCC que integra análise estática e revisão por IA para avaliar repositórios do GitHub e orientar melhorias no código."
+        />
+        <meta
+            property="og:image"
+            content="__SITE_URL__/projects/codex/overview.webp"
+        />
+        <meta property="og:image:width" content="1920" />
+        <meta property="og:image:height" content="1080" />
+        <meta
+            property="og:image:alt"
+            content="Codex — Code Validator | Guilherme Cruz"
+        />
+
+        <!-- ── Twitter Cards ────────────────────────────────────────── -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+            name="twitter:title"
+            content="Codex — Code Validator | Guilherme Cruz"
+        />
+        <meta
+            name="twitter:description"
+            content="TCC que integra análise estática e revisão por IA para avaliar repositórios do GitHub e orientar melhorias no código."
+        />
+        <meta
+            name="twitter:image"
+            content="__SITE_URL__/projects/codex/overview.webp"
+        />
+
+        <meta name="theme-color" content="#040710" />
+
+        <!-- ── Favicons / PWA ───────────────────────────────────────── -->
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+
+        <!-- ── Fontes ───────────────────────────────────────────────── -->
+        <!--
+          Fora do caminho crítico, de propósito.
+
+          Como <link rel="stylesheet"> comum, estas duas folhas seguravam a
+          PRIMEIRA PINTURA até dois hosts de terceiros responderem — dois DNS,
+          dois TLS, antes de qualquer pixel. Medido: com 1,2s de atraso nos
+          CDNs, a tela ficava branca por 1.576ms; sem esperá-los, pinta em
+          400ms. O atraso do terceiro entrava um a um no tempo de tela branca.
+
+          `media="print"` faz o navegador buscar sem bloquear a pintura; o
+          onload devolve para `all` assim que chega. O <noscript> cobre quem
+          não roda JavaScript, e aí bloquear é o comportamento correto.
+
+          A troca de fonte aparece — mas já aparecia: as três famílias usam
+          `display=swap` e todas têm pilha de sistema em tokens.css. A escolha
+          é entre ver o texto na fonte de sistema por um instante ou não ver
+          texto nenhum.
+        -->
+        <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+        <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
+        <link
+            href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,600,700&f[]=general-sans@400,500,600&display=swap"
+            rel="stylesheet"
+            media="print"
+            onload="this.media = 'all'"
+        />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+            media="print"
+            onload="this.media = 'all'"
+        />
+        <noscript>
+            <link
+                href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,600,700&f[]=general-sans@400,500,600&display=swap"
+                rel="stylesheet"
+            />
+            <link
+                href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+                rel="stylesheet"
+            />
+        </noscript>
+
+        <!-- ── CDN externo usado nos ícones de tecnologia ───────────── -->
+        <link rel="preconnect" href="https://skillicons.dev" crossorigin />
+
+        <!-- ── Structured Data (JSON-LD) ────────────────────────────── -->
+
+        <!-- Tema inline — evita flash (FOUC) antes do React montar -->
+        <script>
+            (function () {
+                var saved = localStorage.getItem("portfolio-theme");
+                var dark =
+                    saved === "dark" ||
+                    (!saved &&
+                        window.matchMedia("(prefers-color-scheme: dark)")
+                            .matches);
+                var theme = dark ? "dark" : "light";
+                document.documentElement.setAttribute("data-theme", theme);
+                document.documentElement.style.colorScheme = theme;
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.body.classList.toggle("dark-mode", dark);
+                    document.body.classList.toggle("light-mode", !dark);
+                });
+            })();
+        </script>
+    </head>
+    <body class="dark-mode">
+        <div id="root"></div>
+        <noscript>
+            <main>
+                <h1>Codex — Code Validator</h1>
+                <p>
+                    Trabalho de Conclusão de Curso que integra análise estática
+                    e revisão por inteligência artificial para avaliar
+                    repositórios do GitHub.
+                </p>
+                <p>
+                    Ative o JavaScript para explorar a apresentação e a galeria.
+                </p>
+                <a href="/">Voltar ao portfólio</a>
+            </main>
+        </noscript>
+        <script type="module" src="/src/main.tsx"></script>
+    </body>
+</html>
