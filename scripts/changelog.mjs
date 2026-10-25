@@ -27,7 +27,7 @@ const raiz = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DESTINO = resolve(raiz, "CHANGELOG.md");
 
 const { RELEASE_NOTES, CHANGE_TYPES } = await import(
-    resolve(raiz, "apps/web/src/shared/config/releaseNotes.ts")
+    new URL("../apps/web/src/shared/config/releaseNotes.ts", import.meta.url).href
 );
 
 /* O vocabulário não é mais o do Keep a Changelog. Aquele padrão serve a
@@ -105,7 +105,8 @@ const conteudo = linhas.join("\n");
 
 if (process.argv.includes("--check")) {
     const atual = readFileSync(DESTINO, "utf8");
-    if (atual !== conteudo) {
+    // O checkout do Git no Windows pode usar CRLF sem mudar o conteúdo.
+    if (atual.replace(/\r\n/g, "\n") !== conteudo) {
         console.error(
             "CHANGELOG.md está dessincronizado de RELEASE_NOTES.\n" +
                 "Rode: npm run changelog",

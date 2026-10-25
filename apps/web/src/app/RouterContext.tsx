@@ -5,7 +5,7 @@ import React, {
     useEffect,
     useCallback,
 } from "react";
-import { ROUTES, type RoutePath } from "@/shared/config/routes";
+import { LANG_PARAM, ROUTES, type RoutePath } from "@/shared/config/routes";
 
 /* ─────────────────────────────────────────────────────────
    RouterContext — roteamento client-side sem dependências
@@ -65,7 +65,17 @@ export const RouterProvider: React.FC<{ children: React.ReactNode }> = ({
         const next = normalize(to);
         if (normalize(window.location.pathname) === next) return;
 
-        window.history.pushState({}, "", next);
+        // O idioma faz parte do link compartilhável também ao sair da 404.
+        const lang = new URLSearchParams(window.location.search).get(
+            LANG_PARAM,
+        );
+        const destination = new URL(next, window.location.origin);
+        if (lang) destination.searchParams.set(LANG_PARAM, lang);
+        window.history.pushState(
+            {},
+            "",
+            destination.pathname + destination.search,
+        );
         setPath(next);
 
         /* Rota nova começa do topo — o browser não faz isso em pushState. */

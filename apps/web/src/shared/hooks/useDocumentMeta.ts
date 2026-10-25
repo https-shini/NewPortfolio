@@ -20,13 +20,8 @@ export interface DocumentMeta {
     /** Pathname da rota — vira canonical e og:url absolutos. */
     path: string;
     /**
-     * Diretiva `robots` da rota. O index.html declara `index, follow` para
-     * todas as páginas, o que está certo enquanto todas têm conteúdo — mas
-     * uma página provisória indexada é conteúdo raso apontando para o
-     * domínio, e isso não fica contido nela: pesa no site inteiro.
-     *
-     * `noindex, follow` é a combinação certa nesse caso — não entre no
-     * índice, mas siga os links daqui, que levam de volta ao que interessa.
+     * Diretiva `robots` da rota (padrão: `index, follow`). Páginas de erro
+     * declaram `noindex, follow`; a navegação de recuperação restaura o padrão.
      */
     robots?: string;
 }
@@ -90,7 +85,7 @@ export function useDocumentMeta({
     title,
     description,
     path,
-    robots,
+    robots = "index, follow",
 }: DocumentMeta): void {
     useEffect(() => {
         const url = new URL(path, PROFILE.siteUrl).toString();
@@ -108,9 +103,9 @@ export function useDocumentMeta({
             upsertMeta({ name: "twitter:description" }, description),
         ];
 
-        /* Só quando a rota pede: sem isto a `robots` do index.html vale, que
-           é o comportamento correto para toda página que tem conteúdo. */
-        if (robots) restores.push(upsertMeta({ name: "robots" }, robots));
+        /* A entrada pode ser o 404.html (noindex). Uma navegação válida
+           precisa restaurar a indexação mesmo nesse documento. */
+        restores.push(upsertMeta({ name: "robots" }, robots));
 
         return () => {
             document.title = previousTitle;

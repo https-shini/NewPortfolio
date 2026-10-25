@@ -15,8 +15,6 @@
  * enquanto não há release publicada.
  */
 
-import { fileURLToPath } from "node:url";
-import { dirname, resolve } from "node:path";
 import {
     launchBrowser,
     newContext,
@@ -29,9 +27,8 @@ import {
    versão mais nova" passava só enquanto a 2.0.0 fosse o topo — publicar
    qualquer versão nova quebrava o roteiro sem que nada tivesse quebrado
    no site. Mesmo import do changelog.mjs, com --experimental-strip-types. */
-const raiz = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const { RELEASE_NOTES } = await import(
-    resolve(raiz, "apps/web/src/shared/config/releaseNotes.ts")
+    new URL("../apps/web/src/shared/config/releaseNotes.ts", import.meta.url).href
 );
 
 const [MAIS_RECENTE, ANTERIOR] = RELEASE_NOTES;

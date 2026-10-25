@@ -108,6 +108,8 @@ export const Header: React.FC = () => {
     });
 
     const handleNavClick = (e: React.MouseEvent, id: string) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0)
+            return;
         e.preventDefault();
         closeMenu();
         /* Espera a animação do drawer antes de rolar. */
@@ -136,6 +138,8 @@ export const Header: React.FC = () => {
     };
 
     const currentLang = LANG_META[lang as keyof typeof LANG_META];
+    const sectionHref = (id: string) =>
+        isHome ? `#${id}` : `${lang === "en" ? "/?lang=en" : "/"}#${id}`;
     const ctaLabel = lang === "pt" ? "Fale comigo" : "Get in touch";
     const isPt = lang === "pt";
     const logoLabel = isPt
@@ -169,7 +173,7 @@ export const Header: React.FC = () => {
                 <div className="header__inner">
                     {/* ── Logo tipográfico ──────────────────────────── */}
                     <a
-                        href={`#${SECTION_IDS.HOME}`}
+                        href={sectionHref(SECTION_IDS.HOME)}
                         className="header__logo"
                         aria-label={logoLabel}
                         onClick={(e) => handleNavClick(e, SECTION_IDS.HOME)}
@@ -182,7 +186,7 @@ export const Header: React.FC = () => {
                         {NAV_LINKS.map(({ href, key }) => (
                             <a
                                 key={href}
-                                href={`#${href}`}
+                                href={sectionHref(href)}
                                 className={`header__nav-link${activeSection === href ? " is-active" : ""}`}
                                 onClick={(e) => handleNavClick(e, href)}
                             >
@@ -320,7 +324,7 @@ export const Header: React.FC = () => {
                         {NAV_LINKS.map(({ href, key }, i) => (
                             <a
                                 key={href}
-                                href={`#${href}`}
+                                href={sectionHref(href)}
                                 className={`mobile-nav__link${activeSection === href ? " is-active" : ""}`}
                                 style={{ "--i": i } as React.CSSProperties}
                                 onClick={(e) => handleNavClick(e, href)}
@@ -334,7 +338,7 @@ export const Header: React.FC = () => {
                     </nav>
 
                     <a
-                        href={`#${SECTION_IDS.CONTACT}`}
+                        href={sectionHref(SECTION_IDS.CONTACT)}
                         className="mobile-nav__cta"
                         onClick={(e) => handleNavClick(e, SECTION_IDS.CONTACT)}
                     >

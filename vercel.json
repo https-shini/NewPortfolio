@@ -1,9 +1,32 @@
 {
+<<<<<<< Updated upstream
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "installCommand": "npm install",
     "buildCommand": "npm run build",
     "outputDirectory": "apps/web/dist",
     "rewrites": [
+=======
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "apps/web/dist",
+  "rewrites": [
+    {
+      "source": "/linkedin",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/linkedin/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/feed.xml",
+      "destination": "/api/feed"
+    },
+    {
+      "source": "/links",
+      "has": [
+>>>>>>> Stashed changes
         {
             "source": "/feed.xml",
             "destination": "/api/feed"

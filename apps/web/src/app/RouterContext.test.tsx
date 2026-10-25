@@ -46,6 +46,14 @@ describe("RouterContext", () => {
         expect(result.current.isHome).toBe(true);
     });
 
+    it("preserva o idioma compartilhável ao sair de uma rota inexistente", () => {
+        setPath("/inexistente?lang=en");
+        const { result } = renderHook(() => useRouterContext(), { wrapper });
+        act(() => result.current.navigate(ROUTES.HOME));
+        expect(result.current.path).toBe(ROUTES.HOME);
+        expect(window.location.search).toBe("?lang=en");
+    });
+
     it("normaliza a barra final", () => {
         setPath("/links/");
         const { result } = renderHook(() => useRouterContext(), { wrapper });

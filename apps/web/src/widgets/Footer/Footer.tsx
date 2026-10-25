@@ -1,3 +1,4 @@
+import { ProfileLink } from "@/shared/ui/ProfileLink";
 /**
  * Footer.tsx — gcruz.dev.br · Design System v4.0
  *
@@ -110,8 +111,8 @@ const PAGE_ITEMS: PageItem[] = [
 /* URLs vêm de shared/config/links.ts — fonte única. Aqui só se decide
    quais projetos o rodapé lista e em que ordem. */
 const PROJECT_ITEMS: ProjectItem[] = [
-    /* AuthService é o projeto da seção Destaque — link interno */
-    { label: "AuthService", href: `#${SECTION_IDS.FEATURED}`, external: false },
+    /* TCC apresentado na seção Destaque — link interno */
+    { label: "Codex — TCC", href: `#${SECTION_IDS.FEATURED}`, external: false },
     {
         label: "Web Chat",
         href: PROJECT_URLS.webChat.live,
@@ -131,67 +132,72 @@ const PROJECT_ITEMS: ProjectItem[] = [
 
 interface FooterBrandProps {
     tagline: string;
+    homeHref: string;
     onLogoClick: (e: React.MouseEvent<HTMLAnchorElement>) => void;
     lang: "pt" | "en";
 }
 
-const FooterBrand = memo<FooterBrandProps>(({ tagline, onLogoClick, lang }) => (
-    <div className="footer__brand">
-        {/* Logo — mesma identidade visual do Header */}
-        <a
-            href={`#${SECTION_IDS.HOME}`}
-            className="footer__logo"
-            aria-label={
-                lang === "pt"
-                    ? "Guilherme Cruz — voltar ao início da página"
-                    : "Guilherme Cruz — back to top"
-            }
-            onClick={onLogoClick}
-        >
-            <Logo />
-        </a>
+const FooterBrand = memo<FooterBrandProps>(
+    ({ tagline, onLogoClick, lang, homeHref }) => (
+        <div className="footer__brand">
+            {/* Logo — mesma identidade visual do Header */}
+            <ProfileLink
+                href={homeHref}
+                className="footer__logo"
+                aria-label={
+                    lang === "pt"
+                        ? "Guilherme Cruz — voltar ao início da página"
+                        : "Guilherme Cruz — back to top"
+                }
+                onClick={onLogoClick}
+            >
+                <Logo />
+            </ProfileLink>
 
-        {/* Tagline */}
-        <p className="footer__brand-tagline">{tagline}</p>
+            {/* Tagline */}
+            <p className="footer__brand-tagline">{tagline}</p>
 
-        {/* Redes sociais — a lista vem de TREE_LINKS, a mesma que
+            {/* Redes sociais — a lista vem de TREE_LINKS, a mesma que
             alimenta a /links. Antes eram três <a> escritos à mão, cada um
             repetindo a decisão de target e rel; um perfil novo entrava em
             dois lugares e saía torto de um deles. */}
-        <nav
-            aria-label={
-                lang === "pt"
-                    ? "Redes sociais de Guilherme Cruz"
-                    : "Guilherme Cruz's social media"
-            }
-        >
-            <ul className="footer__social">
-                {SOCIAIS.map(({ id, label, href, icon: Icone }) => {
-                    const externo = linkKind(href) === "external";
-                    return (
-                        <li key={id}>
-                            <a
-                                href={href}
-                                className="social-link"
-                                target={externo ? "_blank" : undefined}
-                                rel={
-                                    externo ? "noopener noreferrer" : undefined
-                                }
-                                aria-label={rotuloSocial(
-                                    label[lang],
-                                    href,
-                                    lang,
-                                )}
-                            >
-                                <Icone width={16} height={16} />
-                            </a>
-                        </li>
-                    );
-                })}
-            </ul>
-        </nav>
-    </div>
-));
+            <nav
+                aria-label={
+                    lang === "pt"
+                        ? "Redes sociais de Guilherme Cruz"
+                        : "Guilherme Cruz's social media"
+                }
+            >
+                <ul className="footer__social">
+                    {SOCIAIS.map(({ id, label, href, icon: Icone }) => {
+                        const externo = linkKind(href) === "external";
+                        return (
+                            <li key={id}>
+                                <ProfileLink
+                                    href={href}
+                                    className="social-link"
+                                    target={externo ? "_blank" : undefined}
+                                    rel={
+                                        externo
+                                            ? "noopener noreferrer"
+                                            : undefined
+                                    }
+                                    aria-label={rotuloSocial(
+                                        label[lang],
+                                        href,
+                                        lang,
+                                    )}
+                                >
+                                    <Icone width={16} height={16} />
+                                </ProfileLink>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </nav>
+        </div>
+    ),
+);
 FooterBrand.displayName = "FooterBrand";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -244,16 +250,16 @@ const FooterContact = memo<FooterContactProps>(
             */}
             <address className="footer__address">
                 {/* E-mail visível em texto — ATS indexa o endereço */}
-                <a
+                <ProfileLink
                     href={`mailto:${AUTHOR_EMAIL}`}
                     className="footer__contact-item"
                     aria-label={`Enviar e-mail para ${AUTHOR_EMAIL}`}
                 >
                     {AUTHOR_EMAIL}
-                </a>
+                </ProfileLink>
 
                 {/* LinkedIn */}
-                <a
+                <ProfileLink
                     href={LINKEDIN_URL}
                     className="footer__contact-item"
                     target="_blank"
@@ -265,7 +271,7 @@ const FooterContact = memo<FooterContactProps>(
                     }
                 >
                     linkedin.com/in/oguilherme-cruz
-                </a>
+                </ProfileLink>
 
                 {/* Localização */}
                 <span className="footer__contact-location">
@@ -274,14 +280,22 @@ const FooterContact = memo<FooterContactProps>(
                 </span>
 
                 {/* CTA compacto de e-mail */}
+<<<<<<< Updated upstream
                 <a
+=======
+                <ProfileLink
+>>>>>>> Stashed changes
                     href={mailtoHref}
                     className="footer__contact-cta btn btn--primary btn--sm"
                     aria-label={`${ctaLabel} — ${AUTHOR_EMAIL}`}
                 >
                     <IconGmail width={14} height={14} />
                     <span>{ctaLabel}</span>
+<<<<<<< Updated upstream
                 </a>
+=======
+                </ProfileLink>
+>>>>>>> Stashed changes
             </address>
 
             {/* Fica fora do <address>: uma caixa de inscrição não é dado
@@ -323,7 +337,7 @@ const FooterBottom = memo<FooterBottomProps>(
 
             {/* Ações secundárias: CV + made with */}
             <div className="footer__bottom-end">
-                <a
+                <ProfileLink
                     href={cvUrl}
                     className="footer__cv-link"
                     target="_blank"
@@ -336,7 +350,7 @@ const FooterBottom = memo<FooterBottomProps>(
                 >
                     <IconDownload width={12} height={12} />
                     {cvLabel}
-                </a>
+                </ProfileLink>
 
                 <p
                     className="footer__made"
@@ -363,12 +377,22 @@ FooterBottom.displayName = "FooterBottom";
 export const Footer: React.FC = () => {
     const { lang, t } = useLang();
     const { isHome, navigate } = useRoute();
+    const sectionHref = (id: string) =>
+        isHome ? `#${id}` : `${lang === "en" ? "/?lang=en" : "/"}#${id}`;
     const year = new Date().getFullYear();
     const mailtoHref = buildMailtoHref(lang);
 
     /* Estável entre renders — não recria a função desnecessariamente */
     const handleInternalNav = useCallback(
         (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+            if (
+                e.metaKey ||
+                e.ctrlKey ||
+                e.shiftKey ||
+                e.altKey ||
+                e.button !== 0
+            )
+                return;
             e.preventDefault();
 
             /* Fora da home as seções não existem: volta para ela e rola
@@ -417,6 +441,7 @@ export const Footer: React.FC = () => {
                         {/* Coluna 1 — Brand */}
                         <FooterBrand
                             tagline={t("footer.tagline")}
+                            homeHref={sectionHref(SECTION_IDS.HOME)}
                             onLogoClick={(e) =>
                                 handleInternalNav(e, SECTION_IDS.HOME)
                             }
@@ -434,15 +459,15 @@ export const Footer: React.FC = () => {
                         >
                             {NAV_ITEMS.map(({ id, key }) => (
                                 <li key={id}>
-                                    <a
-                                        href={`#${id}`}
+                                    <ProfileLink
+                                        href={sectionHref(id)}
                                         className="footer__link"
                                         onClick={(e) =>
                                             handleInternalNav(e, id)
                                         }
                                     >
                                         {t(key)}
-                                    </a>
+                                    </ProfileLink>
                                 </li>
                             ))}
                         </FooterNavCol>
@@ -464,13 +489,13 @@ export const Footer: React.FC = () => {
                         >
                             {PAGE_ITEMS.map(({ to, key }) => (
                                 <li key={to}>
-                                    <a
+                                    <ProfileLink
                                         href={to}
                                         className="footer__link"
                                         onClick={(e) => handleRouteNav(e, to)}
                                     >
                                         {t(key)}
-                                    </a>
+                                    </ProfileLink>
                                 </li>
                             ))}
                         </FooterNavCol>
@@ -487,7 +512,7 @@ export const Footer: React.FC = () => {
                             {PROJECT_ITEMS.map((item) => (
                                 <li key={item.href}>
                                     {item.external ? (
-                                        <a
+                                        <ProfileLink
                                             href={item.href}
                                             className="footer__link"
                                             target="_blank"
@@ -495,10 +520,12 @@ export const Footer: React.FC = () => {
                                             aria-label={`${item.label}${lang === "pt" ? " (abre em nova aba)" : " (opens in new tab)"}`}
                                         >
                                             {item.label}
-                                        </a>
+                                        </ProfileLink>
                                     ) : (
-                                        <a
-                                            href={item.href}
+                                        <ProfileLink
+                                            href={sectionHref(
+                                                SECTION_IDS.FEATURED,
+                                            )}
                                             className="footer__link"
                                             onClick={(e) =>
                                                 handleInternalNav(
@@ -508,7 +535,7 @@ export const Footer: React.FC = () => {
                                             }
                                         >
                                             {item.label}
-                                        </a>
+                                        </ProfileLink>
                                     )}
                                 </li>
                             ))}
@@ -545,7 +572,7 @@ export const Footer: React.FC = () => {
                                própria, então o badge abre uma página — e
                                deve poder ir para nova aba e aparecer no
                                menu de contexto. */
-                            <a
+                            <ProfileLink
                                 href={ROUTES.RELEASE_NOTES}
                                 className="footer__version"
                                 aria-label={t("releaseNotes.openLabel")}
@@ -567,7 +594,7 @@ export const Footer: React.FC = () => {
                                 <span className="footer__version-label">
                                     {t("releaseNotes.badge")}
                                 </span>
-                            </a>
+                            </ProfileLink>
                         }
                     />
                 </div>

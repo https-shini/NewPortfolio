@@ -12,6 +12,8 @@
 export const ROUTES = {
     HOME: "/",
     LINKS: "/links",
+    CODEX: "/projects/codex/readme.html",
+    LINKEDIN_NOTICE: "/linkedin",
     RELEASE_NOTES: "/release-notes",
     /* A seção `#contato` da home continua existindo — esta é a mesma
        entrega com endereço próprio, para poder ser compartilhada, indexada

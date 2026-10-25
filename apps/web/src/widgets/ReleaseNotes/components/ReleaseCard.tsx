@@ -1,3 +1,4 @@
+import { ProfileLink } from "@/shared/ui/ProfileLink";
 import React from "react";
 import { useLang } from "@/shared/hooks/useLang";
 import { useLinkProps } from "@/shared/hooks/useLinkProps";
@@ -21,14 +22,14 @@ const ReleaseLinkItem: React.FC<{ link: ReleaseLink }> = ({ link }) => {
     const { opensNewTab, anchorProps } = useLinkProps(link.href);
 
     return (
-        <a className="release-card__link" {...anchorProps}>
+        <ProfileLink className="release-card__link" {...anchorProps}>
             {link.label[lang]}
             {opensNewTab ? (
                 <IconExternalLink width={13} height={13} aria-hidden="true" />
             ) : (
                 <IconArrowRight width={14} height={14} aria-hidden="true" />
             )}
-        </a>
+        </ProfileLink>
     );
 };
 
@@ -196,8 +197,13 @@ export const ReleaseCard: React.FC<ReleaseCardProps> = ({
                 <div className="release-card__links">
                     {/* Primeiro da fila e destacado: no índice, a saída
                         natural do cartão é a página inteira da versão. */}
+<<<<<<< Updated upstream
                     {resumo && (
                         <a
+=======
+                    {showPermalink && (
+                        <ProfileLink
+>>>>>>> Stashed changes
                             className="release-card__link release-card__link--lead"
                             href={permalink}
                             onClick={(e) => {
@@ -213,7 +219,7 @@ export const ReleaseCard: React.FC<ReleaseCardProps> = ({
                                 height={14}
                                 aria-hidden="true"
                             />
-                        </a>
+                        </ProfileLink>
                     )}
 
                     {entry.links?.map((link) => (
@@ -221,7 +227,7 @@ export const ReleaseCard: React.FC<ReleaseCardProps> = ({
                     ))}
 
                     {entry.url && (
-                        <a
+                        <ProfileLink
                             className="release-card__link"
                             href={entry.url}
                             target="_blank"
@@ -233,7 +239,7 @@ export const ReleaseCard: React.FC<ReleaseCardProps> = ({
                                 aria-hidden="true"
                             />
                             {t("releaseNotes.viewOnGithub")}
-                        </a>
+                        </ProfileLink>
                     )}
                 </div>
             )}

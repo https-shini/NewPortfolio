@@ -4,6 +4,7 @@ import { LangProvider } from "@/app/LangContext";
 import { Hero } from "./Hero";
 import { PROFILE } from "@/shared/config/profile";
 import { getCvUrl, LANG_KEY } from "@/shared/config/constants";
+import { linkedInNoticePath } from "@/shared/config/linkedin";
 
 const setup = () => {
     /* Fixa o idioma para tornar a asserção do CV determinística */
@@ -34,7 +35,10 @@ describe("Hero", () => {
         const github = screen.getByRole("link", { name: /GitHub/i });
         const linkedin = screen.getByRole("link", { name: /LinkedIn/i });
         expect(github).toHaveAttribute("href", PROFILE.social.github.url);
-        expect(linkedin).toHaveAttribute("href", PROFILE.social.linkedin.url);
+        expect(linkedin).toHaveAttribute(
+            "href",
+            linkedInNoticePath(PROFILE.social.linkedin.url, "pt"),
+        );
     });
 
     it("e-mail usa o endereço do perfil central", () => {

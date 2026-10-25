@@ -1,3 +1,4 @@
+import { ProfileLink } from "@/shared/ui/ProfileLink";
 import React, {
     useState,
     useRef,
@@ -164,7 +165,7 @@ export const Recommendations: React.FC = () => {
                         </span>
                     </div>
 
-                    <a
+                    <ProfileLink
                         href={LINKEDIN_URL}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -177,7 +178,7 @@ export const Recommendations: React.FC = () => {
                             aria-hidden="true"
                         />
                         <span>{t("rec.source.text")}</span>
-                    </a>
+                    </ProfileLink>
                 </div>
 
                 {/* Carrossel paginado — 2 cards por página (1 no mobile) */}

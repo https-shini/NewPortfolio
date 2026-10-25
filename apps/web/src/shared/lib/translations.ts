@@ -108,7 +108,7 @@ export type TranslationKey =
     | "featured.eyebrow"
     | "featured.desc"
     | "featured.btn.live"
-    | "featured.btn.repo"
+    | "featured.btn.details"
     | "featured.btn.docs"
     | "featured.gallery.label"
     | "featured.autoplay.play"
@@ -385,7 +385,7 @@ const pt: Translations = {
     "featured.desc":
         "Projeto web com foco em usabilidade, performance e boas práticas de desenvolvimento.",
     "featured.btn.live": "Ver demo",
-    "featured.btn.repo": "Repositório",
+    "featured.btn.details": "Detalhes técnicos",
     "featured.btn.docs": "Swagger Docs",
     "featured.gallery.label": "Capturas do projeto",
     "featured.autoplay.play": "Iniciar autoplay",
@@ -394,7 +394,7 @@ const pt: Translations = {
     "featured.arrow.next": "Próximo slide",
     "featured.block.tech": "Stack",
     "featured.block.endpoints": "Endpoints da API",
-    "featured.endpoint.protected": "Rota protegida (requer Bearer Token)",
+    "featured.endpoint.protected": "Rota protegida (requer autenticação)",
     "featured.lightbox.open": "Ampliar",
     "featured.lightbox.close": "Fechar visualização",
     "featured.lightbox.thumbnails": "Miniaturas dos slides",
@@ -682,7 +682,7 @@ const en: Translations = {
     "featured.desc":
         "Web project focused on usability, performance and development best practices.",
     "featured.btn.live": "View demo",
-    "featured.btn.repo": "Repository",
+    "featured.btn.details": "Technical details",
     "featured.btn.docs": "Swagger Docs",
     "featured.gallery.label": "Project screenshots",
     "featured.autoplay.play": "Start autoplay",
@@ -691,7 +691,7 @@ const en: Translations = {
     "featured.arrow.next": "Next slide",
     "featured.block.tech": "Stack",
     "featured.block.endpoints": "API Endpoints",
-    "featured.endpoint.protected": "Protected route (requires Bearer Token)",
+    "featured.endpoint.protected": "Protected route (requires authentication)",
     "featured.lightbox.open": "Expand",
     "featured.lightbox.close": "Close viewer",
     "featured.lightbox.thumbnails": "Slide thumbnails",

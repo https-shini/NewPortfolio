@@ -7,6 +7,7 @@ import { AmbientBackground } from "@/shared/ui/AmbientBackground/AmbientBackgrou
 /**
  * Routes — mapeia pathname → página.
  *
+<<<<<<< Updated upstream
  * As quatro entram por `lazy`, como já se faz com os modais. Isso não
  * significa uma ida à rede a mais: cada rota é servida por um documento
  * próprio cuja entrada importa a sua página de forma estática (ver
@@ -16,6 +17,12 @@ import { AmbientBackground } from "@/shared/ui/AmbientBackground/AmbientBackgrou
  * Para adicionar uma página: crie-a em `pages/`, registre o pathname em
  * ROUTES (shared/config/routes.ts), acrescente um caso aqui, uma entrada
  * em `src/entradas/`, a rota em `ROTAS_HTML` (vite.config.ts) e o rewrite
+=======
+ * A home é síncrona (destino da maioria das visitas); páginas secundárias
+ * e a página 404 entram por lazy, como já se faz com os
+ * modais. Para adicionar uma página: crie-a em `pages/`, registre o pathname
+ * em ROUTES (shared/config/routes.ts), acrescente um caso aqui e o rewrite
+>>>>>>> Stashed changes
  * correspondente no vercel.json da raiz.
  */
 const HomePage = lazy(() =>
@@ -24,6 +31,9 @@ const HomePage = lazy(() =>
 
 const LinksPage = lazy(() =>
     import("@/pages/Links").then((m) => ({ default: m.LinksPage })),
+);
+const CodexPage = lazy(() =>
+    import("@/pages/Codex").then((m) => ({ default: m.CodexPage })),
 );
 
 const ReleaseNotesPage = lazy(() =>
@@ -42,6 +52,67 @@ const ReleaseNotePage = lazy(() =>
     })),
 );
 
+<<<<<<< Updated upstream
+=======
+const NotFoundPage = lazy(() =>
+    import("@/pages/NotFound").then((m) => ({ default: m.NotFoundPage })),
+);
+
+const LinkedInNoticePage = lazy(() =>
+    import("@/pages/LinkedInNotice").then((m) => ({
+        default: m.LinkedInNoticePage,
+    })),
+);
+
+/** O que vem depois de `/release-notes`, quando vem alguma coisa. */
+export type ReleaseNotesMatch =
+    { kind: "index"; page: number } | { kind: "entry"; version: string } | null;
+
+/**
+ * Interpreta o segmento sob `/release-notes`.
+ *
+ * · `/release-notes`            → índice, página 1
+ * · `/release-notes/page/2`     → índice, página 2
+ * · `/release-notes/v2.0.0`     → a versão 2.0.0
+ *
+ * O segmento `page` nunca colide com uma versão, porque toda versão é
+ * prefixada por `v` — daí a desambiguação ser só uma comparação.
+ * Página inválida (`page/abc`, `page/0`) volta para a primeira, em vez
+ * de cair na home: o usuário pediu o índice.
+ */
+export function matchReleaseNotes(path: string): ReleaseNotesMatch {
+    if (path === ROUTES.RELEASE_NOTES) return { kind: "index", page: 1 };
+    if (!path.startsWith(`${ROUTES.RELEASE_NOTES}/`)) return null;
+
+    const rest = path.slice(ROUTES.RELEASE_NOTES.length + 1);
+    const segments = rest.split("/");
+
+    if (segments[0] === RELEASE_NOTES_PAGE_SEGMENT) {
+        if (segments.length > 2) return null;
+        const page = Number(segments[1]);
+        return {
+            kind: "index",
+            page: Number.isInteger(page) && page > 0 ? page : 1,
+        };
+    }
+
+    /* Uma versão e nada mais: `/release-notes/v2.0.0/qualquer-coisa` não
+       é rota nossa. */
+    if (segments.length > 1) return null;
+
+    try {
+        const version = decodeURIComponent(segments[0] ?? "").replace(
+            /^v/i,
+            "",
+        );
+        return version ? { kind: "entry", version } : null;
+    } catch {
+        // Uma URL com escape inválido deve mostrar a 404, sem derrubar o app.
+        return null;
+    }
+}
+
+>>>>>>> Stashed changes
 export const Routes: React.FC = () => {
     const { path } = useRoute();
 
@@ -77,10 +148,28 @@ export const Routes: React.FC = () => {
                         <ReleaseNotePage version={releaseNotes.version} />
                     )}
                 </Suspense>
+<<<<<<< Updated upstream
             ) : (
                 /* Rota desconhecida cai na home — não há 404 própria. */
                 <Suspense fallback={null}>
                     <HomePage />
+=======
+            ) : path === ROUTES.CODEX ||
+              path === "/projects/codex" ||
+              path === "/projects/codex/index.html" ? (
+                <Suspense fallback={null}>
+                    <CodexPage />
+                </Suspense>
+            ) : path === ROUTES.LINKEDIN_NOTICE ? (
+                <Suspense fallback={null}>
+                    <LinkedInNoticePage />
+                </Suspense>
+            ) : path === ROUTES.HOME ? (
+                <HomePage />
+            ) : (
+                <Suspense fallback={null}>
+                    <NotFoundPage />
+>>>>>>> Stashed changes
                 </Suspense>
             )}
         </>

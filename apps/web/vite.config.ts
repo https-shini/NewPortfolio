@@ -4,8 +4,13 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
+<<<<<<< Updated upstream
 import { writeFile, readFile } from "node:fs/promises";
+=======
+import { readFile, writeFile, copyFile } from "node:fs/promises";
+>>>>>>> Stashed changes
 import { execFileSync } from "node:child_process";
+import { renderNotFoundHtml } from "./build/notFound.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -114,14 +119,14 @@ function sitemapPlugin() {
         name: "sitemap",
         async closeBundle() {
             const { RELEASE_NOTES } =
-                await import("./src/shared/config/releaseNotes");
+                await import("./src/shared/config/releaseNotes.ts");
             const {
                 releaseNotePath,
                 releaseNotesPagePath,
                 releaseNotesTotalPages,
                 HREFLANG,
                 withLang,
-            } = await import("./src/shared/config/routes");
+            } = await import("./src/shared/config/routes.ts");
 
             /* Data de cada rota: o commit mais recente entre os caminhos que
                a compõem. Widgets entram na home porque é lá que aparecem. */
@@ -132,6 +137,15 @@ function sitemapPlugin() {
             ]);
 
             const entries: SitemapEntry[] = [
+                {
+                    loc: `${SITE_URL}/projects/codex/readme.html`,
+                    lastmod: lastModified([
+                        "apps/web/src/pages/Codex",
+                        "apps/web/projects/codex/readme.html",
+                    ]),
+                    changefreq: "monthly",
+                    priority: "0.8",
+                },
                 {
                     loc: `${SITE_URL}/`,
                     lastmod: homeDate,
@@ -248,6 +262,7 @@ function sitemapPlugin() {
     };
 }
 
+<<<<<<< Updated upstream
 /* ── Um documento por rota ───────────────────────────────────────────────
  *
  * Havia um `index.html` só, e o `vercel.json` reescrevia as três rotas
@@ -379,6 +394,38 @@ function rotaHtmlPlugin() {
                         rota.caminho === "/" ? "/" : rota.caminho,
                     );
             },
+=======
+function notFoundPlugin() {
+    return {
+        name: "not-found-html",
+        apply: "build" as const,
+        async closeBundle() {
+            const output = path.resolve(__dirname, "dist");
+            const html = await readFile(
+                path.join(output, "index.html"),
+                "utf8",
+            );
+            await writeFile(
+                path.join(output, "404.html"),
+                renderNotFoundHtml(html),
+                "utf8",
+            );
+        },
+    };
+}
+
+/** Preserve the shorter URL without maintaining a second HTML source. */
+function codexPageAliasPlugin() {
+    return {
+        name: "codex-page-alias",
+        apply: "build" as const,
+        async closeBundle() {
+            const output = path.resolve(__dirname, "dist/projects/codex");
+            await copyFile(
+                path.join(output, "readme.html"),
+                path.join(output, "index.html"),
+            );
+>>>>>>> Stashed changes
         },
     };
 }
@@ -391,6 +438,8 @@ export default defineConfig({
         rotaHtmlPlugin(),
         siteUrlHtmlPlugin(),
         sitemapPlugin(),
+        notFoundPlugin(),
+        codexPageAliasPlugin(),
     ],
 
     /* Constante de build — ver a declaração em src/vite-env.d.ts. */
@@ -478,6 +527,7 @@ export default defineConfig({
         cssCodeSplit: true,
 
         rollupOptions: {
+<<<<<<< Updated upstream
             /* Uma entrada por documento — ver `rotaHtmlPlugin`. */
             input: Object.fromEntries(
                 ROTAS_HTML.map((r) => [
@@ -486,6 +536,12 @@ export default defineConfig({
                 ]),
             ),
 
+=======
+            input: {
+                main: path.resolve(__dirname, "index.html"),
+                codex: path.resolve(__dirname, "projects/codex/readme.html"),
+            },
+>>>>>>> Stashed changes
             output: {
                 /* React/ReactDOM raramente mudam — isolá-los preserva o
                    cache do usuário entre deploys do código da aplicação. */

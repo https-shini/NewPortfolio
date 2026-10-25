@@ -71,6 +71,13 @@ describe("NewsletterForm", () => {
         const href = decodeURIComponent(window.location.href);
         expect(href).toMatch(/^mailto:/);
         expect(href).toContain("alguem@exemplo.com");
+
+        /* `success` é o servidor confirmando; isto aqui é presunção. Se não
+           houver cliente de e-mail registrado, o navegador não faz nada
+           visível — e travar o campo deixaria sem saída a não ser recarregar
+           a página. Mesmo tratamento de "já inscrito". */
+        expect(campo()).not.toBeDisabled();
+        expect(inscrever()).toBeEnabled();
     });
 
     it("recusa endereço inválido sem chamar a rede", async () => {
@@ -167,6 +174,56 @@ describe("NewsletterForm", () => {
         expect(regiao).toBeInTheDocument();
         expect(regiao).toHaveAttribute("aria-live", "polite");
         expect(regiao).toBeEmptyDOMElement();
+    });
+
+    /* A região anuncia o erro UMA vez, quando ele aparece. Quem tabula de
+       volta ao campo depois disso precisa ouvir de novo que ele está inválido
+       e por quê — daí aria-invalid e aria-describedby, e não só a região.
+       WCAG 2.1 SC 3.3.1. Nenhuma regra estática do axe liga um <p role=
+       "status"> ao campo, então este portão é aqui ou em lugar nenhum. */
+    it("associa o erro ao campo, e não só à região viva", async () => {
+        const user = userEvent.setup();
+        await renderForm();
+
+        expect(campo()).toHaveAttribute("aria-invalid", "false");
+        expect(campo()).not.toHaveAttribute("aria-describedby");
+
+        await user.type(campo(), "joao@");
+        await user.click(inscrever());
+
+        expect(campo()).toHaveAttribute("aria-invalid", "true");
+        const id = campo().getAttribute("aria-describedby");
+        expect(id).toBeTruthy();
+        expect(document.getElementById(id!)).toHaveTextContent(
+            /não parece um e-mail/i,
+        );
+
+        /* Corrigido o campo, o estado inválido some junto com a mensagem. */
+        await user.type(campo(), "exemplo.com");
+        expect(campo()).toHaveAttribute("aria-invalid", "false");
+        expect(campo()).not.toHaveAttribute("aria-describedby");
+    });
+
+    /* "error" é o envio que falhou do outro lado — o endereço pode estar
+       perfeito. Descrever o que houve, sim; acusar o campo de inválido, não. */
+    it("falha de envio descreve sem marcar o campo como inválido", async () => {
+        vi.mocked(fetch).mockResolvedValue({
+            ok: false,
+            status: 500,
+        } as Response);
+        const user = userEvent.setup();
+        await renderForm();
+
+        await user.type(campo(), "alguem@exemplo.com");
+        await user.click(inscrever());
+
+        await waitFor(() =>
+            expect(screen.getByText(/tente de novo/i)).toBeInTheDocument(),
+        );
+        expect(campo()).toHaveAttribute("aria-invalid", "false");
+        const id = campo().getAttribute("aria-describedby");
+        expect(id).toBeTruthy();
+        expect(document.getElementById(id!)).toHaveTextContent(/tente de novo/i);
     });
 
     it("preenchimento do honeypot não chama a rede", async () => {

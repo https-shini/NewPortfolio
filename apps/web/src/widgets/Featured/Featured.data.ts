@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 /* ─────────────────────────────────────────────────────────
    Featured.data — AuthService project
    URLs em shared/config/links.ts (fonte única).
@@ -90,6 +91,10 @@ export interface ProjectBadge {
     variant: "live" | "license" | "framework" | "language" | "neutral";
 }
 
+=======
+/* Codex — Code Validator, TCC. Conteúdo conferido no código-fonte do projeto. */
+import { PROJECT_URLS } from "@/shared/config/links";
+>>>>>>> Stashed changes
 export interface ProjectTech {
     /** ID do ícone local — ver `shared/config/skillIcons.ts`. */
     key: SkillIconId;
@@ -113,78 +118,55 @@ export interface ArchitectureCard {
     text: { pt: string; en: string };
 }
 
-/* ─────────────────────────────────────────────────────────
-   AUTHSERVICE — dados completos do projeto
-───────────────────────────────────────────────────────── */
 export const FEATURED_PROJECT = {
-    id: "authservice",
-    name: "AuthService",
+    id: "codex",
+    name: "Codex — Code Validator",
     tagline: {
-        pt: "Sistema de autenticação fullstack com tema Dark Industrial Terminal.",
-        en: "Fullstack authentication system with Dark Industrial Terminal theme.",
+        pt: "TCC em engenharia de software: análise estática e inteligência artificial para compreender e acompanhar a qualidade do código.",
+        en: "A software engineering capstone: static analysis and artificial intelligence to understand and track code quality.",
     },
     description: {
-        pt: "API REST construída em FastAPI com autenticação JWT (HS256) e bcrypt, servida junto a um frontend vanilla em um único container Docker. Arquitetura em camadas (Controllers → Services → Repositories → Models) com dashboard de monitoramento em tempo real.",
-        en: "REST API built with FastAPI featuring JWT (HS256) authentication and bcrypt, served alongside a vanilla frontend in a single Docker container. Layered architecture (Controllers → Services → Repositories → Models) with real-time monitoring dashboard.",
+        pt: "Uma aplicação que combina análise estática e revisão por inteligência artificial para avaliar repositórios do GitHub. Transforma lint, segurança e complexidade em um score de 0 a 1000, com um relatório para orientar melhorias.",
+        en: "An application combining static analysis and AI review to evaluate GitHub repositories. It turns lint, security and complexity findings into a score from 0 to 1000, with a report to guide improvements.",
     },
-
-    repoUrl: PROJECT_URLS.authService.repo,
-    liveUrl: PROJECT_URLS.authService.live,
-    docsUrl: PROJECT_URLS.authService.docs,
-    repoHost: "github.com/https-shini/AuthService",
-
-    badges: [
-        { label: "LIVE", variant: "live" },
-        { label: "MIT", variant: "license" },
-        { label: "DOCKER", variant: "neutral" },
-        { label: "FASTAPI", variant: "framework" },
-        { label: "PYTHON 3.11", variant: "language" },
-    ] as ProjectBadge[],
-
+    detailsUrl: PROJECT_URLS.codex.details,
+    liveUrl: PROJECT_URLS.codex.live,
+    repoHost: "codex.shxred.app.br",
     tech: [
-        { key: "fastapi", label: "FastAPI", variant: "brand" },
-        { key: "python", label: "Python", variant: "brand" },
-        { key: "docker", label: "Docker", variant: "accent" },
-        { key: "html", label: "HTML5", variant: "neutral" },
-        { key: "css", label: "CSS3", variant: "neutral" },
-        { key: "js", label: "JavaScript", variant: "neutral" },
+        {
+            key: "fastapi",
+            label: "FastAPI",
+            variant: "brand",
+        },
+        {
+            key: "python",
+            label: "Python",
+            variant: "brand",
+        },
+        {
+            key: "nextjs",
+            label: "Next.js",
+            variant: "neutral",
+        },
+        {
+            key: "tailwind",
+            label: "Tailwind CSS",
+            variant: "neutral",
+        },
+        {
+            key: "postgres",
+            label: "PostgreSQL",
+            variant: "accent",
+        },
+        {
+            key: "docker",
+            label: "Docker",
+            variant: "accent",
+        },
     ] as ProjectTech[],
-
-    endpoints: [
-        {
-            method: "GET",
-            path: "/health",
-            description: {
-                pt: "Status da API e latência",
-                en: "API status & latency",
-            },
-        },
-        {
-            method: "POST",
-            path: "/register",
-            description: {
-                pt: "Cadastro de novo usuário",
-                en: "New user registration",
-            },
-        },
-        {
-            method: "POST",
-            path: "/token",
-            description: { pt: "Autenticação JWT", en: "JWT authentication" },
-        },
-        {
-            method: "GET",
-            path: "/me",
-            description: {
-                pt: "Dados do usuário autenticado",
-                en: "Authenticated user data",
-            },
-            protected: true,
-        },
-    ] as ProjectEndpoint[],
-
     slides: [
         {
+<<<<<<< Updated upstream
             src: login1440,
             srcSet: SRCSET.login,
             label: { pt: "Tela de Login", en: "Login Screen" },
@@ -198,16 +180,24 @@ export const FEATURED_PROJECT = {
             src: cadastro1440,
             srcSet: SRCSET.cadastro,
             label: { pt: "Cadastro", en: "Registration" },
+=======
+            src: "/projects/codex/overview.webp",
+            label: {
+                pt: "Visão geral",
+                en: "Overview",
+            },
+>>>>>>> Stashed changes
             sub: {
-                pt: "Medidor de força de senha",
-                en: "Password strength meter",
+                pt: "Análise estática + IA",
+                en: "Static analysis + AI",
             },
             description: {
-                pt: "Formulário de cadastro com medidor de força de senha em 5 níveis e validação de e-mail. As senhas são hasheadas com bcrypt + salt antes de serem persistidas.",
-                en: "Registration form with 5-level password strength meter and email validation. Passwords are hashed with bcrypt + salt before being persisted.",
+                pt: "Página pública do Codex, com apresentação da proposta e demonstração do pipeline. A demonstração usa dados de exemplo, como indicado no próprio site.",
+                en: "Codex's public page introducing the project and its pipeline demo. The demo uses sample data, as indicated on the site.",
             },
         },
         {
+<<<<<<< Updated upstream
             src: home1440,
             srcSet: SRCSET.home,
             label: { pt: "Dashboard", en: "Dashboard" },
@@ -221,73 +211,86 @@ export const FEATURED_PROJECT = {
             src: status1440,
             srcSet: SRCSET.status,
             label: { pt: "Monitor da API", en: "API Monitor" },
+=======
+            src: "/projects/codex/pipeline.webp",
+            label: {
+                pt: "Do código ao relatório",
+                en: "From code to report",
+            },
+>>>>>>> Stashed changes
             sub: {
-                pt: "Status, latência e logs",
-                en: "Status, latency & logs",
+                pt: "Três etapas integradas",
+                en: "Three integrated stages",
             },
             description: {
-                pt: "Painel de monitoramento em tempo real com status de cada endpoint, latência em milissegundos e logs estilo terminal — visibilidade total da saúde da API.",
-                en: "Real-time monitoring panel with per-endpoint status, millisecond latency and terminal-style logs — total visibility of API health.",
+                pt: "Captura real da explicação do fluxo: conectar o GitHub, executar as ferramentas de análise estática e revisar o código com IA.",
+                en: "Real capture of the workflow explanation: connect GitHub, run static analysis tools and review code with AI.",
+            },
+        },
+        {
+            src: "/projects/codex/features.webp",
+            label: {
+                pt: "Além da nota",
+                en: "Beyond the score",
+            },
+            sub: {
+                pt: "Recursos do sistema",
+                en: "System features",
+            },
+            description: {
+                pt: "Seção pública que apresenta sugestões de código, comparação de pull requests, histórico e achados consolidados. Os exemplos visuais são demonstrativos.",
+                en: "Public section presenting code suggestions, pull request comparisons, history and consolidated findings. The visual examples are illustrative.",
+            },
+        },
+        {
+            src: "/projects/codex/score.webp",
+            label: {
+                pt: "Critérios transparentes",
+                en: "Transparent criteria",
+            },
+            sub: {
+                pt: "Simulador de score",
+                en: "Score simulator",
+            },
+            description: {
+                pt: "Simulador da página pública: explore as faixas de classificação de 0 a 1000. A nota exibida é uma simulação, não o resultado de uma análise real.",
+                en: "Public page simulator: explore rating bands from 0 to 1000. The displayed score is simulated, not the result of a real analysis.",
             },
         },
     ] as ProjectSlide[],
-
     architecture: [
         {
             icon: "layers",
-            title: { pt: "Arquitetura em Camadas", en: "Layered Architecture" },
+            title: {
+                pt: "Análise estática e IA",
+                en: "Static analysis and AI",
+            },
             text: {
-                pt: "Controllers → Services → Repositories → Models. Separação clara de responsabilidades com Pydantic DTOs e injeção de dependência nativa do FastAPI.",
-                en: "Controllers → Services → Repositories → Models. Clear separation of concerns with Pydantic DTOs and FastAPI native dependency injection.",
+                pt: "Lint, segurança e complexidade para Python, JavaScript/TypeScript e Go, com revisão opcional por IA. O sistema também opera em modo totalmente estático.",
+                en: "Lint, security and complexity for Python, JavaScript/TypeScript and Go, with optional AI review. The system also runs in fully static mode.",
             },
         },
         {
             icon: "shield",
-            title: { pt: "Segurança Robusta", en: "Robust Security" },
+            title: {
+                pt: "Integração com o GitHub",
+                en: "GitHub integration",
+            },
             text: {
-                pt: "Hash de senhas com bcrypt + salt. Tokens JWT assinados em HS256 com expiração configurável. Endpoint /me protegido por Bearer Token.",
-                en: "Password hashing with bcrypt + salt. JWT tokens signed in HS256 with configurable expiration. /me endpoint protected by Bearer Token.",
+                pt: "Análise por URL pública ou seleção de repositórios com OAuth. A comparação de pull requests mostra a diferença de score entre base e head.",
+                en: "Analysis through a public URL or repository selection with OAuth. Pull request comparison shows the score difference between base and head.",
             },
         },
         {
             icon: "package",
-            title: { pt: "Deploy Unificado", en: "Unified Deployment" },
+            title: {
+                pt: "Resultados e histórico",
+                en: "Results and history",
+            },
             text: {
-                pt: "Backend e frontend rodam no mesmo container Docker. FastAPI StaticFiles serve o frontend vanilla. Pronto pra subir em qualquer plataforma.",
-                en: "Backend and frontend run in the same Docker container. FastAPI StaticFiles serves the vanilla frontend. Ready to deploy on any platform.",
+                pt: "Progresso em tempo real via SSE, com fallback para polling. PostgreSQL habilita histórico, cache por commit e comparação entre análises.",
+                en: "Real-time progress via SSE with polling fallback. PostgreSQL enables history, per-commit caching and comparison between analyses.",
             },
         },
     ] as ArchitectureCard[],
 } as const;
-
-/* Cor por método HTTP — terminal-style */
-export const METHOD_COLOR: Record<
-    HttpMethod,
-    { fg: string; bg: string; border: string }
-> = {
-    GET: {
-        fg: "var(--_green-400)",
-        bg: "color-mix(in srgb, var(--_green-500) 13%, transparent)",
-        border: "color-mix(in srgb, var(--_green-500) 32%, transparent)",
-    },
-    POST: {
-        fg: "var(--color-accent-light)",
-        bg: "var(--color-accent-subtle)",
-        border: "color-mix(in srgb, var(--color-accent) 32%, transparent)",
-    },
-    PUT: {
-        fg: "var(--_amber-400)",
-        bg: "color-mix(in srgb, var(--_amber-500) 13%, transparent)",
-        border: "color-mix(in srgb, var(--_amber-500) 32%, transparent)",
-    },
-    DELETE: {
-        fg: "var(--_red-400)",
-        bg: "color-mix(in srgb, var(--_red-500) 13%, transparent)",
-        border: "color-mix(in srgb, var(--_red-500) 32%, transparent)",
-    },
-    PATCH: {
-        fg: "var(--color-brand-light)",
-        bg: "var(--color-brand-subtle)",
-        border: "color-mix(in srgb, var(--color-brand) 32%, transparent)",
-    },
-};

@@ -160,6 +160,21 @@ jobs:
           BASE_URL: http://localhost:4173
         run: npm run audit:release-notes
 
+      - name: Página 404 e navegação de recuperação
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:not-found
+
+      - name: Aviso antes de acessar o LinkedIn
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:linkedin
+
+      - name: Projeto Codex (Full HD, galeria e acessibilidade)
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:codex
+
       - name: Overlays (scroll lock, inert background)
         env:
           BASE_URL: http://localhost:4173

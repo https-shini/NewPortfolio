@@ -83,5 +83,10 @@ describe("matchReleaseNotes", () => {
 
     it("segmento a mais não é rota nossa", () => {
         expect(matchReleaseNotes("/release-notes/v2.0.0/extra")).toBeNull();
+        expect(matchReleaseNotes("/release-notes/page/2/extra")).toBeNull();
+    });
+
+    it("escape de URL inválido não derruba a aplicação", () => {
+        expect(matchReleaseNotes("/release-notes/%E0%A4%A")).toBeNull();
     });
 });

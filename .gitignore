@@ -29,3 +29,5 @@ apps/mobile/ios/
 apps/web/contato.html
 apps/web/links.html
 apps/web/release-notes.html
+apps/web/build/
+.maestri/

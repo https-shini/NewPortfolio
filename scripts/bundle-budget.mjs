@@ -51,11 +51,20 @@ const TETOS_POR_DOCUMENTO = [
 const TETO_SOB_DEMANDA = 56;
 
 const TETOS = [
+<<<<<<< Updated upstream
+=======
+    // Página técnica do Codex: ~5.7 KB gzip adicionais, carregados por rota.
+    { nome: "JS total", limite: 132, alvo: (f) => f.tipo === "js" },
+>>>>>>> Stashed changes
     {
         nome: "vendor (react + react-dom)",
         limite: 50,
         alvo: (f) => f.nome.startsWith("vendor-"),
     },
+<<<<<<< Updated upstream
+=======
+    { nome: "CSS total", limite: 38, alvo: (f) => f.tipo === "css" },
+>>>>>>> Stashed changes
 ];
 
 function listar(dir, tipo) {

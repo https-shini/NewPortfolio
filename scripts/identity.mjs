@@ -86,7 +86,7 @@ const ALVOS = {
         ".career-aside__card",
         ".career-aside__tag",
         ".formation-card",
-        ".arch-card",
+        ".featured__capability",
         ".contact__cta-card",
         ".featured__gallery",
         ".featured__arrow",

@@ -20,6 +20,7 @@ aponte `PW_CHROMIUM_PATH` para um binário existente.
 
 ## `a11y.mjs`
 
+<<<<<<< Updated upstream
 axe-core nas quatro rotas, em três estados, nos dois temas e nos dois
 idiomas — **36 combinações**. Sai com código 1 se houver violação `serious`
 ou `critical`, se o idioma declarado no documento divergir do renderizado, ou
@@ -42,6 +43,11 @@ cobriria metade do componente.
 > está configurada na Vercel — o formulário não existe em produção. Ele entra
 > quando a [#45](https://github.com/https-shini/NewPortfolio/issues/45)
 > publicar o endpoint.
+=======
+axe-core nas cinco rotas (incluindo a 404), nos dois temas e nos dois idiomas — 20
+combinações. Sai com código 1 se houver violação `serious` ou `critical`, ou
+se o idioma declarado no documento divergir do renderizado.
+>>>>>>> Stashed changes
 
 ```bash
 node scripts/a11y.mjs             # relatório legível
@@ -64,7 +70,7 @@ mais elementos e a cobertura sobe.
 
 ## `overflow.mjs`
 
-Quatro rotas em cinco larguras (320 a 1440), procurando conteúdo que
+Cinco rotas em cinco larguras (320 a 1440), procurando conteúdo que
 escape da janela. Sai com código 1 se algo passar, e nomeia os cinco
 primeiros culpados.
 
@@ -93,6 +99,21 @@ O peso é consequência. A causa — a contagem de dependências de runtime —
 é vigiada por `apps/web/src/shared/config/dependencies.test.ts`, que
 falha se `package.json` ganhar qualquer coisa além de `react` e
 `react-dom`.
+
+## `e2e-not-found.mjs`
+
+Verifica a página 404 no build: recuperar o início e a central de links,
+voltar pelo histórico, preservar o idioma e restaurar a indexação. Também
+abre o `404.html` gerado com JavaScript desativado para conferir o conteúdo
+básico, o `noindex` e os assets absolutos.
+
+```bash
+npm run audit:not-found
+```
+
+O status HTTP 404 do acesso direto depende da hospedagem. O `vite preview`
+usa o fallback da SPA; na Vercel, o arquivo `404.html` atende os endereços
+sem correspondência. A auditoria local não confirma o status do deploy.
 
 ## `e2e-modals.mjs`
 
@@ -382,6 +403,7 @@ execuções de runner para servir de porta.
 
 ## `docs/reference/a11y-baseline.json`
 
+<<<<<<< Updated upstream
 O estado que se quer preservar, não um alvo a perseguir. Hoje é zero violação
 em 16 combinações.
 
@@ -403,3 +425,37 @@ guarda, e é o que fecha esse buraco.
 > Até a #66 este documento afirmava que "qualquer regressão futura aparece
 > como diferença contra este arquivo" — e o `a11y.mjs` nunca lia o arquivo.
 > Era write-only. A afirmação passou a ser verdade em vez de ser removida.
+=======
+O estado que se quer preservar, não um alvo a perseguir. Hoje é zero
+violação em 16 combinações; qualquer regressão futura aparece como diferença
+contra este arquivo.
+
+## `e2e-linkedin.mjs`
+
+Verifica os links para o perfil do LinkedIn em todas as páginas principais.
+Nenhuma requisição ao perfil pode ocorrer antes da confirmação. Cobre
+Ctrl+clique/nova aba, certificados, idioma inglês, acessibilidade nos dois
+temas e rolagem interna do aviso em telas baixas. O destino externo é
+simulado; o teste não depende da disponibilidade do LinkedIn.
+
+```bash
+npm run audit:linkedin
+```
+
+## `e2e-codex.mjs`
+
+Valida a página `/projects/codex/readme.html` nos dois idiomas e temas:
+quatro imagens com dimensões naturais de 1920 × 1080, abertura e navegação
+da galeria por teclado, restauração de foco, âncoras, ausência de documentos públicos,
+acessibilidade WCAG, quatro larguras, retorno à home, recarregamento direto
+e aliases `/projects/codex/` e `/projects/codex/index.html`. O HTML é a
+apresentação técnica; o documento original permanece fora da distribuição pública.
+Na home, valida também seleção de capturas, setas, teclado, ampliação,
+restauração de foco, acessibilidade e responsividade da seção `/#destaque`.
+Reutiliza o preview quando `BASE_URL` estiver definido.
+
+```bash
+npm run build
+npm run audit:codex
+```
+>>>>>>> Stashed changes

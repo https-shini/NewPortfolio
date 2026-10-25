@@ -1,3 +1,4 @@
+import { ProfileLink } from "@/shared/ui/ProfileLink";
 import React, { useMemo } from "react";
 import "./FormationCard.css";
 import { SkillIcon } from "@/shared/ui/SkillIcon/SkillIcon";
@@ -133,7 +134,7 @@ export const FormationCard: React.FC<FormationCardProps> = ({
             {/* ─── Institution ─── */}
             <p className="formation-card__institution">
                 {item.institutionUrl ? (
-                    <a
+                    <ProfileLink
                         href={item.institutionUrl}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -145,7 +146,7 @@ export const FormationCard: React.FC<FormationCardProps> = ({
                             height={11}
                             aria-hidden="true"
                         />
-                    </a>
+                    </ProfileLink>
                 ) : (
                     item.institution
                 )}
@@ -212,7 +213,7 @@ export const FormationCard: React.FC<FormationCardProps> = ({
                 )}
 
                 {item.certUrl && (
-                    <a
+                    <ProfileLink
                         href={item.certUrl}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -225,7 +226,7 @@ export const FormationCard: React.FC<FormationCardProps> = ({
                             height={12}
                             aria-hidden="true"
                         />
-                    </a>
+                    </ProfileLink>
                 )}
             </footer>
         </article>

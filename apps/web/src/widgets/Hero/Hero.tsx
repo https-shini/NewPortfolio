@@ -1,3 +1,4 @@
+import { ProfileLink } from "@/shared/ui/ProfileLink";
 import React from "react";
 import "./Hero.css";
 import { useLang } from "@/shared/hooks/useLang";
@@ -96,7 +97,7 @@ export const Hero: React.FC = () => {
                             <IconCode />
                             <span>{t("hero.cta.work")}</span>
                         </button>
-                        <a
+                        <ProfileLink
                             href={cvUrl}
                             className="btn btn--outline btn--lg"
                             target="_blank"
@@ -104,7 +105,7 @@ export const Hero: React.FC = () => {
                         >
                             <IconDownload />
                             <span>{t("hero.cta.cv")}</span>
-                        </a>
+                        </ProfileLink>
                     </div>
 
                     <div className="hero__social">
@@ -113,7 +114,7 @@ export const Hero: React.FC = () => {
                             className="hero__social-divider"
                             aria-hidden="true"
                         />
-                        <a
+                        <ProfileLink
                             href={GITHUB_URL}
                             className="social-link"
                             target="_blank"
@@ -125,8 +126,8 @@ export const Hero: React.FC = () => {
                             }
                         >
                             <IconGitHub />
-                        </a>
-                        <a
+                        </ProfileLink>
+                        <ProfileLink
                             href={LINKEDIN_URL}
                             className="social-link"
                             target="_blank"
@@ -138,8 +139,8 @@ export const Hero: React.FC = () => {
                             }
                         >
                             <IconLinkedIn />
-                        </a>
-                        <a
+                        </ProfileLink>
+                        <ProfileLink
                             href={`mailto:${AUTHOR_EMAIL}`}
                             className="social-link"
                             aria-label={
@@ -149,7 +150,7 @@ export const Hero: React.FC = () => {
                             }
                         >
                             <IconGmail />
-                        </a>
+                        </ProfileLink>
                     </div>
                 </div>
 

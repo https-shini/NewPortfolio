@@ -1,3 +1,4 @@
+import { ProfileLink } from "@/shared/ui/ProfileLink";
 import React, { useState, useCallback } from "react";
 import "./Links.css";
 import { LinkCard } from "./components/LinkCard";
@@ -97,9 +98,9 @@ export const LinksPage: React.FC = () => {
 
     return (
         <>
-            <a href="#main-content" className="skip-link">
+            <ProfileLink href="#main-content" className="skip-link">
                 {t("links.skip")}
-            </a>
+            </ProfileLink>
 
             <ScrollUtils
                 label={lang === "pt" ? "Voltar ao topo" : "Back to top"}
@@ -250,7 +251,7 @@ export const LinksPage: React.FC = () => {
                                 } as React.CSSProperties
                             }
                         >
-                            <a
+                            <ProfileLink
                                 className="btn btn--primary"
                                 href={getCvUrl(lang)}
                                 target="_blank"
@@ -258,7 +259,7 @@ export const LinksPage: React.FC = () => {
                             >
                                 <IconDownload width={16} height={16} />
                                 <span>{t("links.cv")}</span>
-                            </a>
+                            </ProfileLink>
 
                             <button
                                 type="button"

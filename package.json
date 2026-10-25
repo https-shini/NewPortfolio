@@ -1,4 +1,5 @@
 {
+<<<<<<< Updated upstream
     "name": "NewPortfolio",
     "private": true,
     "type": "module",
@@ -61,5 +62,51 @@
     },
     "workspaces": [
         "apps/*"
+=======
+  "name": "NewPortfolio",
+  "private": true,
+  "type": "module",
+  "version": "2.0.0",
+  "description": "Portfolio pessoal de Guilherme Cruz",
+  "author": "Guilherme Cruz",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "npm run dev --workspace apps/web",
+    "build": "npm run build --workspace apps/web",
+    "preview": "npm run preview --workspace apps/web",
+    "clean": "rm -rf node_modules apps/*/node_modules apps/web/dist",
+    "clean:dist": "rm -rf apps/web/dist",
+    "type-check": "npm run type-check --workspace apps/web",
+    "lint": "npm run lint --workspace apps/web",
+    "lint:fix": "npm run lint:fix --workspace apps/web",
+    "format": "npm run format --workspace apps/web",
+    "format:check": "npm run format:check --workspace apps/web",
+    "test": "npm run test --workspace apps/web",
+    "test:watch": "npm run test:watch --workspace apps/web",
+    "audit:a11y": "node scripts/a11y.mjs",
+    "audit:overflow": "node scripts/overflow.mjs",
+    "audit:release-notes": "node --experimental-strip-types --no-warnings scripts/e2e-release-notes.mjs",
+    "audit:not-found": "node scripts/e2e-not-found.mjs",
+    "audit:linkedin": "node scripts/e2e-linkedin.mjs",
+    "audit:codex": "node scripts/e2e-codex.mjs",
+    "audit:bundle": "node scripts/bundle-budget.mjs",
+    "audit:modals": "node scripts/e2e-modals.mjs",
+    "audit:perf": "node scripts/perf.mjs",
+    "audit:layers": "node scripts/layers.mjs",
+    "audit:identity": "node scripts/identity.mjs",
+    "icones": "node scripts/icones.mjs",
+    "icones:check": "node scripts/icones.mjs --check",
+    "changelog": "node --experimental-strip-types --no-warnings scripts/changelog.mjs",
+    "changelog:check": "node --experimental-strip-types --no-warnings scripts/changelog.mjs --check",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "apps/web/src/**/*.{ts,tsx,css}": [
+      "prettier --write"
+>>>>>>> Stashed changes
     ]
 }

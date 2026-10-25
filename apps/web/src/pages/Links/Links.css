@@ -267,6 +267,15 @@
     color: var(--color-text-2);
     border: 1px solid var(--color-border-2);
     border-radius: var(--radius-md);
+<<<<<<< Updated upstream
+=======
+    transition: var(--transition-base);
+}
+.linktree__chip:hover {
+    color: var(--color-text-1);
+    border-color: var(--color-border-brand);
+    transform: translateY(-2px);
+>>>>>>> Stashed changes
 }
 /* O ícone é o que se reconhece à distância — o rótulo em mono de 12px só
    confirma. A 18px ele era menor que a caixa de texto ao lado e a marca
