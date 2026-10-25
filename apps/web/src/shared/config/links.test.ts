@@ -90,11 +90,18 @@ describe("TREE_LINKS — derivação de PROFILE (sem URL reescrita à mão)", ()
 });
 
 describe("PROJECT_URLS", () => {
+    it("Codex oferece detalhes internos sem documento ou repositório público", () => {
+        expect(PROJECT_URLS.codex.details).toBe(ROUTES.CODEX);
+        expect(PROJECT_URLS.codex).not.toHaveProperty("docs");
+        expect(PROJECT_URLS.codex).not.toHaveProperty("repo");
+    });
     it("as URLs de repositório derivam do perfil do GitHub", () => {
         Object.values(PROJECT_URLS).forEach((project) => {
-            expect(project.repo.startsWith(PROFILE.social.github.url)).toBe(
-                true,
-            );
+            if ("repo" in project) {
+                expect(project.repo.startsWith(PROFILE.social.github.url)).toBe(
+                    true,
+                );
+            }
         });
     });
 

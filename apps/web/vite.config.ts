@@ -4,8 +4,9 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import { writeFile, readFile } from "node:fs/promises";
+import { readFile, writeFile, copyFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
+import { renderNotFoundHtml } from "./build/notFound.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,10 +43,6 @@ function siteUrlHtmlPlugin() {
  * `SECTION_IDS` letra por letra. Agora o arquivo inteiro nasce do build, e
  * o `<lastmod>` vem do git — a única fonte que não depende de alguém
  * lembrar de atualizar.
- *
- * As âncoras saíram de vez depois disso: gerá-las de `SECTION_IDS` resolvia
- * a duplicação de texto, mas não a pergunta se elas deviam estar lá. Não
- * deviam — ver o comentário no laço que sobrou.
  */
 
 /** Data do último commit que tocou qualquer um dos caminhos (YYYY-MM-DD). */
@@ -114,14 +111,15 @@ function sitemapPlugin() {
         name: "sitemap",
         async closeBundle() {
             const { RELEASE_NOTES } =
-                await import("./src/shared/config/releaseNotes");
+                await import("./src/shared/config/releaseNotes.ts");
             const {
+                SECTION_IDS,
                 releaseNotePath,
                 releaseNotesPagePath,
-                releaseNotesTotalPages,
+                RELEASE_NOTES_PAGE_SIZE,
                 HREFLANG,
                 withLang,
-            } = await import("./src/shared/config/routes");
+            } = await import("./src/shared/config/routes.ts");
 
             /* Data de cada rota: o commit mais recente entre os caminhos que
                a compõem. Widgets entram na home porque é lá que aparecem. */
@@ -132,6 +130,15 @@ function sitemapPlugin() {
             ]);
 
             const entries: SitemapEntry[] = [
+                {
+                    loc: `${SITE_URL}/projects/codex/readme.html`,
+                    lastmod: lastModified([
+                        "apps/web/src/pages/Codex",
+                        "apps/web/projects/codex/readme.html",
+                    ]),
+                    changefreq: "monthly",
+                    priority: "0.8",
+                },
                 {
                     loc: `${SITE_URL}/`,
                     lastmod: homeDate,
@@ -148,17 +155,6 @@ function sitemapPlugin() {
                     priority: "0.9",
                 },
                 {
-                    loc: `${SITE_URL}/contato`,
-                    lastmod: lastModified([
-                        "apps/web/src/pages/Contact",
-                        "apps/web/src/widgets/Contact",
-                    ]),
-                    changefreq: "monthly",
-                    /* Abaixo da home e da /links, acima das notas de versão:
-                       é uma página de conversão, não de conteúdo. */
-                    priority: "0.8",
-                },
-                {
                     loc: `${SITE_URL}/release-notes`,
                     lastmod: lastModified([
                         "apps/web/src/pages/ReleaseNotes",
@@ -169,23 +165,22 @@ function sitemapPlugin() {
                 },
             ];
 
-            /* As âncoras da home NÃO entram. Elas entravam, geradas de
-               SECTION_IDS, e enchiam o sitemap com 8 das 19 URLs. Mas
-               buscador não indexa fragmento como URL distinta: `/#sobre` é
-               a mesma página que `/`, e anunciar as duas divide sinal de uma
-               página só entre nove entradas idênticas.
-
-               Se um dia uma seção virar rota de verdade, ela entra aqui como
-               rota — não como fragmento. */
+            /* Âncoras da home — geradas de SECTION_IDS, não copiadas. */
+            for (const id of Object.values(SECTION_IDS)) {
+                entries.push({
+                    loc: `${SITE_URL}/#${id}`,
+                    lastmod: homeDate,
+                    changefreq: "monthly",
+                    priority: "0.8",
+                });
+            }
 
             /* Índice paginado: a página 1 é o próprio /release-notes, já
-               listado acima, então o laço começa na 2.
-
-               O `- 1` é a versão mais recente, que ocupa o topo do índice e
-               não entra na paginação. Sem ele a conta daqui divergia da do
-               widget e o sitemap chegava a anunciar uma página que o site
-               devolve como a anterior. */
-            const totalPages = releaseNotesTotalPages(RELEASE_NOTES.length - 1);
+               listado acima, então o laço começa na 2. Com o histórico
+               atual não há página 2 — o laço simplesmente não roda. */
+            const totalPages = Math.ceil(
+                RELEASE_NOTES.length / RELEASE_NOTES_PAGE_SIZE,
+            );
             for (let page = 2; page <= totalPages; page++) {
                 entries.push({
                     loc: `${SITE_URL}${releaseNotesPagePath(page)}`,
@@ -216,7 +211,7 @@ function sitemapPlugin() {
                 '<?xml version="1.0" encoding="UTF-8"?>',
                 "<!--",
                 `    Gerado no build por vite.config.ts — não editar à mão.`,
-                `    As datas vêm do git. Só rotas — fragmento não é URL.`,
+                `    As datas vêm do git; as âncoras, de SECTION_IDS.`,
                 "-->",
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
                 '        xmlns:xhtml="http://www.w3.org/1999/xhtml">',
@@ -248,137 +243,36 @@ function sitemapPlugin() {
     };
 }
 
-/* ── Um documento por rota ───────────────────────────────────────────────
- *
- * Havia um `index.html` só, e o `vercel.json` reescrevia as três rotas
- * para ele. Duas consequências, as duas medidas:
- *
- *   1. quem abria `/links` baixava e compilava a home inteira — 21 KiB de
- *      JS e 22 KiB de CSS que o PageSpeed contava como não usados;
- *   2. título, descrição e canônica eram os da home para todo mundo, e só
- *      o `useDocumentMeta` corrigia, depois do JavaScript.
- *
- * Com um documento por rota, cada uma recebe o seu pedaço e a sua folha
- * ligados no HTML — e as fichas de SEO certas antes de qualquer script.
- *
- * Por que não bastava pôr a home em `lazy`: com `cssCodeSplit`, a folha de
- * um pedaço dinâmico não entra no HTML — quem a pede é o carregador, em
- * execução. A folha da home passaria a ser descoberta depois de baixar e
- * executar 54 KB de JavaScript, o que no celular é regressão de FCP na
- * rota de maior tráfego.
- */
-const ROTAS_HTML = [
-    {
-        arquivo: "index.html",
-        entrada: "/src/main.tsx",
-        caminho: "/",
-        titulo: "Guilherme Cruz — Desenvolvedor de Software | React, TypeScript & Node.js",
-        tituloCurto: "Guilherme Cruz — Desenvolvedor de Software",
-        descricao:
-            "Portfólio profissional de Guilherme Cruz — Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e Python. Projetos reais, experiência e formação.",
-        resumo: "Desenvolvedor Full Stack especializado em React, TypeScript, Node.js e interfaces de alta performance.",
-    },
-    {
-        arquivo: "links.html",
-        entrada: "/src/entradas/links.tsx",
-        caminho: "/links",
-        titulo: "Links — Guilherme Cruz",
-        tituloCurto: "Links — Guilherme Cruz",
-        descricao:
-            "Todos os canais de contato e presença de Guilherme Cruz — portfólio, GitHub, LinkedIn, currículo e e-mail, em um lugar só.",
-        resumo: "Portfólio, GitHub, LinkedIn, currículo e contato de Guilherme Cruz, em um lugar só.",
-    },
-    {
-        arquivo: "release-notes.html",
-        entrada: "/src/entradas/release-notes.tsx",
-        caminho: "/release-notes",
-        titulo: "Notas de versão — Guilherme Cruz",
-        tituloCurto: "Notas de versão — Guilherme Cruz",
-        descricao:
-            "Histórico de versões de gcruz.dev.br: o que mudou em cada release, com as decisões por trás de cada uma.",
-        resumo: "O que mudou em cada versão de gcruz.dev.br, com as decisões por trás de cada uma.",
-    },
-    {
-        arquivo: "contato.html",
-        entrada: "/src/entradas/contato.tsx",
-        caminho: "/contato",
-        titulo: "Contato — Guilherme Cruz",
-        tituloCurto: "Contato — Guilherme Cruz",
-        descricao:
-            "Fale com Guilherme Cruz — e-mail, LinkedIn, GitHub e central de links, com tempo de resposta e localização.",
-        resumo: "E-mail, LinkedIn, GitHub e central de links de Guilherme Cruz, com tempo de resposta.",
-    },
-] as const;
-
-/** Os HTML derivados moram no diretório do app, ao lado do index.html. */
-const htmlDe = (arquivo: string) => path.resolve(__dirname, arquivo);
-
-function rotaHtmlPlugin() {
+function notFoundPlugin() {
     return {
-        name: "documento-por-rota",
-
-        /* `serve.json` no dist para que o servidor estático das
-           auditorias reescreva como a Vercel reescreve. Sem isto o
-           `/release-notes/v2.0.0` devolve 404 no `serve`, e a auditoria
-           mediria um erro achando que media a página.
-
-           Só esta regra: o `cleanUrls` do `serve` já mapeia `/links` e
-           `/release-notes` para os arquivos de mesmo nome sozinho, e a
-           Vercel faz o equivalente pelos rewrites do `vercel.json`. O que
-           nenhum dos dois cobre por padrão é o segmento a mais. */
+        name: "not-found-html",
+        apply: "build" as const,
         async closeBundle() {
+            const output = path.resolve(__dirname, "dist");
+            const html = await readFile(
+                path.join(output, "index.html"),
+                "utf8",
+            );
             await writeFile(
-                path.resolve(__dirname, "./dist/serve.json"),
-                JSON.stringify(
-                    {
-                        rewrites: [
-                            {
-                                source: "/release-notes/**",
-                                destination: "/release-notes.html",
-                            },
-                        ],
-                    },
-                    null,
-                    2,
-                ) + "\n",
+                path.join(output, "404.html"),
+                renderNotFoundHtml(html),
                 "utf8",
             );
         },
+    };
+}
 
-        /* Os derivados nascem antes do Rollup ler as entradas. São cópias
-           do index.html com o `src` do módulo trocado — o resto (fontes,
-           JSON-LD, bootstrap de tema) continua com fonte única. */
-        async buildStart() {
-            const modelo = await readFile(htmlDe("index.html"), "utf8");
-            for (const rota of ROTAS_HTML) {
-                if (rota.arquivo === "index.html") continue;
-                await writeFile(
-                    htmlDe(rota.arquivo),
-                    modelo.replace("/src/main.tsx", rota.entrada),
-                    "utf8",
-                );
-            }
-        },
-
-        /* As fichas `__ROTA_*__` do modelo viram os valores da rota. O
-           `ctx.filename` é o caminho absoluto do HTML em processamento. */
-        transformIndexHtml: {
-            order: "pre" as const,
-            handler(html: string, ctx: { filename: string }) {
-                const rota =
-                    ROTAS_HTML.find((r) => ctx.filename.endsWith(r.arquivo)) ??
-                    ROTAS_HTML[0];
-
-                return html
-                    .replaceAll("__ROTA_TITULO_CURTO__", rota.tituloCurto)
-                    .replaceAll("__ROTA_TITULO__", rota.titulo)
-                    .replaceAll("__ROTA_DESCRICAO__", rota.descricao)
-                    .replaceAll("__ROTA_RESUMO__", rota.resumo)
-                    .replaceAll(
-                        "__ROTA_CAMINHO__",
-                        rota.caminho === "/" ? "/" : rota.caminho,
-                    );
-            },
+/** Preserve the shorter URL without maintaining a second HTML source. */
+function codexPageAliasPlugin() {
+    return {
+        name: "codex-page-alias",
+        apply: "build" as const,
+        async closeBundle() {
+            const output = path.resolve(__dirname, "dist/projects/codex");
+            await copyFile(
+                path.join(output, "readme.html"),
+                path.join(output, "index.html"),
+            );
         },
     };
 }
@@ -388,9 +282,10 @@ export default defineConfig({
         react({
             jsxRuntime: "automatic",
         }),
-        rotaHtmlPlugin(),
         siteUrlHtmlPlugin(),
         sitemapPlugin(),
+        notFoundPlugin(),
+        codexPageAliasPlugin(),
     ],
 
     /* Constante de build — ver a declaração em src/vite-env.d.ts. */
@@ -429,63 +324,13 @@ export default defineConfig({
         target: "es2020",
         minify: "esbuild",
 
-        /* O inline desligado para SVG, e SÓ para ele.
-           Os 34 SVGs de `assets/skills/` têm de 824 a 3.389 bytes — todos
-           abaixo do limite padrão de 4096 —, então o Vite os transformava em
-           `data:image/svg+xml,` DENTRO do JS: houve um momento em que não
-           havia um único `.svg` em `dist/assets/`. Com 32 ícones a mais na
-           home, isso entraria no bundle de entrada e estouraria o teto do
-           documento, que tem ~13 KB de folga.
-
-           Nota de medição: SVG embutido pelo Vite é URL-encoded, NÃO base64.
-           Procurar `;base64` devolve zero esteja embutido ou não — é métrica
-           vazia, e eu já a usei por engano como prova. O que serve é contar
-           os arquivos `.svg` em `dist/assets/img/` (34 como arquivo, 0 se
-           embutidos) ou procurar `data:image/svg+xml` sem o `;base64`.
-           Como arquivo, o SVG sai da conta: `scripts/bundle-budget.mjs` mede
-           o que o documento REFERENCIA — entrada, modulepreload e folhas —, e
-           imagem não está nessa lista. É a mesma armadilha que o cabeçalho de
-           `scripts/imagens.mjs` registra de uma tentativa com `sharp`: as
-           variantes ficaram abaixo do limite, viraram base64 e estouraram o
-           orçamento sem economizar um byte.
-
-           Isto já foi `0` — global, para todo ativo. A função devolve `false`
-           para o que não deve ser embutido NUNCA e `undefined` para o resto,
-           que é o jeito de dizer "volte ao padrão": assim o limite de 4096
-           continua valendo para qualquer outro arquivo pequeno, onde embutir
-           de fato economiza uma requisição. `undefined` e não `true`, que
-           forçaria o inline.
-
-           Duas exclusões, cada uma por um motivo medido:
-
-           · `.svg` — os 34 ícones de skill (ver acima).
-
-           · `assets/gerado/` — as variantes de `scripts/imagens.mjs`. Elas
-             existem PARA SER arquivos separados: é o `srcset` que escolhe
-             qual baixar, e embutir uma no JS faz todo visitante pagar por
-             ela mesmo sem usá-la. As de 400px têm de 1.572 a 3.380 bytes e
-             caíam abaixo do limite: ao acrescentá-las para o srcset do
-             Destaque, quatro foram embutidas e o `index.html` passou de
-             112,7 para 131,0 KB gzip — 5,0 acima do teto de 126. O
-             cabeçalho de `scripts/imagens.mjs` já registrava essa mesma
-             armadilha de uma tentativa com `sharp`; ela voltou por outro
-             caminho. */
-        assetsInlineLimit: (filePath) =>
-            filePath.endsWith(".svg") || filePath.includes("/gerado/")
-                ? false
-                : undefined,
-
         cssCodeSplit: true,
 
         rollupOptions: {
-            /* Uma entrada por documento — ver `rotaHtmlPlugin`. */
-            input: Object.fromEntries(
-                ROTAS_HTML.map((r) => [
-                    r.arquivo.replace(/\.html$/, ""),
-                    htmlDe(r.arquivo),
-                ]),
-            ),
-
+            input: {
+                main: path.resolve(__dirname, "index.html"),
+                codex: path.resolve(__dirname, "projects/codex/readme.html"),
+            },
             output: {
                 /* React/ReactDOM raramente mudam — isolá-los preserva o
                    cache do usuário entre deploys do código da aplicação. */

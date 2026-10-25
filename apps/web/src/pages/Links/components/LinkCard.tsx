@@ -1,3 +1,4 @@
+import { ProfileLink } from "@/shared/ui/ProfileLink";
 import React, { useCallback } from "react";
 import "./LinkCard.css";
 import { IconArrowUp } from "@/shared/ui/Icons";
@@ -59,7 +60,7 @@ export const LinkCard: React.FC<LinkCardProps> = ({ link, index }) => {
         : link.label[lang];
 
     return (
-        <a
+        <ProfileLink
             className="link-card reveal-item"
             style={{ "--reveal-i": index } as React.CSSProperties}
             href={link.href}
@@ -83,6 +84,6 @@ export const LinkCard: React.FC<LinkCardProps> = ({ link, index }) => {
             <span className="link-card__arrow" aria-hidden="true">
                 <IconArrowUp width={18} height={18} />
             </span>
-        </a>
+        </ProfileLink>
     );
 };

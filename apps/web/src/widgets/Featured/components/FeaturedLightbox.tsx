@@ -7,7 +7,7 @@ import {
     IconChevronLeft,
     IconChevronRight,
     IconExternalLink,
-    IconGitHub,
+    IconSearch,
 } from "@/shared/ui/Icons";
 import type { ProjectSlide } from "../Featured.data";
 
@@ -16,7 +16,7 @@ interface FeaturedLightboxProps {
     initialIndex: number;
     projectName: string;
     liveUrl?: string;
-    repoUrl?: string;
+    detailsUrl?: string;
     onClose: () => void;
 }
 
@@ -34,7 +34,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
     initialIndex,
     projectName,
     liveUrl,
-    repoUrl,
+    detailsUrl,
     onClose,
 }) => {
     const { lang, t } = useLang();
@@ -227,7 +227,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                         </p>
                     )}
 
-                    {(liveUrl || repoUrl) && (
+                    {(liveUrl || detailsUrl) && (
                         <div className="fl-actions">
                             {liveUrl && (
                                 <a
@@ -244,19 +244,19 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                                     />
                                 </a>
                             )}
-                            {repoUrl && (
+                            {detailsUrl && (
                                 <a
-                                    href={repoUrl}
+                                    href={detailsUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="btn btn--outline btn--sm fl-cta"
                                 >
-                                    <IconGitHub
+                                    <IconSearch
                                         width={14}
                                         height={14}
                                         aria-hidden="true"
                                     />
-                                    {t("featured.btn.repo")}
+                                    {t("featured.btn.details")}
                                 </a>
                             )}
                         </div>

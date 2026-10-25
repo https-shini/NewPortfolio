@@ -1,3 +1,4 @@
+import { ProfileLink } from "@/shared/ui/ProfileLink";
 import React from "react";
 import "./Contact.css";
 import { useLang } from "@/shared/hooks/useLang";
@@ -80,12 +81,11 @@ const resolve = (v: string | Localized, lang: "pt" | "en"): string =>
  * A lista mistura mailto, sites externos e rota interna (a página /links),
  * então quem decide como abrir é useLinkProps, não este componente.
  */
-const ProfileLink: React.FC<React.PropsWithChildren<{ href: string }>> = ({
-    href,
-    children,
-}) => {
+const ContactProfileLink: React.FC<
+    React.PropsWithChildren<{ href: string }>
+> = ({ href, children }) => {
     const { anchorProps } = useLinkProps(href);
-    return <a {...anchorProps}>{children}</a>;
+    return <ProfileLink {...anchorProps}>{children}</ProfileLink>;
 };
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -177,7 +177,7 @@ export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
                         )}
 
                         {/* ── Botão principal de email ──────────────── */}
-                        <a
+                        <ProfileLink
                             href={mailtoHref}
                             className="contact__email-btn"
                             aria-label={
@@ -208,7 +208,7 @@ export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
                             >
                                 ↗
                             </span>
-                        </a>
+                        </ProfileLink>
 
                         {/* ── Separador ────────────────────────────── */}
                         <div className="contact__or" aria-hidden="true">
@@ -217,7 +217,7 @@ export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
 
                         {/* ── Links alternativos ────────────────────── */}
                         <div className="contact__alt-links">
-                            <a
+                            <ProfileLink
                                 href={PROFILE.social.linkedin.url}
                                 className="contact__alt-link"
                                 target="_blank"
@@ -242,9 +242,9 @@ export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
                                         {PROFILE.social.linkedin.handle}
                                     </span>
                                 </div>
-                            </a>
+                            </ProfileLink>
 
-                            <a
+                            <ProfileLink
                                 href={PROFILE.social.github.url}
                                 className="contact__alt-link"
                                 target="_blank"
@@ -269,7 +269,7 @@ export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
                                         {PROFILE.social.github.handle}
                                     </span>
                                 </div>
-                            </a>
+                            </ProfileLink>
                         </div>
 
                         {/* ── Formulário direto (renderiza somente com
@@ -330,9 +330,11 @@ export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
 
                                         <dd className="contact__data-value">
                                             {item.href ? (
-                                                <ProfileLink href={item.href}>
+                                                <ContactProfileLink
+                                                    href={item.href}
+                                                >
                                                     {resolve(item.value, lang)}
-                                                </ProfileLink>
+                                                </ContactProfileLink>
                                             ) : (
                                                 resolve(item.value, lang)
                                             )}

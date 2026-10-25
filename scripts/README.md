@@ -20,33 +20,14 @@ aponte `PW_CHROMIUM_PATH` para um binário existente.
 
 ## `a11y.mjs`
 
-axe-core nas quatro rotas, em três estados, nos dois temas e nos dois
-idiomas — **36 combinações**. Sai com código 1 se houver violação `serious`
-ou `critical`, se o idioma declarado no documento divergir do renderizado, ou
-se a leitura for pior que a linha de base.
-
-| estado         | onde                                                  | largura                                                  |
-| -------------- | ----------------------------------------------------- | -------------------------------------------------------- |
-| `fechado`      | as quatro rotas                                       | 1280px                                                   |
-| `menu-aberto`  | as quatro rotas                                       | 390px — o `.header__hamburger` só existe abaixo de 901px |
-| `modal-aberto` | só a home, que é quem monta o widget de recomendações | 1280px                                                   |
-
-Os estados abertos existem porque **o axe não abre nada por conta própria**, e
-foi nos estados fechados que se esconderam os quatro defeitos do `Header`. O
-menu vai nas quatro rotas porque o `Header` tem duas formas: com `isHome`
-verdadeiro observa a seção ativa e rola, falso navega — medir só a home
-cobriria metade do componente.
-
-> Um estado ainda não existe: **formulário de contato em erro**. O
-> `ContactForm` retorna `null` sem `VITE_FORM_ENDPOINT`, e essa variável não
-> está configurada na Vercel — o formulário não existe em produção. Ele entra
-> quando a [#45](https://github.com/https-shini/NewPortfolio/issues/45)
-> publicar o endpoint.
+axe-core nas cinco rotas (incluindo a 404), nos dois temas e nos dois idiomas — 20
+combinações. Sai com código 1 se houver violação `serious` ou `critical`, ou
+se o idioma declarado no documento divergir do renderizado.
 
 ```bash
 node scripts/a11y.mjs             # relatório legível
 node scripts/a11y.mjs --json      # saída para máquina
-node scripts/a11y.mjs --baseline  # regrava docs/reference/a11y-baseline.json
+node scripts/a11y.mjs --baseline  # regrava docs/a11y-baseline.json
 ```
 
 As `moderate` viram aviso e não barram: valem correção, não valem travar uma
@@ -64,7 +45,7 @@ mais elementos e a cobertura sobe.
 
 ## `overflow.mjs`
 
-Quatro rotas em cinco larguras (320 a 1440), procurando conteúdo que
+Cinco rotas em cinco larguras (320 a 1440), procurando conteúdo que
 escape da janela. Sai com código 1 se algo passar, e nomeia os cinco
 primeiros culpados.
 
@@ -93,6 +74,21 @@ O peso é consequência. A causa — a contagem de dependências de runtime —
 é vigiada por `apps/web/src/shared/config/dependencies.test.ts`, que
 falha se `package.json` ganhar qualquer coisa além de `react` e
 `react-dom`.
+
+## `e2e-not-found.mjs`
+
+Verifica a página 404 no build: recuperar o início e a central de links,
+voltar pelo histórico, preservar o idioma e restaurar a indexação. Também
+abre o `404.html` gerado com JavaScript desativado para conferir o conteúdo
+básico, o `noindex` e os assets absolutos.
+
+```bash
+npm run audit:not-found
+```
+
+O status HTTP 404 do acesso direto depende da hospedagem. O `vite preview`
+usa o fallback da SPA; na Vercel, o arquivo `404.html` atende os endereços
+sem correspondência. A auditoria local não confirma o status do deploy.
 
 ## `e2e-modals.mjs`
 
@@ -254,50 +250,6 @@ oscila com a máquina ensina a ignorar o job. Aqui o que serve é comparar
 duas execuções na mesma máquina, antes e depois de uma mudança — como o
 `geometry.mjs`.
 
-## `rolagem.mjs`
-
-Atribuição, não medição. O `perf.mjs` responde **quanto** a rolagem custa; este
-responde **quem**.
-
-```bash
-npm run build
-npm run rolagem             # os nove cenários de diagnóstico
-npm run rolagem -- --contagem   # só a curva de quantas partículas animam
-npm run rolagem -- --json
-```
-
-Home, CPU 4×, mediana de três por cenário. Cada cenário desliga um suspeito por
-CSS injetado no fim da cascata — e dois deles rolam **sem mover o ponteiro**,
-para separar a animação CSS da escrita inline por partícula que o
-`useAmbientMotion` faz num laço de quadro.
-
-CSS injetado, e não build por cenário: um build diferente mudaria o bundle, o
-hash dos arquivos e a ordem de carga, e a comparação passaria a medir isso
-também.
-
-**A grandeza comparada é `estilo/s`, não o milissegundo absoluto.** Isso não é
-firula: medindo, o cenário "sem ponteiro" deu `+268 ms` de estilo absoluto, o
-que parecia dizer que mover o ponteiro _alivia_ o custo. Não alivia — sem
-eventos de ponteiro sobra orçamento para mais quadros de animação na mesma
-janela de relógio, e mais quadros é mais recálculo. Cenários de densidade
-diferente têm janelas diferentes, e comparar o absoluto compara a densidade. A
-tabela imprime a janela medida junto, para o leitor conferir.
-
-**A tabela imprime também a amplitude do base entre execuções, e ela é a
-régua.** Delta menor que a amplitude não é atribuição — é a máquina. Sem esse
-número, qualquer diferença parece conclusão; foi o que a série de performance
-aprendeu tirando duas conclusões de execução única, uma delas errada. As
-sessões deram amplitudes de 55, 33 e 8 ms/s — ela varia muito, e é por isso que
-é reportada e não assumida.
-
-Não roda no CI, pelo mesmo motivo do `perf.mjs`: mede tempo.
-
-O resultado está em
-[`docs/reference/ROLAGEM-2026-09.md`](../docs/reference/ROLAGEM-2026-09.md):
-o vidro absolvido em seis medições, o ponteiro absolvido, e as partículas
-animadas como a única alavanca que a variância sustenta — reduzidas de 39 para
-20, com o antes e o depois medidos no mesmo dia.
-
 ## `changelog.mjs`
 
 Gera o `CHANGELOG.md` da raiz a partir de `RELEASE_NOTES`.
@@ -309,97 +261,52 @@ npm run changelog:check    # confere; sai 1 se divergir
 
 O arquivo é derivado, não uma segunda fonte de verdade. Mas derivado só
 continua derivado enquanto alguém regenera, então
-`apps/web/src/shared/config/changelog.test.ts` roda o modo de conferência
+`frontend/src/shared/config/changelog.test.ts` roda o modo de conferência
 na suíte de sempre: acrescentar versão sem regenerar falha ali, e não
 meses depois quando alguém reparar que o arquivo mente.
 
 Roda em Node puro com `--experimental-strip-types`, sem o Vite no caminho.
 
-## `icones.mjs` e `imagens.mjs`
-
-Os dois destoam do resto: não medem o site construído, **geram** arquivo —
-os ícones de tecnologia e as variantes responsivas das fotos — e o
-resultado é commitado.
-
-```bash
-npm run icones          # regenera
-npm run icones:check    # reprova se o commitado estiver velho
-npm run imagens
-npm run imagens:check
-```
-
-Por que commitar o derivado, em vez de gerar no build: a Vercel roda
-`npm install` e o build, e não tem o Chromium do Playwright, que é instalado
-à parte. Gerar durante o build simplesmente não roda lá.
-
-O `--check` **não redesenha**. Dois Chromium de versões diferentes produzem
-bytes diferentes para os mesmos pixels, então comparar arquivo por arquivo
-reprovaria por causa do runner, e não da imagem. Ele confere a assinatura
-das fontes contra a da última geração e a presença de cada derivado.
-
-## `csp.mjs`
-
-Também destoa: não mede o site, confere um **valor gravado** contra o que o
-build produziu — o hash SHA-256 do script inline de bootstrap de tema, que a
-CSP do `vercel.json` libera.
-
-```bash
-npm run build           # o hash é do HTML gerado
-npm run csp             # imprime o hash de cada documento
-npm run csp:check       # reprova se o vercel.json estiver velho
-```
-
-A CSP libera aquele script por **hash**, não por `'unsafe-inline'`. Hash é
-preciso — autoriza aquele script e nenhum outro — e é frágil pela mesma
-razão: um espaço a mais no `apps/web/index.html` muda o hash, o navegador
-bloqueia o script, e o site abre no tema errado. Sem esta porta, isso
-aconteceria em silêncio.
-
-Medido: acrescentar um único espaço ao bootstrap fez o `--check` sair com
-código 1, nomeando o hash que falta e o que sobrou.
-
-Por que o valor mora no `vercel.json` em vez de ser gerado: a Vercel lê esse
-arquivo da **raiz do repositório**, não do `dist/`. O que ela aplica é o que
-está commitado, então gerar no build não teria efeito.
-
-Só o bootstrap de tema entra. Cada documento tem outro script inline, o
-`type="application/ld+json"` do schema.org, que **não executa** — `script-src`
-não se aplica a tipo não executável, e dar hash a ele seria ruído.
-
 ## No CI
 
 O job `audit` do `.github/workflows/ci.yml` roda a acessibilidade, a
-rolagem horizontal, as camadas, a identidade, o roteiro das notas de
-versão, os overlays e o orçamento contra o artefato de build que o job de
-qualidade publica — o que se mede é exatamente o que seria publicado, sem
-construir duas vezes. O `icones:check` e o `imagens:check` rodam no job de
-qualidade, antes do build; o `changelog:check` junto deles, e o `csp:check`
-**depois** do build, porque o hash é do HTML gerado.
+rolagem horizontal, o roteiro das notas de versão, os overlays e o
+orçamento contra o artefato de build que o job de qualidade publica — o
+que se mede é exatamente o que seria publicado, sem construir duas vezes.
 
-Ficam de fora, cada um pelo seu motivo: o `geometry.mjs`, pelo descrito
-acima, e o `perf.mjs`, porque mede tempo — e tempo varia demais entre
-execuções de runner para servir de porta.
+O `geometry.mjs` fica de fora, pelo motivo descrito acima.
 
-## `docs/reference/a11y-baseline.json`
+## `docs/a11y-baseline.json`
 
-O estado que se quer preservar, não um alvo a perseguir. Hoje é zero violação
-em 16 combinações.
+O estado que se quer preservar, não um alvo a perseguir. Hoje é zero
+violação em 16 combinações; qualquer regressão futura aparece como diferença
+contra este arquivo.
 
-O `a11y.mjs` lê este arquivo em toda execução e confere quatro números contra
-a leitura de hoje: combinações medidas, violações no total, combinações sem
-violação e idioma divergente.
+## `e2e-linkedin.mjs`
 
-**Piorar barra; melhorar não.** Menos combinações medidas, mais violações ou
-mais divergência de idioma saem com código 1 e a diferença nomeada. Mais
-combinações — uma rota nova — sai como aviso, pedindo `--baseline` para
-regravar. Base ausente barra, com a instrução de gravá-la antes de qualquer
-alteração.
+Verifica os links para o perfil do LinkedIn em todas as páginas principais.
+Nenhuma requisição ao perfil pode ocorrer antes da confirmação. Cobre
+Ctrl+clique/nova aba, certificados, idioma inglês, acessibilidade nos dois
+temas e rolagem interna do aviso em telas baixas. O destino externo é
+simulado; o teste não depende da disponibilidade do LinkedIn.
 
-A comparação existe por um ponto cego da porta absoluta: **se uma rota sair do
-arranjo, o audit mede 12 combinações em vez de 16 e passa**, porque zero
-violação em 12 também é zero. A contagem de combinações é o que este arquivo
-guarda, e é o que fecha esse buraco.
+```bash
+npm run audit:linkedin
+```
 
-> Até a #66 este documento afirmava que "qualquer regressão futura aparece
-> como diferença contra este arquivo" — e o `a11y.mjs` nunca lia o arquivo.
-> Era write-only. A afirmação passou a ser verdade em vez de ser removida.
+## `e2e-codex.mjs`
+
+Valida a página `/projects/codex/readme.html` nos dois idiomas e temas:
+quatro imagens com dimensões naturais de 1920 × 1080, abertura e navegação
+da galeria por teclado, restauração de foco, âncoras, ausência de documentos públicos,
+acessibilidade WCAG, quatro larguras, retorno à home, recarregamento direto
+e aliases `/projects/codex/` e `/projects/codex/index.html`. O HTML é a
+apresentação técnica; o documento original permanece fora da distribuição pública.
+Na home, valida também seleção de capturas, setas, teclado, ampliação,
+restauração de foco, acessibilidade e responsividade da seção `/#destaque`.
+Reutiliza o preview quando `BASE_URL` estiver definido.
+
+```bash
+npm run build
+npm run audit:codex
+```

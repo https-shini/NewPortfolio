@@ -41,6 +41,10 @@ function repo(name: string): string {
  * comparável entre consumidores.
  */
 export const PROJECT_URLS = {
+    codex: {
+        live: "https://codex.shxred.app.br",
+        details: ROUTES.CODEX,
+    },
     authService: {
         live: "https://authservice-mbul.onrender.com",
         docs: "https://authservice-mbul.onrender.com/docs",

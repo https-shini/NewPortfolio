@@ -17,6 +17,19 @@ import { RELEASE_NOTES } from "../apps/web/src/shared/config/releaseNotes.js";
    deveria estar nele.
 ───────────────────────────────────────────────────────── */
 
+/* O `v` da querystring ia direto para o rasterizador e saía desenhado a
+   fontSize 104 sob a marca do dono. Sem filtro, qualquer texto cabia ali, e
+   cada valor distinto é um cache miss — uma invocação de função por
+   requisição. Validar o formato fecha o conteúdo arbitrário e limita o custo
+   por render; não fecha a contagem de invocações, que depende de rate limit
+   na borda e não de código.
+
+   O intervalo aceito é o das versões reais, prerelease incluso — RELEASE_NOTES
+   vai de 2.0.0-beta.1 a 2.0.0-beta.5. Apertar para `^\d+\.\d+\.\d+$` não
+   falharia com erro: degradaria cinco versões publicadas para o cartão
+   genérico, em silêncio. */
+const VERSAO_RE = /^\d{1,4}\.\d{1,4}\.\d{1,4}(?:-[0-9A-Za-z.-]{1,20})?$/;
+
 const FUNDO = "#070d19";
 const MARCA = "#f43f5e";
 const TEXTO = "#f8fafc";
@@ -64,7 +77,10 @@ export default async function handler(
     /* No runtime Node o `url` chega relativo; a base é descartável, serve
        só para o parser aceitar. */
     const { searchParams } = new URL(req.url ?? "/", "http://localhost");
-    const pedida = searchParams.get("v")?.replace(/^v/i, "") ?? "";
+    const bruta = searchParams.get("v")?.replace(/^v/i, "") ?? "";
+    /* Fora do formato cai no mesmo cartão genérico que a versão desconhecida
+       já rendia — nenhum desenho novo, só a entrada deixa de passar crua. */
+    const pedida = VERSAO_RE.test(bruta) ? bruta : "";
 
     const entrada = RELEASE_NOTES.find((r) => r.version === pedida);
 
