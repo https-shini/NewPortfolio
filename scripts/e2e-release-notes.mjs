@@ -28,7 +28,8 @@ import {
    qualquer versão nova quebrava o roteiro sem que nada tivesse quebrado
    no site. Mesmo import do changelog.mjs, com --experimental-strip-types. */
 const { RELEASE_NOTES } = await import(
-    new URL("../apps/web/src/shared/config/releaseNotes.ts", import.meta.url).href
+    new URL("../apps/web/src/shared/config/releaseNotes.ts", import.meta.url)
+        .href
 );
 
 const [MAIS_RECENTE, ANTERIOR] = RELEASE_NOTES;

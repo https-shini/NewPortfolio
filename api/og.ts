@@ -1,5 +1,5 @@
 import { ImageResponse } from "@vercel/og";
-import { RELEASE_NOTES } from "../apps/web/src/shared/config/releaseNotes.js";
+import { RELEASE_NOTES } from "./_releaseNotes.js";
 
 /* ─────────────────────────────────────────────────────────
    /api/og — imagem de compartilhamento por versão

@@ -1,6 +1,13 @@
 import "@testing-library/jest-dom/vitest";
 import { afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
+import dictionaries from "@/shared/lib/translations.json";
+import { initializeTranslations } from "@/shared/lib/translations";
+import { RELEASE_NOTES } from "@/shared/config/releaseNotes";
+import { initializeReleaseNotes } from "@/shared/config/releaseNotesClient";
+
+initializeTranslations(dictionaries);
+initializeReleaseNotes(RELEASE_NOTES);
 
 /* Quase toda a suíte roda em jsdom, mas alguns casos precisam do node
    puro — a geração da imagem de compartilhamento, por exemplo, escolhe um

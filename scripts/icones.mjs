@@ -97,7 +97,9 @@ function montarIco(pngs) {
     return Buffer.concat([cabecalho, entradas, ...pngs.map((p) => p.dados)]);
 }
 
-const svg = readFileSync(FONTE, "utf8");
+/* O checkout Windows pode usar CRLF; isso não muda o desenho e não deve
+   invalidar a assinatura que o CI calcula em um checkout Linux (LF). */
+const svg = readFileSync(FONTE, "utf8").replace(/\r\n/g, "\n");
 
 /* ── Variante mínima para os tamanhos de aba ─────────────────────────
    A 16px o <gc/> inteiro são cinco glifos em três pixels cada: vira

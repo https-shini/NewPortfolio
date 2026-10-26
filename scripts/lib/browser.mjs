@@ -9,7 +9,9 @@
 
 import { spawn } from "node:child_process";
 import { existsSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
 /* Espelham shared/config/constants.ts — se mudarem lá, mudam aqui. */
@@ -50,7 +52,12 @@ function resolveChromium() {
 export async function launchBrowser() {
     const executablePath = resolveChromium();
     try {
-        return await chromium.launch(executablePath ? { executablePath } : {});
+        // headless-shell pode deixar Ctrl+clique em abas novas sem carregar.
+        // O canal chromium usa o navegador completo, também instalado pelo
+        // comando playwright install chromium, com o comportamento real.
+        return await chromium.launch(
+            executablePath ? { executablePath } : { channel: "chromium" },
+        );
     } catch (err) {
         throw new Error(
             `Não foi possível abrir o Chromium.\n` +
@@ -72,13 +79,70 @@ export async function startPreview({ timeoutMs = 60_000 } = {}) {
     }
 
     const url = "http://localhost:4173";
-    const child = spawn("npm", ["run", "preview", "--prefix", "apps/web"], {
-        stdio: "ignore",
-        detached: true,
+    let occupied = false;
+    try {
+        await fetch(url, { signal: AbortSignal.timeout(1000) });
+        occupied = true;
+    } catch {
+        /* porta livre */
+    }
+    if (occupied)
+        throw new Error(
+            "A porta 4173 já está em uso. Defina BASE_URL para usar esse servidor ou encerre seu preview antes da auditoria.",
+        );
+    const app = resolve(
+        dirname(fileURLToPath(import.meta.url)),
+        "../../apps/web",
+    );
+    const require = createRequire(resolve(app, "package.json"));
+    const cli = join(
+        dirname(require.resolve("vite/package.json")),
+        "bin/vite.js",
+    );
+    const child = spawn(
+        process.execPath,
+        [cli, "preview", "--host", "127.0.0.1"],
+        {
+            cwd: app,
+            windowsHide: true,
+            stdio: ["ignore", "pipe", "pipe"],
+        },
+    );
+    let output = "";
+    child.stdout.on("data", (data) => {
+        output = (output + data).slice(-3000);
     });
+    child.stderr.on("data", (data) => {
+        output = (output + data).slice(-3000);
+    });
+    let spawnError;
+    child.on("error", (error) => {
+        spawnError = error;
+    });
+    const stop = async () => {
+        if (child.exitCode !== null || child.signalCode !== null || !child.pid)
+            return;
+        await new Promise((done) => {
+            const timer = setTimeout(() => {
+                child.kill("SIGKILL");
+                done();
+            }, 3000);
+            child.once("exit", () => {
+                clearTimeout(timer);
+                done();
+            });
+            child.kill("SIGTERM");
+        });
+    };
 
     const deadline = Date.now() + timeoutMs;
     for (;;) {
+        if (spawnError || child.exitCode !== null) {
+            await stop();
+            throw new Error(
+                `Não foi possível iniciar o preview: ${spawnError?.message ?? output}`,
+            );
+        }
         try {
             const res = await fetch(url, { signal: AbortSignal.timeout(2000) });
             if (res.ok) break;
@@ -86,11 +150,7 @@ export async function startPreview({ timeoutMs = 60_000 } = {}) {
             /* ainda subindo */
         }
         if (Date.now() > deadline) {
-            try {
-                process.kill(-child.pid);
-            } catch {
-                /* já morreu */
-            }
+            await stop();
             throw new Error(
                 `O preview não respondeu em ${timeoutMs / 1000}s. ` +
                     `Rode 'npm run build' antes, ou aponte BASE_URL para um servidor de pé.`,
@@ -101,13 +161,7 @@ export async function startPreview({ timeoutMs = 60_000 } = {}) {
 
     return {
         url,
-        stop: async () => {
-            try {
-                process.kill(-child.pid);
-            } catch {
-                /* já morreu */
-            }
-        },
+        stop,
     };
 }
 

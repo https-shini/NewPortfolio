@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: package-lock.json
 
@@ -29,7 +29,10 @@ jobs:
       # As funções em api/ resolvem dependências pela raiz e a suíte inclui
       # os testes delas, então `@vercel/og` precisa estar presente.
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --include=dev
+
+      - name: Auditoria de todas as dependências
+        run: npm audit --audit-level=low
 
       - name: Lint
         run: npm run lint
@@ -92,13 +95,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
 
-      - name: Install root dependencies
-        # `--workspaces=false` mantém o job enxuto: os arranjos precisam
-        # de playwright e axe-core, não do app inteiro.
-        run: npm install --ignore-scripts --no-audit --no-fund --workspaces=false
+      - name: Install locked dependencies
+        run: npm ci --include=dev
 
       - name: Cache Playwright browsers
         id: pw-cache
@@ -122,18 +123,17 @@ jobs:
           path: apps/web/dist
 
       - name: Serve the build
-        # O vite preview exige o app instalado; um servidor estático
-        # entrega o mesmo dist/ sem esse custo.
-        #
-        # Sem `-s` de propósito: cada rota tem o seu documento, e o `-s`
-        # reescreve TUDO para o index.html — as auditorias mediriam a home
-        # três vezes achando que mediam três rotas. O `cleanUrls` do serve
-        # mapeia /links e /release-notes sozinho, e o `dist/serve.json`
-        # gerado no build cobre o `/release-notes/vX.Y.Z`.
-        run: npx --yes serve@14 apps/web/dist -l 4173 &
+        # O preview aplica as rotas atuais e a barreira de documentos privados.
+        run: npm run preview --workspace apps/web -- --host 127.0.0.1 > /tmp/portfolio-preview.log 2>&1 &
 
       - name: Wait for the server
-        run: npx --yes wait-on@7 http://localhost:4173 --timeout 60000
+        run: |
+          for attempt in {1..60}; do
+            if curl --fail --silent http://localhost:4173/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/portfolio-preview.log
+          exit 1
 
       - name: Accessibility (axe-core)
         env:

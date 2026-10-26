@@ -1,7 +1,8 @@
-/* Codex — Code Validator, TCC. Conteúdo conferido no código-fonte do projeto. */
+/* Codex — Code Validator, TCC. Apresentação baseada no material técnico
+   disponível e nas capturas da página pública; não distribui código interno. */
 import { PROJECT_URLS } from "@/shared/config/links";
 export interface ProjectTech {
-    key: string; // skillicons key
+    key: string; // identificador estável da tecnologia
     label: string; // display name
     variant: "brand" | "accent" | "neutral";
 }

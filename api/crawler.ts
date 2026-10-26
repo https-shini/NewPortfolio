@@ -1,4 +1,4 @@
-import { RELEASE_NOTES } from "../apps/web/src/shared/config/releaseNotes.js";
+import { RELEASE_NOTES } from "./_releaseNotes.js";
 import { fetchGithubReleases } from "./_releases.js";
 import { mergeReleaseNotes } from "../apps/web/src/shared/lib/mergeReleaseNotes.js";
 

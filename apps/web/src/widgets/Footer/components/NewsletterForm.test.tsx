@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import dictionaries from "@/shared/lib/translations.json";
 
 /* NEWSLETTER_ENDPOINT é lido de import.meta.env no load do módulo
    constants — daí o mesmo arranjo do ContactForm: stub do env e import
@@ -11,6 +12,9 @@ async function renderForm(endpoint: string = ENDPOINT, lang = "pt") {
     vi.resetModules();
     vi.stubEnv("VITE_NEWSLETTER_ENDPOINT", endpoint);
     localStorage.setItem("portfolio-lang", lang);
+    const { initializeTranslations } =
+        await import("@/shared/lib/translations");
+    initializeTranslations(dictionaries);
     const [{ NewsletterForm }, { LangProvider }] = await Promise.all([
         import("./NewsletterForm"),
         import("@/app/LangContext"),
@@ -223,7 +227,9 @@ describe("NewsletterForm", () => {
         expect(campo()).toHaveAttribute("aria-invalid", "false");
         const id = campo().getAttribute("aria-describedby");
         expect(id).toBeTruthy();
-        expect(document.getElementById(id!)).toHaveTextContent(/tente de novo/i);
+        expect(document.getElementById(id!)).toHaveTextContent(
+            /tente de novo/i,
+        );
     });
 
     it("preenchimento do honeypot não chama a rede", async () => {

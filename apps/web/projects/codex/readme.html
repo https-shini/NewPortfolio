@@ -3,18 +3,14 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        <!-- ── SEO primário ─────────────────────────────────────────── -->
         <title>Codex — Code Validator | Guilherme Cruz</title>
         <meta
             name="description"
-            content="Conheça o TCC Codex: análise estática e revisão por IA para avaliar a qualidade de repositórios do GitHub."
+            content="Conheça o TCC Codex: proposta, arquitetura, ferramentas de análise, relatório de qualidade e capturas reais da aplicação."
         />
         <meta name="author" content="Guilherme Cruz" />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="__SITE_URL__/projects/codex/readme.html" />
-
-        <!-- Notas de versão em Atom; leitores de feed descobrem por aqui. -->
         <link
             rel="alternate"
             type="application/atom+xml"
@@ -22,7 +18,6 @@
             href="__SITE_URL__/feed.xml"
         />
 
-        <!-- ── Open Graph ───────────────────────────────────────────── -->
         <meta property="og:type" content="website" />
         <meta
             property="og:url"
@@ -37,7 +32,7 @@
         />
         <meta
             property="og:description"
-            content="TCC que integra análise estática e revisão por IA para avaliar repositórios do GitHub e orientar melhorias no código."
+            content="TCC de qualidade de software: análise estática, revisão opcional por IA, arquitetura e demonstração visual."
         />
         <meta
             property="og:image"
@@ -47,10 +42,8 @@
         <meta property="og:image:height" content="1080" />
         <meta
             property="og:image:alt"
-            content="Codex — Code Validator | Guilherme Cruz"
+            content="Página pública do Codex com apresentação e demonstração do pipeline"
         />
-
-        <!-- ── Twitter Cards ────────────────────────────────────────── -->
         <meta name="twitter:card" content="summary_large_image" />
         <meta
             name="twitter:title"
@@ -58,52 +51,24 @@
         />
         <meta
             name="twitter:description"
-            content="TCC que integra análise estática e revisão por IA para avaliar repositórios do GitHub e orientar melhorias no código."
+            content="TCC de qualidade de software: análise estática, revisão opcional por IA, arquitetura e demonstração visual."
         />
         <meta
             name="twitter:image"
             content="__SITE_URL__/projects/codex/overview.webp"
         />
-
         <meta name="theme-color" content="#040710" />
 
-        <!-- ── Favicons / PWA ───────────────────────────────────────── -->
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
 
-        <!-- ── Fontes ───────────────────────────────────────────────── -->
-        <!--
-          Fora do caminho crítico, de propósito.
-
-          Como <link rel="stylesheet"> comum, estas duas folhas seguravam a
-          PRIMEIRA PINTURA até dois hosts de terceiros responderem — dois DNS,
-          dois TLS, antes de qualquer pixel. Medido: com 1,2s de atraso nos
-          CDNs, a tela ficava branca por 1.576ms; sem esperá-los, pinta em
-          400ms. O atraso do terceiro entrava um a um no tempo de tela branca.
-
-          `media="print"` faz o navegador buscar sem bloquear a pintura; o
-          onload devolve para `all` assim que chega. O <noscript> cobre quem
-          não roda JavaScript, e aí bloquear é o comportamento correto.
-
-          A troca de fonte aparece — mas já aparecia: as três famílias usam
-          `display=swap` e todas têm pilha de sistema em tokens.css. A escolha
-          é entre ver o texto na fonte de sistema por um instante ou não ver
-          texto nenhum.
-        -->
-        <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+        <!-- Mesmas famílias do portfólio. JetBrains Mono e ícones vêm do bundle local. -->
+        <link rel="preconnect" href="https://api.fontshare.com" />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
         <link
             href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,600,700&f[]=general-sans@400,500,600&display=swap"
-            rel="stylesheet"
-            media="print"
-            onload="this.media = 'all'"
-        />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
             rel="stylesheet"
             media="print"
             onload="this.media = 'all'"
@@ -113,18 +78,13 @@
                 href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,600,700&f[]=general-sans@400,500,600&display=swap"
                 rel="stylesheet"
             />
-            <link
-                href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-                rel="stylesheet"
-            />
         </noscript>
+        <!-- A versão sem JavaScript reutiliza os tokens e os componentes visuais existentes. -->
+        <link rel="stylesheet" href="/src/shared/styles/tokens.css" />
+        <link rel="stylesheet" href="/src/shared/styles/globals.css" />
+        <link rel="stylesheet" href="/src/pages/Codex/Codex.css" />
 
-        <!-- ── CDN externo usado nos ícones de tecnologia ───────────── -->
-        <link rel="preconnect" href="https://skillicons.dev" crossorigin />
-
-        <!-- ── Structured Data (JSON-LD) ────────────────────────────── -->
-
-        <!-- Tema inline — evita flash (FOUC) antes do React montar -->
+        <!-- Mesmo bootstrap de tema da home, autorizado pelo hash da CSP. -->
         <script>
             (function () {
                 var saved = localStorage.getItem("portfolio-theme");
@@ -145,18 +105,283 @@
     </head>
     <body class="dark-mode">
         <div id="root"></div>
+        <!-- Esta é a apresentação pública reescrita, não uma cópia nem um download do documento original. -->
         <noscript>
-            <main>
-                <h1>Codex — Code Validator</h1>
-                <p>
-                    Trabalho de Conclusão de Curso que integra análise estática
-                    e revisão por inteligência artificial para avaliar
-                    repositórios do GitHub.
-                </p>
-                <p>
-                    Ative o JavaScript para explorar a apresentação e a galeria.
-                </p>
-                <a href="/">Voltar ao portfólio</a>
+            <a href="#main-content" class="skip-link"
+                >Ir para o conteúdo principal</a
+            >
+            <main id="main-content" class="codex">
+                <div class="container">
+                    <a href="/#destaque" class="codex__back"
+                        >Voltar ao portfólio</a
+                    >
+                    <header class="codex__hero">
+                        <div>
+                            <p class="section-eyebrow">
+                                Projeto em destaque / TCC
+                            </p>
+                            <h1>Codex<span>Code Validator</span></h1>
+                            <p class="codex__lead">
+                                Qualidade de código medida, explicada e
+                                acompanhada.
+                            </p>
+                            <p class="codex__intro">
+                                Trabalho de Conclusão de Curso que reúne análise
+                                estática e revisão opcional por inteligência
+                                artificial para avaliar repositórios do GitHub.
+                            </p>
+                            <div class="codex__actions">
+                                <a
+                                    href="https://codex.shxred.app.br"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="btn btn--primary"
+                                    >Explorar aplicação em produção</a
+                                >
+                            </div>
+                            <p class="codex__note">
+                                O conteúdo permanece disponível sem JavaScript.
+                                Ative-o para usar os controles de idioma, tema e
+                                ampliação das capturas.
+                            </p>
+                        </div>
+                    </header>
+                    <nav class="codex__nav" aria-label="Nesta página">
+                        <a href="#proposta">Visão geral</a>
+                        <a href="#funcionalidades">Funcionalidades</a>
+                        <a href="#pipeline">Funcionamento</a>
+                        <a href="#engenharia">Arquitetura e tecnologias</a>
+                        <a href="#interface">Capturas</a>
+                    </nav>
+                    <section
+                        id="proposta"
+                        class="codex__section"
+                        aria-labelledby="purpose-title"
+                    >
+                        <span class="section-eyebrow">01 / Visão geral</span>
+                        <h2 id="purpose-title">
+                            Do achado isolado à avaliação do repositório.
+                        </h2>
+                        <p>
+                            O Codex organiza sinais de lint, segurança,
+                            complexidade, testes e documentação em uma avaliação
+                            de 0 a 1000, acompanhada de um relatório. A nota
+                            sintetiza o resultado; os achados e as recomendações
+                            oferecem contexto para a revisão humana. Não é uma
+                            certificação de qualidade.
+                        </p>
+                    </section>
+                    <section
+                        id="funcionalidades"
+                        class="codex__section"
+                        aria-labelledby="features-title"
+                    >
+                        <span class="section-eyebrow"
+                            >02 / Funcionalidades</span
+                        >
+                        <h2 id="features-title">Recursos implementados.</h2>
+                        <ul class="codex__list">
+                            <li>
+                                Autenticação com GitHub e seleção de
+                                repositórios; endpoint da API para análise de
+                                URL pública sem login.
+                            </li>
+                            <li>
+                                Análise estática por linguagem e revisão
+                                opcional com Gemini, Claude ou OpenRouter.
+                            </li>
+                            <li>
+                                Progresso por SSE, com alternativa de
+                                acompanhamento por polling.
+                            </li>
+                            <li>
+                                Relatório com score, indicadores de qualidade e
+                                achados filtráveis por origem e severidade.
+                            </li>
+                            <li>
+                                Comparação entre base e head de pull requests.
+                            </li>
+                            <li>
+                                Histórico e cache por commit com PostgreSQL
+                                configurado; reanálise de pushes em repositórios
+                                públicos por webhook configurado.
+                            </li>
+                        </ul>
+                    </section>
+                    <section
+                        id="pipeline"
+                        class="codex__section"
+                        aria-labelledby="pipeline-title"
+                    >
+                        <span class="section-eyebrow">03 / Funcionamento</span>
+                        <h2 id="pipeline-title">
+                            Do repositório ao relatório.
+                        </h2>
+                        <ol class="codex__steps">
+                            <li>
+                                <h3>Preparar</h3>
+                                <p>
+                                    O pedido entra na fila. O backend faz a
+                                    verificação de tamanho, clona o repositório
+                                    temporariamente e consulta o cache pelo
+                                    commit.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>Analisar</h3>
+                                <p>
+                                    As ferramentas estáticas produzem achados e
+                                    métricas; os metadados são consultados na
+                                    API do GitHub.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>Revisar</h3>
+                                <p>
+                                    Quando habilitada, a IA recebe métricas e
+                                    amostras de código para elaborar a revisão
+                                    qualitativa.
+                                </p>
+                            </li>
+                            <li>
+                                <h3>Apresentar</h3>
+                                <p>
+                                    O frontend exibe o relatório. A nota híbrida
+                                    combina 40% da análise estática e 60% da
+                                    revisão; sem IA, usa a nota estática.
+                                </p>
+                            </li>
+                        </ol>
+                    </section>
+                    <section
+                        id="engenharia"
+                        class="codex__section"
+                        aria-labelledby="engineering-title"
+                    >
+                        <span class="section-eyebrow"
+                            >04 / Arquitetura e tecnologias</span
+                        >
+                        <h2 id="engineering-title">
+                            Interface, processamento e persistência.
+                        </h2>
+                        <div class="codex__cards">
+                            <article class="codex__card">
+                                <h3>Frontend</h3>
+                                <p>
+                                    Next.js 15, React 19, TypeScript, Tailwind
+                                    CSS e ícones lucide-react. Interface para
+                                    repositórios, jobs, relatórios e
+                                    comparações.
+                                </p>
+                            </article>
+                            <article class="codex__card">
+                                <h3>Backend</h3>
+                                <p>
+                                    Python, FastAPI, Uvicorn, httpx e asyncio.
+                                    Análise com ruff, bandit e radon para
+                                    Python, Biome para JavaScript/TypeScript e
+                                    golangci-lint para Go quando disponível.
+                                </p>
+                            </article>
+                            <article class="codex__card">
+                                <h3>Integrações</h3>
+                                <p>
+                                    GitHub OAuth e REST API, provedores de IA
+                                    opcionais e PostgreSQL com asyncpg. Docker
+                                    Compose organiza frontend, backend e banco.
+                                </p>
+                            </article>
+                        </div>
+                        <p class="codex__note">
+                            Tokens ficam no servidor e os clones temporários são
+                            removidos após o processamento. Sessões e jobs são
+                            mantidos em memória; sem banco, não há persistência
+                            de histórico ou cache. Ferramentas ausentes são
+                            sinalizadas no resultado.
+                        </p>
+                    </section>
+                    <section
+                        id="interface"
+                        class="codex__section"
+                        aria-labelledby="interface-title"
+                    >
+                        <span class="section-eyebrow"
+                            >05 / Demonstração visual</span
+                        >
+                        <h2 id="interface-title">
+                            Capturas reais da página pública.
+                        </h2>
+                        <p class="codex__section-intro">
+                            As telas abaixo mostram a apresentação publicada. Os
+                            exemplos de repositórios, achados e notas são
+                            demonstrativos, não resultados de análises
+                            autenticadas.
+                        </p>
+                        <div class="codex__gallery">
+                            <figure class="codex__capture">
+                                <img
+                                    class="codex__static-image"
+                                    src="/projects/codex/overview.webp"
+                                    width="1920"
+                                    height="1080"
+                                    alt="Página pública do Codex com proposta e demonstração do pipeline"
+                                    loading="lazy"
+                                />
+                                <figcaption>
+                                    <p>
+                                        Visão geral: análise estática e revisão
+                                        por IA.
+                                    </p>
+                                </figcaption>
+                            </figure>
+                            <figure class="codex__capture">
+                                <img
+                                    class="codex__static-image"
+                                    src="/projects/codex/pipeline.webp"
+                                    width="1920"
+                                    height="1080"
+                                    alt="Explicação do fluxo de conexão com GitHub, análise estática e revisão por IA"
+                                    loading="lazy"
+                                />
+                                <figcaption>
+                                    <p>Pipeline: três etapas integradas.</p>
+                                </figcaption>
+                            </figure>
+                            <figure class="codex__capture">
+                                <img
+                                    class="codex__static-image"
+                                    src="/projects/codex/features.webp"
+                                    width="1920"
+                                    height="1080"
+                                    alt="Apresentação de sugestões, comparação de PRs, histórico e achados com exemplos demonstrativos"
+                                    loading="lazy"
+                                />
+                                <figcaption>
+                                    <p>
+                                        Recursos: exemplos demonstrativos do
+                                        relatório.
+                                    </p>
+                                </figcaption>
+                            </figure>
+                            <figure class="codex__capture">
+                                <img
+                                    class="codex__static-image"
+                                    src="/projects/codex/score.webp"
+                                    width="1920"
+                                    height="1080"
+                                    alt="Simulador público da nota de qualidade na escala de 0 a 1000"
+                                    loading="lazy"
+                                />
+                                <figcaption>
+                                    <p>
+                                        Score: simulador público, não uma
+                                        análise real.
+                                    </p>
+                                </figcaption>
+                            </figure>
+                        </div>
+                    </section>
+                </div>
             </main>
         </noscript>
         <script type="module" src="/src/main.tsx"></script>

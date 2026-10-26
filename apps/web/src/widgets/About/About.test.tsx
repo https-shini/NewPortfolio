@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { LangProvider } from "@/app/LangContext";
 import { About } from "./About";
 import { LANG_KEY } from "@/shared/config/constants";
@@ -83,7 +83,7 @@ function valorDeCommits(): string {
 }
 
 beforeEach(() => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
+    vi.useFakeTimers();
     Object.defineProperty(window, "IntersectionObserver", {
         writable: true,
         value: observerImediato(),
@@ -97,7 +97,10 @@ afterEach(() => {
 
 /** Roda a animação de ~1200ms até o fim e devolve o valor assentado. */
 async function valorFinalDeCommits(): Promise<string> {
-    await vi.advanceTimersByTimeAsync(1500);
+    await act(async () => {
+        await Promise.resolve();
+    });
+    await act(() => vi.advanceTimersByTimeAsync(1500));
     return valorDeCommits();
 }
 
@@ -112,7 +115,6 @@ describe("About — o contador de commits", () => {
         );
 
         montar();
-        await waitFor(() => expect(valorDeCommits()).not.toBe("0"));
 
         expect(await valorFinalDeCommits()).toBe("4321");
     });
@@ -127,7 +129,7 @@ describe("About — o contador de commits", () => {
         );
 
         montar();
-        await vi.advanceTimersByTimeAsync(1500);
+        await act(() => vi.advanceTimersByTimeAsync(1500));
 
         /* "4321" e "4321+" dizem coisas diferentes: o segundo admite que a
            contagem é um piso, não um número exato. */
@@ -180,7 +182,7 @@ describe("About — o contador de commits", () => {
         vi.stubGlobal("fetch", fetchMock);
 
         const primeira = montar();
-        await waitFor(() => expect(valorDeCommits()).not.toBe("0"));
+        expect(await valorFinalDeCommits()).toBe("777");
         expect(fetchMock).toHaveBeenCalledTimes(1);
         primeira.unmount();
 

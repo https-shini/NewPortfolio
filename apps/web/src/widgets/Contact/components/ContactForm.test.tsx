@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import dictionaries from "@/shared/lib/translations.json";
 
 /* FORM_ENDPOINT é lido de import.meta.env no load do módulo constants —
    por isso os testes stubam o env e importam componente E provider
@@ -11,6 +12,9 @@ async function renderForm(endpoint: string = ENDPOINT) {
     vi.resetModules();
     vi.stubEnv("VITE_FORM_ENDPOINT", endpoint);
     localStorage.setItem("portfolio-lang", "pt");
+    const { initializeTranslations } =
+        await import("@/shared/lib/translations");
+    initializeTranslations(dictionaries);
     const [{ ContactForm }, { LangProvider }] = await Promise.all([
         import("./ContactForm"),
         import("@/app/LangContext"),

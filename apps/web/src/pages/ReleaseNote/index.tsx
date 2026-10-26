@@ -12,7 +12,6 @@ import { useRoute } from "@/shared/hooks/useRoute";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
 import { useReleaseNotes } from "@/shared/hooks/useReleaseNotes";
-import { RELEASE_NOTES } from "@/shared/config/releaseNotes";
 import { mergeReleaseNotes } from "@/shared/lib/mergeReleaseNotes";
 import { ROUTES, releaseNotePath } from "@/shared/config/routes";
 import { PROFILE } from "@/shared/config/profile";
@@ -48,11 +47,11 @@ export const ReleaseNotePage: React.FC<ReleaseNotePageProps> = ({
     const { navigate } = useRoute();
     useReducedMotion();
 
-    const { releases, status } = useReleaseNotes();
+    const { releases, localEntries, status } = useReleaseNotes();
 
     const entries = useMemo(
-        () => mergeReleaseNotes(RELEASE_NOTES, releases),
-        [releases],
+        () => mergeReleaseNotes(localEntries, releases),
+        [localEntries, releases],
     );
 
     const index = entries.findIndex((e) => sameVersion(e.version, version));

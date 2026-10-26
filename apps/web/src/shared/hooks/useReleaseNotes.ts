@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { readCache, writeCache } from "@/shared/lib/cache";
 import type { GithubRelease } from "@/shared/lib/mergeReleaseNotes";
+import {
+    RELEASE_NOTES,
+    loadLocalReleaseNotes,
+} from "@/shared/config/releaseNotesClient";
+import type { ReleaseEntry } from "@/shared/config/releaseNotesModel";
 
 /* ─────────────────────────────────────────────────────────
    useReleaseNotes — releases publicadas no GitHub
@@ -28,6 +33,7 @@ interface UseReleaseNotesOptions {
 
 interface UseReleaseNotesResult {
     releases: GithubRelease[];
+    localEntries: ReleaseEntry[];
     status: ReleaseStatus;
 }
 
@@ -40,6 +46,28 @@ export function useReleaseNotes({
     const [status, setStatus] = useState<ReleaseStatus>(
         !enabled || cached ? "ok" : "loading",
     );
+    const [localEntries, setLocalEntries] = useState(() => [...RELEASE_NOTES]);
+    const [localLoading, setLocalLoading] = useState(
+        enabled && !RELEASE_NOTES.length,
+    );
+
+    useEffect(() => {
+        if (!enabled || RELEASE_NOTES.length) return;
+        let cancelled = false;
+        void loadLocalReleaseNotes()
+            .then(() => {
+                if (!cancelled) {
+                    setLocalEntries([...RELEASE_NOTES]);
+                    setLocalLoading(false);
+                }
+            })
+            .catch(() => {
+                if (!cancelled) setLocalLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [enabled]);
 
     useEffect(() => {
         if (!enabled) return;
@@ -65,5 +93,9 @@ export function useReleaseNotes({
         };
     }, [enabled]);
 
-    return { releases, status };
+    return {
+        releases,
+        localEntries,
+        status: localLoading ? "loading" : status,
+    };
 }

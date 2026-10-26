@@ -46,6 +46,7 @@ import "@/shared/styles/globals.css";
 import "@/shared/styles/theme-patches.css";
 
 import App from "@/app/App";
+import { loadTranslations } from "@/shared/lib/loadTranslations";
 
 /* Houve aqui uma pré-renderização da home com hidratação. Ela foi revertida
    por medição, não por gosto: o PageSpeed no celular caiu de 86 para 81 —
@@ -56,9 +57,28 @@ import App from "@/app/App";
    Se o assunto voltar, o que faltou da primeira vez foi medir LCP e TBT, e
    não só o FCP que eu esperava melhorar. */
 export function montar(): void {
-    createRoot(document.getElementById("root")!).render(
-        <React.StrictMode>
-            <App />
-        </React.StrictMode>,
-    );
+    const root = document.getElementById("root")!;
+    void loadTranslations()
+        .then(() => {
+            createRoot(root).render(
+                <React.StrictMode>
+                    <App />
+                </React.StrictMode>,
+            );
+        })
+        .catch((error: unknown) => {
+            console.error(
+                "Falha ao carregar os dados locais do portfólio",
+                error,
+            );
+            const message = document.createElement("p");
+            message.textContent =
+                "Não foi possível carregar o portfólio. Confira sua conexão e tente novamente.";
+            const retry = document.createElement("button");
+            retry.type = "button";
+            retry.className = "btn btn--primary";
+            retry.textContent = "Tentar novamente";
+            retry.addEventListener("click", () => window.location.reload());
+            root.replaceChildren(message, retry);
+        });
 }

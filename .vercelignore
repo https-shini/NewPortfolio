@@ -3,3 +3,12 @@
 # que só existe em node_modules — mantê-los fora do envio
 # elimina qualquer chance de o builder tentar compilá-los.
 api/*.test.ts
+
+# Pastas preexistentes de outros projetos: preservadas localmente, fora do deploy.
+backend/
+frontend/
+# Referências do TCC não são assets públicos nem entradas do portfólio.
+code-validator-main/
+tcc-reference/
+*.zip
+*.rar

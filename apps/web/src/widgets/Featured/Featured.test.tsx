@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LangProvider } from "@/app/LangContext";
 import { Featured } from "./Featured";
@@ -76,8 +76,8 @@ describe("Featured — o carrossel", () => {
         expect(indiceAtivo()).toBe(1);
     });
 
-    /* Duas navegações seguidas precisam de 700 ms entre elas: o `goTo` sai
-       cedo enquanto `animating` for true, e isso dura o tempo da transição.
+    /* Duas navegações seguidas precisam de 700 ms entre elas quando há
+       movimento: o temporizador bloqueia cliques repetidos nesse intervalo.
        Não é defeito — é o que impede pular dois slides no meio do movimento.
        Descobri porque o caso de circularidade reprovou antes de eu respeitar
        o guarda, e o número que aparecia era o de uma navegação engolida. */
@@ -85,7 +85,7 @@ describe("Featured — o carrossel", () => {
         vi.useFakeTimers({ shouldAdvanceTime: true });
         return userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     };
-    const passarTransicao = () => vi.advanceTimersByTimeAsync(750);
+    const passarTransicao = () => act(() => vi.advanceTimersByTimeAsync(750));
 
     it("uma segunda navegação dentro da transição é ignorada", async () => {
         const user = usuarioComTempo();
@@ -129,7 +129,7 @@ describe("Featured — o carrossel", () => {
         const galeria = screen.getByRole("region", {
             name: /capturas do projeto/i,
         });
-        galeria.focus();
+        act(() => galeria.focus());
 
         await user.keyboard("{ArrowRight}");
         expect(indiceAtivo()).toBe(1);
@@ -152,6 +152,29 @@ describe("Featured — o carrossel", () => {
             screen.getByRole("button", { name: t("featured.autoplay.play") }),
         ).toBeInTheDocument();
     });
+
+    it("seleção direta cancela o bloqueio anterior e mantém navegação por teclado", async () => {
+        comMovimentoReduzido(true);
+        const user = userEvent.setup();
+        montar();
+        const thumbnail = screen.getByRole("button", {
+            name: /ver captura 3/i,
+        });
+        await user.click(thumbnail);
+        expect(indiceAtivo()).toBe(2);
+        await user.keyboard("{ArrowRight}");
+        expect(indiceAtivo()).toBe(3);
+        await user.click(setaProxima());
+        expect(indiceAtivo()).toBe(0);
+    });
+
+    it("limpa os temporizadores quando o componente é desmontado", async () => {
+        const user = usuarioComTempo();
+        const { unmount } = montar();
+        await user.click(setaProxima());
+        unmount();
+        expect(vi.getTimerCount()).toBe(0);
+    });
 });
 
 describe("Featured — o autoplay e o movimento reduzido", () => {
@@ -160,7 +183,7 @@ describe("Featured — o autoplay e o movimento reduzido", () => {
         montar();
 
         expect(indiceAtivo()).toBe(0);
-        await vi.advanceTimersByTimeAsync(7000);
+        await act(() => vi.advanceTimersByTimeAsync(7000));
 
         await waitFor(() => expect(indiceAtivo()).toBe(1));
     });
@@ -175,7 +198,7 @@ describe("Featured — o autoplay e o movimento reduzido", () => {
 
         expect(indiceAtivo()).toBe(0);
         /* Três intervalos inteiros: se houvesse timer, teria andado três. */
-        await vi.advanceTimersByTimeAsync(7000 * 3);
+        await act(() => vi.advanceTimersByTimeAsync(7000 * 3));
 
         expect(indiceAtivo()).toBe(0);
     });
@@ -188,8 +211,19 @@ describe("Featured — o autoplay e o movimento reduzido", () => {
         );
 
         vi.useFakeTimers({ shouldAdvanceTime: true });
-        await vi.advanceTimersByTimeAsync(7000 * 2);
+        await act(() => vi.advanceTimersByTimeAsync(7000 * 2));
 
+        expect(indiceAtivo()).toBe(0);
+    });
+
+    it("não troca slides enquanto a galeria tem foco", async () => {
+        vi.useFakeTimers({ shouldAdvanceTime: true });
+        montar();
+        const gallery = screen.getByRole("region", {
+            name: /capturas do projeto/i,
+        });
+        act(() => gallery.focus());
+        await act(() => vi.advanceTimersByTimeAsync(14000));
         expect(indiceAtivo()).toBe(0);
     });
 });

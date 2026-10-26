@@ -1,4 +1,11 @@
-import { lazy, Suspense, useRef, useState } from "react";
+import {
+    lazy,
+    Suspense,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 import "./Featured.css";
 import { useLang } from "@/shared/hooks/useLang";
 import {
@@ -19,17 +26,88 @@ const FeaturedLightbox = lazy(() =>
     })),
 );
 const capabilityIcons = [IconLayers, IconShield, IconPackage];
+const AUTOPLAY_INTERVAL = 7000;
 
 export function Featured() {
     const { lang, t } = useLang();
     const tr = (pt: string, en: string) => (lang === "pt" ? pt : en);
     const [current, setCurrent] = useState(0);
+    const [autoPlay, setAutoPlay] = useState(true);
+    const [interacting, setInteracting] = useState(false);
+    const [hidden, setHidden] = useState(() => document.hidden);
+    const [reducedMotion, setReducedMotion] = useState(
+        () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    );
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const touch = useRef<{ x: number; y: number } | null>(null);
+    const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+    const transition = useRef<ReturnType<typeof setTimeout> | null>(null);
     const slides = project.slides;
     const slide = slides[current]!;
-    const move = (offset: number) =>
-        setCurrent((index) => (index + offset + slides.length) % slides.length);
+
+    const endTransition = useCallback(() => {
+        if (transition.current !== null) clearTimeout(transition.current);
+        transition.current = null;
+    }, []);
+    const move = useCallback(
+        (offset: number) => {
+            if (transition.current !== null) return;
+            setCurrent(
+                (index) => (index + offset + slides.length) % slides.length,
+            );
+            if (!reducedMotion)
+                transition.current = setTimeout(endTransition, 700);
+        },
+        [endTransition, reducedMotion, slides.length],
+    );
+    useEffect(() => endTransition, [endTransition]);
+    useEffect(() => {
+        const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const onMotion = (event: MediaQueryListEvent) => {
+            setReducedMotion(event.matches);
+            if (event.matches) endTransition();
+        };
+        const onVisibility = () => setHidden(document.hidden);
+        media.addEventListener("change", onMotion);
+        document.addEventListener("visibilitychange", onVisibility);
+        return () => {
+            media.removeEventListener("change", onMotion);
+            document.removeEventListener("visibilitychange", onVisibility);
+        };
+    }, [endTransition]);
+    const stopAuto = useCallback(() => {
+        if (timer.current !== null) {
+            clearInterval(timer.current);
+            timer.current = null;
+        }
+    }, []);
+    const startAuto = useCallback(() => {
+        stopAuto();
+        if (
+            reducedMotion ||
+            !autoPlay ||
+            interacting ||
+            hidden ||
+            lightboxIndex !== null ||
+            slides.length < 2
+        )
+            return;
+        timer.current = setInterval(() => move(1), AUTOPLAY_INTERVAL);
+    }, [
+        autoPlay,
+        hidden,
+        interacting,
+        lightboxIndex,
+        move,
+        reducedMotion,
+        slides.length,
+        stopAuto,
+    ]);
+    useEffect(() => {
+        startAuto();
+        return stopAuto;
+    }, [current, startAuto, stopAuto]);
+    const toggleAutoPlay = () => setAutoPlay((playing) => !playing);
     const detailsUrl =
         lang === "en" ? `${project.detailsUrl}?lang=en` : project.detailsUrl;
 
@@ -147,6 +225,27 @@ export function Featured() {
                         role="region"
                         aria-label={t("featured.gallery.label")}
                         aria-roledescription={tr("carrossel", "carousel")}
+                        tabIndex={0}
+                        onMouseEnter={() => setInteracting(true)}
+                        onMouseLeave={(event) =>
+                            setInteracting(
+                                event.currentTarget.contains(
+                                    document.activeElement,
+                                ),
+                            )
+                        }
+                        onFocus={() => setInteracting(true)}
+                        onBlur={(event) => {
+                            if (
+                                !event.currentTarget.contains(
+                                    event.relatedTarget,
+                                )
+                            ) {
+                                setInteracting(
+                                    event.currentTarget.matches(":hover"),
+                                );
+                            }
+                        }}
                         onKeyDown={(event) => {
                             if (
                                 event.key === "ArrowLeft" ||
@@ -166,57 +265,101 @@ export function Featured() {
                                     )}
                                 </span>
                                 <span>{project.repoHost}</span>
-                            </div>
-                            <div
-                                className="featured__slide is-active"
-                                onTouchStart={(event) => {
-                                    const point = event.touches[0];
-                                    if (point)
-                                        touch.current = {
-                                            x: point.clientX,
-                                            y: point.clientY,
-                                        };
-                                }}
-                                onTouchEnd={(event) => {
-                                    const point = event.changedTouches[0];
-                                    const start = touch.current;
-                                    touch.current = null;
-                                    if (!point || !start) return;
-                                    const dx = start.x - point.clientX;
-                                    if (
-                                        Math.abs(dx) > 48 &&
-                                        Math.abs(dx) >
-                                            Math.abs(start.y - point.clientY)
-                                    )
-                                        move(dx > 0 ? 1 : -1);
-                                }}
-                            >
                                 <button
                                     type="button"
-                                    className="featured__slide-trigger"
-                                    onClick={() => setLightboxIndex(current)}
-                                    aria-label={`${t("featured.lightbox.open")}: ${slide.label[lang]}`}
+                                    className={`featured__autoplay${autoPlay ? " is-playing" : ""}`}
+                                    onClick={toggleAutoPlay}
+                                    aria-label={
+                                        autoPlay
+                                            ? t("featured.autoplay.pause")
+                                            : t("featured.autoplay.play")
+                                    }
+                                    title={
+                                        autoPlay
+                                            ? t("featured.autoplay.pause")
+                                            : t("featured.autoplay.play")
+                                    }
                                 >
-                                    <img
-                                        src={slide.src}
-                                        alt={`${project.name} — ${slide.label[lang]}`}
-                                        width={1920}
-                                        height={1080}
-                                        loading="lazy"
-                                        decoding="async"
-                                    />
-                                    <span className="featured__zoom">
-                                        <IconSearch
-                                            width={16}
-                                            height={16}
-                                            aria-hidden="true"
-                                        />
-                                        {tr("Ampliar", "Enlarge")}
-                                    </span>
+                                    {autoPlay ? "Ⅱ" : "▶"}
                                 </button>
                             </div>
+                            <div className="featured__slides">
+                                {slides.map((item, index) => (
+                                    <div
+                                        key={item.src}
+                                        className={`featured__slide${current === index ? " is-active" : ""}`}
+                                        aria-hidden={current !== index}
+                                        onTouchStart={(event) => {
+                                            const point = event.touches[0];
+                                            if (point)
+                                                touch.current = {
+                                                    x: point.clientX,
+                                                    y: point.clientY,
+                                                };
+                                        }}
+                                        onTouchEnd={(event) => {
+                                            const point =
+                                                event.changedTouches[0];
+                                            const start = touch.current;
+                                            touch.current = null;
+                                            if (!point || !start) return;
+                                            const dx = start.x - point.clientX;
+                                            if (
+                                                Math.abs(dx) > 48 &&
+                                                Math.abs(dx) >
+                                                    Math.abs(
+                                                        start.y - point.clientY,
+                                                    )
+                                            )
+                                                move(dx > 0 ? 1 : -1);
+                                        }}
+                                    >
+                                        <button
+                                            type="button"
+                                            className="featured__slide-trigger"
+                                            onClick={() =>
+                                                setLightboxIndex(index)
+                                            }
+                                            tabIndex={
+                                                current === index ? 0 : -1
+                                            }
+                                            aria-label={`${t("featured.lightbox.open")}: ${item.label[lang]}`}
+                                        >
+                                            <img
+                                                src={item.src}
+                                                alt={`${project.name} — ${item.label[lang]}`}
+                                                width={1920}
+                                                height={1080}
+                                                loading={
+                                                    index === 0
+                                                        ? "eager"
+                                                        : "lazy"
+                                                }
+                                                decoding="async"
+                                            />
+                                            <span className="featured__zoom">
+                                                <IconSearch
+                                                    width={16}
+                                                    height={16}
+                                                    aria-hidden="true"
+                                                />
+                                                {tr("Ampliar", "Enlarge")}
+                                            </span>
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                             <figcaption className="featured__caption">
-                                <div aria-live="polite" aria-atomic="true">
+                                <div
+                                    aria-live={
+                                        autoPlay &&
+                                        !reducedMotion &&
+                                        !interacting
+                                            ? "off"
+                                            : "polite"
+                                    }
+                                    aria-atomic="true"
+                                >
                                     <span className="featured__counter">
                                         {String(current + 1).padStart(2, "0")} /{" "}
                                         {String(slides.length).padStart(2, "0")}
@@ -267,7 +410,29 @@ export function Featured() {
                                     className={`featured__thumbnail${current === index ? " is-active" : ""}`}
                                     aria-pressed={current === index}
                                     aria-label={`${tr("Ver captura", "View screenshot")} ${index + 1}: ${item.label[lang]}`}
-                                    onClick={() => setCurrent(index)}
+                                    onClick={() => {
+                                        endTransition();
+                                        setCurrent(index);
+                                    }}
+                                    onKeyDown={(event) => {
+                                        if (
+                                            event.key !== "ArrowLeft" &&
+                                            event.key !== "ArrowRight"
+                                        )
+                                            return;
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        const offset =
+                                            event.key === "ArrowLeft" ? -1 : 1;
+                                        endTransition();
+                                        setCurrent(
+                                            (value) =>
+                                                (value +
+                                                    offset +
+                                                    slides.length) %
+                                                slides.length,
+                                        );
+                                    }}
                                 >
                                     <img
                                         src={item.src}

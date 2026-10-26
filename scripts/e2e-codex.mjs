@@ -78,12 +78,18 @@ try {
                 await page.locator(".codex").innerText(),
                 /README|SaaS|roadmap/i,
             );
-            for (const file of ["README.md", "ABOUT.md"]) {
-                // Vite's SPA fallback can return index.html for Accept: */*.
-                // A document request must never receive the removed Markdown.
+            for (const file of [
+                "README.md",
+                "ABOUT.md",
+                "APRESENTACAO_TCC.md",
+                "DEPLOY.md",
+                "%52EADME%2Emd",
+                "backend/main.py",
+            ]) {
+                // A barreira deve negar documentos mesmo para navegação HTML e nomes codificados.
                 const response = await page.request.get(
                     `${preview.url}/projects/codex/${file}`,
-                    { headers: { Accept: "text/markdown" } },
+                    { headers: { Accept: "text/html" } },
                 );
                 assert.equal(response.status(), 404);
             }
@@ -109,6 +115,16 @@ try {
             assert.deepEqual(violations, [], `${theme}/${lang} accessibility`);
             for (const width of [320, 375, 768, 1440]) {
                 await page.setViewportSize({ width, height: 900 });
+                // O evento resize e o layout podem concluir em frames distintos
+                // no runner do CI. A condição continua estrita após estabilizar.
+                await page
+                    .waitForFunction(
+                        () =>
+                            document.documentElement.scrollWidth <= innerWidth,
+                        null,
+                        { timeout: 3000 },
+                    )
+                    .catch(() => {});
                 assert.ok(
                     await page.evaluate(
                         () =>
@@ -181,7 +197,9 @@ try {
                     .getAttribute("aria-pressed"),
                 "true",
             );
-            const featureTrigger = feature.locator(".featured__slide-trigger");
+            const featureTrigger = feature.locator(
+                ".featured__slide.is-active .featured__slide-trigger",
+            );
             await featureTrigger.click();
             await page.getByRole("dialog").waitFor();
             await page.keyboard.press("Escape");
@@ -215,6 +233,19 @@ try {
             );
             for (const width of [320, 375, 768, 1440]) {
                 await page.setViewportSize({ width, height: 900 });
+                await page
+                    .waitForFunction(
+                        () => {
+                            const element = document.querySelector("#destaque");
+                            return (
+                                element &&
+                                element.scrollWidth <= element.clientWidth
+                            );
+                        },
+                        null,
+                        { timeout: 3000 },
+                    )
+                    .catch(() => {});
                 assert.ok(
                     await feature.evaluate(
                         (el) => el.scrollWidth <= el.clientWidth,
@@ -240,15 +271,48 @@ try {
                     ).endsWith(route),
                 );
             }
-            // Direct browser visits may use Vite's SPA fallback, but never reveal a document.
-            await visit(page, preview.url, "/projects/codex/README.md");
-            await page.locator(".not-found__title").waitFor();
+            const denied = await page.goto(
+                `${preview.url}/projects/codex/README.md`,
+            );
+            assert.equal(denied.status(), 404);
+            assert.equal(
+                (await page.locator("body").innerText()).trim(),
+                "Not found",
+            );
             console.log(
                 `ok ${theme}/${lang}: 4 imagens Full HD, galeria, teclado, navegação, ausência de documentos públicos, acessibilidade e 4 larguras`,
             );
             await ctx.close();
         }
     }
+    const { ctx, page } = await newContext(browser, {
+        baseUrl: preview.url,
+        javaScriptEnabled: false,
+        viewport: { width: 375, height: 900 },
+    });
+    await page.goto(`${preview.url}${route}`, {
+        waitUntil: "domcontentloaded",
+    });
+    assert.match(await page.locator("h1").innerText(), /Codex/);
+    assert.equal(await page.locator(".codex__static-image").count(), 4);
+    assert.equal(
+        await page.locator('a[href="https://codex.shxred.app.br"]').count(),
+        1,
+    );
+    assert.equal(
+        await page.locator('a[download], a[href*="README.md" i]').count(),
+        0,
+    );
+    assert.equal(await page.locator(".codex__section").count(), 5);
+    assert.ok(
+        await page.evaluate(
+            () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+    );
+    await ctx.close();
+    console.log(
+        "ok sem JavaScript: apresentação técnica, 4 capturas, link para produção e layout mobile",
+    );
 } finally {
     await browser.close();
     await preview.stop();

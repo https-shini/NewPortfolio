@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { render, screen, within, fireEvent } from "@testing-library/react";
+import { act, render, screen, within, fireEvent } from "@testing-library/react";
 import { Providers } from "@/app/providers";
 import { Routes } from "@/app/routes";
 import { NOT_FOUND_COPY } from "@/shared/config/notFound";
@@ -74,7 +74,9 @@ describe("página 404", () => {
         const link = await screen.findByRole("link", {
             name: NOT_FOUND_COPY.pt.home,
         });
-        fireEvent.click(link);
+        await act(async () => {
+            fireEvent.click(link);
+        });
         expect(window.location.pathname).toBe("/");
         expect(
             screen.queryByRole("heading", {

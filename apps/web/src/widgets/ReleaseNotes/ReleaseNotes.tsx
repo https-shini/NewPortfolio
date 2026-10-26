@@ -8,7 +8,7 @@ import {
     releaseNotesTotalPages,
     RELEASE_NOTES_PAGE_SIZE,
 } from "@/shared/config/routes";
-import { RELEASE_NOTES, getUsedTags } from "@/shared/config/releaseNotes";
+import { getUsedTags } from "@/shared/config/releaseNotesClient";
 import {
     mergeReleaseNotes,
     type MergedRelease,
@@ -68,14 +68,16 @@ export const ReleaseNotes: React.FC<ReleaseNotesProps> = ({
     const SubHeading = `h${headingLevel + 1}` as "h2" | "h3";
     const [filter, setFilter] = useState<ReleaseFilter>("all");
 
-    const { releases, status } = useReleaseNotes({ enabled: !entries });
+    const { releases, localEntries, status } = useReleaseNotes({
+        enabled: !entries,
+    });
 
     /* GitHub manda na estrutura; a camada local sobrepõe o editorial.
        Em erro, `releases` fica vazio e sobra só o local — a timeline
        continua completa. */
     const resolved = useMemo(
-        () => entries ?? mergeReleaseNotes(RELEASE_NOTES, releases),
-        [entries, releases],
+        () => entries ?? mergeReleaseNotes(localEntries, releases),
+        [entries, localEntries, releases],
     );
 
     const [latest, ...history] = resolved;

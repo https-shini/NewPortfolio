@@ -27,7 +27,8 @@ const raiz = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DESTINO = resolve(raiz, "CHANGELOG.md");
 
 const { RELEASE_NOTES, CHANGE_TYPES } = await import(
-    new URL("../apps/web/src/shared/config/releaseNotes.ts", import.meta.url).href
+    new URL("../apps/web/src/shared/config/releaseNotes.ts", import.meta.url)
+        .href
 );
 
 /* O vocabulário não é mais o do Keep a Changelog. Aquele padrão serve a

@@ -194,8 +194,8 @@ export function CodexPage() {
                                     <dt>{tr("Código-fonte", "Source code")}</dt>
                                     <dd>
                                         {tr(
-                                            "Repositório oficial ainda não publicado",
-                                            "Official repository not yet published",
+                                            "Implementação interna não disponibilizada neste portfólio",
+                                            "Internal implementation is not distributed through this portfolio",
                                         )}
                                     </dd>
                                 </div>
@@ -362,8 +362,8 @@ export function CodexPage() {
                                 [
                                     tr("Conectar", "Connect"),
                                     tr(
-                                        "URL pública sem login ou seleção de repositório após OAuth do GitHub.",
-                                        "Public URL without sign-in, or repository selection after GitHub OAuth.",
+                                        "Seleção de repositório após OAuth do GitHub. A API também aceita URLs públicas sem login, por um endpoint próprio.",
+                                        "Repository selection after GitHub OAuth. The API also accepts public URLs without sign-in through a dedicated endpoint.",
                                     ),
                                 ],
                                 [
@@ -488,8 +488,8 @@ export function CodexPage() {
                         </h2>
                         <p className="codex__section-intro">
                             {tr(
-                                "A interface envia solicitações à API e acompanha os resultados. O backend concentra o processamento e as conexões com GitHub, provedores de IA e banco de dados.",
-                                "The interface sends requests to the API and tracks results. The backend centralizes processing and connections to GitHub, AI providers and the database.",
+                                "O material técnico do projeto descreve uma interface que envia solicitações à API e acompanha os resultados. O backend concentra o processamento e as conexões com GitHub, provedores de IA e banco de dados.",
+                                "The project's technical material describes an interface that sends requests to the API and tracks results. The backend centralizes processing and connections to GitHub, AI providers and the database.",
                             )}
                         </p>
                         <ol
@@ -617,8 +617,8 @@ export function CodexPage() {
                         </h2>
                         <p className="codex__section-intro">
                             {tr(
-                                "A interface em Next.js consome a API FastAPI. O backend coordena os jobs, executa ferramentas locais e consulta serviços externos; PostgreSQL armazena resultados quando configurado.",
-                                "The Next.js interface consumes the FastAPI API. The backend coordinates jobs, runs local tools and calls external services; PostgreSQL stores results when configured.",
+                                "As responsabilidades e os fluxos abaixo consolidam o material técnico disponível. A interface em Next.js consome a API FastAPI, enquanto o backend coordena jobs, ferramentas locais e serviços externos. Os arquivos citados identificam módulos internos, não links para seu código ou para documentos originais.",
+                                "The responsibilities and flows below consolidate the available technical material. The Next.js interface consumes the FastAPI API, while the backend coordinates jobs, local tools and external services. The cited files identify internal modules, not links to their source or to original documents.",
                             )}
                         </p>
                         <div className="codex__cards">
@@ -777,8 +777,8 @@ export function CodexPage() {
                                     </li>
                                     <li>
                                         {tr(
-                                            "Amostras de código e caminhos internos são retirados antes de salvar o relatório. O diretório temporário é removido no bloco finally, inclusive quando ocorre erro.",
-                                            "Code samples and internal paths are removed before saving the report. The temporary directory is removed in the finally block, including when an error occurs.",
+                                            "As amostras usadas como entrada da IA e os caminhos absolutos são retirados antes de salvar o relatório. Ele pode conter trechos originais e sugestões da revisão. O clone temporário é removido no bloco finally, inclusive quando ocorre erro.",
+                                            "AI input samples and absolute paths are removed before saving the report. It may contain original snippets and review suggestions. The temporary clone is removed in the finally block, including when an error occurs.",
                                         )}
                                     </li>
                                     <li>
