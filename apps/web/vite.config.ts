@@ -5,13 +5,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { readFile, writeFile, copyFile } from "node:fs/promises";
-import { execFileSync } from "node:child_process";
 import { renderNotFoundHtml } from "./config/notFound.ts";
 import { fillHomeMetadata } from "./config/homeMetadata.ts";
 import {
     assertNoPrivateCodexDocuments,
     isPrivateCodexDocument,
 } from "./config/privateDocuments.ts";
+import { lastModified } from "./config/lastModified.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,28 +52,6 @@ function siteUrlHtmlPlugin() {
  * o `<lastmod>` vem do git — a única fonte que não depende de alguém
  * lembrar de atualizar.
  */
-
-/** Data do último commit que tocou qualquer um dos caminhos (YYYY-MM-DD). */
-function lastModified(paths: string[]): string | null {
-    try {
-        const out = execFileSync(
-            "git",
-            ["log", "-1", "--format=%cs", "--", ...paths],
-            {
-                cwd: path.resolve(__dirname, ".."),
-                encoding: "utf8",
-                /* Fora de um clone o git reclama no stderr; o build já
-                   trata a ausência, então o aviso só polui o log. */
-                stdio: ["ignore", "pipe", "ignore"],
-            },
-        ).trim();
-        return /^\d{4}-\d{2}-\d{2}$/.test(out) ? out : null;
-    } catch {
-        /* Sem git: repositório raso no CI (`fetch-depth: 1`), tarball, ou
-           build fora de um clone. Quem chama decide o que fazer. */
-        return null;
-    }
-}
 
 /** `&`, `<` e `>` quebram o XML; versões e caminhos passam por aqui. */
 function escapeXml(value: string): string {
@@ -158,6 +136,21 @@ function sitemapPlugin() {
                     lastmod: lastModified([
                         "apps/web/src/pages/Links",
                         "apps/web/src/shared/config/links.ts",
+                    ]),
+                    changefreq: "monthly",
+                    priority: "0.9",
+                },
+                {
+                    /* A /contato tem endereço próprio, canonical próprio
+                       (`useDocumentMeta` com `ROUTES.CONTACT`) e metadados
+                       próprios em api/crawler.ts, então é URL e não âncora.
+                       Faltava aqui porque a rota tinha sido perdida na
+                       consolidação; sem esta entrada, a página só seria
+                       descoberta pelo link do rodapé. */
+                    loc: `${SITE_URL}/contato`,
+                    lastmod: lastModified([
+                        "apps/web/src/pages/Contact",
+                        "apps/web/src/widgets/Contact",
                     ]),
                     changefreq: "monthly",
                     priority: "0.9",

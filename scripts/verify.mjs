@@ -19,7 +19,9 @@ function npm(args, env = process.env) {
 try {
     for (const script of [
         "lint",
+        "lint:api",
         "type-check",
+        "type-check:api",
         "format:check",
         "test",
         "icones:check",
@@ -45,6 +47,7 @@ try {
                 "audit:not-found",
                 "audit:linkedin",
                 "audit:codex",
+                "audit:contato",
                 "audit:modals",
             ])
                 npm(["run", script], env);

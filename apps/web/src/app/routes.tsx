@@ -43,6 +43,10 @@ const LinkedInNoticePage = lazy(() =>
     })),
 );
 
+const ContactPage = lazy(() =>
+    import("@/pages/Contact").then((m) => ({ default: m.ContactPage })),
+);
+
 export const Routes: React.FC = () => {
     const { path } = useRoute();
 
@@ -82,6 +86,10 @@ export const Routes: React.FC = () => {
             ) : path === ROUTES.LINKEDIN_NOTICE ? (
                 <Suspense fallback={null}>
                     <LinkedInNoticePage />
+                </Suspense>
+            ) : path === ROUTES.CONTACT ? (
+                <Suspense fallback={null}>
+                    <ContactPage />
                 </Suspense>
             ) : path === ROUTES.HOME ? (
                 <HomePage />
