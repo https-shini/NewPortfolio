@@ -397,6 +397,24 @@ export default defineConfig({
             },
         },
 
+        /* ── O que NÃO vira data URI ────────────────────────────────
+           Por padrão o Vite embute todo asset abaixo de 4 KB no JS. Os
+           ícones de tecnologia caíam nessa regra: 36 dos 42 SVGs de
+           `assets/skills` viajavam dentro do bundle, e acrescentar cinco
+           ícones estourou o orçamento de JS em 1,3 KB.
+
+           Embutir não compensa aqui. Estes ícones são `loading="lazy"` e
+           ficam abaixo da dobra; como data URI, pesam no JS que bloqueia
+           a primeira pintura mesmo quando ninguém rola até eles. Como
+           arquivo, saem do bundle, carregam sob demanda e ganham nome por
+           hash com cache imutável — e continuam no próprio domínio, que é
+           o que a CSP `img-src 'self'` exige.
+
+           Devolver `false` significa "nunca embutir"; `undefined` deixa o
+           padrão decidir para todo o resto. */
+        assetsInlineLimit: (filePath: string) =>
+            /[\\/]assets[\\/]skills[\\/]/.test(filePath) ? false : undefined,
+
         chunkSizeWarningLimit: 1000,
     },
 

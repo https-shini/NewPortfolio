@@ -18,7 +18,8 @@ import {
     IconPackage,
     IconSearch,
 } from "@/shared/ui/Icons";
-import { FEATURED_PROJECT as project } from "./Featured.data";
+import { SkillIcon } from "@/shared/ui/SkillIcon/SkillIcon";
+import { ENGENHARIA, FEATURED_PROJECT as project } from "./Featured.data";
 
 const FeaturedLightbox = lazy(() =>
     import("./components/FeaturedLightbox").then((m) => ({
@@ -173,16 +174,8 @@ export function Featured() {
                                     )}
                                 </dd>
                             </div>
-                            <div>
-                                <dt>{tr("Abordagem", "Approach")}</dt>
-                                <dd>
-                                    {tr(
-                                        "Análise estática + IA opcional",
-                                        "Static analysis + optional AI",
-                                    )}
-                                </dd>
-                            </div>
                         </dl>
+
                         <div className="featured__actions">
                             <a href={detailsUrl} className="btn btn--primary">
                                 {tr(
@@ -483,13 +476,88 @@ export function Featured() {
                         );
                     })}
                 </div>
+                {/* ── Engenharia e Qualidade de Software ──────────
+                        O que a ferramenta faz, com o peso visual que o
+                        assunto merece: a abordagem, as quatro linguagens
+                        que ela analisa, a escala do score e o relatório.
+                        Os ícones são Skill Icons servidos do próprio
+                        domínio (ver shared/config/skillIcons). */}
+                <section
+                    className="featured__eng"
+                    aria-labelledby="featured-eng-title"
+                >
+                    <p className="featured__eng-rotulo">
+                        {tr("Área", "Field")}
+                    </p>
+                    <h3
+                        className="featured__eng-titulo"
+                        id="featured-eng-title"
+                    >
+                        {ENGENHARIA.area[lang]}
+                    </h3>
+                    <p className="featured__eng-abordagem">
+                        {ENGENHARIA.abordagem[lang]}
+                    </p>
+
+                    <div className="featured__eng-grade">
+                        <div className="featured__eng-bloco featured__eng-bloco--linguagens">
+                            <h4>
+                                {tr(
+                                    "Linguagens analisadas",
+                                    "Languages analysed",
+                                )}
+                            </h4>
+                            <ul className="featured__linguagens">
+                                {ENGENHARIA.linguagens.map((item) => (
+                                    <li key={item.id}>
+                                        <SkillIcon id={item.id} size={32} />
+                                        <span>{item.label}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className="featured__eng-bloco">
+                            <h4>{tr("Score de qualidade", "Quality score")}</h4>
+                            {/* Escala, não nota: este portfólio
+                                    apresenta o projeto e não executa
+                                    análises, então não há valor real a
+                                    exibir — e inventar um descreveria
+                                    função inexistente. */}
+                            <p className="featured__escala-valores">
+                                <span>{ENGENHARIA.score.min}</span>
+                                <span
+                                    className="featured__escala-traco"
+                                    aria-hidden="true"
+                                />
+                                <span>{ENGENHARIA.score.max}</span>
+                            </p>
+                            <p className="featured__escala-nota">
+                                {ENGENHARIA.score.vazio[lang]}
+                            </p>
+                        </div>
+
+                        <div className="featured__eng-bloco">
+                            <h4>{ENGENHARIA.relatorio.titulo[lang]}</h4>
+                            <p>{ENGENHARIA.relatorio.texto[lang]}</p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* Stack da APLICAÇÃO — complementar, e deliberadamente
+                    com menos peso que o bloco de engenharia acima. Python
+                    aparece nos dois: é linguagem analisada e também
+                    tecnologia de construção. */}
                 <div className="featured__stack">
                     <h3>
                         {tr("Tecnologias do projeto", "Project technologies")}
                     </h3>
                     <ul>
                         {project.tech.map((item) => (
-                            <li key={item.key}>{item.label}</li>
+                            <li key={item.key}>
+                                <SkillIcon id={item.key} size={20} />
+                                <span>{item.label}</span>
+                            </li>
                         ))}
                     </ul>
                 </div>

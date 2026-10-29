@@ -60,8 +60,12 @@ import linuxDark from "@/assets/skills/Linux-Dark.svg";
 import linuxLight from "@/assets/skills/Linux-Light.svg";
 import mysqlDark from "@/assets/skills/MySQL-Dark.svg";
 import mysqlLight from "@/assets/skills/MySQL-Light.svg";
+import nextjsDark from "@/assets/skills/NextJS-Dark.svg";
+import nextjsLight from "@/assets/skills/NextJS-Light.svg";
 import nodejsDark from "@/assets/skills/NodeJS-Dark.svg";
 import nodejsLight from "@/assets/skills/NodeJS-Light.svg";
+import postgresDark from "@/assets/skills/PostgreSQL-Dark.svg";
+import postgresLight from "@/assets/skills/PostgreSQL-Light.svg";
 import phpDark from "@/assets/skills/PHP-Dark.svg";
 import phpLight from "@/assets/skills/PHP-Light.svg";
 import pythonDark from "@/assets/skills/Python-Dark.svg";
@@ -70,6 +74,8 @@ import reactDark from "@/assets/skills/React-Dark.svg";
 import reactLight from "@/assets/skills/React-Light.svg";
 import sqlDark from "@/assets/skills/SQL-Dark.svg";
 import sqlLight from "@/assets/skills/SQL-Light.svg";
+import tailwindDark from "@/assets/skills/TailwindCSS-Dark.svg";
+import tailwindLight from "@/assets/skills/TailwindCSS-Light.svg";
 import viteDark from "@/assets/skills/Vite-Dark.svg";
 import viteLight from "@/assets/skills/Vite-Light.svg";
 import vscodeDark from "@/assets/skills/VSCode-Dark.svg";
@@ -80,10 +86,12 @@ import cssIcon from "@/assets/skills/CSS.svg";
 import dockerIcon from "@/assets/skills/Docker.svg";
 import fastapiIcon from "@/assets/skills/FastAPI.svg";
 import gitIcon from "@/assets/skills/Git.svg";
+import goIcon from "@/assets/skills/GoLang.svg";
 import htmlIcon from "@/assets/skills/HTML.svg";
 import jsIcon from "@/assets/skills/JavaScript.svg";
 import oracleIcon from "@/assets/skills/Oracle.svg";
 import sassIcon from "@/assets/skills/Sass.svg";
+import tsIcon from "@/assets/skills/TypeScript.svg";
 
 /**
  * Os IDs em uso. União fechada de propósito: é o que faz o compilador
@@ -99,18 +107,23 @@ export type SkillIconId =
     | "figma"
     | "firebase"
     | "git"
+    | "go"
     | "html"
     | "java"
     | "js"
     | "linux"
     | "mysql"
+    | "nextjs"
     | "nodejs"
     | "oracle"
     | "php"
+    | "postgres"
     | "python"
     | "react"
     | "sass"
     | "sql"
+    | "tailwind"
+    | "ts"
     | "vite"
     | "vscode";
 
@@ -133,18 +146,23 @@ export const SKILL_ICONS: Readonly<Record<SkillIconId, SkillIcon>> = {
     figma: { dark: figmaDark, light: figmaLight },
     firebase: { dark: firebaseDark, light: firebaseLight },
     git: { dark: gitIcon, light: gitIcon },
+    go: { dark: goIcon, light: goIcon },
     html: { dark: htmlIcon, light: htmlIcon },
     java: { dark: javaDark, light: javaLight },
     js: { dark: jsIcon, light: jsIcon },
     linux: { dark: linuxDark, light: linuxLight },
     mysql: { dark: mysqlDark, light: mysqlLight },
+    nextjs: { dark: nextjsDark, light: nextjsLight },
     nodejs: { dark: nodejsDark, light: nodejsLight },
     oracle: { dark: oracleIcon, light: oracleIcon },
     php: { dark: phpDark, light: phpLight },
+    postgres: { dark: postgresDark, light: postgresLight },
     python: { dark: pythonDark, light: pythonLight },
     react: { dark: reactDark, light: reactLight },
     sass: { dark: sassIcon, light: sassIcon },
     sql: { dark: sqlDark, light: sqlLight },
+    tailwind: { dark: tailwindDark, light: tailwindLight },
+    ts: { dark: tsIcon, light: tsIcon },
     vite: { dark: viteDark, light: viteLight },
     vscode: { dark: vscodeDark, light: vscodeLight },
 };

@@ -1,11 +1,70 @@
 /* Codex — Code Validator, TCC. Apresentação baseada no material técnico
    disponível e nas capturas da página pública; não distribui código interno. */
 import { PROJECT_URLS } from "@/shared/config/links";
+import type { SkillIconId } from "@/shared/config/skillIcons";
 export interface ProjectTech {
-    key: string; // identificador estável da tecnologia
+    /* O identificador É o do ícone. Tipar assim faz o compilador provar
+       que toda tecnologia listada tem arte correspondente em
+       shared/config/skillIcons — um nome sem ícone não compila. */
+    key: SkillIconId;
     label: string; // display name
     variant: "brand" | "accent" | "neutral";
 }
+
+/** Linguagem que a ferramenta analisa — não confundir com a stack da aplicação. */
+export interface AnalyzedLanguage {
+    id: SkillIconId;
+    label: string;
+}
+
+/**
+ * O que a ferramenta faz, em quatro campos.
+ *
+ * Fonte: a própria página pública do Codex e o material técnico do TCC.
+ * O score NÃO traz valor numérico: este portfólio apresenta o projeto, não
+ * executa análises, e inventar uma nota seria descrever função que aqui
+ * não existe. O que se mostra é a escala e onde ela é produzida.
+ */
+export const ENGENHARIA = {
+    area: {
+        pt: "Engenharia e Qualidade de Software",
+        en: "Software Engineering and Quality",
+    },
+    abordagem: {
+        pt: "Análise estática de código + revisão assistida por inteligência artificial",
+        en: "Static code analysis + AI-assisted review",
+    },
+    /* As quatro linguagens que o Codex analisa. */
+    linguagens: [
+        { id: "python", label: "Python" },
+        { id: "js", label: "JavaScript" },
+        { id: "ts", label: "TypeScript" },
+        { id: "go", label: "Go" },
+    ] as AnalyzedLanguage[],
+    score: {
+        min: 0,
+        max: 1000,
+        legenda: {
+            pt: "Escala de qualidade",
+            en: "Quality scale",
+        },
+        /* Estado vazio honesto: a nota existe na aplicação, não aqui. */
+        vazio: {
+            pt: "A nota de cada repositório aparece na aplicação, ao fim da análise.",
+            en: "Each repository's score appears in the application once the analysis finishes.",
+        },
+    },
+    relatorio: {
+        titulo: {
+            pt: "Relatório de melhorias",
+            en: "Improvement report",
+        },
+        texto: {
+            pt: "Reúne os achados de lint, segurança e complexidade com a revisão qualitativa, e ordena o que corrigir primeiro.",
+            en: "Brings lint, security and complexity findings together with the qualitative review, ordering what to fix first.",
+        },
+    },
+} as const;
 
 export interface ProjectSlide {
     src: string; // image URL

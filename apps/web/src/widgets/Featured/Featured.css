@@ -320,12 +320,20 @@
     padding: 0;
 }
 .featured__stack li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
     border: 1px solid var(--color-border-2);
     border-radius: var(--radius-full);
     background: var(--color-surface-1);
     padding: var(--space-2) var(--space-3);
     color: var(--color-text-2);
     font: 500 var(--text-xs)/1.4 var(--font-mono);
+}
+/* O ícone é decorativo aqui: o nome da tecnologia está ao lado, em texto. */
+.featured__stack li img {
+    display: block;
+    flex: none;
 }
 @media (min-width: 1025px) {
     .featured__showcase {
@@ -377,5 +385,172 @@
     }
     .featured__gallery-header {
         font-size: 0.625rem;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────────────
+   ENGENHARIA E QUALIDADE DE SOFTWARE
+
+   O bloco de maior peso da seção. Antes, a abordagem era uma linha de
+   ficha com o texto "Análise estática + IA opcional", e as linguagens
+   analisadas não apareciam em lugar nenhum — o visitante não tinha como
+   saber o que a ferramenta lê.
+
+   Os ícones vêm de shared/config/skillIcons, servidos do próprio
+   domínio: a CSP do site é `img-src 'self' data:`, e o serviço remoto
+   skillicons.dev foi removido do projeto depois de medir que, com a rede
+   até ele indisponível, 46 ícones sumiam e três seções ficavam com
+   buracos. A arte é a mesma — skill-icons, de tandpfun, pela fork
+   https-shini/skill-icons, conferida por SHA-256.
+   ───────────────────────────────────────────────────────────────────── */
+.featured__eng {
+    /* Largura total da seção, e não a coluna estreita do showcase: é o
+       bloco que deve ter o maior peso visual, e espremido ao lado da
+       galeria o título quebrava em três linhas. */
+    margin-top: var(--space-12);
+    padding: var(--space-8);
+    border: 1px solid var(--color-border-accent);
+    border-left-width: 2px;
+    border-radius: var(--radius-lg);
+    background: var(--color-accent-subtle);
+}
+
+.featured__eng-rotulo {
+    font: 500 var(--text-2xs) / 1.4 var(--font-mono);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    /* --color-text-3 e não -4: sobre --color-accent-subtle o -4 mede
+       4.37:1 no tema claro e reprova o AA de 4.5:1. Medido com axe. */
+    color: var(--color-text-3);
+}
+
+.featured__eng-titulo {
+    margin-top: var(--space-2);
+    font-size: var(--text-4xl);
+    letter-spacing: var(--ls-snug);
+    color: var(--color-text-1);
+}
+
+.featured__eng-abordagem {
+    margin-top: var(--space-3);
+    font-size: var(--text-lg);
+    color: var(--color-text-2);
+    max-width: 60ch;
+}
+
+.featured__eng-grade {
+    display: grid;
+    /* Linguagens ocupam a primeira linha inteira; score e relatório
+       dividem a segunda. */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-8);
+    margin-top: var(--space-8);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border-accent);
+}
+
+/* As linguagens ocupam a linha inteira: são o dado que mais se consulta. */
+.featured__eng-bloco--linguagens {
+    grid-column: 1 / -1;
+}
+
+.featured__eng-bloco h4 {
+    font: 500 var(--text-2xs) / 1.4 var(--font-mono);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    /* Mesmo motivo do rótulo acima. */
+    color: var(--color-text-3);
+    margin-bottom: var(--space-3);
+}
+
+.featured__eng-bloco p {
+    font-size: var(--text-sm);
+    color: var(--color-text-2);
+}
+
+/* ── Linguagens analisadas ─────────────────────────────────────────── */
+.featured__linguagens {
+    display: grid;
+    /* `auto-fit` e não `repeat(4, …)`: este bloco vive na coluna estreita
+       do showcase, e quatro colunas fixas cortavam os nomes ("Pytho",
+       "JavaS"). Assim a grade cai para 2×2 sozinha quando falta largura,
+       e o nome nunca trunca. */
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: var(--space-4);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.featured__linguagens li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-1);
+}
+
+/* Nome sempre ao lado do ícone: a informação não depende do símbolo. */
+.featured__linguagens span {
+    font: 500 var(--text-sm) / 1.3 var(--font-body);
+    color: var(--color-text-1);
+    /* O nome é a informação; se faltar espaço, ele quebra em vez de sumir. */
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.featured__linguagens img {
+    display: block;
+    flex: none;
+}
+
+/* ── Escala do score ───────────────────────────────────────────────── */
+.featured__escala-valores {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    font: 600 var(--text-4xl) / 1 var(--font-display);
+    color: var(--color-text-1);
+    letter-spacing: var(--ls-tight);
+}
+
+.featured__escala-traco {
+    flex: 1;
+    height: 2px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(
+        90deg,
+        var(--color-border-3),
+        var(--color-brand)
+    );
+}
+
+.featured__escala-nota {
+    margin-top: var(--space-3);
+    font-size: var(--text-xs) !important;
+    color: var(--color-text-3) !important;
+}
+
+/* ── Responsivo ────────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+    .featured__eng {
+        padding: var(--space-5);
+    }
+
+    .featured__eng-grade {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 420px) {
+    .featured__linguagens li {
+        padding: var(--space-3);
+        gap: var(--space-2);
+    }
+
+    .featured__escala-valores {
+        font-size: var(--text-2xl);
     }
 }
