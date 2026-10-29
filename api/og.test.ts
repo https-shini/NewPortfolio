@@ -12,7 +12,10 @@ const { default: handler } = await import("./og");
 /** Espelha o par (req, res) que a Vercel entrega ao handler. */
 function chamar(url: string) {
     const headers: Record<string, string> = {};
-    let corpo = Buffer.alloc(0);
+    /* Anotado: `Buffer.alloc` devolve `Buffer<ArrayBuffer>` e o `send` do
+       arranjo recebe `Buffer<ArrayBufferLike>`, que é mais largo. Sem a
+       anotação o `corpo` nasce estreito e a atribuição não passa. */
+    let corpo: Buffer = Buffer.alloc(0);
     let codigo = 0;
 
     const res = {

@@ -1,0 +1,42 @@
+{
+    /* ─────────────────────────────────────────────────────────
+       tsconfig.api.json — o portão de tipos das funções serverless
+       ─────────────────────────────────────────────────────────
+       `apps/web/tsconfig.json` declara `"include": ["src"]`, então
+       `tsc --noEmit` nunca olhou para `api/`. A lacuna foi medida, não
+       suposta: um `const x: number = "texto"` acrescentado a
+       `api/_markdown.ts` passava pelo `npm run type-check` com exit 0.
+
+       Isso deixava sem portão justamente a fronteira de confiança do
+       servidor — o conversor de markdown que alimenta um
+       `dangerouslySetInnerHTML`, o endpoint que recebe relatório de CSP
+       de qualquer origem, o montador da imagem de compartilhamento e o
+       atendimento a rastreadores.
+
+       Por que um arquivo separado, e não `include: ["src", "../../api"]`
+       no do frontend: `api/` roda em Node, não no navegador. Herdar
+       `lib: ["DOM"]` daria a estes arquivos `document` e `window`, que
+       não existem lá, e esconderia exatamente o tipo de erro que este
+       portão deve pegar. Aqui a `lib` é só `ES2022` e os globais vêm de
+       `@types/node`.
+    ───────────────────────────────────────────────────────── */
+    "compilerOptions": {
+        "target": "ES2022",
+        "lib": ["ES2022"],
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "strict": true,
+        "noEmit": true,
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        /* Os testes de `api/` importam `./crawler` sem extensão e o
+           código importa `../apps/web/.../x.js` apontando para `.ts`.
+           `bundler` aceita as duas formas, que é o que o vitest e o
+           build da Vercel já fazem na prática. */
+        "allowImportingTsExtensions": true,
+        "types": ["node"],
+        "baseUrl": ".",
+        "paths": { "@/*": ["apps/web/src/*"] }
+    },
+    "include": ["api"]
+}

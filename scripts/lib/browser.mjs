@@ -32,6 +32,13 @@ export const ROUTES = {
  * install` numa máquina de trabalho, imagem pré-montada num contêiner.
  * Tenta as três origens antes de desistir, e a mensagem de erro diz o
  * que fazer em vez de só reclamar.
+ *
+ * Dentro de cada `chromium-<build>` o binário mora em UMA de duas pastas,
+ * e qual delas depende da versão do Playwright que baixou: as builds mais
+ * novas usam `chrome-linux64`, as anteriores `chrome-linux`. Procurar só
+ * uma deixava as nove auditorias de navegador inoperantes num contêiner
+ * recém-criado — não por defeito do projeto, mas por um caminho que não
+ * existia ali. As duas são tentadas, na ordem em que apareceram.
  */
 function resolveChromium() {
     if (process.env.PW_CHROMIUM_PATH) return process.env.PW_CHROMIUM_PATH;
@@ -42,7 +49,10 @@ function resolveChromium() {
             .filter((d) => d.startsWith("chromium-"))
             .sort()
             .reverse()
-            .map((d) => join(root, d, "chrome-linux", "chrome"))
+            .flatMap((d) => [
+                join(root, d, "chrome-linux", "chrome"),
+                join(root, d, "chrome-linux64", "chrome"),
+            ])
             .filter((p) => existsSync(p));
         if (candidates.length) return candidates[0];
     }

@@ -44,21 +44,32 @@ const FIXADAS: Record<string, { versao: string; porque: string }> = {
         porque:
             "A 0.11.1 traz sharp 0.34.5, com duas ALTAS herdadas de libvips e " +
             "libheif — e é por ela que este alfinete nasceu. " +
-            "O motivo original de não subir para 1.0.3 era o satori 0.33.x, " +
-            "que depende de fflate 0.7.3 e reintroduzia três MODERADAS. ISSO " +
-            "DEIXOU DE VALER: o fflate não tem advisory nenhum hoje, então a " +
-            "1.0.3 está liberada. A 1.0.1 continua sendo a escolha por ser a " +
-            "mudança menor — ela e a 1.0.3 declaram a MESMA faixa de sharp " +
-            "(optionalDependency ^0.35.3), então subir a og move satori e " +
-            "fflate sem resolver nada que a faixa já não resolva. " +
             "O CVE-2026-96889 (ALTA, librsvg via sharp <0.35.5) foi fechado " +
             "subindo só o sharp para 0.35.5 DENTRO da faixa ^0.35.3, no " +
             "lockfile: package.json intacto, og em 1.0.1, satori em 0.29.0. " +
-            "npm audit --omit=dev devolve zero. " +
-            "Nota de alcance: api/og.ts monta uma árvore de divs e texto e não " +
-            "passa imagem nenhuma ao ImageResponse, então o decodificador de " +
-            "SVG do librsvg não é alimentado por este uso — o que baixa a " +
-            "urgência, não a obrigação de manter a porta verde.",
+            "RESSALVA ABERTA, e ela é o motivo deste parágrafo existir: o " +
+            "GHSA-wx4j-mvgx-mqwp (escape impróprio no SVG que o satori gera) " +
+            "cobre satori >=0.0.27 <0.33.5 e portanto o 0.29.0 que esta " +
+            "versão embute. `npm audit --omit=dev` devolve DUAS MODERADAS, " +
+            "não zero, e o passo de audit do verify reprova por isso. " +
+            "A 1.0.3 NÃO é a saída, e isto foi medido, não suposto: ela é " +
+            '"type": "module" e seu único build de node é um bundle do ' +
+            'esbuild cujo shim estoura `Dynamic require of "fs" is not ' +
+            "supported` ao inicializar o harfbuzzjs. Falha em node puro, e " +
+            "não só no vitest — api/og.test.ts reprova os cinco casos. " +
+            "Forçar satori por override também não serve, e por um motivo " +
+            "estrutural: o satori é EMBUTIDO no dist do og (não há import " +
+            "em tempo de execução), então o override trocaria um " +
+            "node_modules/satori que ninguém carrega. O audit ficaria verde " +
+            "com o código vulnerável ainda rodando — teatro, não correção. " +
+            "Nota de alcance, que é o que sustenta conviver com a ressalva: " +
+            "api/og.ts valida a versão pedida por regex e a procura numa " +
+            "lista fechada, caindo num título fixo quando não acha, então " +
+            "nenhum texto de terceiro chega ao satori; e não passa imagem " +
+            "nenhuma ao ImageResponse, então o decodificador de SVG do " +
+            "librsvg não é alimentado por este uso. O alcance é nulo por " +
+            "este caminho — o que baixa a urgência, não a obrigação de " +
+            "revisitar quando a og publicar um build de node que carregue.",
     },
 };
 

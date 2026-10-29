@@ -116,10 +116,16 @@ export default async function handler(
        caem nesse segundo caso em alguns runtimes. */
     let payload: unknown = req.body;
     if (typeof payload === "string") {
+        /* O corpo cru vai para um const próprio porque a reatribuição de
+           `payload` dentro do try apaga o narrowing para string: no catch
+           o TypeScript volta a ver `unknown`. Em execução funcionava por
+           acidente da ordem de avaliação — a atribuição não completa
+           quando o JSON.parse lança —, e acidente não é garantia. */
+        const cru = payload;
         try {
-            payload = JSON.parse(payload);
+            payload = JSON.parse(cru);
         } catch {
-            console.warn(`[csp] corpo não-JSON: ${payload.slice(0, 500)}`);
+            console.warn(`[csp] corpo não-JSON: ${cru.slice(0, 500)}`);
             res.status(204).send();
             return;
         }
