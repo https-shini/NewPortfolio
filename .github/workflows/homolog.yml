@@ -70,7 +70,7 @@ jobs:
           # SHA novo com a mesma árvore — e força o deploy da branch.
           git config user.name "github-actions[bot]"
           git config user.email "41898099+github-actions[bot]@users.noreply.github.com"
-          git commit --allow-empty --no-verify -m "homolog: PR #$PR (${SHA:0:7})"
+          git commit --allow-empty --no-verify -m "chore(homolog): espelha PR #$PR (${SHA:0:7})"
           git push --force origin "HEAD:refs/heads/homolog"
           {
               echo "### Homologação atualizada"
