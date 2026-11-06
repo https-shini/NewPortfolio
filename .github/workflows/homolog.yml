@@ -17,8 +17,10 @@
 #     mostra o que recebeu push por último;
 #   · sem o segredo VERCEL_TOKEN, o job termina sem fazer nada.
 #
-# Observação: eventos `deployment_status` rodam o workflow da branch
-# padrão. Ele só passa a valer depois de estar na `main`.
+# Observação: `deployment_status` roda o workflow que existe NO COMMIT
+# do deploy (comprovado nos previews desta própria branch). Um PR só
+# atualiza a homologação se a branch já tiver este arquivo — ou seja,
+# depois do merge na `main` e de a branch estar atualizada com ela.
 #
 # Configuração (uma vez):
 #   1. Vercel → Account Settings → Tokens → criar token com escopo do
