@@ -8,7 +8,7 @@ import {
     linkKind,
 } from "./links";
 import { PROFILE } from "./profile";
-import { ROUTES } from "./routes";
+import { ROUTES, projectPath } from "./routes";
 
 describe("TREE_LINKS — integridade dos dados", () => {
     it("não tem ids repetidos", () => {
@@ -116,6 +116,12 @@ describe("linkKind", () => {
     it("reconhece rota registrada", () => {
         expect(linkKind(ROUTES.LINKS)).toBe("route");
         expect(linkKind(ROUTES.HOME)).toBe("route");
+    });
+
+    it("reconhece a página de um projeto como rota, não arquivo", () => {
+        expect(linkKind(ROUTES.PROJECTS)).toBe("route");
+        expect(linkKind(projectPath("AuthService"))).toBe("route");
+        expect(linkKind(`${ROUTES.PROJECTS}?lang=en`)).toBe("route");
     });
 
     it("trata caminho interno não registrado como arquivo estático", () => {

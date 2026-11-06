@@ -1,70 +1,145 @@
 import React from "react";
 import "./Work.css";
 import { useLang } from "@/shared/hooks/useLang";
-import { type WorkProject } from "./Work.types";
-import { IconGitHub, IconExternalLink } from "@/shared/ui/Icons";
+import { useLinkProps } from "@/shared/hooks/useLinkProps";
+import { useDevhubPinned } from "@/features/devhub/useDevhub";
+import { RepoThumb } from "@/features/devhub/components/RepoThumb";
+import type { Repository } from "@/features/devhub/types";
 import { GITHUB_URL } from "@/shared/config/constants";
-import { PROJECT_URLS } from "@/shared/config/links";
-import webchatImg from "@/assets/projects/webchat.webp";
-import financasImg from "@/assets/projects/financas.webp";
-import authLoginImg from "@/assets/authservice/login.webp";
+import { ROUTES, projectPath } from "@/shared/config/routes";
+import {
+    IconArrowRight,
+    IconExternalLink,
+    IconGitHub,
+} from "@/shared/ui/Icons";
 
-const PROJECTS: WorkProject[] = [
-    {
-        id: "webchat",
-        emoji: "💬",
-        title: { pt: "Web Chat", en: "Web Chat" },
-        desc: {
-            pt: "Aplicação de chat em tempo real utilizando WebSocket, com suporte a múltiplas salas e interação direta no navegador.",
-            en: "Real-time chat application built with WebSocket, supporting multiple rooms and direct in-browser interaction.",
-        },
-        imageUrl: webchatImg,
-        tech: [
-            { label: "Node.js", variant: "accent" },
-            { label: "JavaScript", variant: "brand" },
-            { label: "WebSocket", variant: "neutral" },
-        ],
-        demoUrl: PROJECT_URLS.webChat.live,
-        repoUrl: PROJECT_URLS.webChat.repo,
-    },
-    {
-        id: "auth",
-        emoji: "🔐",
-        title: { pt: "Auth Service", en: "Auth Service" },
-        desc: {
-            pt: "Serviço de autenticação com foco em segurança, gerenciamento de usuários e implementação de fluxo com JWT.",
-            en: "Authentication service focused on security, user management and a complete JWT-based login flow.",
-        },
-        imageUrl: authLoginImg,
-        tech: [
-            { label: "Node.js", variant: "accent" },
-            { label: "TypeScript", variant: "brand" },
-            { label: "JWT", variant: "neutral" },
-        ],
-        demoUrl: PROJECT_URLS.authService.live,
-        repoUrl: PROJECT_URLS.authService.repo,
-    },
-    {
-        id: "financas",
-        emoji: "💰",
-        title: { pt: "Controle Financeiro", en: "Financial Control" },
-        desc: {
-            pt: "Aplicação para gestão financeira pessoal com controle de entradas, saídas e visualização de saldo em tempo real.",
-            en: "Personal finance app for managing income and expenses with real-time balance tracking.",
-        },
-        imageUrl: financasImg,
-        tech: [
-            { label: "React", variant: "brand" },
-            { label: "JavaScript", variant: "brand" },
-            { label: "CSS3", variant: "neutral" },
-        ],
-        demoUrl: PROJECT_URLS.finances.live,
-        repoUrl: PROJECT_URLS.finances.repo,
-    },
-];
+/* ─────────────────────────────────────────────────────────
+   Work — a vitrine da home (#projetos)
+   ─────────────────────────────────────────────────────────
+   Os cards são os repositórios FIXADOS no perfil do GitHub
+   ("Customize your pins"), na ordem escolhida lá. Trocar a
+   seleção no GitHub troca a home — sem mudar código. O cache da
+   CDN (1 h) define quanto tempo a mudança leva para aparecer.
+
+   Antes eram três projetos digitados aqui, com print e texto em
+   PT/EN. A troca foi decidida: o GitHub é a fonte de verdade, e a
+   descrição passa a ser a do repositório (um idioma só).
+
+   A identidade visual dos cards é a mesma (`.work-card`); a
+   imagem é o social card do GitHub, com o nome do repositório
+   sobre a cor da linguagem quando ela não existe.
+───────────────────────────────────────────────────────── */
+
+const QTD_ESQUELETO = 6;
+const BADGE_VARIANTS = ["brand", "accent", "neutral"] as const;
+
+const WorkCard: React.FC<{ repo: Repository; index: number }> = ({
+    repo,
+    index,
+}) => {
+    const { t } = useLang();
+    const detalhes = useLinkProps(projectPath(repo.name));
+    const tituloId = `project-${repo.id}`;
+
+    /* Até três linguagens, das maiores para as menores; sem divisão
+       medida, fica a primária. */
+    const linguagens = (
+        repo.languages.length > 0
+            ? repo.languages
+            : repo.primaryLanguage
+              ? [repo.primaryLanguage]
+              : []
+    ).slice(0, 3);
+
+    return (
+        <article
+            className="work-card"
+            aria-labelledby={tituloId}
+            style={{ ["--card-index" as string]: index }}
+        >
+            <div className="work-card__thumb">
+                <RepoThumb repo={repo} className="work-card__media" />
+                <span className="work-card__thumb-grad" aria-hidden="true" />
+            </div>
+
+            <div className="work-card__body">
+                <h3 className="work-card__title" id={tituloId}>
+                    {repo.name}
+                </h3>
+
+                <p className="work-card__desc">
+                    {repo.description ?? (
+                        <em className="work-card__nodesc">
+                            {t("work.noDescription")}
+                        </em>
+                    )}
+                </p>
+
+                {linguagens.length > 0 && (
+                    <ul
+                        className="work-card__tech"
+                        aria-label={t("work.block.stack")}
+                    >
+                        {linguagens.map((l, i) => (
+                            <li
+                                key={l.name}
+                                className={`badge badge--${BADGE_VARIANTS[i % BADGE_VARIANTS.length]}`}
+                            >
+                                {l.name}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            <div className="work-card__footer">
+                <a
+                    className="work-btn work-btn--primary"
+                    {...detalhes.anchorProps}
+                    aria-label={`${t("work.btn.details")} — ${repo.name}`}
+                >
+                    <IconArrowRight width={14} height={14} aria-hidden="true" />
+                    {t("work.btn.details")}
+                </a>
+
+                {repo.homepageUrl ? (
+                    <a
+                        href={repo.homepageUrl}
+                        className="work-btn work-btn--outline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${t("work.btn.demo")} — ${repo.name}`}
+                    >
+                        <IconExternalLink
+                            width={14}
+                            height={14}
+                            aria-hidden="true"
+                        />
+                        {t("work.btn.demo")}
+                    </a>
+                ) : (
+                    <a
+                        href={repo.url}
+                        className="work-btn work-btn--outline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${t("work.btn.repo")} — ${repo.name}`}
+                    >
+                        <IconGitHub width={15} height={15} aria-hidden="true" />
+                        {t("work.btn.repo")}
+                    </a>
+                )}
+            </div>
+        </article>
+    );
+};
 
 export const Work: React.FC = () => {
-    const { t, lang } = useLang();
+    const { t } = useLang();
+    const { data, loading, error } = useDevhubPinned();
+    const verTodos = useLinkProps(ROUTES.PROJECTS);
+
+    const repos = data?.repositories ?? [];
 
     return (
         <section
@@ -74,113 +149,56 @@ export const Work: React.FC = () => {
             data-reveal
         >
             <div className="container">
-                {/* Header */}
                 <header className="section-header">
                     <span className="section-eyebrow">{t("work.eyebrow")}</span>
-
                     <h2 className="section-title" id="work-title">
                         {t("work.title")}
                     </h2>
-
                     <p className="section-subtitle">{t("work.sub")}</p>
+                    <p className="work__note">{t("work.sub2")}</p>
                 </header>
 
-                {/* Grid */}
-                <div className="work__grid">
-                    {PROJECTS.map((project, i) => (
-                        <article
-                            className="work-card"
-                            key={project.id}
-                            aria-labelledby={`project-${project.id}`}
-                            style={{ ["--card-index" as string]: i }}
-                        >
-                            {/* Thumbnail */}
-                            <div className="work-card__thumb">
-                                <img
-                                    src={project.imageUrl}
-                                    alt={`${t("work.preview")} — ${project.title[lang]}`}
-                                    loading="lazy"
-                                    decoding="async"
-                                />
-                                <span
-                                    className="work-card__thumb-grad"
-                                    aria-hidden="true"
-                                />
-                                <span
-                                    className="work-card__emoji"
-                                    aria-hidden="true"
-                                >
-                                    {project.emoji}
-                                </span>
-                            </div>
+                {loading && (
+                    <ul
+                        className="work__grid"
+                        aria-busy="true"
+                        aria-label={t("work.loading")}
+                    >
+                        {Array.from({ length: QTD_ESQUELETO }, (_, i) => (
+                            <li
+                                key={i}
+                                className="work-card work-card--skeleton"
+                                aria-hidden="true"
+                            >
+                                <span className="work-card__thumb" />
+                                <span className="work-card__skel-line" />
+                                <span className="work-card__skel-line work-card__skel-line--short" />
+                            </li>
+                        ))}
+                    </ul>
+                )}
 
-                            {/* Conteúdo */}
-                            <div className="work-card__body">
-                                <h3
-                                    className="work-card__title"
-                                    id={`project-${project.id}`}
-                                >
-                                    {project.title[lang]}
-                                </h3>
+                {!loading && (error || repos.length === 0) && (
+                    <p className="work__state" role="status">
+                        {t("work.error")}
+                    </p>
+                )}
 
-                                <p className="work-card__desc">
-                                    {project.desc[lang]}
-                                </p>
+                {!loading && repos.length > 0 && (
+                    <ul className="work__grid">
+                        {repos.map((repo, i) => (
+                            <li key={repo.id} className="work__item">
+                                <WorkCard repo={repo} index={i} />
+                            </li>
+                        ))}
+                    </ul>
+                )}
 
-                                {/* Tecnologias */}
-                                <div
-                                    className="work-card__tech"
-                                    aria-label={t("work.block.stack")}
-                                >
-                                    {project.tech.map((tech) => (
-                                        <span
-                                            key={tech.label}
-                                            className={`badge badge--${tech.variant}`}
-                                        >
-                                            {tech.label}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Footer */}
-                            <div className="work-card__footer">
-                                <a
-                                    href={project.demoUrl}
-                                    className="work-btn work-btn--primary"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={`${t("work.btn.demo")} — ${project.title[lang]}`}
-                                >
-                                    <IconExternalLink
-                                        width={14}
-                                        height={14}
-                                        aria-hidden="true"
-                                    />
-                                    {t("work.btn.demo")}
-                                </a>
-
-                                <a
-                                    href={project.repoUrl}
-                                    className="work-btn work-btn--outline"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={`${t("work.btn.repo")} — ${project.title[lang]}`}
-                                >
-                                    <IconGitHub
-                                        width={15}
-                                        height={15}
-                                        aria-hidden="true"
-                                    />
-                                    {t("work.btn.repo")}
-                                </a>
-                            </div>
-                        </article>
-                    ))}
-                </div>
-
-                {/* CTA */}
                 <div className="work__cta">
+                    <a className="btn btn--primary" {...verTodos.anchorProps}>
+                        {t("work.viewAll")}
+                        <IconArrowRight width={16} height={16} aria-hidden />
+                    </a>
                     <a
                         href={GITHUB_URL}
                         className="btn btn--outline"
@@ -188,7 +206,7 @@ export const Work: React.FC = () => {
                         rel="noopener noreferrer"
                     >
                         {t("work.more")}
-                        <IconGitHub width={16} height={16} />
+                        <IconGitHub width={16} height={16} aria-hidden />
                     </a>
                 </div>
             </div>

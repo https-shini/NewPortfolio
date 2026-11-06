@@ -126,6 +126,7 @@ export const CAMPOS_REPO = `
 const QUERY_LISTA = `
     query($login: String!, $after: String) {
         user(login: $login) {
+            followers { totalCount }
             repositories(
                 first: ${POR_PAGINA}
                 after: $after
@@ -135,6 +136,23 @@ const QUERY_LISTA = `
             ) {
                 pageInfo { hasNextPage endCursor }
                 nodes { ${CAMPOS_REPO} }
+            }
+        }
+    }
+`;
+
+/* Os repositórios fixados no perfil ("Customize your pins"). Só existem
+   no GraphQL — o REST não expõe essa lista. O GitHub limita a seis. */
+const QUERY_FIXADOS = `
+    query($login: String!) {
+        user(login: $login) {
+            pinnedItems(first: 6, types: [REPOSITORY]) {
+                nodes {
+                    ... on Repository {
+                        isPrivate
+                        ${CAMPOS_REPO}
+                    }
+                }
             }
         }
     }
@@ -313,6 +331,7 @@ export function doREST(bruto: RepoREST | null | undefined): Repository | null {
 
 interface PaginaGQL {
     user?: {
+        followers?: { totalCount?: number };
         repositories?: {
             pageInfo?: { hasNextPage?: boolean; endCursor?: string | null };
             nodes?: (NoRepoGQL | null)[];
@@ -320,12 +339,26 @@ interface PaginaGQL {
     } | null;
 }
 
+/** O acervo e o que o acompanha para as métricas da /projetos. */
+export interface Acervo {
+    repositories: Repository[];
+    /** Seguidores do perfil; `null` quando a origem não respondeu. */
+    followers: number | null;
+}
+
 /**
  * Todos os repositórios públicos do dono, do mais recente ao mais
- * antigo (por atualização). Pagina até esgotar ou bater `MAX_PAGINAS`.
+ * antigo (por atualização), mais os seguidores do perfil. Pagina até
+ * esgotar ou bater `MAX_PAGINAS`.
+ *
+ * Os seguidores vêm junto — e não por uma operação à parte — para que
+ * as métricas da página e a galeria saiam da MESMA coleta: o
+ * `public_repos` do endpoint de usuário já divergiu da listagem (87 ×
+ * 86), e dois números diferentes na mesma tela não se explicam.
  */
-export async function listarRepositorios(): Promise<Repository[]> {
+export async function listarAcervo(): Promise<Acervo> {
     const todos: Repository[] = [];
+    let followers: number | null = null;
 
     if (temToken()) {
         let after: string | null = null;
@@ -334,6 +367,12 @@ export async function listarRepositorios(): Promise<Repository[]> {
                 QUERY_LISTA,
                 { login: GITHUB_USER, after },
             );
+            if (
+                followers === null &&
+                typeof data.user?.followers?.totalCount === "number"
+            ) {
+                followers = data.user.followers.totalCount;
+            }
             const conexao = data.user?.repositories;
             if (!Array.isArray(conexao?.nodes)) {
                 throw new ErroPublico(
@@ -350,7 +389,7 @@ export async function listarRepositorios(): Promise<Repository[]> {
             if (!proximo?.hasNextPage || !proximo.endCursor) break;
             after = proximo.endCursor;
         }
-        return todos;
+        return { repositories: todos, followers };
     }
 
     for (let pagina = 1; pagina <= MAX_PAGINAS; pagina++) {
@@ -371,7 +410,69 @@ export async function listarRepositorios(): Promise<Repository[]> {
         }
         if (bruto.length < POR_PAGINA) break;
     }
-    return todos;
+
+    /* Seguidores pelo REST: uma chamada a mais, só no caminho sem token.
+       Falhar aqui não derruba o acervo — a métrica some, a galeria fica. */
+    try {
+        const usuario = await buscarREST<{ followers?: number }>(
+            `/users/${GITHUB_USER}`,
+        );
+        if (typeof usuario?.followers === "number")
+            followers = usuario.followers;
+    } catch {
+        /* métrica opcional */
+    }
+    return { repositories: todos, followers };
+}
+
+/** Só a lista — atalho para quem não precisa das métricas. */
+export async function listarRepositorios(): Promise<Repository[]> {
+    return (await listarAcervo()).repositories;
+}
+
+/** Quantos repositórios a home mostra quando não há fixados. */
+export const QTD_FIXADOS = 6;
+
+/**
+ * Os repositórios fixados no perfil, na ordem escolhida no GitHub.
+ *
+ * `source` diz de onde a lista veio: `pinned` é a seleção do dono;
+ * `recent` é o substituto quando não há token (o REST não expõe os
+ * fixados) ou quando nenhum repositório está fixado — os mais
+ * recentemente atualizados, sem forks. A home mostra os dois do mesmo
+ * jeito; o campo existe para não esconder a diferença de quem consome.
+ */
+export async function listarFixados(): Promise<{
+    repositories: Repository[];
+    source: "pinned" | "recent";
+}> {
+    if (temToken()) {
+        const data = await consultarGraphQL<{
+            user?: {
+                pinnedItems?: { nodes?: (NoRepoGQL | null)[] };
+            } | null;
+        }>(QUERY_FIXADOS, { login: GITHUB_USER });
+
+        const nos = data.user?.pinnedItems?.nodes;
+        if (!Array.isArray(nos)) {
+            throw new ErroPublico(
+                "upstream_invalido",
+                "resposta do GitHub fora do formato esperado",
+                "user.pinnedItems.nodes não é lista",
+            );
+        }
+        const fixados = nos
+            .filter((no) => no && !no.isPrivate)
+            .map(doGraphQL)
+            .filter((r): r is Repository => r !== null);
+        if (fixados.length > 0)
+            return { repositories: fixados, source: "pinned" };
+    }
+
+    const recentes = (await listarRepositorios())
+        .filter((r) => !r.isFork && !r.isArchived)
+        .slice(0, QTD_FIXADOS);
+    return { repositories: recentes, source: "recent" };
 }
 
 /**

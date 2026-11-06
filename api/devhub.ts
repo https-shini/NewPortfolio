@@ -8,7 +8,8 @@ import {
 import {
     buscarReadme,
     buscarRepositorio,
-    listarRepositorios,
+    listarAcervo,
+    listarFixados,
     type Repository,
 } from "./_github-repos.js";
 
@@ -45,7 +46,7 @@ interface VercelResponse {
    Operações — a lista fechada
 ───────────────────────────────────────────────────────── */
 
-const OPERACOES = ["index", "project", "readme"] as const;
+const OPERACOES = ["index", "pinned", "project", "readme"] as const;
 type Operacao = (typeof OPERACOES)[number];
 
 /** Operações que exigem `name`; as demais o recusam. */
@@ -163,12 +164,19 @@ function interpretar(query: VercelRequest["query"]): Pedido {
 
 async function opIndex(): Promise<{
     repositories: Repository[];
+    followers: number | null;
     fetchedAt: string;
 }> {
-    return {
-        repositories: await listarRepositorios(),
-        fetchedAt: new Date().toISOString(),
-    };
+    return { ...(await listarAcervo()), fetchedAt: new Date().toISOString() };
+}
+
+/** Os fixados do perfil — a vitrine da home. */
+async function opPinned(): Promise<{
+    repositories: Repository[];
+    source: "pinned" | "recent";
+    fetchedAt: string;
+}> {
+    return { ...(await listarFixados()), fetchedAt: new Date().toISOString() };
 }
 
 /**
@@ -239,9 +247,11 @@ export default async function handler(
         const corpo =
             pedido.op === "index"
                 ? await opIndex()
-                : pedido.op === "project"
-                  ? await buscarRepositorio(pedido.name!)
-                  : await opReadme(pedido.name!);
+                : pedido.op === "pinned"
+                  ? await opPinned()
+                  : pedido.op === "project"
+                    ? await buscarRepositorio(pedido.name!)
+                    : await opReadme(pedido.name!);
 
         res.setHeader("Cache-Control", CACHE_PADRAO);
         res.status(200).json(corpo);
