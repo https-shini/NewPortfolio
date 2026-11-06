@@ -94,7 +94,10 @@ export function recentRepos(
     repositories: readonly Repository[],
     count = RECENT_COUNT,
 ): Repository[] {
-    return filterAndSort(repositories, DEFAULT_FILTERS).slice(0, count);
+    return filterAndSort(repositories, {
+        ...DEFAULT_FILTERS,
+        sort: "updated",
+    }).slice(0, count);
 }
 
 /**
@@ -149,7 +152,7 @@ export function hasActiveFilters(filters: ProjectFilters): boolean {
     );
 }
 
-/** Vizinhos do projeto na ordem padrão da galeria — navegação do detalhe. */
+/** Vizinhos do projeto na ordem padrão da galeria (alfabética) — navegação do detalhe. */
 export function siblingsOf(
     repositories: readonly Repository[],
     name: string,

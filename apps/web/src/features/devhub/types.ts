@@ -69,7 +69,7 @@ export interface DevhubPinned {
    Filtros e ordenação
 ───────────────────────────────────────────────────────── */
 
-export const SORT_OPTIONS = ["updated", "stars", "created", "name"] as const;
+export const SORT_OPTIONS = ["name", "updated", "stars", "created"] as const;
 export type SortOption = (typeof SORT_OPTIONS)[number];
 
 export interface ProjectFilters {
@@ -80,11 +80,18 @@ export interface ProjectFilters {
     showArchived: boolean;
 }
 
-/** Visão padrão da galeria: mais recentes primeiro, sem forks e arquivados. */
+/**
+ * Visão padrão da galeria: ordem alfabética, sem forks e arquivados.
+ *
+ * Alfabética, e não por atividade: a seção "Projetos recentes", logo
+ * acima, já mostra os mais novos. Com a mesma ordem, os seis primeiros
+ * cartões da galeria repetiam a seção de cima — medido na validação
+ * visual. A galeria é o catálogo; a atividade continua a um clique.
+ */
 export const DEFAULT_FILTERS: ProjectFilters = {
     search: "",
     language: "",
-    sort: "updated",
+    sort: "name",
     showForks: false,
     showArchived: false,
 };

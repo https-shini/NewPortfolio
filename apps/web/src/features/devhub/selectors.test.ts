@@ -30,9 +30,17 @@ describe("filterAndSort", () => {
         }),
     ];
 
-    it("visão padrão: mais recentes primeiro, sem forks nem arquivados", () => {
+    it("visão padrão: ordem alfabética, sem forks nem arquivados", () => {
         expect(
             filterAndSort(lista, DEFAULT_FILTERS).map((r) => r.name),
+        ).toEqual(["antigo", "novo", "python-api"]);
+    });
+
+    it("por atualização: mais recentes primeiro", () => {
+        expect(
+            filterAndSort(lista, { ...DEFAULT_FILTERS, sort: "updated" }).map(
+                (r) => r.name,
+            ),
         ).toEqual(["novo", "python-api", "antigo"]);
     });
 
@@ -138,12 +146,12 @@ describe("demais seletores", () => {
         expect(hasActiveFilters({ ...DEFAULT_FILTERS, search: "  " })).toBe(
             false,
         );
-        expect(hasActiveFilters({ ...DEFAULT_FILTERS, sort: "name" })).toBe(
+        expect(hasActiveFilters({ ...DEFAULT_FILTERS, sort: "updated" })).toBe(
             true,
         );
     });
 
-    it("siblingsOf segue a ordem padrão e inclui forks", () => {
+    it("siblingsOf segue a ordem padrão (alfabética) e inclui forks", () => {
         const lista = [
             repo({ name: "a", pushedAt: "2026-03-01T00:00:00Z" }),
             repo({ name: "b", pushedAt: "2026-02-01T00:00:00Z", isFork: true }),
