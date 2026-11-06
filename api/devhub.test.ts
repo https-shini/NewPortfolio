@@ -1063,37 +1063,80 @@ describe("seguidores no índice", () => {
 describe("características no contrato", () => {
     it("GraphQL: observadores, README, docs, Pages, tamanho e capa do README", async () => {
         process.env.GITHUB_TOKEN = TOKEN_FALSO;
-        vi.stubGlobal(
-            "fetch",
-            vi.fn(() =>
-                json({
+        const fetchMock = vi.fn((_url: string, init?: RequestInit) => {
+            const corpo = JSON.parse(String(init?.body ?? "{}")) as {
+                query: string;
+                variables: Record<string, string>;
+            };
+            /* 2ª consulta: o lote de READMEs, com o nome como variável. */
+            if (corpo.query.includes("r0: repository")) {
+                expect(corpo.variables.n0).toBe(REPO_GQL.name);
+                return json({
                     data: {
-                        repository: {
-                            ...REPO_GQL,
-                            usesCustomOpenGraphImage: false,
-                            watchers: { totalCount: 3 },
-                            diskUsage: 420,
-                            readmeUp: { text: "![capa](docs/banner.png)" },
-                            readmeLow: null,
-                            readmeCap: null,
-                            docsDir: { oid: "abc" },
-                            pages: { totalCount: 1 },
+                        r0: {
+                            defaultBranchRef: { name: "main" },
+                            a: { text: "![capa](docs/banner.png)" },
+                            b: null,
+                            c: null,
                         },
                     },
-                }),
-            ),
-        );
+                });
+            }
+            return json({
+                data: {
+                    repository: {
+                        ...REPO_GQL,
+                        usesCustomOpenGraphImage: false,
+                        watchers: { totalCount: 3 },
+                        diskUsage: 420,
+                        readmeUp: { oid: "r1" },
+                        readmeLow: null,
+                        readmeCap: null,
+                        docsDir: { oid: "abc" },
+                        pages: { totalCount: 1 },
+                    },
+                },
+            });
+        });
+        vi.stubGlobal("fetch", fetchMock);
 
         const { corpo } = await chamar({ op: "project", name: "x" });
         const r = corpo as Record<string, unknown>;
+        expect(fetchMock).toHaveBeenCalledTimes(2);
         expect(r.watcherCount).toBe(3);
         expect(r.hasReadme).toBe(true);
         expect(r.hasDocs).toBe(true);
         expect(r.hasPages).toBe(true);
         expect(r.diskUsageKb).toBe(420);
-        expect(r.cover).toMatchObject({ kind: "readme" });
+        expect(r.cover).toEqual({
+            kind: "readme",
+            url: `https://raw.githubusercontent.com/https-shini/${REPO_GQL.name}/main/docs/banner.png`,
+        });
         /* O texto do README não atravessa para o cliente — só a URL da capa. */
         expect(JSON.stringify(r)).not.toContain("![capa]");
+    });
+
+    it("lote de READMEs que falha deixa só a capa de fora", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn((_url: string, init?: RequestInit) =>
+                String(init?.body).includes("r0: repository")
+                    ? Promise.reject(new Error("rede"))
+                    : json({
+                          data: {
+                              repository: {
+                                  ...REPO_GQL,
+                                  readmeUp: { oid: "r1" },
+                              },
+                          },
+                      }),
+            ),
+        );
+        const { codigo, corpo } = await chamar({ op: "project", name: "x" });
+        expect(codigo).toBe(200);
+        expect((corpo as { cover: unknown }).cover).toBeNull();
+        expect((corpo as { hasReadme: boolean }).hasReadme).toBe(true);
     });
 
     it("GraphQL: caminho ausente é false (não tem), não null", async () => {
@@ -1231,7 +1274,15 @@ describe("op=stats", () => {
 
         const { codigo, corpo } = await chamar({ op: "stats", name: "x" });
         expect(codigo).toBe(200);
-        const s = corpo as Record<string, any>;
+        const s = corpo as {
+            openIssues: number;
+            totalPullRequests: number;
+            branches: number;
+            releases: { latest: Record<string, unknown>[] };
+            commits: Record<string, unknown>;
+            tree: { name: string }[];
+            contributors: { total: number; top: { avatarUrl: string }[] };
+        };
         expect(s.openIssues).toBe(2);
         expect(s.totalPullRequests).toBe(7);
         expect(s.branches).toBe(3);
@@ -1240,11 +1291,7 @@ describe("op=stats", () => {
             tag: "v1.0.0",
         });
         expect(s.commits).toMatchObject({ total: 120, lastYear: 40 });
-        expect(s.tree.map((e: { name: string }) => e.name)).toEqual([
-            "api",
-            "src",
-            "README.md",
-        ]);
+        expect(s.tree.map((e) => e.name)).toEqual(["api", "src", "README.md"]);
         expect(s.contributors.total).toBe(1);
         expect(s.contributors.top[0].avatarUrl).toBe(
             "https://avatars.githubusercontent.com/u/1?v=4&s=64",

@@ -136,9 +136,9 @@ export const CAMPOS_REPO = `
     usesCustomOpenGraphImage
     watchers { totalCount }
     diskUsage
-    readmeUp: object(expression: "HEAD:README.md") { ... on Blob { text } }
-    readmeLow: object(expression: "HEAD:readme.md") { ... on Blob { text } }
-    readmeCap: object(expression: "HEAD:Readme.md") { ... on Blob { text } }
+    readmeUp: object(expression: "HEAD:README.md") { ... on Blob { oid } }
+    readmeLow: object(expression: "HEAD:readme.md") { ... on Blob { oid } }
+    readmeCap: object(expression: "HEAD:Readme.md") { ... on Blob { oid } }
     docsDir: object(expression: "HEAD:docs") { ... on Tree { oid } }
     pages: deployments(environments: ["github-pages"], first: 1) { totalCount }
     repositoryTopics(first: 20) { nodes { topic { name } } }
@@ -213,9 +213,9 @@ export interface NoRepoGQL {
     usesCustomOpenGraphImage?: boolean;
     watchers?: { totalCount?: number } | null;
     diskUsage?: number | null;
-    readmeUp?: { text?: string | null } | null;
-    readmeLow?: { text?: string | null } | null;
-    readmeCap?: { text?: string | null } | null;
+    readmeUp?: { oid?: string } | null;
+    readmeLow?: { oid?: string } | null;
+    readmeCap?: { oid?: string } | null;
     docsDir?: { oid?: string } | null;
     pages?: { totalCount?: number } | null;
     repositoryTopics?: { nodes?: { topic?: { name?: string } }[] };
@@ -304,8 +304,6 @@ function caracteristicasGQL(
     | "diskUsageKb"
     | "cover"
 > {
-    const readme =
-        no.readmeUp?.text ?? no.readmeLow?.text ?? no.readmeCap?.text ?? null;
     const temReadme = Boolean(no.readmeUp || no.readmeLow || no.readmeCap);
     const nome = typeof no.name === "string" ? no.name : "";
     return {
@@ -323,7 +321,9 @@ function caracteristicasGQL(
             {
                 usesCustomOpenGraphImage: no.usesCustomOpenGraphImage,
                 openGraphImageUrl: no.openGraphImageUrl,
-                readme,
+                /* Aqui só a capa customizada; a do README entra depois,
+                   em `completarCapas`, que busca os textos em lotes. */
+                readme: null,
             },
             {
                 owner: GITHUB_USER,
@@ -483,7 +483,7 @@ export async function listarAcervo(): Promise<Acervo> {
             if (!proximo?.hasNextPage || !proximo.endCursor) break;
             after = proximo.endCursor;
         }
-        return { repositories: todos, followers };
+        return { repositories: await completarCapas(todos), followers };
     }
 
     for (let pagina = 1; pagina <= MAX_PAGINAS; pagina++) {
@@ -517,6 +517,96 @@ export async function listarAcervo(): Promise<Acervo> {
         /* métrica opcional */
     }
     return { repositories: todos, followers };
+}
+
+/* ─────────────────────────────────────────────────────────
+   Capas do README — em lotes, fora da listagem
+   ─────────────────────────────────────────────────────────
+   Trazer o texto de cada README na consulta da listagem (100 por
+   página) fez o GitHub responder 502 — medido no preview. Agora a
+   listagem só pergunta SE há README, e os textos vêm aqui, em lotes
+   de 20 repositórios por consulta, em paralelo.
+
+   A consulta é um MOLDE fixo: só o número de blocos varia, e cada
+   nome entra como variável ($n0, $n1…) — nunca no texto. Os nomes
+   vêm da própria listagem do GitHub, não do visitante.
+
+   Falhar aqui não derruba nada: o repositório fica sem capa e o
+   cliente desenha a composição.
+───────────────────────────────────────────────────────── */
+
+const TAMANHO_LOTE = 20;
+
+export function consultaDeLote(qtd: number): string {
+    const vars = Array.from({ length: qtd }, (_, i) => `$n${i}: String!`).join(
+        ", ",
+    );
+    const blocos = Array.from(
+        { length: qtd },
+        (_, i) => `
+        r${i}: repository(owner: $login, name: $n${i}) {
+            defaultBranchRef { name }
+            a: object(expression: "HEAD:README.md") { ... on Blob { text } }
+            b: object(expression: "HEAD:readme.md") { ... on Blob { text } }
+            c: object(expression: "HEAD:Readme.md") { ... on Blob { text } }
+        }`,
+    ).join("");
+    return `query($login: String!, ${vars}) {${blocos}\n}`;
+}
+
+interface NoReadme {
+    defaultBranchRef?: { name?: string } | null;
+    a?: { text?: string | null } | null;
+    b?: { text?: string | null } | null;
+    c?: { text?: string | null } | null;
+}
+
+/**
+ * Preenche `cover` a partir do README de quem ainda não tem capa e tem
+ * README. Muta e devolve a mesma lista. Sem token, não faz nada.
+ */
+export async function completarCapas(
+    repos: Repository[],
+): Promise<Repository[]> {
+    if (!temToken()) return repos;
+    const alvos = repos.filter((r) => !r.cover && r.hasReadme);
+    const lotes: Repository[][] = [];
+    for (let i = 0; i < alvos.length; i += TAMANHO_LOTE) {
+        lotes.push(alvos.slice(i, i + TAMANHO_LOTE));
+    }
+
+    await Promise.all(
+        lotes.map(async (lote) => {
+            const variaveis: Record<string, string> = { login: GITHUB_USER };
+            lote.forEach((r, i) => {
+                variaveis[`n${i}`] = r.name;
+            });
+            try {
+                const data = await consultarGraphQL<
+                    Record<string, NoReadme | null>
+                >(consultaDeLote(lote.length), variaveis, {
+                    aceitaNaoEncontrado: true,
+                });
+                lote.forEach((repo, i) => {
+                    const no = data[`r${i}`];
+                    const texto =
+                        no?.a?.text ?? no?.b?.text ?? no?.c?.text ?? null;
+                    if (!texto) return;
+                    repo.cover = escolherCapa(
+                        { readme: texto },
+                        {
+                            owner: GITHUB_USER,
+                            repo: repo.name,
+                            ref: no?.defaultBranchRef?.name ?? undefined,
+                        },
+                    );
+                });
+            } catch {
+                /* capa é enfeite: o lote fica sem, o resto segue */
+            }
+        }),
+    );
+    return repos;
 }
 
 /** Só a lista — atalho para quem não precisa das métricas. */
@@ -559,8 +649,12 @@ export async function listarFixados(): Promise<{
             .filter((no) => no && !no.isPrivate)
             .map(doGraphQL)
             .filter((r): r is Repository => r !== null);
-        if (fixados.length > 0)
-            return { repositories: fixados, source: "pinned" };
+        if (fixados.length > 0) {
+            return {
+                repositories: await completarCapas(fixados),
+                source: "pinned",
+            };
+        }
     }
 
     const recentes = (await listarRepositorios())
@@ -587,7 +681,9 @@ export async function buscarRepositorio(
         );
         const no = data.repository;
         if (!no || no.isPrivate) return null;
-        return doGraphQL(no);
+        const repo = doGraphQL(no);
+        if (repo) await completarCapas([repo]);
+        return repo;
     }
 
     const bruto = await buscarREST<RepoREST>(`/repos/${GITHUB_USER}/${name}`);
