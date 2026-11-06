@@ -179,11 +179,15 @@ casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
 ├── vercel.json                  # Rewrites das rotas da SPA
 ├── api/                         # Serverless (token server-only, cache de CDN)
 │   ├── github-stats.ts          #   Métricas do perfil
+│   ├── devhub.ts                #   Repositórios e README (operações fechadas)
 │   ├── release-notes.ts         #   Releases publicadas, já em HTML
 │   ├── feed.ts                  #   Feed Atom do histórico curado
 │   ├── crawler.ts               #   HTML para prévias de compartilhamento
 │   ├── og.ts                    #   Imagens Open Graph
-│   └── _markdown.ts             #   Markdown → HTML sem dependências; escapa antes de converter
+│   ├── _markdown.ts             #   Markdown → HTML sem dependências; escapa antes de converter
+│   ├── _github.ts               #   Único acesso ao GitHub: token, transporte, erro público, cache
+│   ├── _github-repos.ts         #   Repositórios no contrato interno, com paginação
+│   └── _devhub-markdown.ts      #   README → HTML + `_devhub-sanitize.ts` (allowlist)
 │
 apps/web/
 │
@@ -397,7 +401,7 @@ Definidas em `apps/web/.env.local` (ver `apps/web/.env.example`):
 | `VITE_FORM_ENDPOINT`       | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail.                                                                                                                                                                    |
 | `VITE_NEWSLETTER_ENDPOINT` | Não         | Endpoint de inscrição no rodapé. Sem ele, abre um e-mail preenchido; com ele, envia POST `{ email, lang, source }`.                                                                                                                                                                    |
 | `VITE_SITE_URL`            | Não         | Domínio canônico injetado no `index.html` no build (canonical, Open Graph, JSON-LD). Default: `https://gcruz.dev.br`.                                                                                                                                                                  |
-| `GITHUB_TOKEN`             | Não         | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Usado pelas duas serverless: `/api/github-stats` (sem ela o card de commits cai no valor de fallback) e `/api/release-notes` (sem ela a busca pública continua funcionando, sujeita ao limite de requisições do GitHub). |
+| `GITHUB_TOKEN`             | Não         | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Lido só em `api/_github.ts` e usado por `/api/github-stats` (sem ele o card de commits cai no valor de fallback), `/api/release-notes` e `/api/devhub` (sem ele as duas caem para a API REST pública, sujeita a 60 req/h). |
 
 > Variáveis com prefixo `VITE_` são expostas ao browser — nunca coloque segredos.
 

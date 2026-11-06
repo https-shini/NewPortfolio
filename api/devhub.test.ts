@@ -707,6 +707,74 @@ describe("cache", () => {
    Paginação — o fork lia só os 100 primeiros
    ═════════════════════════════════════════════════════════ */
 
+describe("repositório inexistente", () => {
+    /* Formato real, capturado do GitHub no preview: 200, `repository: null`
+       e um erro NOT_FOUND. O fork respondia 502 aqui, e a página de um
+       projeto inexistente virava "GitHub indisponível" em vez de 404. */
+    const naoEncontrado = {
+        data: { repository: null },
+        errors: [
+            {
+                type: "NOT_FOUND",
+                path: ["repository"],
+                message:
+                    "Could not resolve to a Repository with the name 'https-shini/nao-existe'.",
+            },
+        ],
+    };
+
+    it("GraphQL NOT_FOUND vira 200 com null, sem log de erro", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(() => json(naoEncontrado)),
+        );
+
+        const { codigo, corpo } = await chamar({
+            op: "project",
+            name: "nao-existe",
+        });
+
+        expect(codigo).toBe(200);
+        expect(corpo).toBeNull();
+        expect(erros).toEqual([]);
+    });
+
+    it("NOT_FOUND misturado com outro erro continua sendo falha", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(() =>
+                json({
+                    ...naoEncontrado,
+                    errors: [
+                        ...naoEncontrado.errors,
+                        { type: "FORBIDDEN", message: "x" },
+                    ],
+                }),
+            ),
+        );
+
+        const { codigo } = await chamar({ op: "project", name: "nao-existe" });
+
+        expect(codigo).toBe(502);
+    });
+
+    it("a listagem não aceita NOT_FOUND como resposta válida", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(() =>
+                json({ data: { user: null }, errors: naoEncontrado.errors }),
+            ),
+        );
+
+        const { codigo } = await chamar({ op: "index" });
+
+        expect(codigo).toBe(502);
+    });
+});
+
 describe("paginação do acervo", () => {
     const repo = (n: number) => ({
         ...REPO_GQL,

@@ -151,6 +151,7 @@ export function responderErro(
 export async function consultarGraphQL<T>(
     query: string,
     variables: Record<string, string | number | null>,
+    opcoes: { aceitaNaoEncontrado?: boolean } = {},
 ): Promise<T> {
     let resposta: Response;
     try {
@@ -175,7 +176,7 @@ export async function consultarGraphQL<T>(
         );
     }
 
-    let corpo: { data?: T; errors?: { message?: string }[] };
+    let corpo: { data?: T; errors?: { type?: string; message?: string }[] };
     try {
         corpo = (await resposta.json()) as typeof corpo;
     } catch (erro) {
@@ -186,9 +187,20 @@ export async function consultarGraphQL<T>(
         );
     }
 
+    /* Repositório inexistente não vem como 404: o GraphQL responde 200,
+       `data.repository: null` e um erro do tipo NOT_FOUND. Para quem pediu
+       um item pelo nome, isso é a resposta "não existe" — não uma falha.
+       Só vale quando TODOS os erros são NOT_FOUND e há `data`; qualquer
+       outro erro misturado continua derrubando a consulta. */
+    const soNaoEncontrado =
+        opcoes.aceitaNaoEncontrado &&
+        corpo.data !== undefined &&
+        corpo.errors?.length &&
+        corpo.errors.every((e) => e.type === "NOT_FOUND");
+
     /* O GraphQL responde 200 com `errors` no corpo. A mensagem vai para o
        log, não para o cliente: ela pode citar campos e escopos do token. */
-    if (corpo.errors?.length) {
+    if (corpo.errors?.length && !soNaoEncontrado) {
         throw new ErroPublico(
             "upstream_invalido",
             "o GitHub recusou a consulta",

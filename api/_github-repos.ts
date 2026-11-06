@@ -385,7 +385,11 @@ export async function buscarRepositorio(
     if (temToken()) {
         const data = await consultarGraphQL<{
             repository?: NoRepoGQL | null;
-        }>(QUERY_UM, { login: GITHUB_USER, name });
+        }>(
+            QUERY_UM,
+            { login: GITHUB_USER, name },
+            { aceitaNaoEncontrado: true },
+        );
         const no = data.repository;
         if (!no || no.isPrivate) return null;
         return doGraphQL(no);
