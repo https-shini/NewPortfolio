@@ -4,6 +4,7 @@ import type {
     DevhubPinned,
     Repository,
     RepositoryDetail,
+    RepositoryStats,
 } from "@/features/devhub/types";
 
 /* ─────────────────────────────────────────────────────────
@@ -30,6 +31,7 @@ const TTL = 1000 * 60 * 30;
 /* O sufixo de versão invalida caches gravados por um formato anterior. */
 const CACHE_INDEX = "devhub:v2:index";
 const CACHE_PINNED = "devhub:v2:pinned";
+const CACHE_STATS = "devhub:v2:stats:";
 const cacheProjeto = (name: string) => `devhub:v2:project:${name}`;
 
 /** Falha de transporte ou de contrato — a página decide o que mostrar. */
@@ -86,6 +88,16 @@ function ehFixados(valor: unknown): valor is DevhubPinned {
     const source = ehObjeto(valor) ? valor.source : undefined;
     return (
         ehListaDeRepos(valor) && (source === "pinned" || source === "recent")
+    );
+}
+
+function ehEstatisticas(valor: unknown): valor is RepositoryStats {
+    return (
+        ehObjeto(valor) &&
+        typeof valor.openIssues === "number" &&
+        typeof valor.branches === "number" &&
+        ehObjeto(valor.releases) &&
+        Array.isArray(valor.releases.latest)
     );
 }
 
@@ -160,4 +172,26 @@ export async function fetchProject(
     };
     writeCache(chave, detalhe);
     return detalhe;
+}
+
+/**
+ * Estatísticas de um projeto (issues, PRs, commits, árvore, releases,
+ * contribuidores). `null` = indisponível — sem token no servidor ou
+ * repositório não público. Quem mostra trata `null` como "indisponível",
+ * nunca como zero.
+ */
+export async function fetchStats(
+    name: string,
+): Promise<RepositoryStats | null> {
+    const chave = CACHE_STATS + name;
+    const emCache = readCache<unknown>(chave, TTL);
+    if (ehEstatisticas(emCache)) return emCache;
+
+    const resposta = await pedir({ op: "stats", name });
+    if (resposta === null) return null;
+    if (!ehEstatisticas(resposta)) {
+        throw new DevhubError(`resposta de ${chave} fora do contrato`);
+    }
+    writeCache(chave, resposta);
+    return resposta;
 }

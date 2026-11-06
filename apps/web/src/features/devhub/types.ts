@@ -120,3 +120,56 @@ export interface RepoStats {
 
 /** Cinza de linguagem sem cor conhecida. */
 export const NEUTRAL_LANGUAGE_COLOR = "#8B949E";
+
+/* ── Estatísticas de um projeto (op=stats) ──────────────────
+   Espelho de `RepositoryStats` em api/_github-detalhe.ts. A resposta
+   inteira é `null` quando os números não existem (sem token, privado);
+   blocos internos `null` = só aquele bloco falhou. Na interface,
+   `null` vira "indisponível", NUNCA zero. */
+
+export interface RepoCommit {
+    sha: string;
+    message: string;
+    date: string;
+    url: string;
+    author: string | null;
+    authorLogin: string | null;
+}
+
+export interface RepoRelease {
+    name: string;
+    tag: string;
+    publishedAt: string | null;
+    url: string;
+    prerelease: boolean;
+}
+
+export interface RepoTreeEntry {
+    name: string;
+    type: "tree" | "blob" | "commit";
+}
+
+export interface RepoContributor {
+    login: string;
+    contributions: number;
+    url: string;
+    avatarUrl: string | null;
+}
+
+export interface RepositoryStats {
+    openIssues: number;
+    totalIssues: number;
+    openPullRequests: number;
+    totalPullRequests: number;
+    branches: number;
+    tags: number;
+    releases: { total: number; latest: RepoRelease[] };
+    commits: {
+        total: number;
+        lastYear: number;
+        lastYearDates: string[];
+        recent: RepoCommit[];
+    } | null;
+    tree: RepoTreeEntry[] | null;
+    contributors: { total: number; top: RepoContributor[] } | null;
+}

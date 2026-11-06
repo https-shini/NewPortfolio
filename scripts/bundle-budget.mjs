@@ -31,9 +31,12 @@ const TETOS = [
         limite: 50,
         alvo: (f) => f.nome.startsWith("vendor-"),
     },
-    // DevHub: ~3.7 KB gzip de CSS próprio, carregado só nas rotas dele
-    // (o CSS principal da home foi de 20.2 para 20.5 KB). Sobre 41.0 KB.
-    { nome: "CSS total", limite: 45, alvo: (f) => f.tipo === "css" },
+    // DevHub: CSS próprio carregado só nas rotas dele. Com o catálogo
+    // (filtros, chips, paginação), as capas compostas e a página do
+    // projeto (números, abas, atividade, estrutura), o chunk lazy foi de
+    // ~3.7 para 5.9 KB gzip; o CSS principal da home (22.1 KB) não muda
+    // com isso. Teto refeito sobre 45.1 KB medidos, com ~10% de folga.
+    { nome: "CSS total", limite: 50, alvo: (f) => f.tipo === "css" },
 ];
 
 function listar(dir, tipo) {

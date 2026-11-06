@@ -166,3 +166,59 @@ export function siblingsOf(
     if (i === -1) return { previous: null, next: null };
     return { previous: lista[i - 1] ?? null, next: lista[i + 1] ?? null };
 }
+
+/**
+ * Projetos relacionados: pontua por tópicos em comum (peso 3),
+ * linguagens em comum (peso 1, e +2 se a principal coincide). Só entra
+ * quem tem algo em comum — sem preenchimento aleatório. Desempate pelo
+ * mais recente. Forks e arquivados ficam de fora.
+ */
+export function relatedRepos(
+    repositories: readonly Repository[],
+    alvo: Repository,
+    limite = 3,
+): Repository[] {
+    const topicos = new Set(alvo.topics);
+    const linguagens = new Set(alvo.languages.map((l) => l.name));
+    const principal = alvo.primaryLanguage?.name;
+
+    return repositories
+        .filter((r) => r.name !== alvo.name && !r.isFork && !r.isArchived)
+        .map((r) => {
+            let pontos = 0;
+            for (const t of r.topics) if (topicos.has(t)) pontos += 3;
+            for (const l of r.languages)
+                if (linguagens.has(l.name)) pontos += 1;
+            if (principal && r.primaryLanguage?.name === principal) pontos += 2;
+            return { r, pontos };
+        })
+        .filter((x) => x.pontos > 0)
+        .sort(
+            (a, b) =>
+                b.pontos - a.pontos ||
+                Date.parse(b.r.createdAt) - Date.parse(a.r.createdAt),
+        )
+        .slice(0, limite)
+        .map((x) => x.r);
+}
+
+/**
+ * Commits por semana nas últimas `semanas` semanas, da mais antiga para
+ * a mais recente. Recebe as datas do último ano (até 100, vindas da API)
+ * e conta em baldes de 7 dias terminando em `agora`.
+ */
+export function weeklyCommits(
+    datas: readonly string[],
+    semanas = 52,
+    agora = Date.now(),
+): number[] {
+    const baldes = new Array<number>(semanas).fill(0);
+    const SEMANA = 7 * MS_DIA;
+    for (const d of datas) {
+        const idade = agora - Date.parse(d);
+        if (!(idade >= 0)) continue;
+        const i = Math.floor(idade / SEMANA);
+        if (i < semanas) baldes[semanas - 1 - i]++;
+    }
+    return baldes;
+}
