@@ -65,7 +65,13 @@ jobs:
           SHA: ${{ github.event.pull_request.head.sha }}
           PR: ${{ github.event.pull_request.number }}
         run: |
-          git push --force origin "$SHA:refs/heads/homolog"
+          # A Vercel não publica de novo um commit que já publicou
+          # (o do PR já tem preview). Um commit vazio por cima dá um
+          # SHA novo com a mesma árvore — e força o deploy da branch.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898099+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty --no-verify -m "homolog: PR #$PR (${SHA:0:7})"
+          git push --force origin "HEAD:refs/heads/homolog"
           {
               echo "### Homologação atualizada"
               echo ""
