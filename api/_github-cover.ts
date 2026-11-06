@@ -77,9 +77,16 @@ function candidatas(markdown: string): string[] {
     return achados.sort((a, b) => a.pos - b.pos).map((a) => a.url);
 }
 
+/* Nome de arquivo de peça de interface, não de tela do projeto. Caso
+   real: o README do spotify-github-profile abre com `btn-spotify.png`. */
+const NOME_DECORATIVO =
+    /(^|[/_.-])(btn|button|logo|icon|favicon|avatar)([_.-]|$)/i;
+
 function ehDecorativa(url: URL): boolean {
     const alvo = `${url.hostname}${url.pathname}`.toLowerCase();
     if (url.pathname.toLowerCase().endsWith(".svg")) return true;
+    const arquivo = url.pathname.split("/").pop() ?? "";
+    if (NOME_DECORATIVO.test(arquivo)) return true;
     if (alvo.includes("badge")) return true;
     return HOSTS_DECORATIVOS.some((h) => alvo.includes(h));
 }

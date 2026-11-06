@@ -25,6 +25,17 @@ describe("capaDoReadme", () => {
         expect(capaDoReadme(md, ORIGEM)).toBeNull();
     });
 
+    it("descarta botão, logo e ícone (caso real: btn-spotify.png)", () => {
+        const md = [
+            "![b](img/btn-spotify.png)",
+            "![l](assets/logo.png)",
+            "![i](icon_app.png)",
+            "![t](img/tela-inicial.png)",
+        ].join("\n");
+        expect(capaDoReadme(md, ORIGEM)).toContain("tela-inicial.png");
+        expect(capaDoReadme("![b](img/btn-spotify.png)", ORIGEM)).toBeNull();
+    });
+
     it("prefere nome de capa entre as primeiras imagens", () => {
         const md = "![logo](docs/logo.png)\n![tela](docs/screenshot-home.png)";
         expect(capaDoReadme(md, ORIGEM)).toContain("screenshot-home.png");
