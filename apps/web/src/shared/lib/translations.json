@@ -309,7 +309,17 @@
         "devhub.notFound.desc": "não é um repositório público deste perfil.",
         "devhub.notFound.back": "Ver todos os projetos",
         "a11y.skipToContent": "Ir para o conteúdo principal",
-        "a11y.backToTop": "Voltar ao topo"
+        "a11y.backToTop": "Voltar ao topo",
+        "work.btn.code": "Código-fonte",
+        "work.highlights": "Destaques",
+        "work.facts": "Dados do repositório",
+        "work.carousel": "Projetos em destaque",
+        "work.prev": "Projeto anterior",
+        "work.next": "Próximo projeto",
+        "work.goTo": "Ir para o projeto {n}: {name}",
+        "work.slide": "{n} de {total}",
+        "work.announce": "Projeto {n} de {total}: {name}",
+        "work.pages": "Escolher projeto"
     },
     "en": {
         "nav.home": "Home",
@@ -621,6 +631,16 @@
         "devhub.notFound.desc": "isn't a public repository on this profile.",
         "devhub.notFound.back": "View all projects",
         "a11y.skipToContent": "Skip to main content",
-        "a11y.backToTop": "Back to top"
+        "a11y.backToTop": "Back to top",
+        "work.btn.code": "Source code",
+        "work.highlights": "Highlights",
+        "work.facts": "Repository facts",
+        "work.carousel": "Featured projects",
+        "work.prev": "Previous project",
+        "work.next": "Next project",
+        "work.goTo": "Go to project {n}: {name}",
+        "work.slide": "{n} of {total}",
+        "work.announce": "Project {n} of {total}: {name}",
+        "work.pages": "Choose project"
     }
 }
