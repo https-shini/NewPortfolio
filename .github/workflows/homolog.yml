@@ -1,0 +1,87 @@
+# ─────────────────────────────────────────────────────────
+# Homologação — homolog.gcruz.dev.br sempre no último preview
+# ─────────────────────────────────────────────────────────
+# A Vercel já gera um preview por PR, mas cada um tem um endereço
+# diferente. Este workflow aponta um endereço FIXO para o preview que
+# acabou de ficar pronto, para validar antes do merge sem caçar link.
+#
+# Como funciona: a Vercel publica um `deployment_status` no GitHub ao
+# terminar cada deploy. Quando é um preview com sucesso, o alias
+# `homolog.gcruz.dev.br` passa a apontar para ele. É o MESMO deploy do
+# PR (sem build extra), então o que se vê ali é exatamente o que vai
+# para produção no merge.
+#
+# Regras:
+#   · só previews (produção nunca é tocada);
+#   · o último preview pronto vence — com dois PRs abertos, o endereço
+#     mostra o que recebeu push por último;
+#   · sem o segredo VERCEL_TOKEN, o job termina sem fazer nada.
+#
+# Observação: eventos `deployment_status` rodam o workflow da branch
+# padrão. Ele só passa a valer depois de estar na `main`.
+#
+# Configuração (uma vez):
+#   1. Vercel → Account Settings → Tokens → criar token com escopo do
+#      time "httpsshinis-projects".
+#   2. GitHub → Settings → Secrets and variables → Actions →
+#      New repository secret: VERCEL_TOKEN.
+# ─────────────────────────────────────────────────────────
+
+name: Homologação
+
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+
+# Dois deploys terminando juntos não podem disputar o alias fora de
+# ordem: o segundo espera o primeiro.
+concurrency:
+  group: homolog-alias
+  cancel-in-progress: false
+
+env:
+  HOMOLOG_DOMAIN: homolog.gcruz.dev.br
+  VERCEL_SCOPE: httpsshinis-projects
+  # Versão fixa: um `@latest` aqui executaria, com o token, qualquer
+  # versão publicada amanhã.
+  VERCEL_CLI: vercel@65.12.1
+
+jobs:
+  alias:
+    name: Apontar homolog para o preview
+    if: >-
+      github.event.deployment_status.state == 'success' &&
+      startsWith(github.event.deployment.environment, 'Preview')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Atribuir alias
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          # Vem do evento, não de entrada de usuário; mesmo assim
+          # passa por variável, nunca interpolado no script.
+          PREVIEW_URL: ${{ github.event.deployment_status.environment_url }}
+          REF: ${{ github.event.deployment.ref }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+              echo "::notice::VERCEL_TOKEN não configurado — alias não atualizado."
+              exit 0
+          fi
+          case "$PREVIEW_URL" in
+              https://*.vercel.app) ;;
+              *)
+                  echo "::error::URL de preview inesperada."
+                  exit 1
+                  ;;
+          esac
+          npx --yes "$VERCEL_CLI" alias set "$PREVIEW_URL" "$HOMOLOG_DOMAIN" \
+              --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE"
+          {
+              echo "### Homologação atualizada"
+              echo ""
+              echo "https://$HOMOLOG_DOMAIN → \`$REF\`"
+              echo ""
+              echo "Preview de origem: $PREVIEW_URL"
+          } >> "$GITHUB_STEP_SUMMARY"
