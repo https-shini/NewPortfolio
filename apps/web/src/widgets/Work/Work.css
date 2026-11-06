@@ -1,286 +1,242 @@
+/* ─────────────────────────────────────────────────────────
+   Work — a vitrine de projetos da home (#projetos), em carrossel
+   ─────────────────────────────────────────────────────────
+   Um projeto por vez. O trilho é nativo (`overflow-x` +
+   `scroll-snap`): gesto, trackpad e inércia são do navegador.
+
+   O card mantém a composição horizontal alternada (desktop) e
+   empilha imagem → conteúdo (mobile). A ordem no DOM é sempre a
+   mesma; quem inverte é `data-media="end"`, via
+   `grid-template-areas`, sem `order` e sem duplicar markup.
+
+   A imagem fica numa moldura de janela de terminal — a linguagem
+   de IDE do site — na proporção 2:1 do social card do GitHub,
+   então nada é cortado por `object-fit`.
+───────────────────────────────────────────────────────── */
+
 .work {
     background: transparent;
 }
 
-/* ── Grid ───────────────────────────────────────────────────────── */
-/* Base: uma coluna, com respiro menor — é o arranjo de tela estreita.
-   O `auto-fill` e o respiro maior entram a partir de --bp-work-grid
-   (ver o fim do arquivo). */
-.work__grid {
+/* ── Carrossel ──────────────────────────────────────────────────── */
+/* Mobile: as setas descem para a barra de navegação, ao lado dos dots.
+   Desktop: viram setas laterais, numa coluna própria — nunca por cima
+   do card (ver o fim do arquivo). */
+.work-carousel {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+        "view view view"
+        "prev nav next";
+    align-items: center;
+    column-gap: var(--space-3);
+    row-gap: var(--space-5);
     margin-top: var(--space-8);
 }
 
-/* ── Card ───────────────────────────────────────────────────────── */
-.work-card {
+.work-carousel__viewport {
+    grid-area: view;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border-2);
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    gap: var(--space-6);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    /* Espaço para a sombra do card não ser cortada pelo overflow. */
+    padding: var(--space-2) 0 var(--space-4);
     border-radius: var(--radius-xl);
-    overflow: hidden;
-    isolation: isolate;
+}
 
-    /* entrada com stagger */
-    opacity: 0;
-    transform: translateY(18px);
-    animation: work-card-enter 0.55s var(--ease-out) forwards;
-    animation-delay: calc(var(--card-index, 0) * 90ms);
+.work-carousel__viewport::-webkit-scrollbar {
+    display: none;
+}
 
+.work-carousel__slide {
+    display: flex;
+    min-width: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.work-carousel__slide > .work-card {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Setas: discretas em repouso, assumem a marca no hover. */
+.work-carousel__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    background: var(--color-surface-2);
+    color: var(--color-text-1);
+    box-shadow: var(--surface-edge), var(--shadow-sm);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
     transition:
-        border-color 0.3s var(--ease-out),
-        box-shadow 0.3s var(--ease-out),
-        transform 0.3s var(--ease-out);
-
-    /* Vidro por aresta — somado, não substitutivo: fundo, borda, raio
-       e espaçamento seguem intocados. Ver tokens.css. */
-    box-shadow: var(--surface-edge), var(--surface-lift);
+        background-color 0.2s var(--ease-out),
+        border-color 0.2s var(--ease-out),
+        color 0.2s var(--ease-out),
+        box-shadow 0.25s var(--ease-out),
+        transform 0.2s var(--ease-out),
+        opacity 0.2s var(--ease-out);
 }
 
-@keyframes work-card-enter {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.work-carousel__arrow--prev {
+    grid-area: prev;
 }
 
-.work-card:hover {
+.work-carousel__arrow--next {
+    grid-area: next;
+}
+
+.work-carousel__arrow:hover:not(:disabled) {
     border-color: var(--color-border-brand);
-    box-shadow: var(--surface-edge), var(--shadow-card-hover);
-    transform: translateY(-6px);
+    color: var(--color-brand-text);
+    box-shadow:
+        var(--surface-edge),
+        0 6px 18px var(--color-brand-glow);
 }
 
-/* barra de accent no topo (coerência com os cards de arquitetura) */
-.work-card::before {
+.work-carousel__arrow--prev:hover:not(:disabled) {
+    transform: translateX(-2px);
+}
+
+.work-carousel__arrow--next:hover:not(:disabled) {
+    transform: translateX(2px);
+}
+
+.work-carousel__arrow:active:not(:disabled) {
+    transform: scale(0.94);
+    transition-duration: 0.08s;
+}
+
+.work-carousel__arrow:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 3px;
+}
+
+.work-carousel__arrow:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Barra de navegação: contador · dots · progresso. */
+.work-carousel__nav {
+    grid-area: nav;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+        "count dots"
+        "bar bar";
+    align-items: center;
+    column-gap: var(--space-4);
+    row-gap: var(--space-3);
+    min-width: 0;
+}
+
+.work-carousel__counter {
+    grid-area: count;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-3);
+    font-variant-numeric: tabular-nums;
+}
+
+.work-carousel__counter-now {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.work-carousel__counter-sep {
+    color: var(--color-text-4);
+}
+
+.work-carousel__dots {
+    grid-area: dots;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 2px;
+}
+
+/* Alvo de 32px por dot (o visível é a pílula de dentro). */
+.work-carousel__dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: var(--radius-full);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.work-carousel__dot-fill {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-border-3);
+    transition:
+        width 0.35s var(--ease-out),
+        background-color 0.25s var(--ease-out),
+        transform 0.2s var(--ease-out);
+}
+
+.work-carousel__dot:hover .work-carousel__dot-fill {
+    background: var(--color-text-3);
+    transform: scale(1.2);
+}
+
+.work-carousel__dot[aria-current="true"] .work-carousel__dot-fill {
+    width: 24px;
+    background: var(--color-brand);
+    transform: none;
+}
+
+.work-carousel__dot:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 0;
+}
+
+.work-carousel__progress {
+    grid-area: bar;
+    position: relative;
+    height: 2px;
+    border-radius: var(--radius-full);
+    background: var(--color-border-1);
+    overflow: hidden;
+}
+
+.work-carousel__progress::after {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
+    inset: 0;
     background: linear-gradient(
         to right,
         var(--color-brand),
         var(--color-accent)
     );
-    opacity: 0;
-    transform: scaleX(0);
+    transform: scaleX(var(--progresso, 0));
     transform-origin: left center;
-    transition:
-        opacity 0.3s var(--ease-out),
-        transform 0.45s var(--ease-out);
-    z-index: 3;
-    pointer-events: none;
-}
-
-.work-card:hover::before {
-    opacity: 1;
-    transform: scaleX(1);
-}
-
-/* ── Thumbnail / preview ────────────────────────────────────────── */
-.work-card__thumb {
-    position: relative;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    background: #06080d;
-}
-
-.work-card__thumb img,
-.work-card__media {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top center;
-    display: block;
-    transition: transform 0.6s var(--ease-out);
-}
-
-.work-card:hover .work-card__thumb img,
-.work-card:hover .work-card__media {
-    transform: scale(1.06);
-}
-
-/* gradiente sutil que integra a imagem ao card */
-.work-card__thumb-grad {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        to top,
-        color-mix(in srgb, var(--color-surface-2) 88%, transparent) 0%,
-        transparent 45%
-    );
-    pointer-events: none;
-    z-index: 1;
-}
-
-/* chip de identidade (emoji) sobre a imagem */
-.work-card__emoji {
-    position: absolute;
-    top: var(--space-3);
-    left: var(--space-3);
-    z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    font-size: 18px;
-    line-height: 1;
-    border-radius: var(--radius-md);
-    background: rgba(10, 12, 18, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow:
-        var(--surface-edge),
-        0 4px 14px rgba(0, 0, 0, 0.32);
-    transition: transform 0.3s var(--ease-out);
-}
-
-.work-card:hover .work-card__emoji {
-    transform: translateY(-2px) scale(1.06);
-}
-
-/* ── Body ───────────────────────────────────────────────────────── */
-.work-card__body {
-    padding: var(--space-5);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    flex: 1;
-}
-
-.work-card__title {
-    font-family: var(--font-display);
-    font-size: var(--text-lg);
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: var(--ls-snug);
-    color: var(--color-text-1);
-}
-
-.work-card__desc {
-    font-size: var(--text-sm);
-    line-height: 1.6;
-    color: var(--color-text-2);
-    flex: 1;
-    /* clamp p/ manter consistência visual entre os cards */
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.work-card__tech {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-top: var(--space-1);
-}
-
-.work-card__tech .badge {
-    transition:
-        transform 0.25s var(--ease-out),
-        border-color 0.25s var(--ease-out),
-        background 0.25s var(--ease-out);
-}
-
-.work-card__tech .badge:hover {
-    transform: translateY(-1px);
-}
-
-/* ── Footer ─────────────────────────────────────────────────────── */
-.work-card__footer {
-    display: flex;
-    gap: var(--space-2);
-    padding: 0 var(--space-5) var(--space-5);
-}
-
-.work-btn {
-    flex: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 9px var(--space-3);
-    border-radius: var(--radius-md);
-    font-size: var(--text-xs);
-    font-weight: 600;
-    text-decoration: none;
-    border: 1px solid transparent;
-    white-space: nowrap;
-    transition:
-        background 0.25s var(--ease-out),
-        border-color 0.25s var(--ease-out),
-        color 0.25s var(--ease-out),
-        box-shadow 0.25s var(--ease-out),
-        transform 0.25s var(--ease-out);
-}
-
-.work-btn svg {
-    flex-shrink: 0;
-    transition: transform 0.25s var(--ease-out);
-}
-
-.work-btn--primary {
-    background: var(--color-brand);
-    color: #fff;
-    border-color: var(--color-brand);
-}
-
-.work-btn--primary:hover {
-    background: var(--color-brand-light);
-    border-color: var(--color-brand-light);
-    box-shadow: 0 6px 18px
-        color-mix(in srgb, var(--color-brand) 35%, transparent);
-    transform: translateY(-1px);
-}
-
-.work-btn--primary:hover svg {
-    transform: translate(2px, -2px);
-}
-
-.work-btn--outline {
-    background: var(--color-surface-1);
-    border-color: var(--color-border-2);
-    color: var(--color-text-2);
-}
-
-.work-btn--outline:hover {
-    background: var(--color-surface-3);
-    border-color: var(--color-border-brand);
-    color: var(--color-text-1);
-    transform: translateY(-1px);
-}
-
-/* ── CTA ────────────────────────────────────────────────────────── */
-.work__cta {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-3);
-    margin-top: var(--space-10);
-}
-
-/* ── Vitrine do GitHub ──────────────────────────────────────────── */
-/* A lista é semântica (<ul>), mas o card é quem desenha: o item só
-   repassa a altura para os cards da mesma linha ficarem iguais. */
-.work__grid {
-    list-style: none;
-    padding: 0;
-}
-
-.work__item {
-    display: flex;
-}
-
-.work__item > .work-card {
-    flex: 1;
+    transition: transform 0.45s var(--ease-out);
 }
 
 .work__note {
@@ -300,18 +256,198 @@
     border-radius: var(--radius-lg);
 }
 
-.work-card__tech {
-    list-style: none;
-    padding: 0;
+/* ── Card ───────────────────────────────────────────────────────── */
+/* Base (mobile): coluna — imagem em cima, conteúdo embaixo. */
+.work-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+        "media"
+        "body";
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    isolation: isolate;
+    box-shadow: var(--surface-edge), var(--surface-lift);
+
+    transition:
+        border-color 0.3s var(--ease-out),
+        box-shadow 0.3s var(--ease-out),
+        transform 0.3s var(--ease-out);
 }
 
-.work-card__nodesc {
+/* Entrada do slide que acaba de ficar ativo: o conteúdo sobe em
+   cascata e a imagem assenta. Só `transform`/`opacity`. */
+.work-card[data-active] .work-card__body > * {
+    animation: work-in 0.55s var(--ease-out) both;
+}
+
+.work-card[data-active] .work-card__body > :nth-child(2) {
+    animation-delay: 60ms;
+}
+
+.work-card[data-active] .work-card__body > :nth-child(3) {
+    animation-delay: 110ms;
+}
+
+.work-card[data-active] .work-card__body > :nth-child(4) {
+    animation-delay: 160ms;
+}
+
+.work-card[data-active] .work-card__body > :nth-child(n + 5) {
+    animation-delay: 210ms;
+}
+
+.work-card[data-active] .work-card__window {
+    animation: work-window-in 0.7s var(--ease-out) both;
+}
+
+@keyframes work-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+}
+
+@keyframes work-window-in {
+    from {
+        opacity: 0.4;
+        transform: scale(0.97);
+    }
+}
+
+/* Linha de accent: entra pelo lado da imagem, acompanhando a alternância. */
+.work-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(
+        to right,
+        var(--color-brand),
+        var(--color-accent)
+    );
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.5s var(--ease-out);
+    z-index: 3;
+    pointer-events: none;
+}
+
+.work-card[data-media="end"]::before {
+    transform-origin: right center;
+}
+
+.work-card:hover,
+.work-card:focus-within {
+    border-color: var(--color-border-brand);
+    box-shadow: var(--surface-edge), var(--shadow-card-hover);
+}
+
+.work-card:hover::before,
+.work-card:focus-within::before {
+    transform: scaleX(1);
+}
+
+/* ── Mídia: moldura de janela ───────────────────────────────────── */
+.work-card__media {
+    grid-area: media;
+    display: flex;
+    align-items: center;
+    padding: var(--space-4);
+    /* Fundo levemente tingido: separa a coluna da imagem do texto sem
+       mais uma borda. */
+    background:
+        radial-gradient(
+            120% 90% at 0% 0%,
+            var(--color-brand-subtle),
+            transparent 60%
+        ),
+        var(--color-surface-1);
+    border-bottom: 1px solid var(--color-border-1);
+}
+
+.work-card__window {
+    width: 100%;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--color-surface-2);
+    box-shadow: var(--shadow-md);
+    transition:
+        transform 0.5s var(--ease-out),
+        box-shadow 0.5s var(--ease-out);
+}
+
+.work-card:hover .work-card__window {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.work-card__bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-surface-3);
+    border-bottom: 1px solid var(--color-border-1);
+}
+
+.work-card__dots {
+    display: inline-flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.work-card__dots span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--color-border-3);
+}
+
+.work-card:hover .work-card__dots span:nth-child(1) {
+    background: var(--color-brand);
+}
+
+.work-card__path {
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
     color: var(--color-text-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Sem social card (ou se ele não carregar): o nome do repositório
-   sobre a cor da linguagem — nenhuma requisição, nenhum buraco. */
-.work-card__media[data-fallback] {
+/* 2:1 — a proporção do social card do GitHub (1200×600): a imagem
+   cabe inteira, sem corte, em qualquer largura. */
+.work-card__thumb {
+    position: relative;
+    aspect-ratio: 2 / 1;
+    overflow: hidden;
+    background: var(--color-surface-1);
+}
+
+.work-card__img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.6s var(--ease-out);
+}
+
+.work-card:hover .work-card__img {
+    transform: scale(1.04);
+}
+
+/* Sem social card (ou se ele não carregar): o nome sobre a cor da
+   linguagem — nenhuma requisição, nenhum buraco. */
+.work-card__img[data-fallback] {
     display: grid;
     place-items: center;
     background:
@@ -323,7 +459,7 @@
         var(--color-surface-2);
 }
 
-.work-card__media[data-fallback] .devhub-thumb__name {
+.work-card__img[data-fallback] .devhub-thumb__name {
     padding: var(--space-4);
     font-family: var(--font-mono);
     font-size: var(--text-lg);
@@ -333,30 +469,360 @@
     overflow-wrap: anywhere;
 }
 
-/* Esqueleto enquanto o GitHub responde. */
+/* ── Conteúdo ───────────────────────────────────────────────────── */
+.work-card__body {
+    grid-area: body;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-6) var(--space-5);
+}
+
+.work-card__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    color: var(--color-text-3);
+}
+
+.work-card__index {
+    color: var(--color-brand-text);
+    font-weight: 600;
+}
+
+.work-card__index::after {
+    content: " /";
+    color: var(--color-text-4);
+    font-weight: 400;
+}
+
+.work-card__lang {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-2);
+}
+
+.work-card__lang-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.work-card__title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    line-height: var(--lh-tight);
+    letter-spacing: var(--ls-snug);
+    color: var(--color-text-1);
+    overflow-wrap: anywhere;
+}
+
+.work-card__desc {
+    max-width: 60ch;
+    font-size: var(--text-md);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-2);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.work-card__nodesc {
+    color: var(--color-text-3);
+}
+
+.work-card__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: 0;
+    list-style: none;
+}
+
+/* ── Destaques (tópicos do GitHub) e dados ──────────────────────── */
+.work-card__highlights {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.work-card__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.work-card__topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-3);
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-2);
+}
+
+.work-card__facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-5);
+    margin: 0;
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.work-card__fact {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.work-card__fact dt {
+    display: inline-flex;
+    align-items: center;
+}
+
+.work-card__fact dd {
+    margin: 0;
+    color: var(--color-text-2);
+}
+
+/* ── Ações ──────────────────────────────────────────────────────── */
+.work-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: auto;
+    padding-top: var(--space-3);
+}
+
+/* ── Botões da seção ────────────────────────────────────────────── */
+/* Alvo mínimo de 44px (WCAG 2.5.8 pede 24; 44 é o confortável ao
+   toque). Hover: sobe 1px e ganha profundidade; clique (`:active`):
+   afunda e encolhe de leve — retorno imediato, sem esperar a rota. */
+.work-btn {
+    --work-btn-h: 44px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: var(--work-btn-h);
+    padding: 0 var(--space-5);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+        background-color 0.2s var(--ease-out),
+        border-color 0.2s var(--ease-out),
+        color 0.2s var(--ease-out),
+        box-shadow 0.25s var(--ease-out),
+        transform 0.2s var(--ease-out);
+}
+
+.work-btn__icon {
+    flex-shrink: 0;
+    transition: transform 0.25s var(--ease-out);
+}
+
+.work-btn:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 3px;
+}
+
+.work-btn:active {
+    transform: translateY(1px) scale(0.98);
+    transition-duration: 0.08s;
+}
+
+/* Primário: cor da marca com brilho que atravessa no hover. */
+.work-btn--primary {
+    background: var(--color-brand);
+    border-color: var(--color-brand);
+    color: #fff;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.work-btn--primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        110deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.22) 50%,
+        transparent 70%
+    );
+    transform: translateX(-110%);
+    transition: transform 0.6s var(--ease-out);
+}
+
+.work-btn--primary:hover {
+    background: var(--color-brand-hover);
+    border-color: var(--color-brand-hover);
+    transform: translateY(-1px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        0 8px 22px var(--color-brand-glow);
+}
+
+.work-btn--primary:hover::after {
+    transform: translateX(110%);
+}
+
+.work-btn--primary:hover .work-btn__icon--go,
+.work-btn--primary:focus-visible .work-btn__icon--go {
+    transform: translateX(3px);
+}
+
+.work-btn--primary:active {
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.25),
+        0 2px 8px var(--color-brand-glow);
+}
+
+/* Secundário: contorno discreto que assume a marca no hover. */
+.work-btn--ghost {
+    background: transparent;
+    border-color: var(--color-border-2);
+    color: var(--color-text-1);
+}
+
+.work-btn--ghost:hover {
+    background: var(--color-brand-subtle);
+    border-color: var(--color-border-brand);
+    color: var(--color-text-1);
+    transform: translateY(-1px);
+}
+
+.work-btn--ghost:hover .work-btn__icon {
+    transform: scale(1.1);
+    color: var(--color-brand-text);
+}
+
+.work-btn--ghost:active {
+    background: var(--color-brand-muted);
+}
+
+/* Terciário: texto com seta — o caminho para a página do projeto
+   quando os dois botões já estão ocupados por demo e código. */
+.work-btn--link {
+    padding: 0 var(--space-2);
+    background: transparent;
+    color: var(--color-text-2);
+    overflow: visible;
+}
+
+.work-btn--link::before {
+    content: "";
+    position: absolute;
+    left: var(--space-2);
+    right: var(--space-2);
+    bottom: 11px;
+    height: 1px;
+    background: currentcolor;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.3s var(--ease-out);
+}
+
+.work-btn--link:hover {
+    color: var(--color-brand-text);
+}
+
+.work-btn--link:hover::before {
+    transform: scaleX(1);
+}
+
+.work-btn--link:hover .work-btn__icon--go {
+    transform: translateX(3px);
+}
+
+/* Variante grande — os CTAs do fim da seção. */
+.work-btn--lg {
+    --work-btn-h: 52px;
+    padding: 0 var(--space-7);
+    font-size: var(--text-md);
+    border-radius: var(--radius-lg);
+}
+
+/* ── CTA ────────────────────────────────────────────────────────── */
+.work__cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-12);
+}
+
+/* ── Esqueleto ──────────────────────────────────────────────────── */
 .work-card--skeleton {
     pointer-events: none;
-    padding-bottom: var(--space-5);
 }
 
-.work-card--skeleton .work-card__thumb,
+.work-carousel--skeleton .work-carousel__viewport {
+    overflow: hidden;
+}
+
+.work-card__skel-block,
 .work-card__skel-line {
     display: block;
-    background: var(--color-surface-2);
+    background: var(--color-surface-3);
+    border-radius: var(--radius-md);
+}
+
+.work-card__skel-block {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    border-radius: var(--radius-lg);
 }
 
 .work-card__skel-line {
-    height: 12px;
-    margin: var(--space-4) var(--space-5) 0;
+    height: 14px;
     border-radius: var(--radius-full);
 }
 
 .work-card__skel-line--short {
+    width: 30%;
+}
+
+.work-card__skel-line--title {
     width: 55%;
+    height: 24px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-    .work-card--skeleton .work-card__thumb,
+    .work-card__skel-block,
     .work-card__skel-line {
         animation: work-skeleton 1.4s ease-in-out infinite;
     }
@@ -368,29 +834,175 @@
     }
 }
 
-/* ── A partir de --bp-work-grid (600px) ─────────────────────────── */
+/* ── Telas estreitas: a barra de navegação cabe numa linha ───────── */
+/* Com 32px por dot, seis dots + contador + duas setas passavam da
+   largura útil em 375px e os dots quebravam em duas linhas (medido).
+   24px é o alvo mínimo do WCAG 2.5.8 (AA). */
+@media (max-width: 600px) {
+    .work-carousel {
+        column-gap: var(--space-2);
+    }
+
+    .work-carousel__nav {
+        column-gap: var(--space-3);
+    }
+
+    .work-carousel__dots {
+        flex-wrap: nowrap;
+        gap: 0;
+    }
+
+    .work-carousel__dot {
+        width: 24px;
+        height: 24px;
+    }
+
+    .work-carousel__counter-now {
+        font-size: var(--text-md);
+    }
+}
+
+/* ── Telas estreitas: botões ocupam a linha ─────────────────────── */
+@media (max-width: 480px) {
+    .work-card__actions .work-btn {
+        flex: 1 1 0;
+        padding: 0 var(--space-3);
+    }
+
+    .work-card__actions .work-btn--link {
+        flex-basis: 100%;
+    }
+
+    .work__cta .work-btn {
+        width: 100%;
+    }
+}
+
+/* ── Tablet: respiro maior, ainda empilhado ─────────────────────── */
 @media (min-width: 601px) {
-    .work__grid {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: var(--space-6);
+    .work-carousel {
         margin-top: var(--space-12);
+    }
+
+    .work-card__media {
+        padding: var(--space-6);
+    }
+
+    .work-card__body {
+        padding: var(--space-8);
+    }
+}
+
+/* ── Desktop: faixas horizontais alternadas ─────────────────────── */
+@media (min-width: 900px) {
+    /* Setas laterais, numa coluna própria de cada lado do card. */
+    .work-carousel {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        grid-template-areas:
+            "prev view next"
+            ". nav .";
+        column-gap: var(--space-4);
+    }
+
+    .work-carousel__arrow {
+        width: 48px;
+        height: 48px;
+    }
+
+    .work-card {
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        grid-template-areas: "media body";
+        align-items: stretch;
+    }
+
+    .work-card[data-media="end"] {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        grid-template-areas: "body media";
+    }
+
+    .work-card__media {
+        padding: var(--space-8);
+        border-bottom: 0;
+        border-right: 1px solid var(--color-border-1);
+    }
+
+    .work-card[data-media="end"] .work-card__media {
+        border-right: 0;
+        border-left: 1px solid var(--color-border-1);
+        background:
+            radial-gradient(
+                120% 90% at 100% 0%,
+                var(--color-brand-subtle),
+                transparent 60%
+            ),
+            var(--color-surface-1);
+    }
+
+    .work-card__body {
+        justify-content: center;
+        padding: var(--space-10);
+    }
+
+    /* No mobile os botões descem até o fim do card; aqui o bloco inteiro
+       fica centralizado e unido — senão a descrição curta deixava um
+       vão entre as tecnologias e os botões. */
+    .work-card__actions {
+        margin-top: 0;
+        padding-top: var(--space-4);
+    }
+}
+
+@media (min-width: 1200px) {
+    .work-card__title {
+        font-size: var(--text-3xl);
     }
 }
 
 /* ── prefers-reduced-motion ─────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+    .work-carousel__viewport {
+        scroll-behavior: auto;
+    }
+
+    .work-card[data-active] .work-card__body > *,
+    .work-card[data-active] .work-card__window,
+    .work-carousel__arrow,
+    .work-carousel__dot-fill,
+    .work-carousel__progress::after,
+    .work-btn--link::before,
     .work[data-reveal],
     .work-card,
     .work-card::before,
-    .work-card__thumb img,
-    .work-card__media,
-    .work-card__emoji,
+    .work-card__window,
+    .work-card__img,
     .work-btn,
-    .work-btn svg,
-    .work-card__tech .badge {
+    .work-btn::after,
+    .work-btn__icon {
         animation: none !important;
         transition: none !important;
+    }
+
+    .work-card,
+    .work-card__body > *,
+    .work-card__window {
         opacity: 1 !important;
         transform: none !important;
+    }
+
+    .work-card::before {
+        transform: scaleX(1);
+    }
+
+    .work-btn:hover,
+    .work-btn:active,
+    .work-carousel__arrow:hover,
+    .work-carousel__arrow:active,
+    .work-card:hover .work-card__window,
+    .work-card:hover .work-card__img {
+        transform: none !important;
+    }
+
+    .work-btn--primary::after {
+        display: none;
     }
 }
