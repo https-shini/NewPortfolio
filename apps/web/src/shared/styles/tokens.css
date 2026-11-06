@@ -694,6 +694,15 @@ body.light-mode {
     --layout-max: 1200px;
     --layout-narrow: 768px;
     --layout-wide: 1440px;
+
+    /* Moldura de IDE (tema Radical do GitHub): fixa nos dois temas, porque
+       o que vai dentro dela — os cartões SVG dos widgets do perfil — já
+       chega com fundo #0d1117. Contraste: texto 15.8:1, apagado 7.6:1. */
+    --ide-bg: #0d1117;
+    --ide-surface: #161b22;
+    --ide-border: #30363d;
+    --ide-text: #e6edf3;
+    --ide-muted: #9da7b3;
     --header-height: 68px;
 
     /* Espaçamento vertical de seção — fluido (48px → 80px) */

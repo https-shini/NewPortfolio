@@ -23,6 +23,7 @@ import {
 } from "@/features/devhub/catalog";
 import { Modal } from "@/shared/ui/Modal/Modal";
 import { ProjectMetrics } from "@/features/devhub/components/ProjectMetrics";
+import { ProfileWidgets } from "@/features/devhub/components/ProfileWidgets";
 import { useDevhubIndex } from "@/features/devhub/useDevhub";
 import { recentRepos, repoStats } from "@/features/devhub/selectors";
 import { formatNumber } from "@/features/devhub/format";
@@ -164,6 +165,13 @@ export const ProjectsPage: React.FC = () => {
                                 fetchedAt={data?.fetchedAt ?? null}
                             />
                         )}
+                        <a
+                            className="devhub-hero__link"
+                            href="#panorama-github"
+                        >
+                            {t("widgets.link")}
+                            <span aria-hidden="true"> ↓</span>
+                        </a>
                     </div>
                 </header>
 
@@ -481,6 +489,8 @@ export const ProjectsPage: React.FC = () => {
                             </Modal>
                         </section>
                     )}
+
+                    <ProfileWidgets />
                 </div>
             </main>
 
