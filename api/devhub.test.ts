@@ -849,7 +849,7 @@ describe("paginação do acervo", () => {
 
         await chamar({ op: "index" });
 
-        expect(fetchMock).toHaveBeenCalledTimes(10);
+        expect(fetchMock).toHaveBeenCalledTimes(34);
     });
 
     it("REST: pede a página seguinte enquanto vierem 100 itens", async () => {

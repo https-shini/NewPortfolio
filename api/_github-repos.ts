@@ -74,6 +74,13 @@ export interface Repository {
 export const MAX_PAGINAS = 10;
 const POR_PAGINA = 100;
 
+/* GraphQL pagina menos por vez: cada repositório pergunta por README,
+   pasta docs/ e deploys do Pages, e 100 por consulta fez o GitHub
+   responder 502 (medido no preview). 30 por página = 3 consultas leves
+   para o acervo atual; o teto mantém a cobertura de ~1.000. */
+const POR_PAGINA_GQL = 30;
+export const MAX_PAGINAS_GQL = 34;
+
 /* ─────────────────────────────────────────────────────────
    Cores de linguagem — o REST público não as traz
 ───────────────────────────────────────────────────────── */
@@ -153,7 +160,7 @@ const QUERY_LISTA = `
         user(login: $login) {
             followers { totalCount }
             repositories(
-                first: ${POR_PAGINA}
+                first: ${POR_PAGINA_GQL}
                 after: $after
                 privacy: PUBLIC
                 ownerAffiliations: OWNER
@@ -456,7 +463,7 @@ export async function listarAcervo(): Promise<Acervo> {
 
     if (temToken()) {
         let after: string | null = null;
-        for (let pagina = 0; pagina < MAX_PAGINAS; pagina++) {
+        for (let pagina = 0; pagina < MAX_PAGINAS_GQL; pagina++) {
             const data: PaginaGQL = await consultarGraphQL<PaginaGQL>(
                 QUERY_LISTA,
                 { login: GITHUB_USER, after },
