@@ -1,89 +1,75 @@
 # ─────────────────────────────────────────────────────────
-# Homologação — homolog.gcruz.dev.br sempre no último preview
+# Homologação — a branch `homolog` espelha o último PR atualizado
 # ─────────────────────────────────────────────────────────
-# A Vercel já gera um preview por PR, mas cada um tem um endereço
-# diferente. Este workflow aponta um endereço FIXO para o preview que
-# acabou de ficar pronto, para validar antes do merge sem caçar link.
+# A Vercel gera um preview por PR, cada um num endereço diferente.
+# Para ter UM endereço fixo, este workflow copia o commit do PR que
+# acabou de receber push para a branch `homolog`. A Vercel publica
+# toda branch num endereço estável:
 #
-# Como funciona: a Vercel publica um `deployment_status` no GitHub ao
-# terminar cada deploy. Quando é um preview com sucesso, o alias
-# `homolog.gcruz.dev.br` passa a apontar para ele. É o MESMO deploy do
-# PR (sem build extra), então o que se vê ali é exatamente o que vai
-# para produção no merge.
+#   https://new-portfolio-git-homolog-httpsshinis-projects.vercel.app
+#
+# e, se o domínio for ligado à branch no painel da Vercel
+# (Settings → Domains → homolog.gcruz.dev.br → Git Branch: homolog):
+#
+#   https://homolog.gcruz.dev.br
+#
+# Por que branch, e não alias: o alias exige um token da Vercel
+# guardado no GitHub. Aqui basta o GITHUB_TOKEN do próprio Actions.
 #
 # Regras:
-#   · só previews (produção nunca é tocada);
-#   · o último preview pronto vence — com dois PRs abertos, o endereço
-#     mostra o que recebeu push por último;
-#   · sem o segredo VERCEL_TOKEN, o job termina sem fazer nada.
+#   · `homolog` é DESCARTÁVEL — um espelho, nunca recebe trabalho
+#     direto; por isso o push é forçado;
+#   · o último PR que recebeu push vence;
+#   · só PRs do próprio repositório (fork não escreve aqui);
+#   · rascunho também entra — homologar antes de pedir revisão é o
+#     ponto;
+#   · produção (`main`) nunca é tocada.
 #
-# Observação: `deployment_status` roda o workflow que existe NO COMMIT
-# do deploy (comprovado nos previews desta própria branch). Um PR só
-# atualiza a homologação se a branch já tiver este arquivo — ou seja,
-# depois do merge na `main` e de a branch estar atualizada com ela.
-#
-# Configuração (uma vez):
-#   1. Vercel → Account Settings → Tokens → criar token com escopo do
-#      time "httpsshinis-projects".
-#   2. GitHub → Settings → Secrets and variables → Actions →
-#      New repository secret: VERCEL_TOKEN.
+# Observação: `pull_request` roda o workflow que existe no PR. Um PR
+# só atualiza a homologação se a branch dele já tiver este arquivo —
+# ou seja, depois do merge na `main` e de a branch estar atualizada.
 # ─────────────────────────────────────────────────────────
 
 name: Homologação
 
 on:
-  deployment_status:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
-  contents: read
+  contents: write
 
-# Dois deploys terminando juntos não podem disputar o alias fora de
-# ordem: o segundo espera o primeiro.
+# Dois pushes seguidos não podem gravar `homolog` fora de ordem.
 concurrency:
-  group: homolog-alias
+  group: homolog-branch
   cancel-in-progress: false
 
-env:
-  HOMOLOG_DOMAIN: homolog.gcruz.dev.br
-  VERCEL_SCOPE: httpsshinis-projects
-  # Versão fixa: um `@latest` aqui executaria, com o token, qualquer
-  # versão publicada amanhã.
-  VERCEL_CLI: vercel@65.12.1
-
 jobs:
-  alias:
-    name: Apontar homolog para o preview
-    if: >-
-      github.event.deployment_status.state == 'success' &&
-      startsWith(github.event.deployment.environment, 'Preview')
+  espelhar:
+    name: Atualizar branch homolog
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Atribuir alias
+      - name: Checkout do commit do PR
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          # Histórico completo: empurrar um clone raso para
+          # outra branch é recusado ("shallow update").
+          fetch-depth: 0
+
+      - name: Empurrar para homolog
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          # Vem do evento, não de entrada de usuário; mesmo assim
-          # passa por variável, nunca interpolado no script.
-          PREVIEW_URL: ${{ github.event.deployment_status.environment_url }}
-          COMMIT: ${{ github.event.deployment.sha }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          PR: ${{ github.event.pull_request.number }}
         run: |
-          if [ -z "$VERCEL_TOKEN" ]; then
-              echo "::notice::VERCEL_TOKEN não configurado — alias não atualizado."
-              exit 0
-          fi
-          case "$PREVIEW_URL" in
-              https://*.vercel.app) ;;
-              *)
-                  echo "::error::URL de preview inesperada."
-                  exit 1
-                  ;;
-          esac
-          npx --yes "$VERCEL_CLI" alias set "$PREVIEW_URL" "$HOMOLOG_DOMAIN" \
-              --token "$VERCEL_TOKEN" --scope "$VERCEL_SCOPE"
+          git push --force origin "$SHA:refs/heads/homolog"
           {
               echo "### Homologação atualizada"
               echo ""
-              echo "https://$HOMOLOG_DOMAIN → commit \`${COMMIT:0:7}\`"
+              echo "PR #$PR → commit \`${SHA:0:7}\`"
               echo ""
-              echo "Preview de origem: $PREVIEW_URL"
+              echo "https://new-portfolio-git-homolog-httpsshinis-projects.vercel.app"
           } >> "$GITHUB_STEP_SUMMARY"
