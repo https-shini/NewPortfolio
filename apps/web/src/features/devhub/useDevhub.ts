@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import { fetchIndex, fetchPinned, fetchProject } from "@/features/devhub/api";
+import {
+    fetchIndex,
+    fetchPinned,
+    fetchProject,
+    fetchStats,
+} from "@/features/devhub/api";
 import type {
     DevhubIndex,
     DevhubPinned,
     RepositoryDetail,
+    RepositoryStats,
 } from "@/features/devhub/types";
 
 /* ─────────────────────────────────────────────────────────
@@ -72,4 +78,9 @@ export function useDevhubPinned(): AsyncState<DevhubPinned> {
 /** Um projeto pelo nome. `data: null` sem erro = não existe. */
 export function useDevhubProject(name: string): AsyncState<RepositoryDetail> {
     return useRemoto(() => fetchProject(name), name);
+}
+
+/** Estatísticas de um projeto. `data: null` sem erro = indisponível. */
+export function useDevhubStats(name: string): AsyncState<RepositoryStats> {
+    return useRemoto(() => fetchStats(name), `stats:${name}`);
 }

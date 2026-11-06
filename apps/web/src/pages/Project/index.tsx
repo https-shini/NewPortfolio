@@ -4,7 +4,17 @@ import { Header } from "@/widgets/Header/Header";
 import { Footer } from "@/widgets/Footer/Footer";
 import { ScrollUtils } from "@/shared/ui/ScrollUtils";
 import { LanguageBar } from "@/features/devhub/components/LanguageBar";
-import { useDevhubIndex, useDevhubProject } from "@/features/devhub/useDevhub";
+import { ProjectCard } from "@/features/devhub/components/ProjectCard";
+import { ProjectStatsGrid } from "@/features/devhub/components/ProjectStatsGrid";
+import { DetailTabs, type Tab } from "@/features/devhub/components/DetailTabs";
+import { CommitActivity } from "@/features/devhub/components/CommitActivity";
+import { RepoStructure } from "@/features/devhub/components/RepoStructure";
+import { ReleaseList } from "@/features/devhub/components/ReleaseList";
+import {
+    useDevhubIndex,
+    useDevhubProject,
+    useDevhubStats,
+} from "@/features/devhub/useDevhub";
 import {
     formatDate,
     formatNumber,
@@ -14,6 +24,7 @@ import {
 import {
     ACTIVE_WINDOW_DAYS,
     lastActivity,
+    relatedRepos,
     siblingsOf,
 } from "@/features/devhub/selectors";
 import {
@@ -31,6 +42,8 @@ import {
     IconArrowRight,
     IconExternalLink,
     IconGitHub,
+    IconLayers,
+    IconLink,
 } from "@/shared/ui/Icons";
 import type { TranslationKey } from "@/shared/lib/translations";
 
@@ -93,6 +106,38 @@ const SiblingLink: React.FC<{
     );
 };
 
+/** Endereço do GitHub Pages de um repositório do perfil. */
+function pagesUrl(repo: Repository): string {
+    const dono = PROFILE.githubUsername.toLowerCase();
+    return repo.name.toLowerCase() === `${dono}.github.io`
+        ? `https://${dono}.github.io/`
+        : `https://${dono}.github.io/${repo.name}/`;
+}
+
+/** Conteúdo de uma aba que depende de `op=stats`. */
+const ComStats: React.FC<{
+    loading: boolean;
+    ok: boolean;
+    children: () => React.ReactNode;
+}> = ({ loading, ok, children }) => {
+    const { t } = useLang();
+    if (loading) {
+        return (
+            <div className="devhub-detail__loading" aria-busy="true">
+                <span className="devhub-skeleton__line" />
+                <span className="devhub-skeleton__line devhub-skeleton__line--short" />
+                <span className="sr-only">{t("devhub.stats.loading")}</span>
+            </div>
+        );
+    }
+    if (!ok) {
+        return (
+            <p className="devhub-empty">{t("devhub.stats.unavailableNote")}</p>
+        );
+    }
+    return <>{children()}</>;
+};
+
 /** Moldura comum aos estados — mesmo Header e Footer em todos. */
 const Moldura: React.FC<{ busy?: boolean; children: React.ReactNode }> = ({
     busy,
@@ -124,6 +169,7 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
 
     const { data: repo, loading, error } = useDevhubProject(name);
     const indice = useDevhubIndex();
+    const estat = useDevhubStats(name);
     const voltar = useLinkProps(ROUTES.PROJECTS);
 
     const { previous, next } = useMemo(
@@ -132,6 +178,14 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
                 ? siblingsOf(indice.data.repositories, name)
                 : { previous: null, next: null },
         [indice.data, name],
+    );
+
+    const relacionados = useMemo(
+        () =>
+            indice.data && repo
+                ? relatedRepos(indice.data.repositories, repo)
+                : [],
+        [indice.data, repo],
     );
 
     useDocumentMeta({
@@ -194,6 +248,75 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
     const status = statusDe(repo);
     const atividade = new Date(lastActivity(repo)).toISOString();
     const temLinguagens = languageShares(repo.languages).length > 0;
+    const temPagesNaDemo = /\.github\.io(\/|$)/i.test(repo.homepageUrl ?? "");
+    const stats = estat.data;
+    const okStats = Boolean(stats);
+
+    const readme = repo.readmeHtml ? (
+        /* Seguro por construção — ver o comentário do topo. */
+        <div
+            className="devhub-readme__body"
+            dangerouslySetInnerHTML={{ __html: repo.readmeHtml }}
+        />
+    ) : (
+        <div className="devhub-state" role="status">
+            <h3 className="devhub-state__title">
+                {t("devhub.detail.noReadme")}
+            </h3>
+            <p className="devhub-state__desc">
+                {t("devhub.detail.noReadmeDesc")}
+            </p>
+            <a
+                className="btn btn--outline"
+                href={repo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                {t("devhub.detail.viewOnGithub")}
+            </a>
+        </div>
+    );
+
+    const abas: Tab[] = [
+        { id: "readme", label: t("devhub.tabs.readme"), content: readme },
+        {
+            id: "activity",
+            label: t("devhub.tabs.activity"),
+            content: (
+                <ComStats loading={estat.loading} ok={okStats}>
+                    {() => stats && <CommitActivity stats={stats} />}
+                </ComStats>
+            ),
+        },
+        {
+            id: "structure",
+            label: t("devhub.tabs.structure"),
+            content: (
+                <ComStats loading={estat.loading} ok={okStats}>
+                    {() =>
+                        stats && <RepoStructure repo={repo} tree={stats.tree} />
+                    }
+                </ComStats>
+            ),
+        },
+        {
+            id: "releases",
+            label: t("devhub.tabs.releases"),
+            badge: stats ? formatNumber(stats.releases.total, lang) : undefined,
+            content: (
+                <ComStats loading={estat.loading} ok={okStats}>
+                    {() =>
+                        stats && (
+                            <ReleaseList
+                                repo={repo}
+                                releases={stats.releases}
+                            />
+                        )
+                    }
+                </ComStats>
+            ),
+        },
+    ];
 
     const estatisticas: { label: string; value: React.ReactNode }[] = [
         {
@@ -220,14 +343,6 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
                 </time>
             ),
         },
-        {
-            label: t("devhub.detail.stars"),
-            value: formatNumber(repo.stargazerCount, lang),
-        },
-        {
-            label: t("devhub.detail.forks"),
-            value: formatNumber(repo.forkCount, lang),
-        },
         ...(repo.defaultBranch
             ? [
                   {
@@ -244,11 +359,11 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
     return (
         <Moldura>
             <div className="devhub-detail__banner">
-                {repo.openGraphImageUrl && (
+                {repo.cover && (
                     <span
                         className="devhub-detail__banner-media"
                         style={{
-                            backgroundImage: `url(${JSON.stringify(repo.openGraphImageUrl)})`,
+                            backgroundImage: `url(${JSON.stringify(repo.cover.url)})`,
                         }}
                         aria-hidden="true"
                     />
@@ -334,6 +449,36 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
                                     />
                                     {t("devhub.detail.viewOnGithub")}
                                 </a>
+                                {repo.hasDocs && (
+                                    <a
+                                        className="btn btn--outline"
+                                        href={`${repo.url}/tree/${encodeURIComponent(repo.defaultBranch ?? "HEAD")}/docs`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <IconLayers
+                                            width={16}
+                                            height={16}
+                                            aria-hidden
+                                        />
+                                        {t("devhub.detail.docs")}
+                                    </a>
+                                )}
+                                {repo.hasPages && !temPagesNaDemo && (
+                                    <a
+                                        className="btn btn--outline"
+                                        href={pagesUrl(repo)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <IconLink
+                                            width={16}
+                                            height={16}
+                                            aria-hidden
+                                        />
+                                        {t("devhub.detail.pages")}
+                                    </a>
+                                )}
                                 {repo.homepageUrl && (
                                     <a
                                         className="btn btn--primary"
@@ -397,44 +542,44 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
             </div>
 
             <div className="container">
-                {repo.readmeHtml ? (
-                    <article
-                        className="devhub-readme"
-                        aria-labelledby="devhub-readme-title"
+                <ProjectStatsGrid
+                    repo={repo}
+                    stats={stats}
+                    loading={estat.loading}
+                />
+
+                <section
+                    className="devhub-detail__content"
+                    aria-labelledby="devhub-content-title"
+                >
+                    <h2 id="devhub-content-title" className="sr-only">
+                        {t("devhub.tabs.label")}
+                    </h2>
+                    <DetailTabs label={t("devhub.tabs.label")} tabs={abas} />
+                </section>
+
+                {relacionados.length > 0 && (
+                    <section
+                        className="devhub-section devhub-related"
+                        aria-labelledby="devhub-related-title"
                     >
-                        <div className="devhub-readme__head">
-                            <h2
-                                className="devhub-readme__title"
-                                id="devhub-readme-title"
-                            >
-                                {t("devhub.detail.readme")}
-                            </h2>
-                        </div>
-                        {/* Seguro por construção — ver o comentário do topo. */}
-                        <div
-                            className="devhub-readme__body"
-                            dangerouslySetInnerHTML={{
-                                __html: repo.readmeHtml,
-                            }}
-                        />
-                    </article>
-                ) : (
-                    <div className="devhub-state" role="status">
-                        <h2 className="devhub-state__title">
-                            {t("devhub.detail.noReadme")}
-                        </h2>
-                        <p className="devhub-state__desc">
-                            {t("devhub.detail.noReadmeDesc")}
-                        </p>
-                        <a
-                            className="btn btn--outline"
-                            href={repo.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <h2
+                            id="devhub-related-title"
+                            className="devhub-section__title"
                         >
-                            {t("devhub.detail.viewOnGithub")}
-                        </a>
-                    </div>
+                            {t("devhub.related.title")}
+                        </h2>
+                        <p className="devhub-section__desc">
+                            {t("devhub.related.desc")}
+                        </p>
+                        <ul className="devhub-grid">
+                            {relacionados.map((r, i) => (
+                                <li key={r.name}>
+                                    <ProjectCard repo={r} index={i} />
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
                 )}
 
                 {(previous || next) && (
