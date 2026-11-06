@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, within, fireEvent } from "@testing-library/react";
+import { act, render, screen, within, fireEvent } from "@testing-library/react";
 import { Providers } from "@/app/providers";
 import { ProjectsPage } from "./index";
 import { LANG_KEY } from "@/shared/config/constants";
@@ -11,6 +11,8 @@ const muitos = Array.from({ length: 20 }, (_, i) =>
         stargazerCount: i === 0 ? 5 : 0,
         pushedAt: new Date(Date.UTC(2026, 0, 1 + i)).toISOString(),
         updatedAt: new Date(Date.UTC(2026, 0, 1 + i)).toISOString(),
+        // criação na ordem inversa do push: separa "recentes" de "atualizados"
+        createdAt: new Date(Date.UTC(2025, 0, 20 - i)).toISOString(),
     }),
 );
 const INDICE = {
@@ -78,50 +80,120 @@ describe("/projetos", () => {
         ]);
     });
 
-    it("galeria: 12 por vez e 'carregar mais' revela o resto", async () => {
+    const catalogo = () =>
+        screen.findByRole("region", { name: "Todos os projetos" });
+    const titulos = (el: HTMLElement) =>
+        within(el)
+            .getAllByRole("article")
+            .map((a) => within(a).getByRole("heading").textContent);
+    const filtros = (el: HTMLElement) =>
+        within(el.querySelector("aside") as HTMLElement);
+
+    it("catálogo: padrão 'Mais recentes' por data de criação e 12 por página", async () => {
         montar();
-        const galeria = await screen.findByRole("region", {
-            name: "Todos os projetos",
-        });
-        expect(within(galeria).getAllByRole("article")).toHaveLength(12);
+        const sec = await catalogo();
         expect(
-            within(galeria).getByText("Mostrando 12 de 20 projetos"),
+            within(sec).getByRole("combobox", { name: "Ordenar por" }),
+        ).toHaveValue("recent");
+        // proj-00 foi criado por último (createdAt), apesar do push antigo.
+        expect(titulos(sec)[0]).toBe("proj-00");
+        expect(titulos(sec)).toHaveLength(12);
+        expect(
+            within(sec).getByText("Mostrando 1–12 de 20"),
         ).toBeInTheDocument();
-        fireEvent.click(
-            within(galeria).getByRole("button", {
-                name: /Carregar mais projetos/,
-            }),
-        );
-        expect(within(galeria).getAllByRole("article")).toHaveLength(20);
+    });
+
+    it("paginação: página 2 mostra o restante e vai para a URL", async () => {
+        montar();
+        const sec = await catalogo();
+        const nav = within(sec).getByRole("navigation", {
+            name: "Paginação dos resultados",
+        });
+        fireEvent.click(within(nav).getByRole("button", { name: "Página 2" }));
+        expect(titulos(sec)).toHaveLength(8);
         expect(
-            within(galeria).queryByRole("button", { name: /Carregar mais/ }),
+            within(sec).getByText("Mostrando 13–20 de 20"),
+        ).toBeInTheDocument();
+        expect(
+            within(nav).getByRole("button", { name: "Página 2" }),
+        ).toHaveAttribute("aria-current", "page");
+        expect(window.location.search).toContain("pagina=2");
+    });
+
+    it("ordenação muda a ordem e persiste na URL", async () => {
+        montar();
+        const sec = await catalogo();
+        fireEvent.change(
+            within(sec).getByRole("combobox", { name: "Ordenar por" }),
+            { target: { value: "stars" } },
+        );
+        expect(titulos(sec)[0]).toBe("proj-00");
+        fireEvent.change(
+            within(sec).getByRole("combobox", { name: "Ordenar por" }),
+            { target: { value: "updated" } },
+        );
+        expect(titulos(sec)[0]).toBe("proj-19");
+        expect(window.location.search).toContain("ordem=updated");
+    });
+
+    it("filtros combinados com contadores, chips e 'limpar tudo'", async () => {
+        montar();
+        const sec = await catalogo();
+        const lateral = filtros(sec);
+        fireEvent.click(
+            lateral.getByRole("checkbox", { name: /Incluir forks/ }),
+        );
+        expect(
+            within(sec).getByText("Mostrando 1–12 de 21"),
+        ).toBeInTheDocument();
+        fireEvent.click(lateral.getByRole("checkbox", { name: /^Python/ }));
+        expect(titulos(sec)).toEqual(["um-fork"]);
+        const chips = within(sec).getByRole("group", {
+            name: "Filtros ativos",
+        });
+        expect(
+            within(chips).getByRole("button", {
+                name: /Remover filtro: Python/,
+            }),
+        ).toBeInTheDocument();
+        expect(window.location.search).toContain("ling=Python");
+        fireEvent.click(
+            within(chips).getByRole("button", { name: "Limpar tudo" }),
+        );
+        expect(
+            within(sec).getByText("Mostrando 1–12 de 20"),
+        ).toBeInTheDocument();
+        expect(
+            within(sec).queryByRole("group", { name: "Filtros ativos" }),
         ).toBeNull();
     });
 
-    it("forks entram pelo filtro, e o filtro de linguagem recorta", async () => {
-        montar();
-        const galeria = await screen.findByRole("region", {
-            name: "Todos os projetos",
-        });
-        fireEvent.click(
-            within(galeria).getByRole("button", { name: "Filtros" }),
+    it("estado inicial vem da URL (link compartilhável)", async () => {
+        vi.stubGlobal("fetch", vi.fn(fetchPorOp({ index: INDICE })));
+        localStorage.setItem(LANG_KEY, "pt");
+        window.history.replaceState({}, "", "/projetos?forks=1&ling=Python");
+        render(
+            <Providers>
+                <ProjectsPage />
+            </Providers>,
         );
-        fireEvent.click(
-            within(galeria).getByRole("checkbox", { name: "Forks" }),
-        );
-        expect(
-            within(galeria).getByText("Mostrando 12 de 21 projetos"),
-        ).toBeInTheDocument();
-        fireEvent.click(
-            within(galeria).getByRole("button", { name: "Python" }),
-        );
-        expect(within(galeria).getAllByRole("article")).toHaveLength(1);
-        fireEvent.click(
-            within(galeria).getByRole("button", { name: "Limpar filtros" }),
-        );
-        expect(
-            within(galeria).getByText("Mostrando 12 de 20 projetos"),
-        ).toBeInTheDocument();
+        const sec = await catalogo();
+        expect(titulos(sec)).toEqual(["um-fork"]);
+    });
+
+    it("busca por texto com debounce", async () => {
+        vi.useFakeTimers({ shouldAdvanceTime: true });
+        try {
+            montar();
+            const sec = await catalogo();
+            fireEvent.change(within(sec).getByRole("searchbox"), {
+                target: { value: "proj-07" },
+            });
+            await act(() => vi.advanceTimersByTimeAsync(300));
+            expect(titulos(sec)).toEqual(["proj-07"]);
+        } finally {
+            vi.useRealTimers();
+        }
     });
 
     it("cada card leva à página do projeto", async () => {

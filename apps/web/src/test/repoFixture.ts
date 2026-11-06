@@ -25,6 +25,12 @@ export function repo(over: Partial<Repository> = {}): Repository {
         defaultBranch: "main",
         openGraphImageUrl: null,
         licenseName: "MIT License",
+        watcherCount: 1,
+        hasReadme: true,
+        hasDocs: false,
+        hasPages: false,
+        diskUsageKb: 100,
+        cover: null,
         ...over,
     };
 }

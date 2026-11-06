@@ -40,6 +40,14 @@ export interface Repository {
     /** Social card do GitHub; `null` quando não há. */
     openGraphImageUrl: string | null;
     licenseName: string | null;
+    /* Características — `null` = a origem não mediu (nunca "não tem"). */
+    watcherCount: number | null;
+    hasReadme: boolean | null;
+    hasDocs: boolean | null;
+    hasPages: boolean | null;
+    diskUsageKb: number | null;
+    /** Capa real: social preview customizada ou imagem do README. */
+    cover: { kind: "custom" | "readme"; url: string } | null;
 }
 
 /** O detalhe de um projeto: o repositório mais o README já seguro. */
