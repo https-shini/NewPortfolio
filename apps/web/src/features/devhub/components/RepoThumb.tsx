@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { ProjectCover } from "@/features/devhub/components/ProjectCover";
 import {
     NEUTRAL_LANGUAGE_COLOR,
     type Repository,
@@ -22,13 +23,27 @@ import {
 interface Props {
     repo: Repository;
     className?: string;
+    /**
+     * `social` (padrão, vitrine da home): social card do GitHub.
+     * `cover` (catálogo): só capa REAL — imagem social personalizada
+     * ou imagem do README, escolhidas pela API. Sem ela, a capa
+     * composta pela identidade do projeto; o card automático do
+     * GitHub não entra, porque em 86 repositórios ele vira a mesma
+     * imagem repetida com textos diferentes.
+     */
+    source?: "social" | "cover";
 }
 
-export const RepoThumb: React.FC<Props> = ({ repo, className }) => {
+export const RepoThumb: React.FC<Props> = ({
+    repo,
+    className,
+    source = "social",
+}) => {
     const [falhou, setFalhou] = useState(false);
 
     const cor = repo.primaryLanguage?.color ?? NEUTRAL_LANGUAGE_COLOR;
-    const og = repo.openGraphImageUrl;
+    const og =
+        source === "cover" ? (repo.cover?.url ?? null) : repo.openGraphImageUrl;
 
     if (og && !falhou) {
         return (
@@ -43,8 +58,13 @@ export const RepoThumb: React.FC<Props> = ({ repo, className }) => {
                 loading="lazy"
                 decoding="async"
                 onError={() => setFalhou(true)}
+                data-cover={source === "cover" ? repo.cover?.kind : undefined}
             />
         );
+    }
+
+    if (source === "cover") {
+        return <ProjectCover repo={repo} className={className} />;
     }
 
     return (

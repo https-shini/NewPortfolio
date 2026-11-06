@@ -14,6 +14,9 @@ import {
     IconExternalLink,
     IconGitBranch,
     IconGitHub,
+    IconLayers,
+    IconLink,
+    IconRocket,
     IconStar,
 } from "@/shared/ui/Icons";
 
@@ -56,7 +59,11 @@ export const ProjectCard: React.FC<Props> = ({
             style={{ "--card-index": index } as React.CSSProperties}
         >
             <div className="devhub-card__thumb">
-                <RepoThumb repo={repo} className="devhub-card__media" />
+                <RepoThumb
+                    repo={repo}
+                    source="cover"
+                    className="devhub-card__media"
+                />
                 <span className="devhub-card__veil" aria-hidden="true" />
 
                 {linguagem && (
@@ -130,6 +137,40 @@ export const ProjectCard: React.FC<Props> = ({
                         </em>
                     )}
                 </p>
+
+                {(demo || repo.hasPages || repo.hasDocs) && (
+                    <ul
+                        className="devhub-card__badges"
+                        aria-label={t("devhub.card.badges")}
+                    >
+                        {demo && (
+                            <li className="devhub-card__badge">
+                                <IconRocket
+                                    width={12}
+                                    height={12}
+                                    aria-hidden
+                                />
+                                {t("devhub.card.badge.demo")}
+                            </li>
+                        )}
+                        {repo.hasPages && !demo && (
+                            <li className="devhub-card__badge">
+                                <IconLink width={12} height={12} aria-hidden />
+                                {t("devhub.card.badge.pages")}
+                            </li>
+                        )}
+                        {repo.hasDocs && (
+                            <li className="devhub-card__badge">
+                                <IconLayers
+                                    width={12}
+                                    height={12}
+                                    aria-hidden
+                                />
+                                {t("devhub.card.badge.docs")}
+                            </li>
+                        )}
+                    </ul>
+                )}
 
                 {repo.topics.length > 0 && (
                     <ul className="devhub-card__topics">
