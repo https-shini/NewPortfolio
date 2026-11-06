@@ -159,11 +159,19 @@ export const SOCIAL_LINKS = TREE_LINKS.filter((l) => l.kind === "social");
 /** Como um href deve ser aberto. Derivado, nunca declarado à mão. */
 export type LinkKind = "route" | "file" | "external" | "mailto";
 
+/** Prefixos de rotas da SPA que levam parâmetro no caminho. */
+const ROUTE_PREFIXES: readonly string[] = [`${ROUTES.PROJECTS}/`];
+
 export function linkKind(href: string): LinkKind {
     if (href.startsWith("mailto:")) return "mailto";
     if (/^https?:\/\//.test(href)) return "external";
     /* Caminho interno: rota da SPA se registrada, senão arquivo estático
        servido de public/ (os PDFs do currículo, por exemplo). */
-    const isRoute = (Object.values(ROUTES) as string[]).includes(href);
+    const caminho = href.split(/[?#]/)[0] ?? href;
+    const isRoute =
+        (Object.values(ROUTES) as string[]).includes(caminho) ||
+        /* Rotas com parâmetro: `/projetos/AuthService`. Sem isto, a página
+           de cada projeto seria tratada como arquivo e abriria em nova aba. */
+        ROUTE_PREFIXES.some((prefixo) => caminho.startsWith(prefixo));
     return isRoute ? "route" : "file";
 }

@@ -89,7 +89,8 @@
     background: #06080d;
 }
 
-.work-card__thumb img {
+.work-card__thumb img,
+.work-card__media {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -98,7 +99,8 @@
     transition: transform 0.6s var(--ease-out);
 }
 
-.work-card:hover .work-card__thumb img {
+.work-card:hover .work-card__thumb img,
+.work-card:hover .work-card__media {
     transform: scale(1.06);
 }
 
@@ -258,8 +260,112 @@
 
 /* ── CTA ────────────────────────────────────────────────────────── */
 .work__cta {
-    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
     margin-top: var(--space-10);
+}
+
+/* ── Vitrine do GitHub ──────────────────────────────────────────── */
+/* A lista é semântica (<ul>), mas o card é quem desenha: o item só
+   repassa a altura para os cards da mesma linha ficarem iguais. */
+.work__grid {
+    list-style: none;
+    padding: 0;
+}
+
+.work__item {
+    display: flex;
+}
+
+.work__item > .work-card {
+    flex: 1;
+}
+
+.work__note {
+    margin-top: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    color: var(--color-text-3);
+}
+
+.work__state {
+    margin-top: var(--space-8);
+    padding: var(--space-6);
+    text-align: center;
+    color: var(--color-text-2);
+    border: 1px dashed var(--color-border-2);
+    border-radius: var(--radius-lg);
+}
+
+.work-card__tech {
+    list-style: none;
+    padding: 0;
+}
+
+.work-card__nodesc {
+    color: var(--color-text-3);
+}
+
+/* Sem social card (ou se ele não carregar): o nome do repositório
+   sobre a cor da linguagem — nenhuma requisição, nenhum buraco. */
+.work-card__media[data-fallback] {
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(
+            circle at 30% 20%,
+            color-mix(in srgb, var(--thumb-tint) 45%, transparent),
+            transparent 70%
+        ),
+        var(--color-surface-2);
+}
+
+.work-card__media[data-fallback] .devhub-thumb__name {
+    padding: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--color-text-1);
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+/* Esqueleto enquanto o GitHub responde. */
+.work-card--skeleton {
+    pointer-events: none;
+    padding-bottom: var(--space-5);
+}
+
+.work-card--skeleton .work-card__thumb,
+.work-card__skel-line {
+    display: block;
+    background: var(--color-surface-2);
+}
+
+.work-card__skel-line {
+    height: 12px;
+    margin: var(--space-4) var(--space-5) 0;
+    border-radius: var(--radius-full);
+}
+
+.work-card__skel-line--short {
+    width: 55%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .work-card--skeleton .work-card__thumb,
+    .work-card__skel-line {
+        animation: work-skeleton 1.4s ease-in-out infinite;
+    }
+}
+
+@keyframes work-skeleton {
+    50% {
+        opacity: 0.55;
+    }
 }
 
 /* ── A partir de --bp-work-grid (600px) ─────────────────────────── */
@@ -277,6 +383,7 @@
     .work-card,
     .work-card::before,
     .work-card__thumb img,
+    .work-card__media,
     .work-card__emoji,
     .work-btn,
     .work-btn svg,

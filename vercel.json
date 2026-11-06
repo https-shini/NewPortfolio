@@ -77,6 +77,18 @@
             "destination": "/index.html"
         },
         {
+            "source": "/projetos",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/projetos/",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/projetos/(.*)",
+            "destination": "/index.html"
+        },
+        {
             "source": "/release-notes",
             "destination": "/index.html"
         },

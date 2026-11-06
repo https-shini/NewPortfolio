@@ -862,10 +862,12 @@ describe("paginação do acervo", () => {
 
         const { corpo } = await chamar({ op: "index" });
 
-        expect(fetchMock).toHaveBeenCalledTimes(2);
-        expect(String((fetchMock.mock.calls[1] as [string])[0])).toContain(
-            "page=2",
-        );
+        /* Duas páginas de repositórios (a 3ª chamada é a dos seguidores). */
+        const paginas = (fetchMock.mock.calls as unknown as [string][])
+            .map(([url]) => String(url))
+            .filter((url) => url.includes("/repos?"));
+        expect(paginas).toHaveLength(2);
+        expect(paginas[1]).toContain("page=2");
         expect(
             (corpo as { repositories: unknown[] }).repositories,
         ).toHaveLength(101);
@@ -884,5 +886,166 @@ describe("guarda de abuso", () => {
         expect(codigo).toBe(429);
         expect(headers["retry-after"]).toBe("60");
         expect(fetchMock).not.toHaveBeenCalled();
+    });
+});
+
+/* ═════════════════════════════════════════════════════════
+   Fixados (vitrine da home) e seguidores (métricas da /projetos)
+   ═════════════════════════════════════════════════════════ */
+
+describe("op=pinned", () => {
+    const fixado = (n: number, extra: Record<string, unknown> = {}) => ({
+        ...REPO_GQL,
+        id: `P_${n}`,
+        name: `fixado-${n}`,
+        ...extra,
+    });
+
+    it("devolve os fixados na ordem do GitHub, com source=pinned", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        const fetchMock = vi.fn(() =>
+            json({
+                data: {
+                    user: {
+                        pinnedItems: {
+                            nodes: [fixado(3), fixado(1), fixado(2)],
+                        },
+                    },
+                },
+            }),
+        );
+        vi.stubGlobal("fetch", fetchMock);
+
+        const { codigo, corpo, headers } = await chamar({ op: "pinned" });
+
+        expect(codigo).toBe(200);
+        const c = corpo as { source: string; repositories: { name: string }[] };
+        expect(c.source).toBe("pinned");
+        expect(c.repositories.map((r) => r.name)).toEqual([
+            "fixado-3",
+            "fixado-1",
+            "fixado-2",
+        ]);
+        expect(headers["cache-control"]).toContain("s-maxage");
+        /* Consulta fixa: pede pinnedItems de repositório, limitado a 6. */
+        const corpoReq = JSON.parse(
+            (fetchMock.mock.calls[0] as unknown as [string, RequestInit])[1]
+                .body as string,
+        ) as { query: string };
+        expect(corpoReq.query).toContain(
+            "pinnedItems(first: 6, types: [REPOSITORY])",
+        );
+    });
+
+    it("descarta fixado privado", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(() =>
+                json({
+                    data: {
+                        user: {
+                            pinnedItems: {
+                                nodes: [
+                                    fixado(1),
+                                    fixado(2, { isPrivate: true }),
+                                ],
+                            },
+                        },
+                    },
+                }),
+            ),
+        );
+
+        const { corpo } = await chamar({ op: "pinned" });
+
+        expect(
+            (corpo as { repositories: { name: string }[] }).repositories.map(
+                (r) => r.name,
+            ),
+        ).toEqual(["fixado-1"]);
+    });
+
+    it("sem token, cai para os 6 mais recentes sem fork/arquivado (source=recent)", async () => {
+        const lista = [
+            { ...REPO_REST, id: 1, name: "fork", fork: true },
+            { ...REPO_REST, id: 2, name: "arquivado", archived: true },
+            ...Array.from({ length: 8 }, (_, i) => ({
+                ...REPO_REST,
+                id: 10 + i,
+                name: `r${i}`,
+            })),
+        ];
+        vi.stubGlobal(
+            "fetch",
+            vi.fn((url: string) =>
+                json(url.includes("/repos?") ? lista : { followers: 5 }),
+            ),
+        );
+
+        const { corpo } = await chamar({ op: "pinned" });
+
+        const c = corpo as { source: string; repositories: { name: string }[] };
+        expect(c.source).toBe("recent");
+        expect(c.repositories.map((r) => r.name)).toEqual([
+            "r0",
+            "r1",
+            "r2",
+            "r3",
+            "r4",
+            "r5",
+        ]);
+    });
+
+    it("não aceita name", async () => {
+        const { codigo } = await chamar({ op: "pinned", name: "x" });
+        expect(codigo).toBe(400);
+    });
+});
+
+describe("seguidores no índice", () => {
+    it("GraphQL: lê followers.totalCount da primeira página", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(() =>
+                json({
+                    data: {
+                        user: {
+                            followers: { totalCount: 42 },
+                            repositories: {
+                                pageInfo: {
+                                    hasNextPage: false,
+                                    endCursor: null,
+                                },
+                                nodes: [REPO_GQL],
+                            },
+                        },
+                    },
+                }),
+            ),
+        );
+
+        const { corpo } = await chamar({ op: "index" });
+
+        expect((corpo as { followers: number }).followers).toBe(42);
+    });
+
+    it("REST: busca o usuário e, se falhar, devolve null sem derrubar a lista", async () => {
+        vi.stubGlobal(
+            "fetch",
+            vi.fn((url: string) =>
+                url.includes("/repos?")
+                    ? json([REPO_REST])
+                    : Promise.reject(new Error("rede")),
+            ),
+        );
+
+        const { codigo, corpo } = await chamar({ op: "index" });
+
+        expect(codigo).toBe(200);
+        const c = corpo as { followers: null; repositories: unknown[] };
+        expect(c.followers).toBeNull();
+        expect(c.repositories).toHaveLength(1);
     });
 });

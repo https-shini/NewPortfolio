@@ -22,13 +22,18 @@ const DIST = "apps/web/dist/assets";
 
 const TETOS = [
     // Página técnica do Codex: ~5.7 KB gzip adicionais, carregados por rota.
-    { nome: "JS total", limite: 132, alvo: (f) => f.tipo === "js" },
+    // DevHub (/projetos e /projetos/:nome): ~8.8 KB gzip adicionais, também
+    // só na rota — o JS principal da home não cresceu (45.7 → 45.6 KB).
+    // Teto refeito sobre 137.2 KB medidos, com a folga de ~10% de sempre.
+    { nome: "JS total", limite: 150, alvo: (f) => f.tipo === "js" },
     {
         nome: "vendor (react + react-dom)",
         limite: 50,
         alvo: (f) => f.nome.startsWith("vendor-"),
     },
-    { nome: "CSS total", limite: 38, alvo: (f) => f.tipo === "css" },
+    // DevHub: ~3.7 KB gzip de CSS próprio, carregado só nas rotas dele
+    // (o CSS principal da home foi de 20.2 para 20.5 KB). Sobre 41.0 KB.
+    { nome: "CSS total", limite: 45, alvo: (f) => f.tipo === "css" },
 ];
 
 function listar(dir, tipo) {
