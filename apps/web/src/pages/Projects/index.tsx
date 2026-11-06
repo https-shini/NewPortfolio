@@ -1,30 +1,46 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import "@/features/devhub/devhub.css";
 import { Header } from "@/widgets/Header/Header";
 import { Footer } from "@/widgets/Footer/Footer";
 import { ScrollUtils } from "@/shared/ui/ScrollUtils";
 import { ProjectCard } from "@/features/devhub/components/ProjectCard";
-import { DevhubToolbar } from "@/features/devhub/components/DevhubToolbar";
+import { CatalogFilters } from "@/features/devhub/components/CatalogFilters";
+import { CatalogChips } from "@/features/devhub/components/CatalogChips";
+import { CatalogPagination } from "@/features/devhub/components/CatalogPagination";
+import { useCatalogState } from "@/features/devhub/useCatalogState";
+import {
+    SORTS,
+    activeFilterCount,
+    buildFacets,
+    runCatalog,
+    type CatalogSort,
+} from "@/features/devhub/catalog";
+import { Modal } from "@/shared/ui/Modal/Modal";
 import { ProjectMetrics } from "@/features/devhub/components/ProjectMetrics";
 import { useDevhubIndex } from "@/features/devhub/useDevhub";
-import {
-    GALLERY_PAGE_SIZE,
-    availableLanguages,
-    filterAndSort,
-    recentRepos,
-    repoStats,
-} from "@/features/devhub/selectors";
+import { recentRepos, repoStats } from "@/features/devhub/selectors";
 import { formatNumber } from "@/features/devhub/format";
-import { DEFAULT_FILTERS, type ProjectFilters } from "@/features/devhub/types";
 import { useLang } from "@/shared/hooks/useLang";
-import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { scrollToSection } from "@/shared/lib/smoothScroll";
 import { ROUTES } from "@/shared/config/routes";
 import { GITHUB_URL } from "@/shared/config/constants";
 import { PROFILE } from "@/shared/config/profile";
-import { IconArrowRight, IconGitHub, IconWarning } from "@/shared/ui/Icons";
+import {
+    IconArrowRight,
+    IconFilter,
+    IconGitHub,
+    IconSearch,
+    IconWarning,
+} from "@/shared/ui/Icons";
+import type { TranslationKey } from "@/shared/lib/translations";
 
 /* ─────────────────────────────────────────────────────────
    /projetos — o DevHub integrado ao portfólio
@@ -55,64 +71,72 @@ export const ProjectsPage: React.FC = () => {
 
     const { data, loading, error } = useDevhubIndex();
 
-    const [filters, setFilters] = useState<ProjectFilters>(DEFAULT_FILTERS);
-    const [searchInput, setSearchInput] = useState("");
-    const [limite, setLimite] = useState(GALLERY_PAGE_SIZE);
-    const search = useDebouncedValue(searchInput, 250);
+    const { state, update, reset } = useCatalogState();
+    const [busca, setBusca] = useState(state.query);
+    const [gaveta, setGaveta] = useState(false);
+    const temporizador = useRef(0);
+    const resultadosRef = useRef<HTMLParagraphElement>(null);
 
     const repositories = useMemo(
         () => data?.repositories ?? [],
         [data?.repositories],
     );
 
-    /* A busca entra aqui, e não no estado: o campo responde a cada tecla
-       enquanto o recálculo espera a pausa. */
-    const applied = useMemo<ProjectFilters>(
-        () => ({ ...filters, search }),
-        [filters, search],
-    );
+    /* Debounce da busca: o campo responde a cada tecla; o catálogo
+       recalcula na pausa (250 ms). */
+    const aoBuscar = (valor: string) => {
+        setBusca(valor);
+        window.clearTimeout(temporizador.current);
+        temporizador.current = window.setTimeout(
+            () => update({ query: valor }),
+            250,
+        );
+    };
+    useEffect(() => () => window.clearTimeout(temporizador.current), []);
 
-    const visible = useMemo(
-        () => filterAndSort(repositories, applied),
-        [repositories, applied],
+    const resultado = useMemo(
+        () => runCatalog(repositories, state),
+        [repositories, state],
+    );
+    const facets = useMemo(
+        () => buildFacets(repositories, state),
+        [repositories, state],
     );
     const recentes = useMemo(() => recentRepos(repositories), [repositories]);
     const stats = useMemo(
         () => (data ? repoStats(repositories, data.followers) : null),
         [data, repositories],
     );
-    const languages = useMemo(
-        () => availableLanguages(repositories),
-        [repositories],
-    );
+    const qtdFiltros = activeFilterCount(state);
 
-    /* Mudar um filtro volta a galeria para a primeira "página": revelar
-       24 resultados de uma busca nova, porque a anterior tinha sido
-       expandida, esconderia que o recorte mudou. */
-    const setFilter = useCallback(
-        <K extends keyof ProjectFilters>(key: K, value: ProjectFilters[K]) => {
-            setFilters((prev) => ({ ...prev, [key]: value }));
-            setLimite(GALLERY_PAGE_SIZE);
-        },
-        [],
-    );
+    const limparTudo = useCallback(() => {
+        window.clearTimeout(temporizador.current);
+        setBusca("");
+        reset();
+    }, [reset]);
 
-    const onSearchChange = useCallback((value: string) => {
-        setSearchInput(value);
-        setLimite(GALLERY_PAGE_SIZE);
-    }, []);
+    /* Trocar de página leva o foco ao topo dos resultados: quem navega
+       por teclado ou leitor de tela não fica preso lá embaixo. */
+    const irParaPagina = (pagina: number) => {
+        update({ page: pagina }, { keepPage: true });
+        const alvo = resultadosRef.current;
+        if (alvo) {
+            alvo.scrollIntoView?.({ block: "start", behavior: "smooth" });
+            alvo.focus({ preventScroll: true });
+        }
+    };
 
-    const reset = useCallback(() => {
-        setFilters(DEFAULT_FILTERS);
-        setSearchInput("");
-        setLimite(GALLERY_PAGE_SIZE);
-    }, []);
-
-    const mostrados = visible.slice(0, limite);
-    const restam = visible.length - mostrados.length;
-    const contagem = t("devhub.showing")
-        .replace("{shown}", formatNumber(mostrados.length, lang))
-        .replace("{total}", formatNumber(visible.length, lang));
+    const rotuloTotal =
+        resultado.total === 1
+            ? t("catalog.results.one")
+            : t("catalog.results").replace(
+                  "{n}",
+                  formatNumber(resultado.total, lang),
+              );
+    const rotuloIntervalo = t("catalog.range")
+        .replace("{from}", formatNumber(resultado.from, lang))
+        .replace("{to}", formatNumber(resultado.to, lang))
+        .replace("{total}", formatNumber(resultado.total, lang));
 
     return (
         <>
@@ -235,82 +259,226 @@ export const ProjectsPage: React.FC = () => {
 
                     {!error && !loading && (
                         <section
-                            className="devhub-section"
+                            className="devhub-section catalog"
                             id={ID_TODOS}
                             aria-labelledby="devhub-all"
                         >
-                            <div className="devhub-section__head">
+                            <div className="catalog__head">
                                 <h2
                                     className="devhub-section__title"
                                     id="devhub-all"
                                 >
                                     {t("devhub.all.title")}
                                 </h2>
+                                <div className="catalog__search" role="search">
+                                    <label
+                                        htmlFor="catalog-busca"
+                                        className="sr-only"
+                                    >
+                                        {t("devhub.search.label")}
+                                    </label>
+                                    <IconSearch
+                                        className="catalog__search-icon"
+                                        width={18}
+                                        height={18}
+                                        aria-hidden
+                                    />
+                                    <input
+                                        id="catalog-busca"
+                                        className="catalog__search-input"
+                                        type="search"
+                                        value={busca}
+                                        onChange={(e) =>
+                                            aoBuscar(e.target.value)
+                                        }
+                                        placeholder={t(
+                                            "catalog.search.placeholder",
+                                        )}
+                                        autoComplete="off"
+                                        spellCheck={false}
+                                        maxLength={100}
+                                    />
+                                </div>
                             </div>
 
-                            <DevhubToolbar
-                                filters={applied}
-                                searchInput={searchInput}
-                                onSearchChange={onSearchChange}
-                                onChange={setFilter}
-                                onReset={reset}
-                                languages={languages}
-                            />
-
-                            <p className="devhub-count" aria-live="polite">
-                                {contagem}
-                            </p>
-
-                            {visible.length === 0 ? (
-                                <div className="devhub-state" role="status">
-                                    <h3 className="devhub-state__title">
-                                        {t("devhub.empty.title")}
-                                    </h3>
-                                    <p className="devhub-state__desc">
-                                        {t("devhub.empty.desc")}
-                                    </p>
-                                    <button
-                                        type="button"
-                                        className="btn btn--outline"
-                                        onClick={reset}
+                            <div className="catalog__layout">
+                                <aside
+                                    className="catalog__sidebar"
+                                    aria-labelledby="catalog-filtros"
+                                >
+                                    <h3
+                                        className="catalog__sidebar-title"
+                                        id="catalog-filtros"
                                     >
-                                        {t("devhub.filters.reset")}
-                                    </button>
-                                </div>
-                            ) : (
-                                <>
-                                    <ul className="devhub-grid">
-                                        {mostrados.map((repo, i) => (
-                                            <li key={repo.id}>
-                                                <ProjectCard
-                                                    repo={repo}
-                                                    index={
-                                                        i % GALLERY_PAGE_SIZE
-                                                    }
+                                        {t("catalog.filters")}
+                                    </h3>
+                                    <CatalogFilters
+                                        state={state}
+                                        facets={facets}
+                                        update={update}
+                                    />
+                                </aside>
+
+                                <div className="catalog__main">
+                                    <div className="catalog__bar">
+                                        <p
+                                            className="catalog__count"
+                                            ref={resultadosRef}
+                                            tabIndex={-1}
+                                            aria-live="polite"
+                                        >
+                                            <strong>{rotuloTotal}</strong>
+                                            {resultado.total > 0 && (
+                                                <span>{rotuloIntervalo}</span>
+                                            )}
+                                        </p>
+                                        <div className="catalog__bar-actions">
+                                            <button
+                                                type="button"
+                                                className="catalog__filters-btn"
+                                                aria-haspopup="dialog"
+                                                onClick={() => setGaveta(true)}
+                                            >
+                                                <IconFilter
+                                                    width={16}
+                                                    height={16}
+                                                    aria-hidden
                                                 />
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    {restam > 0 && (
-                                        <div className="devhub-more">
+                                                {t("catalog.filters")}
+                                                {qtdFiltros > 0 && (
+                                                    <span className="catalog__filters-badge">
+                                                        {qtdFiltros}
+                                                    </span>
+                                                )}
+                                            </button>
+                                            <label className="catalog__sort">
+                                                <span>
+                                                    {t("catalog.sort.label")}
+                                                </span>
+                                                <select
+                                                    value={state.sort}
+                                                    onChange={(e) =>
+                                                        update({
+                                                            sort: e.target
+                                                                .value as CatalogSort,
+                                                        })
+                                                    }
+                                                >
+                                                    {SORTS.map((o) => (
+                                                        <option
+                                                            key={o}
+                                                            value={o}
+                                                        >
+                                                            {t(
+                                                                `catalog.sort.${o}` as TranslationKey,
+                                                            )}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <CatalogChips
+                                        state={state}
+                                        update={(m) => {
+                                            if ("query" in m) setBusca("");
+                                            update(m);
+                                        }}
+                                        onClearAll={limparTudo}
+                                    />
+
+                                    {resultado.total === 0 ? (
+                                        <div
+                                            className="devhub-state"
+                                            role="status"
+                                        >
+                                            <h3 className="devhub-state__title">
+                                                {t("devhub.empty.title")}
+                                            </h3>
+                                            <p className="devhub-state__desc">
+                                                {t("devhub.empty.desc")}
+                                            </p>
                                             <button
                                                 type="button"
                                                 className="btn btn--outline"
-                                                onClick={() =>
-                                                    setLimite(
-                                                        (n) =>
-                                                            n +
-                                                            GALLERY_PAGE_SIZE,
-                                                    )
-                                                }
+                                                onClick={limparTudo}
                                             >
-                                                {t("devhub.loadMore")} (
-                                                {formatNumber(restam, lang)})
+                                                {t("catalog.filters.clearAll")}
                                             </button>
                                         </div>
+                                    ) : (
+                                        <ul className="devhub-grid catalog__grid">
+                                            {resultado.items.map((repo, i) => (
+                                                <li key={repo.id}>
+                                                    <ProjectCard
+                                                        repo={repo}
+                                                        index={i}
+                                                    />
+                                                </li>
+                                            ))}
+                                        </ul>
                                     )}
-                                </>
-                            )}
+
+                                    <CatalogPagination
+                                        page={resultado.page}
+                                        pageCount={resultado.pageCount}
+                                        onChange={irParaPagina}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Mobile: os mesmos filtros numa gaveta (Modal do
+                                projeto: foco preso, Esc fecha, fundo inerte). */}
+                            <Modal
+                                isOpen={gaveta}
+                                onClose={() => setGaveta(false)}
+                                labelledBy="catalog-gaveta-titulo"
+                                className="catalog-drawer"
+                            >
+                                <div className="catalog-drawer__head">
+                                    <h3 id="catalog-gaveta-titulo">
+                                        {t("catalog.filters")}
+                                    </h3>
+                                    <button
+                                        type="button"
+                                        className="catalog-drawer__close"
+                                        onClick={() => setGaveta(false)}
+                                        aria-label={t("catalog.filters.close")}
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                                <div className="catalog-drawer__body">
+                                    <CatalogFilters
+                                        state={state}
+                                        facets={facets}
+                                        update={update}
+                                    />
+                                </div>
+                                <div className="catalog-drawer__foot">
+                                    <button
+                                        type="button"
+                                        className="btn btn--outline"
+                                        onClick={limparTudo}
+                                        disabled={
+                                            qtdFiltros === 0 && !state.query
+                                        }
+                                    >
+                                        {t("catalog.filters.clearAll")}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn btn--primary"
+                                        onClick={() => setGaveta(false)}
+                                    >
+                                        {t("catalog.filters.apply").replace(
+                                            "{n}",
+                                            formatNumber(resultado.total, lang),
+                                        )}
+                                    </button>
+                                </div>
+                            </Modal>
                         </section>
                     )}
                 </div>

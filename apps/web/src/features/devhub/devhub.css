@@ -1254,3 +1254,575 @@ h3.devhub-stats__label {
     padding: 0;
     list-style: none;
 }
+
+/* ─────────────────────────────────────────────────────────
+   Catálogo (/projetos → Todos os projetos)
+   ─────────────────────────────────────────────────────────
+   Mobile primeiro: busca em largura total, filtros numa gaveta,
+   uma coluna de cards. A partir de 1024px a barra lateral aparece
+   e o botão "Filtros" some.
+───────────────────────────────────────────────────────── */
+
+.catalog__head {
+    display: grid;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+}
+
+.catalog__search {
+    position: relative;
+}
+
+.catalog__search-icon {
+    position: absolute;
+    top: 50%;
+    left: var(--space-4);
+    transform: translateY(-50%);
+    color: var(--color-text-3);
+    pointer-events: none;
+}
+
+.catalog__search-input {
+    width: 100%;
+    min-height: 52px;
+    padding: 0 var(--space-4) 0 calc(var(--space-4) * 2 + 18px);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-2);
+    color: var(--color-text-1);
+    font: inherit;
+    font-size: var(--text-md);
+    box-shadow: var(--surface-edge);
+    transition:
+        border-color 0.2s var(--ease-out),
+        box-shadow 0.2s var(--ease-out);
+}
+
+.catalog__search-input::placeholder {
+    color: var(--color-text-3);
+}
+
+.catalog__search-input:hover {
+    border-color: var(--color-border-3);
+}
+
+.catalog__search-input:focus-visible {
+    outline: none;
+    border-color: var(--color-border-brand);
+    box-shadow:
+        var(--surface-edge),
+        0 0 0 3px var(--color-brand-subtle);
+}
+
+.catalog__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: start;
+}
+
+.catalog__sidebar {
+    display: none;
+}
+
+.catalog__sidebar-title {
+    margin-bottom: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.catalog__main {
+    min-width: 0;
+}
+
+/* Barra de resultados: contagem · filtros (mobile) · ordenação */
+.catalog__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-5);
+    margin-bottom: var(--space-4);
+}
+
+.catalog__count {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    margin: 0;
+    color: var(--color-text-3);
+    font-size: var(--text-sm);
+    scroll-margin-top: calc(var(--header-height) + var(--space-6));
+}
+
+.catalog__count:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 4px;
+    border-radius: var(--radius-xs);
+}
+
+.catalog__count strong {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    color: var(--color-text-1);
+}
+
+.catalog__bar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.catalog__filters-btn,
+.catalog__sort select {
+    min-height: 44px;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    color: var(--color-text-1);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition:
+        border-color 0.2s var(--ease-out),
+        background-color 0.2s var(--ease-out);
+}
+
+.catalog__filters-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0 var(--space-4);
+    cursor: pointer;
+}
+
+.catalog__filters-btn:hover,
+.catalog__sort select:hover {
+    border-color: var(--color-border-brand);
+}
+
+.catalog__filters-btn:focus-visible,
+.catalog__sort select:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog__filters-badge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-brand);
+    color: #fff;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+}
+
+.catalog__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-3);
+}
+
+.catalog__sort select {
+    padding: 0 var(--space-8) 0 var(--space-3);
+    cursor: pointer;
+    appearance: none;
+    background-image:
+        linear-gradient(45deg, transparent 50%, currentcolor 50%),
+        linear-gradient(135deg, currentcolor 50%, transparent 50%);
+    background-position:
+        calc(100% - 18px) 50%,
+        calc(100% - 13px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+}
+
+/* Chips de filtros ativos */
+.catalog-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.catalog-chips__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.catalog-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 32px;
+    padding: 0 var(--space-2) 0 var(--space-3);
+    border: 1px solid var(--color-border-brand);
+    border-radius: var(--radius-full);
+    background: var(--color-brand-subtle);
+    color: var(--color-text-1);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+        background-color 0.2s var(--ease-out),
+        transform 0.15s var(--ease-out);
+}
+
+.catalog-chip:hover {
+    background: var(--color-brand-muted);
+}
+
+.catalog-chip:active {
+    transform: scale(0.96);
+}
+
+.catalog-chip:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog-chip__x {
+    display: inline-grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: var(--text-md);
+    line-height: 1;
+    color: var(--color-brand-text);
+}
+
+.catalog-chips__clear {
+    min-height: 32px;
+    padding: 0 var(--space-1);
+    border: 0;
+    background: transparent;
+    color: var(--color-brand-text);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.catalog-chips__clear:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+/* Grupos de filtro */
+.catalog-filters {
+    display: grid;
+    gap: var(--space-6);
+}
+
+.catalog-filter {
+    min-width: 0;
+    margin: 0;
+    padding: 0 0 var(--space-6);
+    border: 0;
+    border-bottom: 1px solid var(--color-border-1);
+}
+
+.catalog-filter:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.catalog-filter__title {
+    margin-bottom: var(--space-3);
+    padding: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.catalog-filter__list {
+    display: grid;
+    gap: 2px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.catalog-filter__option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 36px;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-2);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition:
+        background-color 0.15s var(--ease-out),
+        color 0.15s var(--ease-out);
+}
+
+.catalog-filter__option:hover {
+    background: var(--color-surface-3);
+    color: var(--color-text-1);
+}
+
+.catalog-filter__option:has(input:checked) {
+    color: var(--color-text-1);
+    font-weight: 500;
+}
+
+/* Opção que zera o resultado: continua clicável (não é "disabled"),
+   então mantém contraste AA — esmaece só a cor, sem opacidade. */
+.catalog-filter__option[data-empty] {
+    color: var(--color-text-3);
+}
+
+.catalog-filter__option input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: var(--color-brand);
+    cursor: pointer;
+}
+
+.catalog-filter__option input:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog-filter__label {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.catalog-filter__count {
+    min-width: 28px;
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    text-align: center;
+    color: var(--color-text-3);
+}
+
+.catalog-filter__option--toggle {
+    margin-top: var(--space-2);
+}
+
+.catalog-filter__more {
+    margin-top: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    border: 0;
+    background: transparent;
+    color: var(--color-brand-text);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.catalog-filter__more:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+/* Paginação */
+.catalog-pages {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-10);
+}
+
+.catalog-pages__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.catalog-pages__num,
+.catalog-pages__step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 var(--space-3);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-2);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition:
+        background-color 0.2s var(--ease-out),
+        border-color 0.2s var(--ease-out),
+        color 0.2s var(--ease-out);
+}
+
+.catalog-pages__step {
+    border-color: var(--color-border-2);
+}
+
+.catalog-pages__num:hover,
+.catalog-pages__step:hover:not(:disabled) {
+    background: var(--color-surface-3);
+    color: var(--color-text-1);
+}
+
+.catalog-pages__num[aria-current="page"] {
+    background: var(--color-brand);
+    border-color: var(--color-brand);
+    color: #fff;
+    font-weight: 700;
+}
+
+.catalog-pages__num:focus-visible,
+.catalog-pages__step:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog-pages__step:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.catalog-pages__gap {
+    display: inline-grid;
+    place-items: center;
+    min-width: 28px;
+    color: var(--color-text-3);
+}
+
+/* Gaveta de filtros (mobile) — usa o Modal do projeto */
+.catalog-drawer {
+    --modal-width: 480px;
+    --modal-max-height: min(88dvh, 760px);
+    display: flex;
+    flex-direction: column;
+}
+
+.catalog-drawer__head,
+.catalog-drawer__foot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    flex-shrink: 0;
+}
+
+.catalog-drawer__head {
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-border-1);
+}
+
+.catalog-drawer__head h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+}
+
+.catalog-drawer__close {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-1);
+    font-size: var(--text-xl);
+    line-height: 1;
+    cursor: pointer;
+}
+
+.catalog-drawer__close:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog-drawer__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-5);
+    overscroll-behavior: contain;
+}
+
+.catalog-drawer__foot {
+    border-top: 1px solid var(--color-border-1);
+}
+
+.catalog-drawer__foot .btn {
+    flex: 1;
+}
+
+@media (min-width: 640px) {
+    .catalog__head {
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: var(--space-8);
+    }
+}
+
+@media (min-width: 1024px) {
+    .catalog__layout {
+        grid-template-columns: 248px minmax(0, 1fr);
+    }
+
+    .catalog__sidebar {
+        display: block;
+        position: sticky;
+        top: calc(var(--header-height) + var(--space-6));
+        max-height: calc(100dvh - var(--header-height) - var(--space-12));
+        overflow-y: auto;
+        padding: var(--space-5);
+        border: 1px solid var(--color-border-1);
+        border-radius: var(--radius-xl);
+        background: var(--color-surface-2);
+        box-shadow: var(--surface-edge);
+        overscroll-behavior: contain;
+    }
+
+    .catalog__filters-btn {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .catalog-chip,
+    .catalog-filter__option,
+    .catalog-pages__num,
+    .catalog-pages__step,
+    .catalog__search-input {
+        transition: none;
+    }
+}
