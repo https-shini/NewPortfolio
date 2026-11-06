@@ -1,4 +1,10 @@
 import { renderMarkdown } from "./_markdown.js";
+import {
+    GITHUB_REST,
+    GITHUB_USER,
+    headersGitHub,
+    temToken,
+} from "./_github.js";
 
 /* ─────────────────────────────────────────────────────────
    _releases — a busca das releases, compartilhada
@@ -10,7 +16,7 @@ import { renderMarkdown } from "./_markdown.js";
    feita só de um lado.
 ───────────────────────────────────────────────────────── */
 
-export const GITHUB_USER = "https-shini";
+export { GITHUB_USER };
 export const GITHUB_REPO = "NewPortfolio";
 
 /** Teto de releases lidas — a timeline pagina o resto. */
@@ -41,17 +47,11 @@ export interface ReleasePayload {
  * sozinha quando não vem nada.
  */
 export async function fetchGithubReleases(): Promise<ReleasePayload[]> {
-    const token = process.env.GITHUB_TOKEN;
-
-    const headers: Record<string, string> = {
-        Accept: "application/vnd.github+json",
-        "User-Agent": "gcruz-portfolio",
-    };
-    if (token) headers.Authorization = `Bearer ${token}`;
+    const headers = headersGitHub();
 
     try {
         const response = await fetch(
-            `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/releases?per_page=${PER_PAGE}`,
+            `${GITHUB_REST}/repos/${GITHUB_USER}/${GITHUB_REPO}/releases?per_page=${PER_PAGE}`,
             { headers },
         );
 
@@ -61,7 +61,9 @@ export async function fetchGithubReleases(): Promise<ReleasePayload[]> {
                uma queda real passaria despercebida. */
             console.warn(
                 `[releases] GitHub respondeu ${response.status}` +
-                    (token ? "" : " (sem GITHUB_TOKEN: limite de 60 req/h)"),
+                    (temToken()
+                        ? ""
+                        : " (sem GITHUB_TOKEN: limite de 60 req/h)"),
             );
             return [];
         }
