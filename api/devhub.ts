@@ -1,4 +1,5 @@
 import { renderReadme } from "./_devhub-markdown.js";
+import { buscarEstatisticas } from "./_github-detalhe.js";
 import {
     CACHE_PADRAO,
     ErroPublico,
@@ -46,11 +47,15 @@ interface VercelResponse {
    Operações — a lista fechada
 ───────────────────────────────────────────────────────── */
 
-const OPERACOES = ["index", "pinned", "project", "readme"] as const;
+const OPERACOES = ["index", "pinned", "project", "readme", "stats"] as const;
 type Operacao = (typeof OPERACOES)[number];
 
 /** Operações que exigem `name`; as demais o recusam. */
-const EXIGEM_NOME: ReadonlySet<Operacao> = new Set(["project", "readme"]);
+const EXIGEM_NOME: ReadonlySet<Operacao> = new Set([
+    "project",
+    "readme",
+    "stats",
+]);
 
 /** Os únicos parâmetros aceitos. Qualquer outro é recusado. */
 const PARAMS_ACEITOS = new Set(["op", "name"]);
@@ -249,9 +254,11 @@ export default async function handler(
                 ? await opIndex()
                 : pedido.op === "pinned"
                   ? await opPinned()
-                  : pedido.op === "project"
-                    ? await buscarRepositorio(pedido.name!)
-                    : await opReadme(pedido.name!);
+                  : pedido.op === "stats"
+                    ? await buscarEstatisticas(pedido.name!)
+                    : pedido.op === "project"
+                      ? await buscarRepositorio(pedido.name!)
+                      : await opReadme(pedido.name!);
 
         res.setHeader("Cache-Control", CACHE_PADRAO);
         res.status(200).json(corpo);

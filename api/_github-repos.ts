@@ -5,6 +5,7 @@ import {
     consultarGraphQL,
     temToken,
 } from "./_github.js";
+import { escolherCapa, type Cover } from "./_github-cover.js";
 
 /* ─────────────────────────────────────────────────────────
    _github-repos.ts — repositórios no contrato interno
@@ -47,6 +48,22 @@ export interface Repository {
     defaultBranch: string | null;
     openGraphImageUrl: string | null;
     licenseName: string | null;
+    /* ── Características (null = a origem não informou) ─────────
+       `null` nunca vira `false` nem `0`: "não sei" e "não tem" são
+       respostas diferentes, e os filtros só aparecem para o que é
+       conhecido. O caminho REST (sem token) não mede nenhuma delas. */
+    /** Quem acompanha o repositório (o dono conta). */
+    watcherCount: number | null;
+    /** Há README na raiz. */
+    hasReadme: boolean | null;
+    /** Há pasta `docs/` na raiz. */
+    hasDocs: boolean | null;
+    /** Publicado no GitHub Pages (houve deploy no ambiente `github-pages`). */
+    hasPages: boolean | null;
+    /** Tamanho em KB, como o GitHub mede. */
+    diskUsageKb: number | null;
+    /** Capa real (custom ou do README); `null` = o cliente compõe uma. */
+    cover: Cover | null;
 }
 
 /**
@@ -116,6 +133,14 @@ export const CAMPOS_REPO = `
     openGraphImageUrl
     defaultBranchRef { name }
     licenseInfo { name }
+    usesCustomOpenGraphImage
+    watchers { totalCount }
+    diskUsage
+    readmeUp: object(expression: "HEAD:README.md") { ... on Blob { text } }
+    readmeLow: object(expression: "HEAD:readme.md") { ... on Blob { text } }
+    readmeCap: object(expression: "HEAD:Readme.md") { ... on Blob { text } }
+    docsDir: object(expression: "HEAD:docs") { ... on Tree { oid } }
+    pages: deployments(environments: ["github-pages"], first: 1) { totalCount }
     repositoryTopics(first: 20) { nodes { topic { name } } }
     primaryLanguage { name color }
     languages(first: 8, orderBy: { field: SIZE, direction: DESC }) {
@@ -185,6 +210,14 @@ export interface NoRepoGQL {
     openGraphImageUrl?: string | null;
     defaultBranchRef?: { name?: string } | null;
     licenseInfo?: { name?: string } | null;
+    usesCustomOpenGraphImage?: boolean;
+    watchers?: { totalCount?: number } | null;
+    diskUsage?: number | null;
+    readmeUp?: { text?: string | null } | null;
+    readmeLow?: { text?: string | null } | null;
+    readmeCap?: { text?: string | null } | null;
+    docsDir?: { oid?: string } | null;
+    pages?: { totalCount?: number } | null;
     repositoryTopics?: { nodes?: { topic?: { name?: string } }[] };
     primaryLanguage?: { name?: string; color?: string | null } | null;
     languages?: {
@@ -250,6 +283,54 @@ export function doGraphQL(no: NoRepoGQL | null | undefined): Repository | null {
         defaultBranch: no.defaultBranchRef?.name ?? null,
         openGraphImageUrl: no.openGraphImageUrl ?? null,
         licenseName: no.licenseInfo?.name ?? null,
+        ...caracteristicasGQL(no),
+    };
+}
+
+/**
+ * Características vindas do GraphQL. Os campos de árvore (`object`)
+ * vêm `null` quando o caminho não existe — ou seja, aqui `null`
+ * significa "não tem", e por isso vira `false`. Só o caminho REST, que
+ * não pergunta, deixa as características em `null`.
+ */
+function caracteristicasGQL(
+    no: NoRepoGQL,
+): Pick<
+    Repository,
+    | "watcherCount"
+    | "hasReadme"
+    | "hasDocs"
+    | "hasPages"
+    | "diskUsageKb"
+    | "cover"
+> {
+    const readme =
+        no.readmeUp?.text ?? no.readmeLow?.text ?? no.readmeCap?.text ?? null;
+    const temReadme = Boolean(no.readmeUp || no.readmeLow || no.readmeCap);
+    const nome = typeof no.name === "string" ? no.name : "";
+    return {
+        watcherCount:
+            typeof no.watchers?.totalCount === "number"
+                ? no.watchers.totalCount
+                : null,
+        hasReadme: temReadme,
+        hasDocs: Boolean(no.docsDir),
+        hasPages:
+            (no.pages?.totalCount ?? 0) > 0 ||
+            /\.github\.io(\/|$)/i.test(no.homepageUrl ?? ""),
+        diskUsageKb: typeof no.diskUsage === "number" ? no.diskUsage : null,
+        cover: escolherCapa(
+            {
+                usesCustomOpenGraphImage: no.usesCustomOpenGraphImage,
+                openGraphImageUrl: no.openGraphImageUrl,
+                readme,
+            },
+            {
+                owner: GITHUB_USER,
+                repo: nome,
+                ref: no.defaultBranchRef?.name ?? undefined,
+            },
+        ),
     };
 }
 
@@ -276,6 +357,9 @@ export interface RepoREST {
     language?: string | null;
     license?: { name?: string } | null;
     topics?: string[];
+    watchers_count?: number;
+    size?: number;
+    has_pages?: boolean;
 }
 
 export function doREST(bruto: RepoREST | null | undefined): Repository | null {
@@ -322,6 +406,16 @@ export function doREST(bruto: RepoREST | null | undefined): Repository | null {
             bruto.pushed_at ?? "1",
         )}/${fullName}`,
         licenseName: bruto.license?.name ?? null,
+        /* O REST da listagem informa Pages e tamanho; "watchers_count" ali
+           é sinônimo de estrelas (legado da API), então não serve. README,
+           docs e capa exigiriam uma chamada por repositório: ficam como
+           desconhecidos neste caminho. */
+        watcherCount: null,
+        hasReadme: null,
+        hasDocs: null,
+        hasPages: typeof bruto.has_pages === "boolean" ? bruto.has_pages : null,
+        diskUsageKb: typeof bruto.size === "number" ? bruto.size : null,
+        cover: null,
     };
 }
 

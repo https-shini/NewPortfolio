@@ -365,6 +365,12 @@ describe("normalização", () => {
         "defaultBranch",
         "openGraphImageUrl",
         "licenseName",
+        "watcherCount",
+        "hasReadme",
+        "hasDocs",
+        "hasPages",
+        "diskUsageKb",
+        "cover",
     ];
 
     it("as duas origens produzem o mesmo formato", async () => {
@@ -1047,5 +1053,238 @@ describe("seguidores no índice", () => {
         const c = corpo as { followers: null; repositories: unknown[] };
         expect(c.followers).toBeNull();
         expect(c.repositories).toHaveLength(1);
+    });
+});
+
+/* ═════════════════════════════════════════════════════════
+   Características e estatísticas detalhadas (catálogo e /projetos/:nome)
+   ═════════════════════════════════════════════════════════ */
+
+describe("características no contrato", () => {
+    it("GraphQL: observadores, README, docs, Pages, tamanho e capa do README", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(() =>
+                json({
+                    data: {
+                        repository: {
+                            ...REPO_GQL,
+                            usesCustomOpenGraphImage: false,
+                            watchers: { totalCount: 3 },
+                            diskUsage: 420,
+                            readmeUp: { text: "![capa](docs/banner.png)" },
+                            readmeLow: null,
+                            readmeCap: null,
+                            docsDir: { oid: "abc" },
+                            pages: { totalCount: 1 },
+                        },
+                    },
+                }),
+            ),
+        );
+
+        const { corpo } = await chamar({ op: "project", name: "x" });
+        const r = corpo as Record<string, unknown>;
+        expect(r.watcherCount).toBe(3);
+        expect(r.hasReadme).toBe(true);
+        expect(r.hasDocs).toBe(true);
+        expect(r.hasPages).toBe(true);
+        expect(r.diskUsageKb).toBe(420);
+        expect(r.cover).toMatchObject({ kind: "readme" });
+        /* O texto do README não atravessa para o cliente — só a URL da capa. */
+        expect(JSON.stringify(r)).not.toContain("![capa]");
+    });
+
+    it("GraphQL: caminho ausente é false (não tem), não null", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(() =>
+                json({
+                    data: {
+                        repository: {
+                            ...REPO_GQL,
+                            readmeUp: null,
+                            readmeLow: null,
+                            readmeCap: null,
+                            docsDir: null,
+                            pages: { totalCount: 0 },
+                        },
+                    },
+                }),
+            ),
+        );
+        const { corpo } = await chamar({ op: "project", name: "x" });
+        const r = corpo as Record<string, unknown>;
+        expect(r.hasReadme).toBe(false);
+        expect(r.hasDocs).toBe(false);
+        expect(r.hasPages).toBe(false);
+        expect(r.cover).toBeNull();
+    });
+
+    it("REST (sem token): o que não foi medido fica null, não false", async () => {
+        vi.stubGlobal(
+            "fetch",
+            vi.fn(() => json({ ...REPO_REST, has_pages: true, size: 10 })),
+        );
+        const { corpo } = await chamar({ op: "project", name: "x" });
+        const r = corpo as Record<string, unknown>;
+        expect(r.hasReadme).toBeNull();
+        expect(r.hasDocs).toBeNull();
+        expect(r.watcherCount).toBeNull();
+        expect(r.hasPages).toBe(true);
+        expect(r.diskUsageKb).toBe(10);
+    });
+});
+
+describe("op=stats", () => {
+    const DETALHE = {
+        data: {
+            repository: {
+                isPrivate: false,
+                openIssues: { totalCount: 2 },
+                allIssues: { totalCount: 5 },
+                openPRs: { totalCount: 0 },
+                allPRs: { totalCount: 7 },
+                branches: { totalCount: 3 },
+                tags: { totalCount: 4 },
+                releases: {
+                    totalCount: 1,
+                    nodes: [
+                        {
+                            name: "",
+                            tagName: "v1.0.0",
+                            publishedAt: "2026-01-01T00:00:00Z",
+                            url: "https://github.com/https-shini/x/releases/tag/v1.0.0",
+                            isPrerelease: false,
+                        },
+                    ],
+                },
+                tree: {
+                    entries: [
+                        { name: "README.md", type: "blob" },
+                        { name: "src", type: "tree" },
+                        { name: "api", type: "tree" },
+                    ],
+                },
+                defaultBranchRef: {
+                    target: {
+                        all: {
+                            totalCount: 120,
+                            nodes: [
+                                {
+                                    oid: "abc123",
+                                    messageHeadline: "feat: x",
+                                    committedDate: "2026-10-01T00:00:00Z",
+                                    url: "https://github.com/https-shini/x/commit/abc123",
+                                    author: {
+                                        name: "Guilherme",
+                                        user: { login: "https-shini" },
+                                    },
+                                },
+                            ],
+                        },
+                        year: {
+                            totalCount: 40,
+                            nodes: [{ committedDate: "2026-10-01T00:00:00Z" }],
+                        },
+                    },
+                },
+            },
+        },
+    };
+
+    it("sem token: null (a página mostra indisponível, não zero)", async () => {
+        const fetchMock = vi.fn();
+        vi.stubGlobal("fetch", fetchMock);
+        const { codigo, corpo } = await chamar({ op: "stats", name: "x" });
+        expect(codigo).toBe(200);
+        expect(corpo).toBeNull();
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it("com token: números reais, árvore ordenada e contribuidores sem bots", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn((url: string) =>
+                url.includes("/contributors")
+                    ? json([
+                          {
+                              login: "https-shini",
+                              contributions: 90,
+                              html_url: "https://github.com/https-shini",
+                              avatar_url:
+                                  "https://avatars.githubusercontent.com/u/1?v=4",
+                              type: "User",
+                          },
+                          {
+                              login: "dependabot[bot]",
+                              contributions: 5,
+                              type: "Bot",
+                          },
+                      ])
+                    : json(DETALHE),
+            ),
+        );
+
+        const { codigo, corpo } = await chamar({ op: "stats", name: "x" });
+        expect(codigo).toBe(200);
+        const s = corpo as Record<string, any>;
+        expect(s.openIssues).toBe(2);
+        expect(s.totalPullRequests).toBe(7);
+        expect(s.branches).toBe(3);
+        expect(s.releases.latest[0]).toMatchObject({
+            name: "v1.0.0",
+            tag: "v1.0.0",
+        });
+        expect(s.commits).toMatchObject({ total: 120, lastYear: 40 });
+        expect(s.tree.map((e: { name: string }) => e.name)).toEqual([
+            "api",
+            "src",
+            "README.md",
+        ]);
+        expect(s.contributors.total).toBe(1);
+        expect(s.contributors.top[0].avatarUrl).toBe(
+            "https://avatars.githubusercontent.com/u/1?v=4&s=64",
+        );
+    });
+
+    it("contribuidores que falham viram null sem derrubar o resto", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn((url: string) =>
+                url.includes("/contributors")
+                    ? Promise.reject(new Error("rede"))
+                    : json(DETALHE),
+            ),
+        );
+        const { codigo, corpo } = await chamar({ op: "stats", name: "x" });
+        expect(codigo).toBe(200);
+        expect((corpo as { contributors: unknown }).contributors).toBeNull();
+        expect((corpo as { openIssues: number }).openIssues).toBe(2);
+    });
+
+    it("repositório privado ou inexistente: null", async () => {
+        process.env.GITHUB_TOKEN = TOKEN_FALSO;
+        vi.stubGlobal(
+            "fetch",
+            vi.fn((url: string) =>
+                url.includes("/contributors")
+                    ? json([])
+                    : json({
+                          data: {
+                              repository: {
+                                  ...DETALHE.data.repository,
+                                  isPrivate: true,
+                              },
+                          },
+                      }),
+            ),
+        );
+        const { corpo } = await chamar({ op: "stats", name: "x" });
+        expect(corpo).toBeNull();
     });
 });
