@@ -120,6 +120,21 @@
             ]
         },
         {
+            "source": "/(.*)",
+            "has": [
+                {
+                    "type": "host",
+                    "value": "homolog.gcruz.dev.br"
+                }
+            ],
+            "headers": [
+                {
+                    "key": "X-Robots-Tag",
+                    "value": "noindex, nofollow"
+                }
+            ]
+        },
+        {
             "source": "/assets/(.*)",
             "headers": [
                 {
