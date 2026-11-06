@@ -63,7 +63,7 @@ jobs:
           # Vem do evento, não de entrada de usuário; mesmo assim
           # passa por variável, nunca interpolado no script.
           PREVIEW_URL: ${{ github.event.deployment_status.environment_url }}
-          REF: ${{ github.event.deployment.ref }}
+          COMMIT: ${{ github.event.deployment.sha }}
         run: |
           if [ -z "$VERCEL_TOKEN" ]; then
               echo "::notice::VERCEL_TOKEN não configurado — alias não atualizado."
@@ -81,7 +81,7 @@ jobs:
           {
               echo "### Homologação atualizada"
               echo ""
-              echo "https://$HOMOLOG_DOMAIN → \`$REF\`"
+              echo "https://$HOMOLOG_DOMAIN → commit \`${COMMIT:0:7}\`"
               echo ""
               echo "Preview de origem: $PREVIEW_URL"
           } >> "$GITHUB_STEP_SUMMARY"
