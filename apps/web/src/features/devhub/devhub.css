@@ -1181,6 +1181,13 @@ h3.devhub-stats__label {
     }
 }
 
+@media (min-width: 1440px) {
+    .catalog__layout {
+        grid-template-columns: 264px minmax(0, 1fr);
+        gap: var(--space-10);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .catalog-chip,
     .catalog-filter__option,
@@ -1760,6 +1767,18 @@ a.devhub-tree__item:hover {
     padding-top: calc(var(--header-height) + var(--space-6));
 }
 
+/* Monitores largos (referência: 1920×1080). O catálogo é a única página
+   que é uma grade de muitos cartões, e em 1200px ela cabia em 3 colunas
+   de ~270px — cartões espremidos. Aqui a medida passa a --layout-wide
+   (1440px) para a PÁGINA INTEIRA, cabeçalho e rodapé inclusos: trocar o
+   token na raiz mantém o logotipo, o conteúdo e o rodapé na mesma
+   margem, que é a regra do site (ver pages/Links/Links.css). */
+@media (min-width: 1440px) {
+    :root:has(main.pp) {
+        --layout-max: var(--layout-wide);
+    }
+}
+
 .pp section + section,
 .pp .catalog {
     margin-top: var(--space-16);
@@ -2189,10 +2208,13 @@ a.devhub-tree__item:hover {
     color: var(--color-text-3);
 }
 
+/* Coluna mínima de 320px: abaixo disso a linha de documentação e os
+   números quebram em duas linhas e o cartão perde o ritmo. Resultado:
+   3 colunas de ~345px em 1920, 2 de ~410px em 1366, 1 no celular. */
 .catalog__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
-    gap: var(--space-5);
+    grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+    gap: var(--space-6);
     padding: 0;
     margin: 0;
     list-style: none;
