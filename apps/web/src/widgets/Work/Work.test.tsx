@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, within, fireEvent } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { Providers } from "@/app/providers";
 import { Work } from "./Work";
 import { GITHUB_URL, LANG_KEY } from "@/shared/config/constants";
@@ -7,13 +7,11 @@ import { ROUTES, projectPath } from "@/shared/config/routes";
 import { fetchPorOp, repo } from "@/test/repoFixture";
 
 /* ─────────────────────────────────────────────────────────
-   A vitrine da home é um carrossel dos fixados no GitHub
-   (`op=pinned`). O que se vigia: a ordem dos fixados, todo
-   projeto alcançável (setas, dots, teclado), só o slide atual no
-   Tab, nenhum conteúdo inventado e a seção sempre com saída.
-
-   `hidden: true` nas buscas por slides: os de fora de vista ficam
-   `inert`, e a árvore de acessibilidade do jsdom os omite.
+   A vitrine da home é uma grade com os fixados do GitHub
+   (`op=pinned`). O que se vigia: a ordem dos fixados, todos
+   visíveis de uma vez, o 1º como líder, o card inteiro levando à
+   página do projeto, atalhos de demo/código, nenhum conteúdo
+   inventado e a seção sempre com saída para o catálogo.
 ───────────────────────────────────────────────────────── */
 
 const FIXADOS = [
@@ -55,190 +53,86 @@ const montar = (
 const secao = () =>
     screen.getByRole("region", { name: /^(Projetos|Projects)$/ });
 
-const carrossel = () =>
-    screen.findByRole("region", {
-        name: /Projetos em destaque|Featured projects/,
-    });
-
-async function slides(): Promise<HTMLElement[]> {
-    const c = await carrossel();
-    return within(c)
-        .getAllByRole("group", { hidden: true })
-        .filter((g) => g.getAttribute("aria-roledescription") === "slide");
-}
+const cards = async () => {
+    await screen.findByRole("heading", { level: 3, name: "AuthService" });
+    return within(secao()).getAllByRole("article");
+};
 
 afterEach(() => vi.unstubAllGlobals());
 
-describe("Work — carrossel dos fixados no GitHub", () => {
-    it("um slide por fixado, na ordem do GitHub, rotulado com nome e posição", async () => {
+describe("Work — grade dos fixados no GitHub", () => {
+    it("todos os fixados de uma vez, na ordem do GitHub; o 1º é o líder", async () => {
         montar(PINNED);
+        const lista = await cards();
         expect(
-            (await slides()).map((s) => s.getAttribute("aria-label")),
-        ).toEqual([
-            "AuthService — 1 de 3",
-            "web-chat — 2 de 3",
-            "NewPortfolio — 3 de 3",
-        ]);
+            lista.map((c) => within(c).getByRole("heading").textContent),
+        ).toEqual(["AuthService", "web-chat", "NewPortfolio"]);
+        expect(lista[0]).toHaveAttribute("data-lead", "true");
+        expect(lista[1]).not.toHaveAttribute("data-lead");
     });
 
-    it("é um carrossel acessível: roledescription, contador e dots", async () => {
+    it("o título leva à página do projeto (e cobre o card)", async () => {
         montar(PINNED);
-        const c = await carrossel();
-        expect(c).toHaveAttribute("aria-roledescription", "carousel");
-        expect(c).toHaveTextContent("01/03");
-        const dots = within(c).getAllByRole("button", {
-            name: /Ir para o projeto/,
-        });
-        expect(dots).toHaveLength(3);
-        expect(dots[0]).toHaveAttribute("aria-current", "true");
-        expect(dots[1]).not.toHaveAttribute("aria-current");
-    });
-
-    it("só o slide atual entra no Tab (os outros ficam inert)", async () => {
-        montar(PINNED);
-        const [s1, s2, s3] = (await slides()).map((s) => s.parentElement!);
-        expect(s1).not.toHaveAttribute("inert");
-        expect(s2).toHaveAttribute("inert");
-        expect(s3).toHaveAttribute("inert");
-    });
-
-    it("setas, dots e teclado navegam; nos extremos a seta desabilita", async () => {
-        montar(PINNED);
-        const c = await carrossel();
-        const anterior = within(c).getByRole("button", {
-            name: "Projeto anterior",
-        });
-        const proximo = within(c).getByRole("button", {
-            name: "Próximo projeto",
-        });
-        expect(anterior).toBeDisabled();
-
-        fireEvent.click(proximo);
-        expect(c).toHaveTextContent("02/03");
-        const [s1, s2] = (await slides()).map((s) => s.parentElement!);
-        expect(s1).toHaveAttribute("inert");
-        expect(s2).not.toHaveAttribute("inert");
-
-        fireEvent.keyDown(c, { key: "End" });
-        expect(c).toHaveTextContent("03/03");
-        expect(proximo).toBeDisabled();
-
-        fireEvent.keyDown(c, { key: "ArrowLeft" });
-        expect(c).toHaveTextContent("02/03");
-
-        fireEvent.keyDown(c, { key: "Home" });
-        expect(c).toHaveTextContent("01/03");
-
-        fireEvent.click(
-            within(c).getByRole("button", { name: /Ir para o projeto 3/ }),
-        );
-        expect(c).toHaveTextContent("03/03");
-    });
-
-    it("anuncia a troca só depois de uma ação — nada ao carregar", async () => {
-        montar(PINNED);
-        const c = await carrossel();
-        expect(screen.queryByText(/Projeto 1 de 3/)).toBeNull();
-        fireEvent.click(
-            within(c).getByRole("button", { name: "Próximo projeto" }),
-        );
+        const [auth] = await cards();
         expect(
-            screen.getByText("Projeto 2 de 3: web-chat"),
-        ).toBeInTheDocument();
+            within(auth!).getByRole("link", { name: "AuthService" }),
+        ).toHaveAttribute("href", projectPath("AuthService"));
     });
 
-    it("com demo: Acessar projeto é o principal, e Detalhes continua presente", async () => {
+    it("líder: botões com texto para demo e código", async () => {
         montar(PINNED);
-        const [auth] = await slides();
-        const demo = within(auth!).getByRole("link", {
-            name: /Acessar projeto — AuthService/,
-        });
-        expect(demo).toHaveAttribute("href", "https://auth.example");
-        expect(demo).toHaveClass("work-btn--primary");
-        const detalhes = within(auth!).getByRole("link", {
-            name: /Detalhes — AuthService/,
-        });
-        expect(detalhes).toHaveAttribute("href", projectPath("AuthService"));
-        expect(detalhes).not.toHaveAttribute("target");
+        const [auth] = await cards();
+        expect(
+            within(auth!).getByRole("link", {
+                name: /Acessar projeto — AuthService/,
+            }),
+        ).toHaveAttribute("href", "https://auth.example");
+        expect(
+            within(auth!).getByRole("link", {
+                name: /Código-fonte — AuthService/,
+            }),
+        ).toHaveAttribute("href", "https://github.com/https-shini/AuthService");
+        expect(within(auth!).getByText("Demo online")).toBeInTheDocument();
     });
 
-    it("sem demo, Detalhes é o principal", async () => {
+    it("compactos: atalho de código sempre; de demo só quando existe", async () => {
         montar(PINNED);
-        const [, chat] = await slides();
+        const [, chat] = await cards();
         expect(
             within(chat!).getByRole("link", {
-                name: /Detalhes — web-chat/,
-                hidden: true,
+                name: /Código-fonte — web-chat/,
             }),
-        ).toHaveClass("work-btn--primary");
+        ).toBeInTheDocument();
         expect(
-            within(chat!).queryByRole("link", {
-                name: /Acessar projeto/,
-                hidden: true,
-            }),
+            within(chat!).queryByRole("link", { name: /Acessar projeto/ }),
         ).toBeNull();
+        expect(within(chat!).queryByText("Demo online")).toBeNull();
     });
 
-    it("todo slide tem o botão de código-fonte para o repositório", async () => {
+    it("stack: líder com barra e %, compacto com até três nomes", async () => {
         montar(PINNED);
-        for (const s of await slides()) {
-            const nome = s.getAttribute("aria-label")!.split(" — ")[0]!;
-            expect(
-                within(s).getByRole("link", {
-                    name: new RegExp(`Código-fonte — ${nome}`),
-                    hidden: true,
-                }),
-            ).toHaveAttribute("href", `https://github.com/https-shini/${nome}`);
-        }
-    });
-
-    it("stack: até quatro linguagens, com a porcentagem medida", async () => {
-        montar(PINNED);
-        const s = (await slides())[2]!;
-        const stack = within(s).getByRole("list", {
-            name: "Stack",
-            hidden: true,
-        });
-        const itens = within(stack).getAllByRole("listitem", { hidden: true });
+        const lista = await cards();
+        const novo = lista[2]!;
+        const stack = within(novo).getByRole("list", { name: "Stack" });
         expect(
-            itens.map(
-                (li) => li.querySelector(".work-card__tech-name")?.textContent,
-            ),
-        ).toEqual(["TypeScript", "CSS", "JavaScript", "HTML"]);
-        /* Com bytes medidos, a barra soletra a divisão para o leitor de
-           tela e cada item mostra a sua fatia. */
-        if (s.querySelector(".work-card__stackbar")) {
-            expect(itens[0]).toHaveTextContent(/%$/);
-        }
+            within(stack)
+                .getAllByRole("listitem")
+                .map((li) => li.textContent),
+        ).toEqual(["TypeScript", "CSS", "JavaScript"]);
+        expect(novo.querySelector(".ptile__bar")).toBeNull();
     });
 
-    it("números rotulados: estrelas, forks e atualização", async () => {
+    it("destaques = tópicos do GitHub, só no líder", async () => {
         montar(PINNED);
-        const s = (await slides())[0]!;
-        const fatos = s.querySelector(
-            'dl[aria-label="Dados do repositório"]',
-        ) as HTMLElement;
-        const rotulos = [...fatos.querySelectorAll("dt")].map((dt) =>
-            dt.textContent?.trim(),
-        );
-        expect(rotulos.slice(0, 3)).toEqual([
-            "Estrelas",
-            "Forks",
-            "Atualizado",
-        ]);
-    });
-
-    it("destaques são os tópicos do GitHub; sem tópicos, a lista não aparece", async () => {
-        montar(PINNED);
-        const [auth, chat] = await slides();
-        expect(within(auth!).getByText("Destaques")).toBeInTheDocument();
-        expect(within(auth!).getByText("#jwt")).toBeInTheDocument();
-        expect(within(chat!).queryByText("Destaques")).toBeNull();
+        const [auth] = await cards();
+        const topicos = within(auth!).getByRole("list", { name: "Destaques" });
+        expect(topicos).toHaveTextContent("#jwt");
+        expect(topicos).toHaveTextContent("#fastapi");
     });
 
     it("sem descrição no GitHub, mostra o aviso — não inventa texto", async () => {
         montar(PINNED);
-        const [, chat] = await slides();
+        const [, chat] = await cards();
         expect(
             within(chat!).getByText("Sem descrição no GitHub."),
         ).toBeInTheDocument();
@@ -246,51 +140,46 @@ describe("Work — carrossel dos fixados no GitHub", () => {
 
     it("todo link externo abre em nova aba com rel seguro", async () => {
         montar(PINNED);
-        await slides();
-        within(secao())
-            .getAllByRole("link", { hidden: true })
-            .filter((a) => a.getAttribute("target") === "_blank")
-            .forEach((a) =>
-                expect(a).toHaveAttribute("rel", "noopener noreferrer"),
-            );
+        await cards();
+        for (const a of within(secao())
+            .getAllByRole("link")
+            .filter((a) => a.getAttribute("target") === "_blank")) {
+            expect(a).toHaveAttribute("rel", "noopener noreferrer");
+        }
     });
 
-    it("CTA: Ver todos os projetos → /projetos, e o GitHub continua acessível", async () => {
+    it("faixa final leva ao catálogo e ao GitHub", async () => {
         montar(PINNED);
+        await cards();
         expect(
-            screen.getByRole("link", { name: /Ver todos os projetos/ }),
+            within(secao()).getByRole("link", {
+                name: /Ver todos os projetos/,
+            }),
         ).toHaveAttribute("href", ROUTES.PROJECTS);
         expect(
-            screen.getByRole("link", { name: /Ver todos no GitHub/ }),
+            within(secao()).getByRole("link", { name: /Ver todos no GitHub/ }),
         ).toHaveAttribute("href", GITHUB_URL);
     });
 
-    it("com erro, avisa e mantém os caminhos de saída", async () => {
+    it("erro na API: aviso e a saída para o catálogo continua", async () => {
         montar({});
         expect(
-            await screen.findByText(
-                /Não foi possível carregar os projetos agora/,
-            ),
-        ).toHaveAttribute("role", "status");
+            await screen.findByText(/não|couldn/i, {
+                selector: ".work__state",
+            }),
+        ).toBeInTheDocument();
         expect(
-            screen.queryByRole("region", { name: "Projetos em destaque" }),
-        ).toBeNull();
-        expect(
-            screen.getByRole("link", { name: /Ver todos os projetos/ }),
+            within(secao()).getByRole("link", {
+                name: /Ver todos os projetos/,
+            }),
         ).toBeInTheDocument();
     });
 
-    it("em inglês, rótulos e posição acompanham o idioma", async () => {
+    it("em inglês", async () => {
         montar(PINNED, "en");
-        expect((await slides())[0]).toHaveAttribute(
-            "aria-label",
-            "AuthService — 1 of 3",
-        );
+        await screen.findByRole("heading", { level: 3, name: "AuthService" });
         expect(
-            screen.getByRole("button", { name: "Next project" }),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByRole("link", { name: /View all projects/ }),
-        ).toBeInTheDocument();
+            screen.getByRole("region", { name: "Projects" }),
+        ).toHaveTextContent("Pinned on GitHub");
     });
 });

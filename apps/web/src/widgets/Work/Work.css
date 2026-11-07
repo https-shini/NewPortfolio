@@ -1,759 +1,526 @@
-/* ── Mídia: moldura de janela ───────────────────────────────────── */
-/* Painel com grade de pontos (o "papel" de terminal do site) e um
-   brilho da marca no canto do lado da imagem. */
-.work-card__media {
-    grid-area: media;
-    display: flex;
-    align-items: center;
-    padding: var(--space-4);
-    position: relative;
-    isolation: isolate;
-    background:
-        radial-gradient(
-                color-mix(in srgb, var(--color-text-1) 9%, transparent) 1px,
-                transparent 1px
-            )
-            0 0 / 16px 16px,
-        var(--color-surface-1);
-    border-bottom: 1px solid var(--color-border-1);
-}
-
-/* Brilho na cor da linguagem principal, atrás da janela: a atmosfera
-   muda a cada projeto sem nenhuma imagem extra. */
-.work-card__media::before {
-    content: "";
-    position: absolute;
-    inset: 12% 10%;
-    z-index: -1;
-    border-radius: 50%;
-    background: radial-gradient(
-        closest-side,
-        color-mix(in srgb, var(--work-tint) 38%, transparent),
-        color-mix(in srgb, var(--color-brand) 10%, transparent) 60%,
-        transparent
-    );
-    filter: blur(24px);
-    opacity: 0.9;
-    pointer-events: none;
-}
-
 /* ─────────────────────────────────────────────────────────
-   Work — a vitrine de projetos da home (#projetos), em carrossel
+   Work — vitrine da home (#projetos) em grade "bento"
    ─────────────────────────────────────────────────────────
-   Um projeto por vez. O trilho é nativo (`overflow-x` +
-   `scroll-snap`): gesto, trackpad e inércia são do navegador.
-
-   O card mantém a composição horizontal alternada (desktop) e
-   empilha imagem → conteúdo (mobile). A ordem no DOM é sempre a
-   mesma; quem inverte é `data-media="end"`, via
-   `grid-template-areas`, sem `order` e sem duplicar markup.
-
-   A imagem fica numa moldura de janela de terminal — a linguagem
-   de IDE do site — na proporção 2:1 do social card do GitHub,
-   então nada é cortado por `object-fit`.
+   Estrutura (ver Work.tsx): cabeçalho → grade de cards → faixa do
+   catálogo. Mobile primeiro; 2 colunas a partir de 640px; 3 colunas
+   com o card líder em 2×2 a partir de 1024px.
 ───────────────────────────────────────────────────────── */
 
-.work {
-    background: transparent;
-}
-
 /* ── Cabeçalho ──────────────────────────────────────────────────── */
-/* Mesma gramática do "Projeto em destaque": eyebrow à esquerda, selo
-   de estado à direita, título e um subtítulo de leitura confortável
-   (alinhado à esquerda, ~70 caracteres por linha — o texto justificado
-   em largura total abria "rios" entre as palavras). */
-.work__eyebrow-row {
+.work__head {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: var(--space-2) var(--space-4);
+    gap: var(--space-4) var(--space-10);
+    margin-bottom: var(--space-10);
 }
 
-.work__sync {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-2);
-}
-
-.work__sync > span {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    /* Mesmo ponto da marca do selo "Aplicação disponível" do destaque. */
-    background: var(--color-brand);
-    box-shadow: 0 0 0 3px var(--color-brand-subtle);
+.work__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    flex: 1 1 520px;
+    min-width: 0;
 }
 
 .work__sub {
-    max-width: 70ch;
+    max-width: 66ch;
     font-size: var(--text-md);
     line-height: var(--lh-relaxed);
     color: var(--color-text-3);
     text-wrap: pretty;
 }
 
-/* ── Carrossel ──────────────────────────────────────────────────── */
-/* O card ocupa a largura do container — alinhado ao título — e todos
-   os controles moram numa barra só, embaixo dele. */
-.work-carousel {
-    display: grid;
-    gap: var(--space-5);
-    margin-top: var(--space-10);
-}
-
-.work-carousel__viewport {
-    position: relative;
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 100%;
-    gap: var(--space-6);
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    scrollbar-width: none;
-    /* Espaço para a sombra do card não ser cortada pelo overflow. */
-    padding: var(--space-2) 0 var(--space-4);
-    margin-block: calc(var(--space-2) * -1) calc(var(--space-4) * -1);
-    border-radius: var(--radius-xl);
-}
-
-.work-carousel__viewport::-webkit-scrollbar {
-    display: none;
-}
-
-.work-carousel__slide {
-    display: flex;
-    min-width: 0;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-}
-
-.work-carousel__slide > .work-card {
-    flex: 1;
-    min-width: 0;
-}
-
-/* Barra: contador · dots · setas. O filete superior é o progresso. */
-.work-carousel__nav {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding-top: var(--space-4);
-}
-
-.work-carousel__nav::before,
-.work-carousel__nav::after {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto;
-    height: 2px;
-    border-radius: var(--radius-full);
-}
-
-.work-carousel__nav::before {
-    background: var(--color-border-1);
-}
-
-.work-carousel__nav::after {
-    background: linear-gradient(
-        to right,
-        var(--color-brand),
-        var(--color-accent)
-    );
-    transform: scaleX(var(--progresso, 0));
-    transform-origin: left center;
-    transition: transform 0.45s var(--ease-out);
-}
-
-.work-carousel__counter {
+/* Selo de estado — o mesmo do "Aplicação disponível" do destaque. */
+.work__sync {
     display: inline-flex;
-    align-items: baseline;
-    gap: 6px;
-    margin-right: auto;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 6px var(--space-3);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    background: var(--color-surface-2);
     font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--color-text-3);
-    font-variant-numeric: tabular-nums;
+    font-size: var(--text-xs);
+    color: var(--color-text-2);
+    white-space: nowrap;
 }
 
-.work-carousel__counter-now {
-    font-size: var(--text-lg);
-    font-weight: 600;
-    color: var(--color-text-1);
-}
-
-.work-carousel__counter-sep {
-    color: var(--color-text-4);
-}
-
-.work-carousel__dots {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 0;
-}
-
-/* Alvo de 24px por dot (WCAG 2.5.8); o visível é a pílula de dentro. */
-.work-carousel__dot {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    border-radius: var(--radius-full);
-    -webkit-tap-highlight-color: transparent;
-}
-
-.work-carousel__dot-fill {
-    display: block;
+.work__sync > span {
     width: 7px;
     height: 7px;
-    border-radius: var(--radius-full);
-    background: var(--color-border-3);
-    transition:
-        width 0.35s var(--ease-out),
-        background-color 0.25s var(--ease-out),
-        transform 0.2s var(--ease-out);
-}
-
-.work-carousel__dot:hover .work-carousel__dot-fill {
-    background: var(--color-text-3);
-    transform: scale(1.2);
-}
-
-.work-carousel__dot[aria-current="true"] .work-carousel__dot-fill {
-    width: 20px;
+    border-radius: 50%;
     background: var(--color-brand);
-    transform: none;
+    box-shadow: 0 0 0 3px var(--color-brand-subtle);
 }
 
-.work-carousel__dot:focus-visible {
-    outline: 2px solid var(--color-brand-text);
-    outline-offset: 0;
+/* ── Grade ──────────────────────────────────────────────────────── */
+.work-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
-.work-carousel__arrows {
-    display: inline-flex;
-    gap: var(--space-2);
+.work-grid__item {
+    display: flex;
+    min-width: 0;
 }
 
-/* Setas quadradas, na família dos botões da galeria do destaque. */
-.work-carousel__arrow {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-md);
-    background: var(--color-surface-2);
-    color: var(--color-text-1);
-    box-shadow: var(--surface-edge);
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition:
-        background-color 0.2s var(--ease-out),
-        border-color 0.2s var(--ease-out),
-        color 0.2s var(--ease-out),
-        transform 0.2s var(--ease-out),
-        opacity 0.2s var(--ease-out);
+.work-grid__item > .ptile {
+    flex: 1;
 }
 
-.work-carousel__arrow:hover:not(:disabled) {
-    border-color: var(--color-border-brand);
-    background: var(--color-brand-subtle);
-    color: var(--color-brand-text);
+@media (min-width: 640px) {
+    .work-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .work-grid > :first-child {
+        grid-column: 1 / -1;
+    }
+
+    /* Número par de cards: o último ficaria sozinho numa linha — ocupa
+       a largura toda em vez de deixar um buraco. */
+    .work-grid > :last-child:nth-child(even) {
+        grid-column: 1 / -1;
+    }
 }
 
-.work-carousel__arrow:active:not(:disabled) {
-    transform: scale(0.94);
-    transition-duration: 0.08s;
-}
+@media (min-width: 1024px) {
+    .work-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-auto-flow: row dense;
+    }
 
-.work-carousel__arrow:focus-visible {
-    outline: 2px solid var(--color-brand-text);
-    outline-offset: 3px;
-}
+    .work-grid > :first-child {
+        grid-column: span 2;
+        grid-row: span 2;
+    }
 
-.work-carousel__arrow:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-}
-
-.work__state {
-    margin-top: var(--space-8);
-    padding: var(--space-6);
-    text-align: center;
-    color: var(--color-text-2);
-    border: 1px dashed var(--color-border-2);
-    border-radius: var(--radius-lg);
+    .work-grid > :last-child:nth-child(even) {
+        grid-column: auto;
+    }
 }
 
 /* ── Card ───────────────────────────────────────────────────────── */
-/* Base (mobile): coluna — imagem em cima, conteúdo embaixo. */
-.work-card {
+.ptile {
+    --ptile-radius: var(--radius-xl);
     position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-        "media"
-        "body";
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
     overflow: hidden;
-    isolation: isolate;
-    box-shadow: var(--surface-edge), var(--surface-lift);
-
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--ptile-radius);
+    box-shadow: var(--surface-edge);
     transition:
-        border-color 0.3s var(--ease-out),
+        border-color 0.25s var(--ease-out),
         box-shadow 0.3s var(--ease-out),
         transform 0.3s var(--ease-out);
 }
 
-/* Entrada do slide que acaba de ficar ativo: o conteúdo sobe em
-   cascata e a imagem assenta. Só `transform`/`opacity`. */
-.work-card[data-active] .work-card__body > * {
-    animation: work-in 0.55s var(--ease-out) both;
-}
-
-.work-card[data-active] .work-card__body > :nth-child(2) {
-    animation-delay: 60ms;
-}
-
-.work-card[data-active] .work-card__body > :nth-child(3) {
-    animation-delay: 110ms;
-}
-
-.work-card[data-active] .work-card__body > :nth-child(4) {
-    animation-delay: 160ms;
-}
-
-.work-card[data-active] .work-card__body > :nth-child(n + 5) {
-    animation-delay: 210ms;
-}
-
-.work-card[data-active] .work-card__window {
-    animation: work-window-in 0.7s var(--ease-out) both;
-}
-
-@keyframes work-in {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-}
-
-@keyframes work-window-in {
-    from {
-        opacity: 0.4;
-        transform: scale(0.97);
-    }
-}
-
-/* Linha de accent: entra pelo lado da imagem, acompanhando a alternância. */
-.work-card::before {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto;
-    height: 3px;
-    background: linear-gradient(
-        to right,
-        var(--color-brand),
-        var(--color-accent)
-    );
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform 0.5s var(--ease-out);
-    z-index: 3;
-    pointer-events: none;
-}
-
-.work-card[data-media="end"]::before {
-    transform-origin: right center;
-}
-
-.work-card:hover,
-.work-card:focus-within {
+.ptile:hover {
     border-color: var(--color-border-brand);
-    box-shadow: var(--surface-edge), var(--shadow-card-hover);
+    box-shadow:
+        var(--surface-edge),
+        0 24px 48px -28px color-mix(in srgb, var(--ptile-tint) 55%, transparent),
+        var(--shadow-md);
+    transform: translateY(-3px);
 }
 
-.work-card:hover::before,
-.work-card:focus-within::before {
-    transform: scaleX(1);
+/* Foco do teclado no link que cobre o card: anel no card inteiro. */
+.ptile:has(.ptile__link:focus-visible) {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 3px;
 }
 
-/* ── Mídia: moldura de janela ───────────────────────────────────── */
-.work-card__media {
-    grid-area: media;
-    display: flex;
-    align-items: center;
-    padding: var(--space-4);
-    /* Fundo levemente tingido: separa a coluna da imagem do texto sem
-       mais uma borda. */
+/* ── Mídia ── */
+.ptile__media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    container-type: inline-size;
     background:
         radial-gradient(
-            120% 90% at 0% 0%,
-            var(--color-brand-subtle),
-            transparent 60%
+            80% 100% at 50% 100%,
+            color-mix(in srgb, var(--ptile-tint) 28%, transparent),
+            transparent 70%
         ),
         var(--color-surface-1);
     border-bottom: 1px solid var(--color-border-1);
 }
 
-.work-card__window {
-    width: 100%;
-    border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    background: var(--color-surface-2);
-    box-shadow:
-        var(--shadow-lg),
-        0 18px 40px -18px color-mix(in srgb, var(--work-tint) 45%, transparent);
-    transition:
-        transform 0.5s var(--ease-out),
-        box-shadow 0.5s var(--ease-out);
-}
-
-.work-card:hover .work-card__window {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-.work-card__bar {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    min-width: 0;
-    padding: var(--space-2) var(--space-3);
-    background: var(--color-surface-3);
-    border-bottom: 1px solid var(--color-border-1);
-}
-
-.work-card__dots {
-    display: inline-flex;
-    gap: 6px;
-    flex-shrink: 0;
-}
-
-.work-card__dots span {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-    background: var(--color-border-3);
-}
-
-.work-card:hover .work-card__dots span:nth-child(1) {
-    background: var(--color-brand);
-}
-
-.work-card__path {
-    min-width: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    color: var(--color-text-3);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* 2:1 — a proporção do social card do GitHub (1200×600): a imagem
-   cabe inteira, sem corte, em qualquer largura. */
-.work-card__thumb {
-    position: relative;
-    /* A capa composta dimensiona o título pela largura da janela. */
-    container-type: inline-size;
-    aspect-ratio: 2 / 1;
-    overflow: hidden;
-    background: var(--color-surface-1);
-}
-
-.work-card__img {
+.ptile__img {
+    display: block;
     width: 100%;
     height: 100%;
-    display: block;
     object-fit: cover;
-    object-position: center;
     transition: transform 0.6s var(--ease-out);
 }
 
-.work-card:hover .work-card__img {
+.ptile__img[data-cover="readme"] {
+    object-position: top center;
+}
+
+/* Social card do GitHub: inteiro (o texto dele vai até as bordas e
+   seria cortado em 16:9), emoldurado sobre o brilho da linguagem. */
+.ptile__img[data-cover="social"] {
+    object-fit: contain;
+    padding: var(--space-4);
+    filter: drop-shadow(0 12px 24px rgb(0 0 0 / 0.28));
+}
+
+/* Capa composta, versão do card: o nome e as linguagens já estão logo
+   abaixo, então a capa fica só com o caminho — um "prompt" no centro
+   da grade de pontos, sobre a cor do projeto. */
+.ptile .pcover {
+    align-items: center;
+    justify-content: center;
+}
+
+.ptile .pcover__title,
+.ptile .pcover__langs {
+    display: none;
+}
+
+.ptile .pcover__path {
+    max-width: 90%;
+    padding: 6px var(--space-3);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--color-surface-2) 85%, transparent);
+    font-size: var(--text-xs);
+    color: var(--color-text-1);
+}
+
+.ptile .pcover__path::before {
+    content: "$ cd ";
+    color: var(--color-brand-text);
+}
+
+.ptile:hover .ptile__img {
     transform: scale(1.04);
 }
 
-/* Sem social card (ou se ele não carregar): o nome sobre a cor da
-   linguagem — nenhuma requisição, nenhum buraco. */
-.work-card__img[data-fallback] {
+/* Fallback do social card (repo sem nenhuma imagem): nome sobre a cor. */
+.ptile__img[data-fallback] {
     display: grid;
     place-items: center;
-    background:
-        radial-gradient(
-            circle at 30% 20%,
-            color-mix(in srgb, var(--thumb-tint) 45%, transparent),
-            transparent 70%
-        ),
-        var(--color-surface-2);
+    background: color-mix(in srgb, var(--thumb-tint) 22%, transparent);
 }
 
-.work-card__img[data-fallback] .devhub-thumb__name {
-    padding: var(--space-4);
-    font-family: var(--font-mono);
-    font-size: var(--text-lg);
-    font-weight: 600;
-    color: var(--color-text-1);
-    text-align: center;
-    overflow-wrap: anywhere;
-}
-
-/* ── Conteúdo ───────────────────────────────────────────────────── */
-.work-card__body {
-    grid-area: body;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    min-width: 0;
-    padding: var(--space-6) var(--space-5);
-}
-
-.work-card__eyebrow {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2) var(--space-3);
-}
-
-.work-card__meta {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.06em;
-    color: var(--color-text-3);
-}
-
-.work-card__index {
-    color: var(--color-brand-text);
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-}
-
-.work-card__index-total {
-    margin-left: 2px;
-    color: var(--color-text-4);
-    font-weight: 400;
-}
-
-.work-card__lang {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding-left: var(--space-3);
-    border-left: 1px solid var(--color-border-2);
-    color: var(--color-text-2);
-}
-
-.work-card__lang-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    background: var(--work-tint);
-}
-
-/* "Demo online": o projeto tem endereço publicado. */
-.work-card__live {
+.ptile__live {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 3px var(--space-2);
+    padding: 4px var(--space-2);
     border: 1px solid var(--color-border-2);
     border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-surface-2) 88%, transparent);
+    backdrop-filter: blur(8px);
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
-    color: var(--color-text-2);
+    color: var(--color-text-1);
 }
 
-.work-card__live > span {
+.ptile__live > span {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: var(--color-brand);
 }
 
-.work-card__title {
-    font-family: var(--font-display);
-    font-size: var(--text-2xl);
-    font-weight: 700;
-    line-height: var(--lh-tight);
-    letter-spacing: var(--ls-snug);
-    color: var(--color-text-1);
-    overflow-wrap: anywhere;
+/* ── Corpo ── */
+.ptile__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: var(--space-3);
+    padding: var(--space-5);
 }
 
-.work-card__desc {
-    max-width: 60ch;
-    font-size: var(--text-md);
-    line-height: var(--lh-relaxed);
-    color: var(--color-text-2);
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.work-card__nodesc {
+.ptile__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     color: var(--color-text-3);
 }
 
-/* Stack: barra proporcional (bytes por linguagem, como no GitHub) e
-   as quatro maiores com a porcentagem. */
-.work-card__stack {
+.ptile__index {
+    font-weight: 600;
+    color: var(--color-brand-text);
+    font-variant-numeric: tabular-nums;
+}
+
+.ptile__lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    color: var(--color-text-2);
+    white-space: nowrap;
+}
+
+.ptile__time {
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.ptile__dot {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+
+.ptile__title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+}
+
+.ptile__link {
+    color: var(--color-text-1);
+    text-decoration: none;
+}
+
+.ptile__link:focus-visible {
+    outline: none;
+}
+
+/* O alvo do link é o card inteiro. */
+.ptile__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: var(--ptile-radius);
+}
+
+.ptile:hover .ptile__link {
+    color: var(--color-brand-text);
+}
+
+.ptile__desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: var(--text-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-2);
+}
+
+.ptile__nodesc {
+    font-style: italic;
+    color: var(--color-text-3);
+}
+
+/* ── Stack ── */
+.ptile__stack {
     display: grid;
     gap: var(--space-3);
 }
 
-.work-card__stackbar {
+.ptile__bar {
     display: flex;
-    height: 6px;
     gap: 2px;
+    height: 6px;
     overflow: hidden;
     border-radius: var(--radius-full);
     background: var(--color-surface-3);
 }
 
-.work-card__stackbar > span {
+.ptile__bar > span {
     min-width: 3px;
     height: 100%;
 }
 
-.work-card__tech {
+.ptile__langs {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2) var(--space-4);
+    gap: var(--space-1) var(--space-4);
     padding: 0;
     margin: 0;
     list-style: none;
 }
 
-.work-card__tech-item {
+.ptile__langs-item {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    color: var(--color-text-1);
-}
-
-.work-card__tech-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.work-card__tech-pct {
-    color: var(--color-text-3);
-}
-
-/* ── Destaques (tópicos do GitHub) e dados ──────────────────────── */
-.work-card__highlights {
-    display: grid;
-    gap: var(--space-2);
-}
-
-.work-card__label {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    font-weight: 500;
-    letter-spacing: var(--ls-wider);
-    text-transform: uppercase;
-    color: var(--color-text-3);
-}
-
-.work-card__topics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2) var(--space-3);
-    padding: 0;
-    list-style: none;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
     color: var(--color-text-2);
 }
 
-/* Números rotulados: rótulo pequeno em cima, valor embaixo — legível
-   para quem não reconhece os ícones do GitHub. */
-.work-card__facts {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3) var(--space-4);
-    margin: 0;
-    padding-block: var(--space-4) 0;
-    border-top: 1px solid var(--color-border-1);
-}
-
-.work-card__fact {
-    display: grid;
-    gap: 2px;
-    min-width: 0;
-}
-
-.work-card__fact dt {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    letter-spacing: var(--ls-wide);
-    text-transform: uppercase;
+.ptile__langs-pct {
     color: var(--color-text-3);
 }
 
-.work-card__fact dd {
+.ptile__topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: 0;
     margin: 0;
-    font-size: var(--text-sm);
-    font-weight: 600;
-    color: var(--color-text-1);
-    overflow-wrap: anywhere;
+    list-style: none;
 }
 
-/* Largura natural de cada número: os quatro cabem numa linha no
-   desktop e só quebram quando faltar espaço de verdade. */
-@media (min-width: 480px) {
-    .work-card__facts {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: var(--space-3) var(--space-5);
+.ptile__topics li {
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-2);
+}
+
+/* ── Rodapé do card ── */
+.ptile__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-top: auto;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-1);
+}
+
+.ptile__stats {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.ptile__stats > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Atalhos ficam ACIMA do link esticado. */
+.ptile__actions {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.ptile__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-1);
+    color: var(--color-text-2);
+    transition:
+        color 0.2s var(--ease-out),
+        border-color 0.2s var(--ease-out),
+        background-color 0.2s var(--ease-out);
+}
+
+.ptile__action:hover {
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+    color: var(--color-brand-text);
+}
+
+.ptile__action:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+/* ── Card líder ── */
+@media (min-width: 640px) {
+    .ptile[data-lead] .ptile__body {
+        gap: var(--space-4);
+        padding: var(--space-6) var(--space-8) var(--space-6);
+    }
+
+    .ptile[data-lead] .ptile__title {
+        font-size: var(--text-2xl);
+    }
+
+    .ptile[data-lead] .ptile__desc {
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        font-size: var(--text-md);
     }
 }
 
-/* ── Ações ──────────────────────────────────────────────────────── */
-.work-card__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: auto;
-    padding-top: var(--space-3);
+/* Tablet: cards na largura toda (o líder e o último quando sobra
+   sozinho) ficam lado a lado (capa | texto) — uma capa 16:9 em 700px
+   de largura viraria um bloco alto e vazio. */
+@media (min-width: 640px) and (max-width: 1023px) {
+    .ptile[data-lead],
+    .work-grid > :last-child:nth-child(even) .ptile {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    }
+
+    .work-grid > :last-child:nth-child(even) .ptile__media {
+        height: 100%;
+        min-height: 220px;
+        aspect-ratio: auto;
+        border-bottom: 0;
+        border-right: 1px solid var(--color-border-1);
+    }
+
+    .ptile[data-lead] .ptile__media {
+        height: 100%;
+        min-height: 280px;
+        aspect-ratio: auto;
+        border-bottom: 0;
+        border-right: 1px solid var(--color-border-1);
+    }
 }
 
-/* ── Botões da seção ────────────────────────────────────────────── */
-/* Alvo mínimo de 44px (WCAG 2.5.8 pede 24; 44 é o confortável ao
-   toque). Hover: sobe 1px e ganha profundidade; clique (`:active`):
-   afunda e encolhe de leve — retorno imediato, sem esperar a rota. */
+@media (min-width: 1024px) {
+    .ptile[data-lead] .ptile__media {
+        aspect-ratio: auto;
+        flex: 1 1 auto;
+        min-height: 300px;
+    }
+
+    .ptile[data-lead] .ptile__img[data-cover="social"] {
+        padding: var(--space-8);
+    }
+
+    .ptile[data-lead] .ptile__body {
+        flex: 0 0 auto;
+    }
+
+    .ptile[data-lead] .ptile__title {
+        font-size: var(--text-3xl);
+    }
+}
+
+/* ── Botões (CTAs da seção e do card líder) ─────────────────────── */
 .work-btn {
     --work-btn-h: 44px;
     position: relative;
@@ -906,25 +673,41 @@
     transform: translateX(3px);
 }
 
-/* ── Rodapé: acervo completo ────────────────────────────────────── */
-/* Uma faixa com texto e os dois CTAs — o próximo passo fica explicado,
-   em vez de dois botões soltos no meio da página. */
+.work-btn--sm {
+    --work-btn-h: 40px;
+    padding: 0 var(--space-4);
+}
+
+/* ── Faixa do catálogo ──────────────────────────────────────────── */
 .work__more {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-5) var(--space-8);
-    margin-top: var(--space-10);
+    position: relative;
+    display: grid;
+    gap: var(--space-4) var(--space-8);
+    margin-top: var(--space-5);
     padding: var(--space-6);
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border-1);
+    overflow: hidden;
+    background:
+        radial-gradient(
+            60% 140% at 100% 0%,
+            var(--color-brand-subtle),
+            transparent 70%
+        ),
+        var(--color-surface-2);
+    border: 1px dashed var(--color-border-2);
     border-radius: var(--radius-xl);
-    box-shadow: var(--surface-edge);
+}
+
+.work__prompt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.work__prompt span {
+    color: var(--color-brand-text);
 }
 
 .work__more-text {
-    flex: 1 1 320px;
     display: grid;
     gap: var(--space-1);
 }
@@ -949,204 +732,98 @@
     gap: var(--space-3);
 }
 
-/* ── Esqueleto ──────────────────────────────────────────────────── */
-.work-card--skeleton {
-    pointer-events: none;
-}
-
-.work-carousel--skeleton .work-carousel__viewport {
-    overflow: hidden;
-}
-
-.work-card__skel-block,
-.work-card__skel-line {
-    display: block;
-    background: var(--color-surface-3);
-    border-radius: var(--radius-md);
-}
-
-.work-card__skel-block {
-    width: 100%;
-    aspect-ratio: 2 / 1;
-    border-radius: var(--radius-lg);
-}
-
-.work-card__skel-line {
-    height: 14px;
-    border-radius: var(--radius-full);
-}
-
-.work-card__skel-line--short {
-    width: 30%;
-}
-
-.work-card__skel-line--title {
-    width: 55%;
-    height: 24px;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-    .work-card__skel-block,
-    .work-card__skel-line {
-        animation: work-skeleton 1.4s ease-in-out infinite;
-    }
-}
-
-@keyframes work-skeleton {
-    50% {
-        opacity: 0.55;
-    }
-}
-
-/* ── Telas estreitas ────────────────────────────────────────────── */
-@media (max-width: 480px) {
-    .work-carousel__nav {
-        gap: var(--space-2);
-    }
-
-    .work-carousel__counter-now {
-        font-size: var(--text-md);
-    }
-
-    .work-card__actions .work-btn {
-        flex: 1 1 0;
-        padding: 0 var(--space-3);
-    }
-
-    .work-card__actions .work-btn--link {
-        flex-basis: 100%;
-    }
-
+@media (min-width: 900px) {
     .work__more {
-        padding: var(--space-5);
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+            "prompt actions"
+            "text actions";
+        align-items: center;
+        padding: var(--space-6) var(--space-8);
     }
 
+    .work__prompt {
+        grid-area: prompt;
+    }
+
+    .work__more-text {
+        grid-area: text;
+    }
+
+    .work__more-actions {
+        grid-area: actions;
+    }
+}
+
+@media (max-width: 479px) {
     .work__more-actions,
     .work__more-actions .work-btn {
         width: 100%;
     }
 }
 
-/* ── Tablet: respiro maior, ainda empilhado ─────────────────────── */
-@media (min-width: 601px) {
-    .work-card__media {
-        padding: var(--space-6);
-    }
+/* ── Estados ────────────────────────────────────────────────────── */
+.work__state {
+    padding: var(--space-6);
+    text-align: center;
+    color: var(--color-text-2);
+    border: 1px dashed var(--color-border-2);
+    border-radius: var(--radius-lg);
+}
 
-    .work-card__body {
-        padding: var(--space-8);
-    }
+.ptile--skeleton .ptile__media,
+.ptile__skel {
+    background: linear-gradient(
+        90deg,
+        var(--color-surface-3) 25%,
+        var(--color-surface-1) 50%,
+        var(--color-surface-3) 75%
+    );
+    background-size: 200% 100%;
+    animation: work-skeleton 1.4s linear infinite;
+}
 
-    .work__more {
-        padding: var(--space-6) var(--space-8);
+.ptile__skel {
+    display: block;
+    height: 12px;
+    border-radius: var(--radius-sm);
+}
+
+.ptile__skel--short {
+    width: 35%;
+}
+
+.ptile__skel--title {
+    width: 60%;
+    height: 22px;
+}
+
+@keyframes work-skeleton {
+    to {
+        background-position: -200% 0;
     }
 }
 
-/* ── Desktop: imagem como protagonista, lado alternado ──────────── */
-@media (min-width: 900px) {
-    .work-card {
-        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-        grid-template-areas: "media body";
-        align-items: stretch;
-    }
-
-    .work-card[data-media="end"] {
-        grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-        grid-template-areas: "body media";
-    }
-
-    .work-card__media {
-        padding: var(--space-8);
-        border-bottom: 0;
-        border-right: 1px solid var(--color-border-1);
-    }
-
-    .work-card[data-media="end"] .work-card__media {
-        border-right: 0;
-        border-left: 1px solid var(--color-border-1);
-    }
-
-    .work-card__body {
-        justify-content: center;
-        padding: var(--space-8) var(--space-10);
-    }
-
-    /* Bloco centralizado e unido — senão a descrição curta deixava um
-       vão entre as tecnologias e os botões. */
-    .work-card__actions {
-        margin-top: 0;
-        padding-top: var(--space-4);
-    }
-}
-
-@media (min-width: 900px) {
-    /* Capa real ou composta: janela mais alta (16:10), ocupando melhor a
-       coluna. O social card do GitHub fica em 2:1 — o texto dele vai
-       quase até as bordas e seria cortado. */
-    .work-card__thumb:has(
-        .work-card__img[data-cover="readme"],
-        .work-card__img[data-cover="custom"],
-        .pcover
-    ) {
-        aspect-ratio: 16 / 10;
-    }
-
-    .work-card__img[data-cover="readme"] {
-        object-position: top center;
-    }
-}
-
-@media (min-width: 1200px) {
-    .work-card__title {
-        font-size: var(--text-3xl);
-    }
-}
-
-/* ── prefers-reduced-motion ─────────────────────────────────────── */
+/* ── Movimento reduzido ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-    .work-carousel__viewport {
-        scroll-behavior: auto;
-    }
-
-    .work-card[data-active] .work-card__body > *,
-    .work-card[data-active] .work-card__window,
-    .work-carousel__arrow,
-    .work-carousel__dot-fill,
-    .work-carousel__nav::after,
-    .work-btn--link::before,
-    .work[data-reveal],
-    .work-card,
-    .work-card::before,
-    .work-card__window,
-    .work-card__img,
+    .ptile,
+    .ptile__img,
+    .ptile__action,
     .work-btn,
-    .work-btn::after,
     .work-btn__icon {
-        animation: none !important;
-        transition: none !important;
+        transition: none;
     }
 
-    .work-card,
-    .work-card__body > *,
-    .work-card__window {
-        opacity: 1 !important;
-        transform: none !important;
+    .ptile:hover {
+        transform: none;
     }
 
-    .work-card::before {
-        transform: scaleX(1);
+    .ptile:hover .ptile__img {
+        transform: none;
     }
 
-    .work-btn:hover,
-    .work-btn:active,
-    .work-carousel__arrow:hover,
-    .work-carousel__arrow:active,
-    .work-card:hover .work-card__window,
-    .work-card:hover .work-card__img {
-        transform: none !important;
-    }
-
-    .work-btn--primary::after {
-        display: none;
+    .ptile--skeleton .ptile__media,
+    .ptile__skel {
+        animation: none;
     }
 }
