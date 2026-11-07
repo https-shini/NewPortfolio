@@ -5,6 +5,7 @@ import {
     consultarGraphQL,
     temToken,
 } from "./_github.js";
+import { escolherCapa, type Cover } from "./_github-cover.js";
 
 /* ─────────────────────────────────────────────────────────
    _github-repos.ts — repositórios no contrato interno
@@ -47,6 +48,22 @@ export interface Repository {
     defaultBranch: string | null;
     openGraphImageUrl: string | null;
     licenseName: string | null;
+    /* ── Características (null = a origem não informou) ─────────
+       `null` nunca vira `false` nem `0`: "não sei" e "não tem" são
+       respostas diferentes, e os filtros só aparecem para o que é
+       conhecido. O caminho REST (sem token) não mede nenhuma delas. */
+    /** Quem acompanha o repositório (o dono conta). */
+    watcherCount: number | null;
+    /** Há README na raiz. */
+    hasReadme: boolean | null;
+    /** Há pasta `docs/` na raiz. */
+    hasDocs: boolean | null;
+    /** Publicado no GitHub Pages (houve deploy no ambiente `github-pages`). */
+    hasPages: boolean | null;
+    /** Tamanho em KB, como o GitHub mede. */
+    diskUsageKb: number | null;
+    /** Capa real (custom ou do README); `null` = o cliente compõe uma. */
+    cover: Cover | null;
 }
 
 /**
@@ -56,6 +73,13 @@ export interface Repository {
  */
 export const MAX_PAGINAS = 10;
 const POR_PAGINA = 100;
+
+/* GraphQL pagina menos por vez: cada repositório pergunta por README,
+   pasta docs/ e deploys do Pages, e 100 por consulta fez o GitHub
+   responder 502 (medido no preview). 30 por página = 3 consultas leves
+   para o acervo atual; o teto mantém a cobertura de ~1.000. */
+const POR_PAGINA_GQL = 30;
+export const MAX_PAGINAS_GQL = 34;
 
 /* ─────────────────────────────────────────────────────────
    Cores de linguagem — o REST público não as traz
@@ -116,6 +140,14 @@ export const CAMPOS_REPO = `
     openGraphImageUrl
     defaultBranchRef { name }
     licenseInfo { name }
+    usesCustomOpenGraphImage
+    watchers { totalCount }
+    diskUsage
+    readmeUp: object(expression: "HEAD:README.md") { ... on Blob { oid } }
+    readmeLow: object(expression: "HEAD:readme.md") { ... on Blob { oid } }
+    readmeCap: object(expression: "HEAD:Readme.md") { ... on Blob { oid } }
+    docsDir: object(expression: "HEAD:docs") { ... on Tree { oid } }
+    pages: deployments(environments: ["github-pages"], first: 1) { totalCount }
     repositoryTopics(first: 20) { nodes { topic { name } } }
     primaryLanguage { name color }
     languages(first: 8, orderBy: { field: SIZE, direction: DESC }) {
@@ -126,8 +158,9 @@ export const CAMPOS_REPO = `
 const QUERY_LISTA = `
     query($login: String!, $after: String) {
         user(login: $login) {
+            followers { totalCount }
             repositories(
-                first: ${POR_PAGINA}
+                first: ${POR_PAGINA_GQL}
                 after: $after
                 privacy: PUBLIC
                 ownerAffiliations: OWNER
@@ -135,6 +168,23 @@ const QUERY_LISTA = `
             ) {
                 pageInfo { hasNextPage endCursor }
                 nodes { ${CAMPOS_REPO} }
+            }
+        }
+    }
+`;
+
+/* Os repositórios fixados no perfil ("Customize your pins"). Só existem
+   no GraphQL — o REST não expõe essa lista. O GitHub limita a seis. */
+const QUERY_FIXADOS = `
+    query($login: String!) {
+        user(login: $login) {
+            pinnedItems(first: 6, types: [REPOSITORY]) {
+                nodes {
+                    ... on Repository {
+                        isPrivate
+                        ${CAMPOS_REPO}
+                    }
+                }
             }
         }
     }
@@ -167,6 +217,14 @@ export interface NoRepoGQL {
     openGraphImageUrl?: string | null;
     defaultBranchRef?: { name?: string } | null;
     licenseInfo?: { name?: string } | null;
+    usesCustomOpenGraphImage?: boolean;
+    watchers?: { totalCount?: number } | null;
+    diskUsage?: number | null;
+    readmeUp?: { oid?: string } | null;
+    readmeLow?: { oid?: string } | null;
+    readmeCap?: { oid?: string } | null;
+    docsDir?: { oid?: string } | null;
+    pages?: { totalCount?: number } | null;
     repositoryTopics?: { nodes?: { topic?: { name?: string } }[] };
     primaryLanguage?: { name?: string; color?: string | null } | null;
     languages?: {
@@ -232,6 +290,54 @@ export function doGraphQL(no: NoRepoGQL | null | undefined): Repository | null {
         defaultBranch: no.defaultBranchRef?.name ?? null,
         openGraphImageUrl: no.openGraphImageUrl ?? null,
         licenseName: no.licenseInfo?.name ?? null,
+        ...caracteristicasGQL(no),
+    };
+}
+
+/**
+ * Características vindas do GraphQL. Os campos de árvore (`object`)
+ * vêm `null` quando o caminho não existe — ou seja, aqui `null`
+ * significa "não tem", e por isso vira `false`. Só o caminho REST, que
+ * não pergunta, deixa as características em `null`.
+ */
+function caracteristicasGQL(
+    no: NoRepoGQL,
+): Pick<
+    Repository,
+    | "watcherCount"
+    | "hasReadme"
+    | "hasDocs"
+    | "hasPages"
+    | "diskUsageKb"
+    | "cover"
+> {
+    const temReadme = Boolean(no.readmeUp || no.readmeLow || no.readmeCap);
+    const nome = typeof no.name === "string" ? no.name : "";
+    return {
+        watcherCount:
+            typeof no.watchers?.totalCount === "number"
+                ? no.watchers.totalCount
+                : null,
+        hasReadme: temReadme,
+        hasDocs: Boolean(no.docsDir),
+        hasPages:
+            (no.pages?.totalCount ?? 0) > 0 ||
+            /\.github\.io(\/|$)/i.test(no.homepageUrl ?? ""),
+        diskUsageKb: typeof no.diskUsage === "number" ? no.diskUsage : null,
+        cover: escolherCapa(
+            {
+                usesCustomOpenGraphImage: no.usesCustomOpenGraphImage,
+                openGraphImageUrl: no.openGraphImageUrl,
+                /* Aqui só a capa customizada; a do README entra depois,
+                   em `completarCapas`, que busca os textos em lotes. */
+                readme: null,
+            },
+            {
+                owner: GITHUB_USER,
+                repo: nome,
+                ref: no.defaultBranchRef?.name ?? undefined,
+            },
+        ),
     };
 }
 
@@ -258,6 +364,9 @@ export interface RepoREST {
     language?: string | null;
     license?: { name?: string } | null;
     topics?: string[];
+    watchers_count?: number;
+    size?: number;
+    has_pages?: boolean;
 }
 
 export function doREST(bruto: RepoREST | null | undefined): Repository | null {
@@ -304,6 +413,16 @@ export function doREST(bruto: RepoREST | null | undefined): Repository | null {
             bruto.pushed_at ?? "1",
         )}/${fullName}`,
         licenseName: bruto.license?.name ?? null,
+        /* O REST da listagem informa Pages e tamanho; "watchers_count" ali
+           é sinônimo de estrelas (legado da API), então não serve. README,
+           docs e capa exigiriam uma chamada por repositório: ficam como
+           desconhecidos neste caminho. */
+        watcherCount: null,
+        hasReadme: null,
+        hasDocs: null,
+        hasPages: typeof bruto.has_pages === "boolean" ? bruto.has_pages : null,
+        diskUsageKb: typeof bruto.size === "number" ? bruto.size : null,
+        cover: null,
     };
 }
 
@@ -313,6 +432,7 @@ export function doREST(bruto: RepoREST | null | undefined): Repository | null {
 
 interface PaginaGQL {
     user?: {
+        followers?: { totalCount?: number };
         repositories?: {
             pageInfo?: { hasNextPage?: boolean; endCursor?: string | null };
             nodes?: (NoRepoGQL | null)[];
@@ -320,20 +440,40 @@ interface PaginaGQL {
     } | null;
 }
 
+/** O acervo e o que o acompanha para as métricas da /projetos. */
+export interface Acervo {
+    repositories: Repository[];
+    /** Seguidores do perfil; `null` quando a origem não respondeu. */
+    followers: number | null;
+}
+
 /**
  * Todos os repositórios públicos do dono, do mais recente ao mais
- * antigo (por atualização). Pagina até esgotar ou bater `MAX_PAGINAS`.
+ * antigo (por atualização), mais os seguidores do perfil. Pagina até
+ * esgotar ou bater `MAX_PAGINAS`.
+ *
+ * Os seguidores vêm junto — e não por uma operação à parte — para que
+ * as métricas da página e a galeria saiam da MESMA coleta: o
+ * `public_repos` do endpoint de usuário já divergiu da listagem (87 ×
+ * 86), e dois números diferentes na mesma tela não se explicam.
  */
-export async function listarRepositorios(): Promise<Repository[]> {
+export async function listarAcervo(): Promise<Acervo> {
     const todos: Repository[] = [];
+    let followers: number | null = null;
 
     if (temToken()) {
         let after: string | null = null;
-        for (let pagina = 0; pagina < MAX_PAGINAS; pagina++) {
+        for (let pagina = 0; pagina < MAX_PAGINAS_GQL; pagina++) {
             const data: PaginaGQL = await consultarGraphQL<PaginaGQL>(
                 QUERY_LISTA,
                 { login: GITHUB_USER, after },
             );
+            if (
+                followers === null &&
+                typeof data.user?.followers?.totalCount === "number"
+            ) {
+                followers = data.user.followers.totalCount;
+            }
             const conexao = data.user?.repositories;
             if (!Array.isArray(conexao?.nodes)) {
                 throw new ErroPublico(
@@ -350,7 +490,7 @@ export async function listarRepositorios(): Promise<Repository[]> {
             if (!proximo?.hasNextPage || !proximo.endCursor) break;
             after = proximo.endCursor;
         }
-        return todos;
+        return { repositories: await completarCapas(todos), followers };
     }
 
     for (let pagina = 1; pagina <= MAX_PAGINAS; pagina++) {
@@ -371,7 +511,163 @@ export async function listarRepositorios(): Promise<Repository[]> {
         }
         if (bruto.length < POR_PAGINA) break;
     }
-    return todos;
+
+    /* Seguidores pelo REST: uma chamada a mais, só no caminho sem token.
+       Falhar aqui não derruba o acervo — a métrica some, a galeria fica. */
+    try {
+        const usuario = await buscarREST<{ followers?: number }>(
+            `/users/${GITHUB_USER}`,
+        );
+        if (typeof usuario?.followers === "number")
+            followers = usuario.followers;
+    } catch {
+        /* métrica opcional */
+    }
+    return { repositories: todos, followers };
+}
+
+/* ─────────────────────────────────────────────────────────
+   Capas do README — em lotes, fora da listagem
+   ─────────────────────────────────────────────────────────
+   Trazer o texto de cada README na consulta da listagem (100 por
+   página) fez o GitHub responder 502 — medido no preview. Agora a
+   listagem só pergunta SE há README, e os textos vêm aqui, em lotes
+   de 20 repositórios por consulta, em paralelo.
+
+   A consulta é um MOLDE fixo: só o número de blocos varia, e cada
+   nome entra como variável ($n0, $n1…) — nunca no texto. Os nomes
+   vêm da própria listagem do GitHub, não do visitante.
+
+   Falhar aqui não derruba nada: o repositório fica sem capa e o
+   cliente desenha a composição.
+───────────────────────────────────────────────────────── */
+
+const TAMANHO_LOTE = 20;
+
+export function consultaDeLote(qtd: number): string {
+    const vars = Array.from({ length: qtd }, (_, i) => `$n${i}: String!`).join(
+        ", ",
+    );
+    const blocos = Array.from(
+        { length: qtd },
+        (_, i) => `
+        r${i}: repository(owner: $login, name: $n${i}) {
+            defaultBranchRef { name }
+            a: object(expression: "HEAD:README.md") { ... on Blob { text } }
+            b: object(expression: "HEAD:readme.md") { ... on Blob { text } }
+            c: object(expression: "HEAD:Readme.md") { ... on Blob { text } }
+        }`,
+    ).join("");
+    return `query($login: String!, ${vars}) {${blocos}\n}`;
+}
+
+interface NoReadme {
+    defaultBranchRef?: { name?: string } | null;
+    a?: { text?: string | null } | null;
+    b?: { text?: string | null } | null;
+    c?: { text?: string | null } | null;
+}
+
+/**
+ * Preenche `cover` a partir do README de quem ainda não tem capa e tem
+ * README. Muta e devolve a mesma lista. Sem token, não faz nada.
+ */
+export async function completarCapas(
+    repos: Repository[],
+): Promise<Repository[]> {
+    if (!temToken()) return repos;
+    const alvos = repos.filter((r) => !r.cover && r.hasReadme);
+    const lotes: Repository[][] = [];
+    for (let i = 0; i < alvos.length; i += TAMANHO_LOTE) {
+        lotes.push(alvos.slice(i, i + TAMANHO_LOTE));
+    }
+
+    await Promise.all(
+        lotes.map(async (lote) => {
+            const variaveis: Record<string, string> = { login: GITHUB_USER };
+            lote.forEach((r, i) => {
+                variaveis[`n${i}`] = r.name;
+            });
+            try {
+                const data = await consultarGraphQL<
+                    Record<string, NoReadme | null>
+                >(consultaDeLote(lote.length), variaveis, {
+                    aceitaNaoEncontrado: true,
+                });
+                lote.forEach((repo, i) => {
+                    const no = data[`r${i}`];
+                    const texto =
+                        no?.a?.text ?? no?.b?.text ?? no?.c?.text ?? null;
+                    if (!texto) return;
+                    repo.cover = escolherCapa(
+                        { readme: texto },
+                        {
+                            owner: GITHUB_USER,
+                            repo: repo.name,
+                            ref: no?.defaultBranchRef?.name ?? undefined,
+                        },
+                    );
+                });
+            } catch {
+                /* capa é enfeite: o lote fica sem, o resto segue */
+            }
+        }),
+    );
+    return repos;
+}
+
+/** Só a lista — atalho para quem não precisa das métricas. */
+export async function listarRepositorios(): Promise<Repository[]> {
+    return (await listarAcervo()).repositories;
+}
+
+/** Quantos repositórios a home mostra quando não há fixados. */
+export const QTD_FIXADOS = 6;
+
+/**
+ * Os repositórios fixados no perfil, na ordem escolhida no GitHub.
+ *
+ * `source` diz de onde a lista veio: `pinned` é a seleção do dono;
+ * `recent` é o substituto quando não há token (o REST não expõe os
+ * fixados) ou quando nenhum repositório está fixado — os mais
+ * recentemente atualizados, sem forks. A home mostra os dois do mesmo
+ * jeito; o campo existe para não esconder a diferença de quem consome.
+ */
+export async function listarFixados(): Promise<{
+    repositories: Repository[];
+    source: "pinned" | "recent";
+}> {
+    if (temToken()) {
+        const data = await consultarGraphQL<{
+            user?: {
+                pinnedItems?: { nodes?: (NoRepoGQL | null)[] };
+            } | null;
+        }>(QUERY_FIXADOS, { login: GITHUB_USER });
+
+        const nos = data.user?.pinnedItems?.nodes;
+        if (!Array.isArray(nos)) {
+            throw new ErroPublico(
+                "upstream_invalido",
+                "resposta do GitHub fora do formato esperado",
+                "user.pinnedItems.nodes não é lista",
+            );
+        }
+        const fixados = nos
+            .filter((no) => no && !no.isPrivate)
+            .map(doGraphQL)
+            .filter((r): r is Repository => r !== null);
+        if (fixados.length > 0) {
+            return {
+                repositories: await completarCapas(fixados),
+                source: "pinned",
+            };
+        }
+    }
+
+    const recentes = (await listarRepositorios())
+        .filter((r) => !r.isFork && !r.isArchived)
+        .slice(0, QTD_FIXADOS);
+    return { repositories: recentes, source: "recent" };
 }
 
 /**
@@ -392,7 +688,9 @@ export async function buscarRepositorio(
         );
         const no = data.repository;
         if (!no || no.isPrivate) return null;
-        return doGraphQL(no);
+        const repo = doGraphQL(no);
+        if (repo) await completarCapas([repo]);
+        return repo;
     }
 
     const bruto = await buscarREST<RepoREST>(`/repos/${GITHUB_USER}/${name}`);

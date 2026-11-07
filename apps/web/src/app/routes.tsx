@@ -3,6 +3,7 @@ import { HomePage } from "@/pages/Home";
 import { useRoute } from "@/shared/hooks/useRoute";
 import { ROUTES } from "@/shared/config/constants";
 import { matchReleaseNotes } from "./releaseNotesRoute";
+import { matchProjects } from "./projectsRoute";
 import { AmbientBackground } from "@/shared/ui/AmbientBackground/AmbientBackground";
 
 /**
@@ -43,6 +44,14 @@ const LinkedInNoticePage = lazy(() =>
     })),
 );
 
+const ProjectsPage = lazy(() =>
+    import("@/pages/Projects").then((m) => ({ default: m.ProjectsPage })),
+);
+
+const ProjectPage = lazy(() =>
+    import("@/pages/Project").then((m) => ({ default: m.ProjectPage })),
+);
+
 const ContactPage = lazy(() =>
     import("@/pages/Contact").then((m) => ({ default: m.ContactPage })),
 );
@@ -52,6 +61,7 @@ export const Routes: React.FC = () => {
 
     const ehLinks = path === ROUTES.LINKS;
     const releaseNotes = ehLinks ? null : matchReleaseNotes(path);
+    const projetos = ehLinks || releaseNotes ? null : matchProjects(path);
 
     /* UMA instância para todas as rotas, montada aqui e não em cada
        página. É o que faz a atmosfera sobreviver à troca de rota: as
@@ -75,6 +85,16 @@ export const Routes: React.FC = () => {
                         <ReleaseNotesPage page={releaseNotes.page} />
                     ) : (
                         <ReleaseNotePage version={releaseNotes.version} />
+                    )}
+                </Suspense>
+            ) : projetos ? (
+                <Suspense fallback={null}>
+                    {projetos.kind === "index" ? (
+                        <ProjectsPage />
+                    ) : (
+                        /* `key`: trocar de projeto remonta a página, e o
+                           estado remoto nasce de novo em "carregando". */
+                        <ProjectPage key={projetos.name} name={projetos.name} />
                     )}
                 </Suspense>
             ) : path === ROUTES.CODEX ||

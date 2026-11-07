@@ -22,13 +22,21 @@ const DIST = "apps/web/dist/assets";
 
 const TETOS = [
     // Página técnica do Codex: ~5.7 KB gzip adicionais, carregados por rota.
-    { nome: "JS total", limite: 132, alvo: (f) => f.tipo === "js" },
+    // DevHub (/projetos e /projetos/:nome): ~8.8 KB gzip adicionais, também
+    // só na rota — o JS principal da home não cresceu (45.7 → 45.6 KB).
+    // Teto refeito sobre 137.2 KB medidos, com a folga de ~10% de sempre.
+    { nome: "JS total", limite: 150, alvo: (f) => f.tipo === "js" },
     {
         nome: "vendor (react + react-dom)",
         limite: 50,
         alvo: (f) => f.nome.startsWith("vendor-"),
     },
-    { nome: "CSS total", limite: 38, alvo: (f) => f.tipo === "css" },
+    // DevHub: CSS próprio carregado só nas rotas dele. Com o catálogo
+    // (filtros, chips, paginação), as capas compostas e a página do
+    // projeto (números, abas, atividade, estrutura), o chunk lazy foi de
+    // ~3.7 para 5.9 KB gzip; o CSS principal da home (22.1 KB) não muda
+    // com isso. Teto refeito sobre 45.1 KB medidos, com ~10% de folga.
+    { nome: "CSS total", limite: 50, alvo: (f) => f.tipo === "css" },
 ];
 
 function listar(dir, tipo) {

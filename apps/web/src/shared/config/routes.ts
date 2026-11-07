@@ -19,6 +19,11 @@ export const ROUTES = {
        entrega com endereço próprio, para poder ser compartilhada, indexada
        e linkada de fora sem arrastar a home inteira atrás. */
     CONTACT: "/contato",
+    /* O DevHub integrado: a home mostra a vitrine (os fixados no GitHub);
+       daqui para dentro é o acervo inteiro — métricas, recentes, busca,
+       filtros e uma página por repositório. A âncora `#projetos` da home
+       continua existindo; esta é a camada técnica, com endereço próprio. */
+    PROJECTS: "/projetos",
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];
@@ -116,4 +121,9 @@ export function releaseNotesPagePath(page: number): string {
     return page <= 1
         ? ROUTES.RELEASE_NOTES
         : `${ROUTES.RELEASE_NOTES}/${RELEASE_NOTES_PAGE_SEGMENT}/${page}`;
+}
+
+/** `/projetos/AuthService` — o nome do repositório, codificado. */
+export function projectPath(name: string): string {
+    return `${ROUTES.PROJECTS}/${encodeURIComponent(name)}`;
 }
