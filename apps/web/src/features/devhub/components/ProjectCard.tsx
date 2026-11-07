@@ -35,15 +35,16 @@ import {
                "prompt" `$ cd ~/repositório`. Selos por cima: Fixado
                (canto superior) e "Aplicação disponível ↗" (link).
      corpo   → meta · título · descrição · tecnologias · números
-     ações   → principal + secundária, sempre com texto
+     ações   → principal: "Conhecer projeto" (página interna);
+               secundária: "Ver demo" ou "Ver código" (nova aba)
      detalhes→ (opcional, vitrine) painel expansível nativo
                <details> com stack medida, tópicos e links do README.
 
    Variantes:
      `featured` — vitrine da home: "01 / PROJETO", chips de
-                  tecnologia, "Acessar projeto" + "Código", detalhes.
+                  tecnologia, ação principal preenchida, detalhes.
      `default`  — catálogo: linguagem + estado, números e data,
-                  "Conhecer projeto" + "Demo"/"Código".
+                  ação principal com contorno.
 
    Sem link esticado sobre o cartão: as ações são explícitas e o
    título é o link para a página do projeto — nada de link dentro de
@@ -125,7 +126,7 @@ export const ProjectCard: React.FC<Props> = ({
                         href={demo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`${t("card.available")} — ${nome}`}
+                        aria-label={`${t("card.available")}: ${nome} (${t("card.newTab")})`}
                     >
                         <span className="pcard__live-dot" aria-hidden="true" />
                         {t("card.available")}
@@ -223,44 +224,31 @@ export const ProjectCard: React.FC<Props> = ({
                     </p>
                 )}
 
+                {/* Ações: a principal leva SEMPRE à página do projeto (é ali
+                    que o visitante conhece o trabalho); a secundária abre a
+                    demo, quando existe, ou o código. */}
                 <div className="pcard__actions">
-                    {destaque && demo ? (
-                        <a
-                            href={demo}
-                            className="pcard__btn pcard__btn--primary"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`${t("work.btn.demo")} — ${nome}`}
-                        >
-                            <IconExternalLink
-                                width={15}
-                                height={15}
-                                aria-hidden
-                            />
-                            {t("work.btn.demo")}
-                        </a>
-                    ) : (
-                        <a
-                            className={`pcard__btn ${destaque ? "pcard__btn--primary" : "pcard__btn--outline"}`}
-                            {...detalhes.anchorProps}
-                            aria-label={`${t("card.explore")} — ${nome}`}
-                        >
-                            {t("card.explore")}
-                            <IconArrowRight
-                                width={15}
-                                height={15}
-                                aria-hidden
-                            />
-                        </a>
-                    )}
+                    <a
+                        className={`pcard__btn ${destaque ? "pcard__btn--primary" : "pcard__btn--outline"}`}
+                        {...detalhes.anchorProps}
+                        aria-label={`${t("card.explore")}: ${nome}`}
+                    >
+                        {t("card.explore")}
+                        <IconArrowRight
+                            className="pcard__btn-go"
+                            width={15}
+                            height={15}
+                            aria-hidden
+                        />
+                    </a>
 
-                    {!destaque && demo ? (
+                    {demo ? (
                         <a
                             href={demo}
                             className="pcard__btn pcard__btn--text"
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label={`${t("card.demo")} — ${nome}`}
+                            aria-label={`${t("card.demo")}: ${nome} (${t("card.newTab")})`}
                         >
                             <IconExternalLink
                                 width={14}
@@ -275,7 +263,7 @@ export const ProjectCard: React.FC<Props> = ({
                             className="pcard__btn pcard__btn--text"
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label={`${t("card.code")} — ${nome}`}
+                            aria-label={`${t("card.code")}: ${nome} (${t("card.newTab")})`}
                         >
                             <IconCode width={15} height={15} aria-hidden />
                             {t("card.code")}
@@ -387,6 +375,18 @@ export const ProjectCard: React.FC<Props> = ({
                                         />
                                     </a>
                                 )}
+                                <a
+                                    href={repo.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {t("card.docs.code")}
+                                    <IconExternalLink
+                                        width={12}
+                                        height={12}
+                                        aria-hidden
+                                    />
+                                </a>
                                 <a {...detalhes.anchorProps}>
                                     {t("card.docs.page")}
                                     <IconArrowRight

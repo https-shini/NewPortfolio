@@ -259,7 +259,7 @@
 
 .pcard[data-variant="featured"] .pcard__actions {
     flex-wrap: wrap;
-    justify-content: flex-start;
+    justify-content: space-between;
     margin-top: auto;
     padding-top: var(--space-2);
 }
@@ -330,6 +330,15 @@
 
 .pcard__btn svg {
     flex-shrink: 0;
+}
+
+.pcard__btn-go {
+    transition: transform 0.25s var(--ease-out);
+}
+
+.pcard__btn:hover .pcard__btn-go,
+.pcard__btn:focus-visible .pcard__btn-go {
+    transform: translateX(3px);
 }
 
 /* ── Detalhes (vitrine) ── */

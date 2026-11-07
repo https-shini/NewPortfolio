@@ -101,13 +101,13 @@ describe("ProjectCard", () => {
         });
         expect(screen.getByText("Fixado")).toBeInTheDocument();
         expect(
-            screen.getByRole("link", { name: /^Demo — A$/ }),
+            screen.getByRole("link", { name: /^Ver demo: A/ }),
         ).toHaveAttribute("href", "https://a.dev");
         cleanup();
         montar(repo({ name: "b" }));
         expect(screen.queryByText("Fixado")).toBeNull();
         expect(
-            screen.getByRole("link", { name: /Código — B/ }),
+            screen.getByRole("link", { name: /Ver código: B/ }),
         ).toBeInTheDocument();
     });
 });
