@@ -84,6 +84,7 @@ import htmlIcon from "@/assets/skills/HTML.svg";
 import jsIcon from "@/assets/skills/JavaScript.svg";
 import oracleIcon from "@/assets/skills/Oracle.svg";
 import sassIcon from "@/assets/skills/Sass.svg";
+import tsIcon from "@/assets/skills/TypeScript.svg";
 
 /**
  * Os IDs em uso. União fechada de propósito: é o que faz o compilador
@@ -111,6 +112,7 @@ export type SkillIconId =
     | "react"
     | "sass"
     | "sql"
+    | "ts"
     | "vite"
     | "vscode";
 
@@ -145,6 +147,7 @@ export const SKILL_ICONS: Readonly<Record<SkillIconId, SkillIcon>> = {
     react: { dark: reactDark, light: reactLight },
     sass: { dark: sassIcon, light: sassIcon },
     sql: { dark: sqlDark, light: sqlLight },
+    ts: { dark: tsIcon, light: tsIcon },
     vite: { dark: viteDark, light: viteLight },
     vscode: { dark: vscodeDark, light: vscodeLight },
 };

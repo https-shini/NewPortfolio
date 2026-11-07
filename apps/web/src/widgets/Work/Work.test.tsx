@@ -3,7 +3,7 @@ import { render, screen, within, fireEvent } from "@testing-library/react";
 import { Providers } from "@/app/providers";
 import { Work } from "./Work";
 import { GITHUB_URL, LANG_KEY } from "@/shared/config/constants";
-import { ROUTES, projectPath } from "@/shared/config/routes";
+import { ROUTES } from "@/shared/config/routes";
 import { fetchPorOp, repo } from "@/test/repoFixture";
 
 /* ─────────────────────────────────────────────────────────
@@ -125,63 +125,68 @@ describe("Work — carrossel dos fixados no GitHub", () => {
         expect(dots[0]).toHaveAttribute("aria-current", "true");
     });
 
-    it("ação principal leva à página do projeto; demo e selo em nova aba", async () => {
+    it("ações: Acessar projeto (aplicação) e Acessar repositório (GitHub)", async () => {
         montar(PINNED);
         const [auth] = await cards();
         expect(
             within(auth!).getByRole("link", {
-                name: "Conhecer projeto: Auth Service",
-            }),
-        ).toHaveAttribute("href", projectPath("AuthService"));
-        expect(
-            within(auth!).getByRole("link", {
-                name: /^Ver demo: Auth Service \(abre em nova aba\)$/,
+                name: "Acessar projeto: Auth Service (abre em nova aba)",
             }),
         ).toHaveAttribute("href", "https://auth.example");
         expect(
             within(auth!).getByRole("link", {
-                name: /Aplicação disponível: Auth Service/,
+                name: "Acessar repositório: Auth Service (abre em nova aba)",
             }),
-        ).toHaveAttribute("href", "https://auth.example");
+        ).toHaveAttribute("href", "https://github.com/https-shini/AuthService");
+        expect(within(auth!).queryByText(/Aplicação disponível/)).toBeNull();
     });
 
-    it("sem demo: a secundária é o código", async () => {
+    it("sem aplicação publicada: só Acessar repositório", async () => {
         montar(PINNED);
         const [, chat] = await cards();
         expect(
-            within(chat!).getByRole("link", { name: /Ver código: Web Chat/ }),
+            within(chat!).queryByRole("link", { name: /^Acessar projeto/ }),
+        ).toBeNull();
+        expect(
+            within(chat!).getByRole("link", {
+                name: /^Acessar repositório: Web Chat/,
+            }),
         ).toHaveAttribute("href", "https://github.com/https-shini/web-chat");
-        expect(within(chat!).queryByText("Aplicação disponível")).toBeNull();
     });
 
-    it("tecnologias: até três linguagens", async () => {
+    it("tecnologias: chips com o nome de cada linguagem", async () => {
         montar(PINNED);
         const lista = await cards();
-        const stack = within(lista[2]!).getByRole("list", { name: "Stack" });
+        const stack = within(lista[2]!).getByRole("list", {
+            name: "Tecnologias",
+        });
         expect(
             within(stack)
                 .getAllByRole("listitem")
                 .map((li) => li.textContent),
-        ).toEqual(["TypeScript", "CSS", "JavaScript"]);
+        ).toEqual([
+            "TypeScript",
+            "CSS",
+            "JavaScript",
+            "HTML",
+            "+1Mais 1 tecnologia",
+        ]);
     });
 
-    it("documentação do projeto: painel nativo com tópicos e links", async () => {
+    it("documentação do projeto: abre o modal, sem link para página interna", async () => {
         montar(PINNED);
         const [auth] = await cards();
-        const resumo = within(auth!).getByText("Documentação do projeto");
-        const detalhes = resumo.closest("details")!;
-        fireEvent.click(resumo);
-        expect(within(detalhes).getByText("#jwt")).toBeInTheDocument();
+        const docs = within(auth!).getByRole("button", {
+            name: "Documentação do projeto: Auth Service",
+        });
+        expect(docs).toHaveAttribute("aria-haspopup", "dialog");
         expect(
-            within(detalhes).getByRole("link", {
-                name: /Ver página do projeto/,
-            }),
-        ).toHaveAttribute("href", projectPath("AuthService"));
+            within(auth!).queryByRole("link", { name: /página do projeto/ }),
+        ).toBeNull();
+        fireEvent.click(docs);
         expect(
-            within(detalhes).getByRole("link", {
-                name: /Ver código no GitHub/,
-            }),
-        ).toHaveAttribute("target", "_blank");
+            await screen.findByRole("dialog", { name: "Auth Service" }),
+        ).toBeInTheDocument();
     });
 
     it("sem descrição no GitHub, mostra um convite neutro — não inventa", async () => {

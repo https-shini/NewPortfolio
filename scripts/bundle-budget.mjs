@@ -25,7 +25,12 @@ const TETOS = [
     // DevHub (/projetos e /projetos/:nome): ~8.8 KB gzip adicionais, também
     // só na rota — o JS principal da home não cresceu (45.7 → 45.6 KB).
     // Teto refeito sobre 137.2 KB medidos, com a folga de ~10% de sempre.
-    { nome: "JS total", limite: 150, alvo: (f) => f.tipo === "js" },
+    // Modal de projeto (galeria + documentação do README): ~3.0 KB gzip
+    // num chunk lazy, baixado só ao abrir. Na home entram ~2 KB: chips
+    // de tecnologia (catálogo + TechList) e o ícone do TypeScript, que o
+    // Vite embute como data URI junto dos outros. Teto refeito sobre
+    // 151.1 KB medidos, com ~10% de folga.
+    { nome: "JS total", limite: 165, alvo: (f) => f.tipo === "js" },
     {
         nome: "vendor (react + react-dom)",
         limite: 50,

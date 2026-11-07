@@ -1,6 +1,6 @@
 # Ícones de tecnologia (skill-icons)
 
-**Todos os 34 SVGs deste diretório vêm da fork
+**Todos os 35 SVGs deste diretório vêm da fork
 https://github.com/https-shini/skill-icons** — fork de **skill-icons**, de
 tandpfun (https://github.com/tandpfun/skill-icons), licença MIT
 (Copyright © 2022 tandpfun).
@@ -8,7 +8,7 @@ tandpfun (https://github.com/tandpfun/skill-icons), licença MIT
 **Os logotipos pertencem aos respectivos donos.** A licença MIT cobre o
 empacotamento em SVG, não as marcas representadas.
 
-Conferido por SHA-256, arquivo por arquivo: **34 de 34 são byte-idênticos** aos
+Conferido por SHA-256, arquivo por arquivo: **35 de 35 são byte-idênticos** aos
 do diretório `icons/` da fork. Não há ícone local sem origem na fork, e nenhum
 arquivo aqui deve ser editado à mão — atualizar é copiar da fork por cima.
 
@@ -17,16 +17,16 @@ arquivo aqui deve ser editado à mão — atualizar é copiar da fork por cima.
 `NodeJS-Dark.svg` e não `nodejs-dark.svg`: o nome é o mesmo do diretório
 `icons/` da fork, então atualizar é cópia direta, sem traduzir nome nenhum.
 
-## Os 21 ícones em uso
+## Os 22 ícones em uso
 
 Com variante por tema (par `-Dark` / `-Light`), 13:
 
 `Bash` · `Figma` · `Firebase` · `Java` · `Linux` · `MySQL` · `NodeJS` ·
 `PHP` · `Python` · `React` · `SQL` · `Vite` · `VSCode`
 
-Arquivo único — logotipo com fundo de marca próprio, igual nos dois temas, 8:
+Arquivo único — logotipo com fundo de marca próprio, igual nos dois temas, 9:
 
-`CSS` · `Docker` · `FastAPI` · `Git` · `HTML` · `JavaScript` · `Oracle` · `Sass`
+`CSS` · `Docker` · `FastAPI` · `Git` · `HTML` · `JavaScript` · `Oracle` · `Sass` · `TypeScript`
 
 O mapeamento ID → arquivo é `src/shared/config/skillIcons.ts`, e quem renderiza
 é `src/shared/ui/SkillIcon`, que emite os dois `<img>` do par e deixa o CSS

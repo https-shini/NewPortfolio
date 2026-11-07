@@ -1,0 +1,632 @@
+/* ─────────────────────────────────────────────────────────
+   ProjectModal (.pmodal) + ProjectGallery (.pgallery)
+   ─────────────────────────────────────────────────────────
+   Mobile-first:
+     · até 640px  → tela cheia, rolagem única, ações fixas no rodapé,
+                    miniaturas viram pontos;
+     · 641–1023px → diálogo grande, ainda em coluna única;
+     · ≥ 1024px   → duas colunas: galeria (1,45fr) e informações
+                    (1fr), cada uma com a própria altura.
+   Mecânica de diálogo e animação de entrada: shared/ui/Modal.
+───────────────────────────────────────────────────────── */
+
+/* Tela cheia no celular: o backdrop perde o respiro. A regra repete
+   o seletor dentro da media query porque a do Modal, lá, ganharia. */
+.modal-backdrop:has(> .pmodal) {
+    padding: 0;
+}
+
+.pmodal {
+    --modal-width: 1280px;
+    --modal-max-height: min(90dvh, 880px);
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+}
+
+.pmodal__grid {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+/* ── Fechar ── */
+.pmodal__close {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--color-border-3);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-surface-2) 90%, transparent);
+    backdrop-filter: blur(8px);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-1);
+    cursor: pointer;
+    transition:
+        border-color 0.2s var(--ease-out),
+        background-color 0.2s var(--ease-out);
+}
+
+.pmodal__close:hover {
+    border-color: var(--color-border-brand);
+    background: var(--color-surface-3);
+}
+
+.pmodal__close:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.pmodal__close-text,
+.pmodal__kbd {
+    display: none;
+}
+
+.pmodal__kbd {
+    padding: 2px 6px;
+    border: 1px solid var(--color-border-3);
+    border-radius: var(--radius-xs);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    color: var(--color-text-3);
+}
+
+/* ── Galeria ── */
+.pgallery {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: calc(44px + var(--space-5)) var(--space-4) var(--space-2);
+    background: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface-1));
+}
+
+.pgallery__stage {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-lg);
+    background:
+        radial-gradient(
+            80% 100% at 50% 0%,
+            color-mix(in srgb, var(--color-brand) 10%, transparent),
+            transparent 70%
+        ),
+        var(--color-surface-1);
+    touch-action: pan-y;
+}
+
+.pgallery__img,
+.pgallery__cover {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select: none;
+}
+
+img.pgallery__img,
+img.pgallery__cover {
+    display: block;
+}
+
+.pgallery__img {
+    animation: pgallery-in 0.3s var(--ease-out);
+}
+
+@keyframes pgallery-in {
+    from {
+        opacity: 0;
+        transform: scale(1.01);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.pgallery__arrow {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--color-border-3);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-surface-2) 88%, transparent);
+    backdrop-filter: blur(8px);
+    color: var(--color-text-1);
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition:
+        border-color 0.2s var(--ease-out),
+        background-color 0.2s var(--ease-out);
+}
+
+.pgallery__arrow:hover {
+    border-color: var(--color-border-brand);
+    background: var(--color-surface-3);
+}
+
+.pgallery__arrow:focus-visible,
+.pgallery__thumb:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.pgallery__arrow--prev {
+    left: var(--space-3);
+}
+
+.pgallery__arrow--next {
+    right: var(--space-3);
+}
+
+.pgallery__bar {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    left: var(--space-3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    pointer-events: none;
+}
+
+.pgallery__caption,
+.pgallery__count {
+    padding: 4px var(--space-3);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-surface-2) 88%, transparent);
+    backdrop-filter: blur(8px);
+    font-size: var(--text-xs);
+    color: var(--color-text-1);
+}
+
+.pgallery__caption {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pgallery__count {
+    flex: none;
+    font-family: var(--font-mono);
+}
+
+/* Sem capturas: a capa composta do cartão, em escala de vitrine. */
+.pgallery--empty .pgallery__stage > *,
+.pgallery--empty .pcover {
+    width: 100%;
+    height: 100%;
+}
+
+.pgallery--empty .pcover {
+    gap: var(--space-2);
+    padding: clamp(var(--space-5), 5cqi, var(--space-10));
+}
+
+.pgallery--empty .pgallery__stage {
+    container-type: inline-size;
+}
+
+.pgallery--empty .pcover__title {
+    font-size: clamp(var(--text-2xl), 7cqi, var(--text-5xl));
+}
+
+.pgallery--empty .pcover__path,
+.pgallery--empty .pcover__langs {
+    font-size: clamp(var(--text-2xs), 1.8cqi, var(--text-sm));
+}
+
+.pgallery--empty .pgallery__caption {
+    align-self: flex-start;
+    border-color: transparent;
+    background: none;
+    color: var(--color-text-3);
+    white-space: normal;
+}
+
+/* Miniaturas — no celular, pontos (alvo de 24px, ponto de 8px). */
+.pgallery__thumbs {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-1);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.pgallery__thumb {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: none;
+    cursor: pointer;
+}
+
+.pgallery__thumb::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-border-3);
+    transition:
+        width 0.2s var(--ease-out),
+        background-color 0.2s var(--ease-out);
+}
+
+.pgallery__thumb[aria-current="true"]::before {
+    width: 20px;
+    background: var(--color-brand-text);
+}
+
+.pgallery__thumb img {
+    display: none;
+}
+
+/* ── Informações ── */
+.pmodal__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--color-surface-1);
+}
+
+.pmodal__scroll {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-4);
+}
+
+.pmodal__scroll:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: -2px;
+}
+
+.pmodal__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.pmodal__index {
+    color: var(--color-brand-text);
+}
+
+.pmodal__lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-text-2);
+}
+
+.pmodal__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.pmodal__title {
+    font-family: var(--font-display);
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--color-text-1);
+    overflow-wrap: anywhere;
+}
+
+.pmodal__desc {
+    font-size: var(--text-md);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-2);
+}
+
+.pmodal__muted {
+    color: var(--color-text-3);
+}
+
+.pmodal__notice {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-2);
+}
+
+.pmodal__block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.pmodal__heading {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.pmodal__features {
+    display: grid;
+    gap: var(--space-2);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.pmodal__features li {
+    display: flex;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-1);
+}
+
+.pmodal__features svg {
+    flex: none;
+    margin-top: 0.3em;
+    color: var(--color-brand-text);
+}
+
+.pmodal__facts {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: hidden;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+}
+
+.pmodal__facts > div {
+    padding: var(--space-3) var(--space-4);
+    border-color: var(--color-border-2);
+    border-style: solid;
+    border-width: 0 0 1px 1px;
+}
+
+.pmodal__facts > div:nth-child(2n + 1) {
+    border-left-width: 0;
+}
+
+.pmodal__facts > div:nth-last-child(-n + 2) {
+    border-bottom-width: 0;
+}
+
+.pmodal__facts dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.pmodal__facts dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+    color: var(--color-text-1);
+    overflow-wrap: anywhere;
+}
+
+/* Ações: fixas no rodapé enquanto a coluna rola. */
+.pmodal__actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-2) var(--space-3);
+    margin-top: auto;
+    padding: var(--space-3) var(--space-4)
+        calc(var(--space-3) + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--color-border-2);
+    background: color-mix(in srgb, var(--color-surface-1) 94%, transparent);
+    backdrop-filter: blur(8px);
+}
+
+/* ── ≥ 641px: diálogo, miniaturas de verdade ── */
+@media (min-width: 641px) {
+    .modal-backdrop:has(> .pmodal) {
+        padding: var(--space-4);
+    }
+
+    .pmodal {
+        width: min(var(--modal-width), 100%);
+        height: var(--modal-max-height);
+        border: 1px solid var(--color-border-2);
+        border-radius: var(--radius-xl);
+    }
+
+    .pmodal__close {
+        top: var(--space-4);
+        right: var(--space-4);
+        width: auto;
+        padding: 0 var(--space-3) 0 var(--space-4);
+    }
+
+    .pmodal__close-text,
+    .pmodal__kbd {
+        display: inline;
+    }
+
+    .pgallery {
+        padding: calc(44px + var(--space-6)) var(--space-6) var(--space-4);
+    }
+
+    .pgallery__thumbs {
+        justify-content: flex-start;
+        gap: var(--space-2);
+        overflow-x: auto;
+        padding: 2px;
+        scrollbar-width: thin;
+    }
+
+    .pgallery__thumb {
+        flex: none;
+        width: 104px;
+        height: 64px;
+        overflow: hidden;
+        border-radius: var(--radius-md);
+        background: var(--color-surface-1);
+        box-shadow: inset 0 0 0 1px var(--color-border-2);
+        opacity: 0.7;
+        transition: opacity 0.2s var(--ease-out);
+    }
+
+    .pgallery__thumb::before {
+        content: none;
+    }
+
+    .pgallery__thumb img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .pgallery__thumb:hover {
+        opacity: 1;
+    }
+
+    .pgallery__thumb[aria-current="true"] {
+        opacity: 1;
+        box-shadow: inset 0 0 0 2px var(--color-brand-text);
+    }
+
+    .pgallery__thumb[aria-current="true"] img {
+        padding: 2px;
+        border-radius: calc(var(--radius-md) - 1px);
+    }
+
+    .pmodal__scroll {
+        padding: var(--space-6);
+    }
+
+    .pmodal__facts {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .pmodal__facts > div,
+    .pmodal__facts > div:nth-child(2n + 1) {
+        border-width: 0 0 0 1px;
+    }
+
+    .pmodal__facts > div:first-child {
+        border-left-width: 0;
+    }
+
+    .pmodal__actions {
+        padding: var(--space-4) var(--space-6);
+    }
+}
+
+/* ── ≥ 1024px: duas colunas, cada uma com a própria rolagem ── */
+@media (min-width: 1024px) {
+    .pmodal__grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(380px, 1fr);
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .pgallery {
+        min-height: 0;
+        padding: var(--space-6);
+    }
+
+    .pgallery__stage {
+        flex: 1;
+        min-height: 0;
+        aspect-ratio: auto;
+    }
+
+    .pmodal__info {
+        min-height: 0;
+        border-left: 1px solid var(--color-border-2);
+    }
+
+    .pmodal__scroll {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: calc(44px + var(--space-8)) var(--space-8) var(--space-6);
+    }
+
+    .pmodal__facts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pmodal__facts > div {
+        border-width: 0 0 1px 1px;
+    }
+
+    .pmodal__facts > div:nth-child(2n + 1) {
+        border-left-width: 0;
+    }
+
+    .pmodal__facts > div:nth-last-child(-n + 2) {
+        border-bottom-width: 0;
+    }
+
+    .pmodal__actions {
+        position: static;
+        padding: var(--space-5) var(--space-8);
+        background: var(--color-surface-1);
+        backdrop-filter: none;
+    }
+}
+
+/* ── Movimento reduzido ── */
+@media (prefers-reduced-motion: reduce) {
+    .pgallery__img {
+        animation: none;
+    }
+
+    .pgallery__arrow,
+    .pgallery__thumb,
+    .pgallery__thumb::before,
+    .pmodal__close {
+        transition: none;
+    }
+}
+
+body.reduce-motion .pgallery__img {
+    animation: none;
+}

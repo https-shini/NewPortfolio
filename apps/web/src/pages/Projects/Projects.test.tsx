@@ -211,17 +211,17 @@ describe("/projetos", () => {
         }
     });
 
-    it("cada card leva à página do projeto", async () => {
+    it("cada card abre o modal do projeto e leva ao repositório", async () => {
         montar();
         const sec = await catalogo();
         expect(
-            within(sec).getAllByRole("link", {
-                name: /Conhecer projeto: Proj 00/,
-            })[0],
-        ).toHaveAttribute("href", "/projetos/proj-00");
+            within(sec).getByRole("button", { name: "Proj 00" }),
+        ).toHaveAttribute("aria-haspopup", "dialog");
         expect(
-            within(sec).getByRole("link", { name: "Proj 00" }),
-        ).toHaveAttribute("href", "/projetos/proj-00");
+            within(sec).getAllByRole("link", {
+                name: /^Acessar repositório: Proj 00/,
+            })[0],
+        ).toHaveAttribute("href", "https://github.com/https-shini/proj-00");
     });
 
     it("chamada final leva ao contato", async () => {
