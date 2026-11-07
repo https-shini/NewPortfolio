@@ -263,7 +263,9 @@ export type TranslationKey =
     | "footer.rights"
 
     /* ── DEVHUB (home #projetos, /projetos, /projetos/:nome) ── */
-    | "work.sub2"
+    | "work.sync"
+    | "work.moreTitle"
+    | "work.moreDesc"
     | "work.viewAll"
     | "work.btn.details"
     | "work.loading"
