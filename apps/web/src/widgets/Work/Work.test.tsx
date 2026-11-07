@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, within, fireEvent } from "@testing-library/react";
 import { Providers } from "@/app/providers";
 import { Work } from "./Work";
 import { GITHUB_URL, LANG_KEY } from "@/shared/config/constants";
@@ -7,11 +7,11 @@ import { ROUTES, projectPath } from "@/shared/config/routes";
 import { fetchPorOp, repo } from "@/test/repoFixture";
 
 /* ─────────────────────────────────────────────────────────
-   A vitrine da home é uma grade com os fixados do GitHub
-   (`op=pinned`). O que se vigia: a ordem dos fixados, todos
-   visíveis de uma vez, o 1º como líder, o card inteiro levando à
-   página do projeto, atalhos de demo/código, nenhum conteúdo
-   inventado e a seção sempre com saída para o catálogo.
+   A vitrine da home mostra os fixados do GitHub (`op=pinned`):
+   os três primeiros em cartões de destaque (o ProjectCard único do
+   site) e os demais em "Outras implementações". O que se vigia: a
+   ordem dos fixados, todos alcançáveis, as ações de cada cartão,
+   nenhum conteúdo inventado e a saída para o catálogo.
 ───────────────────────────────────────────────────────── */
 
 const FIXADOS = [
@@ -31,6 +31,8 @@ const FIXADOS = [
             { name: "Shell", color: "#89e051", size: 1 },
         ],
     }),
+    repo({ name: "Portal-Receitas" }),
+    repo({ name: "todolist-fullstack" }),
 ];
 
 const PINNED = {
@@ -54,87 +56,109 @@ const secao = () =>
     screen.getByRole("region", { name: /^(Projetos|Projects)$/ });
 
 const cards = async () => {
-    await screen.findByRole("heading", { level: 3, name: "AuthService" });
+    await screen.findByRole("heading", { level: 3, name: "Auth Service" });
     return within(secao()).getAllByRole("article");
 };
 
 afterEach(() => vi.unstubAllGlobals());
 
-describe("Work — grade dos fixados no GitHub", () => {
-    it("todos os fixados de uma vez, na ordem do GitHub; o 1º é o líder", async () => {
+describe("Work — vitrine dos fixados no GitHub", () => {
+    it("três destaques na ordem do GitHub, numerados", async () => {
         montar(PINNED);
         const lista = await cards();
         expect(
             lista.map((c) => within(c).getByRole("heading").textContent),
-        ).toEqual(["AuthService", "web-chat", "NewPortfolio"]);
-        expect(lista[0]).toHaveAttribute("data-lead", "true");
-        expect(lista[1]).not.toHaveAttribute("data-lead");
+        ).toEqual(["Auth Service", "Web Chat", "New Portfolio"]);
+        expect(lista[0]).toHaveTextContent("01 / Projeto");
+        expect(lista[2]).toHaveTextContent("03 / Projeto");
     });
 
-    it("o título leva à página do projeto (e cobre o card)", async () => {
+    it("barra com a contagem real e atalho para o GitHub", async () => {
         montar(PINNED);
-        const [auth] = await cards();
+        await cards();
+        expect(secao().querySelector(".work__count strong")).toHaveTextContent(
+            "05",
+        );
         expect(
-            within(auth!).getByRole("link", { name: "AuthService" }),
-        ).toHaveAttribute("href", projectPath("AuthService"));
+            within(secao()).getByRole("link", { name: /No GitHub/ }),
+        ).toHaveAttribute("href", GITHUB_URL);
     });
 
-    it("líder: botões com texto para demo e código", async () => {
+    it("outras implementações: os demais fixados, levando à página", async () => {
+        montar(PINNED);
+        await cards();
+        const outras = within(secao()).getByRole("region", {
+            name: "Outras implementações",
+        });
+        const links = within(outras).getAllByRole("link");
+        expect(links.map((a) => a.getAttribute("href"))).toEqual([
+            projectPath("Portal-Receitas"),
+            projectPath("todolist-fullstack"),
+        ]);
+        expect(links[0]).toHaveTextContent("04");
+        expect(links[0]).toHaveTextContent("Portal Receitas");
+    });
+
+    it("com demo: 'Acessar projeto' e selo 'Aplicação disponível'", async () => {
         montar(PINNED);
         const [auth] = await cards();
         expect(
             within(auth!).getByRole("link", {
-                name: /Acessar projeto — AuthService/,
+                name: /Acessar projeto — Auth Service/,
             }),
         ).toHaveAttribute("href", "https://auth.example");
         expect(
             within(auth!).getByRole("link", {
-                name: /Código-fonte — AuthService/,
+                name: /Aplicação disponível — Auth Service/,
             }),
+        ).toHaveAttribute("href", "https://auth.example");
+        expect(
+            within(auth!).getByRole("link", { name: /Código — Auth Service/ }),
         ).toHaveAttribute("href", "https://github.com/https-shini/AuthService");
-        expect(within(auth!).getByText("Demo online")).toBeInTheDocument();
     });
 
-    it("compactos: atalho de código sempre; de demo só quando existe", async () => {
+    it("sem demo: a ação principal leva à página do projeto", async () => {
         montar(PINNED);
         const [, chat] = await cards();
         expect(
             within(chat!).getByRole("link", {
-                name: /Código-fonte — web-chat/,
+                name: /Conhecer projeto — Web Chat/,
             }),
-        ).toBeInTheDocument();
-        expect(
-            within(chat!).queryByRole("link", { name: /Acessar projeto/ }),
-        ).toBeNull();
-        expect(within(chat!).queryByText("Demo online")).toBeNull();
+        ).toHaveAttribute("href", projectPath("web-chat"));
+        expect(within(chat!).queryByText("Aplicação disponível")).toBeNull();
     });
 
-    it("stack: líder com barra e %, compacto com até três nomes", async () => {
+    it("tecnologias: até três linguagens", async () => {
         montar(PINNED);
         const lista = await cards();
-        const novo = lista[2]!;
-        const stack = within(novo).getByRole("list", { name: "Stack" });
+        const stack = within(lista[2]!).getByRole("list", { name: "Stack" });
         expect(
             within(stack)
                 .getAllByRole("listitem")
                 .map((li) => li.textContent),
         ).toEqual(["TypeScript", "CSS", "JavaScript"]);
-        expect(novo.querySelector(".ptile__bar")).toBeNull();
     });
 
-    it("destaques = tópicos do GitHub, só no líder", async () => {
+    it("documentação do projeto: painel nativo com tópicos e links", async () => {
         montar(PINNED);
         const [auth] = await cards();
-        const topicos = within(auth!).getByRole("list", { name: "Destaques" });
-        expect(topicos).toHaveTextContent("#jwt");
-        expect(topicos).toHaveTextContent("#fastapi");
+        const resumo = within(auth!).getByText("Documentação do projeto");
+        const detalhes = resumo.closest("details")!;
+        expect(detalhes).not.toHaveAttribute("open");
+        fireEvent.click(resumo);
+        expect(within(detalhes).getByText("#jwt")).toBeInTheDocument();
+        expect(
+            within(detalhes).getByRole("link", {
+                name: /Ver página do projeto/,
+            }),
+        ).toHaveAttribute("href", projectPath("AuthService"));
     });
 
-    it("sem descrição no GitHub, mostra o aviso — não inventa texto", async () => {
+    it("sem descrição no GitHub, mostra um convite neutro — não inventa", async () => {
         montar(PINNED);
         const [, chat] = await cards();
         expect(
-            within(chat!).getByText("Sem descrição no GitHub."),
+            within(chat!).getByText(/Explore os arquivos e a documentação/),
         ).toBeInTheDocument();
     });
 
@@ -148,7 +172,7 @@ describe("Work — grade dos fixados no GitHub", () => {
         }
     });
 
-    it("faixa final leva ao catálogo e ao GitHub", async () => {
+    it("rodapé leva ao catálogo e ao GitHub", async () => {
         montar(PINNED);
         await cards();
         expect(
@@ -177,9 +201,9 @@ describe("Work — grade dos fixados no GitHub", () => {
 
     it("em inglês", async () => {
         montar(PINNED, "en");
-        await screen.findByRole("heading", { level: 3, name: "AuthService" });
+        await screen.findByRole("heading", { level: 3, name: "Auth Service" });
         expect(
             screen.getByRole("region", { name: "Projects" }),
-        ).toHaveTextContent("Pinned on GitHub");
+        ).toHaveTextContent("Pinned projects");
     });
 });

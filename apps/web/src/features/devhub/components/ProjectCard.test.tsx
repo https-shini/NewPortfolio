@@ -1,3 +1,4 @@
+import type React from "react";
 import { describe, it, expect, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { Providers } from "@/app/providers";
@@ -7,11 +8,14 @@ import { LANG_KEY } from "@/shared/config/constants";
 import { repo } from "@/test/repoFixture";
 import type { Repository } from "@/features/devhub/types";
 
-const montar = (r: Repository) => {
+const montar = (
+    r: Repository,
+    props: Partial<React.ComponentProps<typeof ProjectCard>> = {},
+) => {
     localStorage.setItem(LANG_KEY, "pt");
     return render(
         <Providers>
-            <ProjectCard repo={r} />
+            <ProjectCard repo={r} {...props} />
         </Providers>,
     );
 };
@@ -30,7 +34,7 @@ describe("ProjectCard", () => {
                 },
             }),
         );
-        const img = container.querySelector(".devhub-card__thumb img");
+        const img = container.querySelector(".pcard__media img");
         expect(img).toHaveAttribute(
             "src",
             "https://raw.githubusercontent.com/a/b/main/s.png",
@@ -39,7 +43,7 @@ describe("ProjectCard", () => {
         expect(container.querySelector(".pcover")).toBeNull();
     });
 
-    it("sem capa real: capa composta, nunca o card automático do GitHub", () => {
+    it("catálogo sem capa real: prompt do terminal, nunca o card automático", () => {
         const { container } = montar(
             repo({
                 name: "meu-projeto_legal",
@@ -47,11 +51,27 @@ describe("ProjectCard", () => {
                 cover: null,
             }),
         );
-        expect(container.querySelector(".devhub-card__thumb img")).toBeNull();
-        const capa = container.querySelector(".pcover");
+        expect(container.querySelector(".pcard__media img")).toBeNull();
+        const capa = container.querySelector(".pcover--terminal");
         expect(capa).toHaveAttribute("aria-hidden", "true");
-        expect(capa).toHaveTextContent("Meu Projeto Legal");
-        expect(capa).toHaveTextContent("~/meu-projeto_legal");
+        expect(capa).toHaveTextContent("$ cd ~/meu-projeto_legal");
+    });
+
+    it("vitrine sem capa real: usa o social card do GitHub", () => {
+        const { container } = montar(
+            repo({
+                name: "vitrine",
+                openGraphImageUrl: "https://opengraph.githubassets.com/x",
+                cover: null,
+            }),
+            { variant: "featured" },
+        );
+        const img = container.querySelector(".pcard__media img");
+        expect(img).toHaveAttribute(
+            "src",
+            "https://opengraph.githubassets.com/x",
+        );
+        expect(img).toHaveAttribute("data-cover", "social");
     });
 
     it("capa real que falha ao carregar cai na composta", () => {
@@ -62,29 +82,33 @@ describe("ProjectCard", () => {
             }),
         );
         fireEvent.error(
-            container.querySelector(".devhub-card__thumb img") as Element,
+            container.querySelector(".pcard__media img") as Element,
         );
         expect(container.querySelector(".pcover")).not.toBeNull();
     });
 
-    it("selos só para o que existe; Pages some quando já há demo", () => {
-        montar(
-            repo({
-                name: "sel",
-                homepageUrl: "https://x.dev",
-                hasPages: true,
-                hasDocs: true,
-            }),
+    it("título com nome de exibição e link para a página do projeto", () => {
+        montar(repo({ name: "web-chat" }));
+        expect(screen.getByRole("link", { name: "Web Chat" })).toHaveAttribute(
+            "href",
+            "/projetos/web-chat",
         );
-        const lista = screen.getByRole("list", { name: "Recursos do projeto" });
-        expect(lista).toHaveTextContent("Demo online");
-        expect(lista).toHaveTextContent("Documentação");
-        expect(lista).not.toHaveTextContent("GitHub Pages");
-        cleanup();
-        montar(repo({ name: "nada" }));
+    });
+
+    it("selo Fixado só quando fixado; Demo só quando há endereço", () => {
+        montar(repo({ name: "a", homepageUrl: "https://a.dev" }), {
+            pinned: true,
+        });
+        expect(screen.getByText("Fixado")).toBeInTheDocument();
         expect(
-            screen.queryByRole("list", { name: "Recursos do projeto" }),
-        ).toBeNull();
+            screen.getByRole("link", { name: /^Demo — A$/ }),
+        ).toHaveAttribute("href", "https://a.dev");
+        cleanup();
+        montar(repo({ name: "b" }));
+        expect(screen.queryByText("Fixado")).toBeNull();
+        expect(
+            screen.getByRole("link", { name: /Código — B/ }),
+        ).toBeInTheDocument();
     });
 });
 

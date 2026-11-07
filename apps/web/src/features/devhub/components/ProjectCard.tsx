@@ -1,7 +1,13 @@
 import React from "react";
+import "./ProjectCard.css";
 import { RepoThumb } from "@/features/devhub/components/RepoThumb";
-import { LanguageBar } from "@/features/devhub/components/LanguageBar";
-import { formatNumber, formatRelativeDate } from "@/features/devhub/format";
+import { displayName } from "@/features/devhub/catalog";
+import {
+    formatDate,
+    formatNumber,
+    formatRelativeDate,
+    languageShares,
+} from "@/features/devhub/format";
 import { lastActivity } from "@/features/devhub/selectors";
 import {
     NEUTRAL_LANGUAGE_COLOR,
@@ -11,214 +17,388 @@ import { projectPath } from "@/shared/config/routes";
 import { useLang } from "@/shared/hooks/useLang";
 import { useLinkProps } from "@/shared/hooks/useLinkProps";
 import {
+    IconArrowRight,
+    IconCode,
     IconExternalLink,
     IconGitBranch,
-    IconGitHub,
-    IconLayers,
-    IconLink,
-    IconRocket,
     IconStar,
 } from "@/shared/ui/Icons";
 
 /* ─────────────────────────────────────────────────────────
-   ProjectCard — um repositório na /projetos
+   ProjectCard — o cartão de projeto ÚNICO do site
    ─────────────────────────────────────────────────────────
-   O cartão inteiro é clicável, mas o elemento clicável é só o
-   link do título: ele se estica sobre o cartão por CSS
-   (`::after` com `inset: 0`). Assim o leitor de tela anuncia UM
-   link, com o nome do projeto, e não quatro para o mesmo lugar.
+   O mesmo componente na home (#projetos) e no catálogo (/projetos),
+   para as duas superfícies falarem a mesma língua visual.
 
-   As ações rápidas (repositório e demonstração) levam para fora,
-   ficam acima dessa camada e aparecem também no `:focus-within`,
-   para existirem no teclado.
+     mídia   → capa real (imagem social própria ou do README); sem
+               ela, o social card do GitHub (só na vitrine) ou o
+               "prompt" `$ cd ~/repositório`. Selos por cima: Fixado
+               (canto superior) e "Aplicação disponível ↗" (link).
+     corpo   → meta · título · descrição · tecnologias · números
+     ações   → principal + secundária, sempre com texto
+     detalhes→ (opcional, vitrine) painel expansível nativo
+               <details> com stack medida, tópicos e links do README.
+
+   Variantes:
+     `featured` — vitrine da home: "01 / PROJETO", chips de
+                  tecnologia, "Acessar projeto" + "Código", detalhes.
+     `default`  — catálogo: linguagem + estado, números e data,
+                  "Conhecer projeto" + "Demo"/"Código".
+
+   Sem link esticado sobre o cartão: as ações são explícitas e o
+   título é o link para a página do projeto — nada de link dentro de
+   link, e cada alvo diz o que faz.
 ───────────────────────────────────────────────────────── */
 
 interface Props {
     repo: Repository;
-    /** Posição na grade — escalona a entrada animada. */
+    /** Posição na lista — "01 / PROJETO" na vitrine. */
     index?: number;
+    variant?: "featured" | "default";
+    /** Fixado no perfil do GitHub (selo na mídia). */
+    pinned?: boolean;
     /** Nível do título: 3 dentro de uma seção com h2. */
     headingLevel?: 2 | 3;
 }
 
+const pad = (n: number) => String(n).padStart(2, "0");
+
 export const ProjectCard: React.FC<Props> = ({
     repo,
     index = 0,
+    variant = "default",
+    pinned = false,
     headingLevel = 3,
 }) => {
     const { lang, t } = useLang();
-    const { anchorProps } = useLinkProps(projectPath(repo.name));
-    const linguagem = repo.primaryLanguage;
-    const demo = repo.homepageUrl;
+    const detalhes = useLinkProps(projectPath(repo.name));
+    const destaque = variant === "featured";
     const Titulo = headingLevel === 2 ? "h2" : "h3";
+    const tituloId = `pcard-${repo.id}`;
+    const nome = displayName(repo.name);
+    const demo = repo.homepageUrl;
+    const tinta = repo.primaryLanguage?.color ?? NEUTRAL_LANGUAGE_COLOR;
     const atividade = new Date(lastActivity(repo)).toISOString();
+
+    const fatias = languageShares(repo.languages);
+    const linguagens: { name: string; color: string | null; pct?: number }[] =
+        fatias.length > 0
+            ? fatias
+            : repo.languages.length > 0
+              ? repo.languages
+              : repo.primaryLanguage
+                ? [repo.primaryLanguage]
+                : [];
+    const fmtPct = new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "en-US", {
+        maximumFractionDigits: 1,
+    });
+
+    const estado = repo.isArchived
+        ? t("devhub.card.archived")
+        : repo.isFork
+          ? t("devhub.card.fork")
+          : t("card.public");
 
     return (
         <article
-            className="devhub-card"
-            style={{ "--card-index": index } as React.CSSProperties}
+            className="pcard"
+            data-variant={variant}
+            aria-labelledby={tituloId}
+            style={{ "--pcard-tint": tinta } as React.CSSProperties}
         >
-            <div className="devhub-card__thumb">
+            <div className="pcard__media">
                 <RepoThumb
                     repo={repo}
-                    source="cover"
-                    className="devhub-card__media"
+                    source={destaque ? "showcase" : "cover"}
+                    coverVariant="terminal"
+                    className="pcard__img"
                 />
-                <span className="devhub-card__veil" aria-hidden="true" />
-
-                {linguagem && (
-                    <span className="devhub-card__lang">
-                        <span
-                            className="devhub-card__lang-dot"
-                            style={{
-                                background:
-                                    linguagem.color ?? NEUTRAL_LANGUAGE_COLOR,
-                            }}
-                            aria-hidden="true"
-                        />
-                        {linguagem.name}
+                {pinned && (
+                    <span className="pcard__badge">
+                        <span aria-hidden="true">⌖</span>
+                        {t("card.pinned")}
                     </span>
                 )}
-
-                {(repo.isArchived || repo.isFork) && (
-                    <span className="devhub-card__flags">
-                        {repo.isArchived && (
-                            <span className="devhub-chip devhub-chip--warn">
-                                {t("devhub.card.archived")}
-                            </span>
-                        )}
-                        {repo.isFork && (
-                            <span className="devhub-chip">
-                                {t("devhub.card.fork")}
-                            </span>
-                        )}
-                    </span>
-                )}
-
-                <div className="devhub-card__actions">
+                {demo && (
                     <a
-                        className="devhub-card__icon-btn"
-                        href={repo.url}
+                        className="pcard__live"
+                        href={demo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`${t("devhub.card.openRepo")}: ${repo.name}`}
+                        aria-label={`${t("card.available")} — ${nome}`}
                     >
-                        <IconGitHub width={16} height={16} aria-hidden />
+                        <span className="pcard__live-dot" aria-hidden="true" />
+                        {t("card.available")}
+                        <IconExternalLink width={12} height={12} aria-hidden />
                     </a>
-                    {demo && (
+                )}
+            </div>
+
+            <div className="pcard__body">
+                <p className="pcard__meta">
+                    {destaque ? (
+                        <span className="pcard__index">
+                            {pad(index + 1)} / {t("card.project")}
+                        </span>
+                    ) : (
+                        <span className="pcard__lang">
+                            <span
+                                className="pcard__dot"
+                                style={{ background: tinta }}
+                                aria-hidden="true"
+                            />
+                            {repo.primaryLanguage?.name ?? t("card.noLanguage")}
+                        </span>
+                    )}
+                    {destaque ? (
+                        repo.primaryLanguage && (
+                            <span className="pcard__lang">
+                                <span
+                                    className="pcard__dot"
+                                    style={{ background: tinta }}
+                                    aria-hidden="true"
+                                />
+                                {repo.primaryLanguage.name}
+                            </span>
+                        )
+                    ) : (
+                        <span className="pcard__state">{estado}</span>
+                    )}
+                </p>
+
+                <Titulo className="pcard__title" id={tituloId}>
+                    <a className="pcard__link" {...detalhes.anchorProps}>
+                        {nome}
+                    </a>
+                </Titulo>
+
+                <p className="pcard__desc">
+                    {repo.description ?? (
+                        <span className="pcard__nodesc">
+                            {t("card.noDescription")}
+                        </span>
+                    )}
+                </p>
+
+                {destaque && linguagens.length > 0 && (
+                    <ul
+                        className="pcard__chips"
+                        aria-label={t("work.block.stack")}
+                    >
+                        {linguagens.slice(0, 3).map((l) => (
+                            <li
+                                key={l.name}
+                                className="pcard__chip"
+                                style={
+                                    {
+                                        "--chip":
+                                            l.color ?? NEUTRAL_LANGUAGE_COLOR,
+                                    } as React.CSSProperties
+                                }
+                            >
+                                {l.name}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+
+                {!destaque && (
+                    <p className="pcard__stats">
+                        <span
+                            aria-label={`${formatNumber(repo.stargazerCount, lang)} ${t("devhub.card.stars")}`}
+                        >
+                            <IconStar width={13} height={13} aria-hidden />
+                            {formatNumber(repo.stargazerCount, lang)}
+                        </span>
+                        <span
+                            aria-label={`${formatNumber(repo.forkCount, lang)} ${t("devhub.card.forks")}`}
+                        >
+                            <IconGitBranch width={13} height={13} aria-hidden />
+                            {formatNumber(repo.forkCount, lang)}
+                        </span>
+                        <time className="pcard__date" dateTime={atividade}>
+                            {t("devhub.card.updated")}{" "}
+                            {formatDate(atividade, lang)}
+                        </time>
+                    </p>
+                )}
+
+                <div className="pcard__actions">
+                    {destaque && demo ? (
                         <a
-                            className="devhub-card__icon-btn"
                             href={demo}
+                            className="pcard__btn pcard__btn--primary"
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label={`${t("devhub.card.openDemo")}: ${repo.name}`}
+                            aria-label={`${t("work.btn.demo")} — ${nome}`}
                         >
                             <IconExternalLink
-                                width={16}
-                                height={16}
+                                width={15}
+                                height={15}
+                                aria-hidden
+                            />
+                            {t("work.btn.demo")}
+                        </a>
+                    ) : (
+                        <a
+                            className={`pcard__btn ${destaque ? "pcard__btn--primary" : "pcard__btn--outline"}`}
+                            {...detalhes.anchorProps}
+                            aria-label={`${t("card.explore")} — ${nome}`}
+                        >
+                            {t("card.explore")}
+                            <IconArrowRight
+                                width={15}
+                                height={15}
                                 aria-hidden
                             />
                         </a>
                     )}
-                </div>
-            </div>
 
-            <div className="devhub-card__body">
-                <Titulo className="devhub-card__title">
-                    <a className="devhub-card__link" {...anchorProps}>
-                        {repo.name}
-                    </a>
-                </Titulo>
-
-                <p className="devhub-card__desc">
-                    {repo.description ?? (
-                        <em className="devhub-card__nodesc">
-                            {t("devhub.card.noDescription")}
-                        </em>
+                    {!destaque && demo ? (
+                        <a
+                            href={demo}
+                            className="pcard__btn pcard__btn--text"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${t("card.demo")} — ${nome}`}
+                        >
+                            <IconExternalLink
+                                width={14}
+                                height={14}
+                                aria-hidden
+                            />
+                            {t("card.demo")}
+                        </a>
+                    ) : (
+                        <a
+                            href={repo.url}
+                            className="pcard__btn pcard__btn--text"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${t("card.code")} — ${nome}`}
+                        >
+                            <IconCode width={15} height={15} aria-hidden />
+                            {t("card.code")}
+                        </a>
                     )}
-                </p>
+                </div>
 
-                {(demo || repo.hasPages || repo.hasDocs) && (
-                    <ul
-                        className="devhub-card__badges"
-                        aria-label={t("devhub.card.badges")}
-                    >
-                        {demo && (
-                            <li className="devhub-card__badge">
-                                <IconRocket
-                                    width={12}
-                                    height={12}
-                                    aria-hidden
-                                />
-                                {t("devhub.card.badge.demo")}
-                            </li>
-                        )}
-                        {repo.hasPages && !demo && (
-                            <li className="devhub-card__badge">
-                                <IconLink width={12} height={12} aria-hidden />
-                                {t("devhub.card.badge.pages")}
-                            </li>
-                        )}
-                        {repo.hasDocs && (
-                            <li className="devhub-card__badge">
-                                <IconLayers
-                                    width={12}
-                                    height={12}
-                                    aria-hidden
-                                />
-                                {t("devhub.card.badge.docs")}
-                            </li>
-                        )}
-                    </ul>
+                {destaque && (
+                    <details className="pcard__docs">
+                        <summary className="pcard__docs-summary">
+                            <span className="pcard__docs-label">
+                                <span aria-hidden="true">▤</span>
+                                {t("card.docs.title")}
+                            </span>
+                            <span
+                                className="pcard__docs-icon"
+                                aria-hidden="true"
+                            />
+                        </summary>
+                        <div className="pcard__docs-body">
+                            {fatias.length > 0 && (
+                                <div className="pcard__docs-block">
+                                    <p className="pcard__docs-heading">
+                                        {t("card.docs.stack")}
+                                    </p>
+                                    <span
+                                        className="pcard__bar"
+                                        role="img"
+                                        aria-label={fatias
+                                            .map(
+                                                (f) =>
+                                                    `${f.name} ${fmtPct.format(f.pct)}%`,
+                                            )
+                                            .join(", ")}
+                                    >
+                                        {fatias.map((f) => (
+                                            <span
+                                                key={f.name}
+                                                style={{
+                                                    width: `${f.pct}%`,
+                                                    background:
+                                                        f.color ??
+                                                        NEUTRAL_LANGUAGE_COLOR,
+                                                }}
+                                            />
+                                        ))}
+                                    </span>
+                                </div>
+                            )}
+
+                            {repo.topics.length > 0 && (
+                                <ul
+                                    className="pcard__topics"
+                                    aria-label={t("work.highlights")}
+                                >
+                                    {repo.topics.slice(0, 6).map((tp) => (
+                                        <li key={tp}>#{tp}</li>
+                                    ))}
+                                </ul>
+                            )}
+
+                            <dl className="pcard__facts">
+                                <div>
+                                    <dt>{t("devhub.detail.stars")}</dt>
+                                    <dd>
+                                        {formatNumber(
+                                            repo.stargazerCount,
+                                            lang,
+                                        )}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt>{t("devhub.detail.forks")}</dt>
+                                    <dd>
+                                        {formatNumber(repo.forkCount, lang)}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt>{t("devhub.card.updated")}</dt>
+                                    <dd>
+                                        <time dateTime={atividade}>
+                                            {formatRelativeDate(
+                                                atividade,
+                                                lang,
+                                            )}
+                                        </time>
+                                    </dd>
+                                </div>
+                                {repo.licenseName && (
+                                    <div>
+                                        <dt>{t("devhub.detail.license")}</dt>
+                                        <dd>{repo.licenseName}</dd>
+                                    </div>
+                                )}
+                            </dl>
+
+                            <p className="pcard__docs-links">
+                                {repo.hasReadme && (
+                                    <a
+                                        href={`${repo.url}#readme`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {t("card.docs.readme")}
+                                        <IconExternalLink
+                                            width={12}
+                                            height={12}
+                                            aria-hidden
+                                        />
+                                    </a>
+                                )}
+                                <a {...detalhes.anchorProps}>
+                                    {t("card.docs.page")}
+                                    <IconArrowRight
+                                        width={13}
+                                        height={13}
+                                        aria-hidden
+                                    />
+                                </a>
+                            </p>
+                        </div>
+                    </details>
                 )}
-
-                {repo.topics.length > 0 && (
-                    <ul className="devhub-card__topics">
-                        {repo.topics.slice(0, 3).map((topic) => (
-                            <li key={topic} className="devhub-chip">
-                                {topic}
-                            </li>
-                        ))}
-                        {repo.topics.length > 3 && (
-                            <li className="devhub-chip devhub-chip--muted">
-                                +{repo.topics.length - 3}
-                            </li>
-                        )}
-                    </ul>
-                )}
-
-                <LanguageBar languages={repo.languages} lang={lang} />
-
-                <footer className="devhub-card__footer">
-                    <span className="devhub-card__meta">
-                        <span className="devhub-card__stat">
-                            <IconStar width={12} height={12} aria-hidden />
-                            <span className="sr-only">
-                                {t("devhub.card.stars")}:
-                            </span>
-                            {formatNumber(repo.stargazerCount, lang)}
-                        </span>
-                        <span className="devhub-card__stat">
-                            <IconGitBranch width={12} height={12} aria-hidden />
-                            <span className="sr-only">
-                                {t("devhub.card.forks")}:
-                            </span>
-                            {formatNumber(repo.forkCount, lang)}
-                        </span>
-                        <span className="devhub-card__stat">
-                            <span className="sr-only">
-                                {t("devhub.card.updated")}:
-                            </span>
-                            <time dateTime={atividade}>
-                                {formatRelativeDate(atividade, lang)}
-                            </time>
-                        </span>
-                    </span>
-                    <span className="devhub-card__cta" aria-hidden="true">
-                        {t("devhub.card.details")}
-                        <span className="devhub-card__arrow">→</span>
-                    </span>
-                </footer>
             </div>
         </article>
     );

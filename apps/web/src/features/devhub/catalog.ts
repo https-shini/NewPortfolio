@@ -57,6 +57,8 @@ export interface CatalogState {
     features: FeatureFlag[];
     status: StatusFilter;
     includeForks: boolean;
+    /** Só os fixados no perfil do GitHub. */
+    pinnedOnly: boolean;
     sort: CatalogSort;
     page: number;
 }
@@ -72,6 +74,7 @@ export const DEFAULT_CATALOG: CatalogState = {
     features: [],
     status: "active",
     includeForks: false,
+    pinnedOnly: false,
     sort: "recent",
     page: 1,
 };
@@ -196,14 +199,19 @@ export function featureKnown(repo: Repository, flag: FeatureFlag): boolean {
     }
 }
 
+const SEM_FIXADOS: ReadonlySet<string> = new Set();
+
 /** O repositório passa em todos os filtros, exceto (opcionalmente) uma faceta. */
 export function matches(
     repo: Repository,
     s: CatalogState,
     ignorar?: Facet,
     agora: number = Date.now(),
+    fixados: ReadonlySet<string> = SEM_FIXADOS,
 ): boolean {
     if (!matchesQuery(repo, s.query)) return false;
+
+    if (s.pinnedOnly && !fixados.has(repo.name)) return false;
 
     if (ignorar !== "includeForks" && !s.includeForks && repo.isFork) {
         return false;
@@ -302,9 +310,10 @@ export function runCatalog(
     repos: readonly Repository[],
     s: CatalogState,
     agora: number = Date.now(),
+    fixados: ReadonlySet<string> = SEM_FIXADOS,
 ): CatalogResult {
     const filtrados = repos
-        .filter((r) => matches(r, s, undefined, agora))
+        .filter((r) => matches(r, s, undefined, agora, fixados))
         .sort(compareBy(s.sort));
     const pageCount = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE));
     const page = Math.min(Math.max(1, s.page), pageCount);
@@ -326,9 +335,11 @@ function contar(
     faceta: Facet,
     agora: number,
     passa: (r: Repository) => boolean,
+    fixados: ReadonlySet<string> = SEM_FIXADOS,
 ): number {
     let n = 0;
-    for (const r of repos) if (matches(r, s, faceta, agora) && passa(r)) n += 1;
+    for (const r of repos)
+        if (matches(r, s, faceta, agora, fixados) && passa(r)) n += 1;
     return n;
 }
 
@@ -353,7 +364,10 @@ export function buildFacets(
     repos: readonly Repository[],
     s: CatalogState,
     agora: number = Date.now(),
+    fixados: ReadonlySet<string> = SEM_FIXADOS,
 ): Facets {
+    const conta = (faceta: Facet, passa: (r: Repository) => boolean) =>
+        contar(repos, s, faceta, agora, passa, fixados);
     const porContagem = <V>(lista: FacetOption<V>[]) =>
         lista.sort(
             (a, b) =>
@@ -376,9 +390,7 @@ export function buildFacets(
     const languages = porContagem(
         [...todasLinguagens.keys()].map((value) => ({
             value,
-            count: contar(repos, s, "languages", agora, (r) =>
-                repoLanguages(r).includes(value),
-            ),
+            count: conta("languages", (r) => repoLanguages(r).includes(value)),
             active: s.languages.includes(value),
         })),
     );
@@ -386,20 +398,15 @@ export function buildFacets(
     const topics = porContagem(
         [...todosTopicos.keys()].map((value) => ({
             value,
-            count: contar(repos, s, "topics", agora, (r) =>
-                r.topics.includes(value),
-            ),
+            count: conta("topics", (r) => r.topics.includes(value)),
             active: s.topics.includes(value),
         })),
     );
 
     const updatedWithin = ACTIVITY_WINDOWS.map((value) => ({
         value,
-        count: contar(
-            repos,
-            s,
+        count: conta(
             "updatedWithin",
-            agora,
             (r) => ultimaAtividade(r) >= agora - value * MS_DIA,
         ),
         active: s.updatedWithin === value,
@@ -409,13 +416,7 @@ export function buildFacets(
         .sort((a, b) => b - a)
         .map((value) => ({
             value,
-            count: contar(
-                repos,
-                s,
-                "createdYears",
-                agora,
-                (r) => createdYear(r) === value,
-            ),
+            count: conta("createdYears", (r) => createdYear(r) === value),
             active: s.createdYears.includes(value),
         }));
 
@@ -423,9 +424,7 @@ export function buildFacets(
         repos.some((r) => hasPopularity(r, f)),
     ).map((value) => ({
         value,
-        count: contar(repos, s, "popularity", agora, (r) =>
-            hasPopularity(r, value),
-        ),
+        count: conta("popularity", (r) => hasPopularity(r, value)),
         active: s.popularity.includes(value),
     }));
 
@@ -435,13 +434,13 @@ export function buildFacets(
             repos.some((r) => hasFeature(r, f)),
     ).map((value) => ({
         value,
-        count: contar(repos, s, "features", agora, (r) => hasFeature(r, value)),
+        count: conta("features", (r) => hasFeature(r, value)),
         active: s.features.includes(value),
     }));
 
     const status = STATUSES.map((value) => ({
         value,
-        count: contar(repos, s, "status", agora, (r) =>
+        count: conta("status", (r) =>
             value === "all"
                 ? true
                 : value === "archived"
@@ -452,7 +451,7 @@ export function buildFacets(
     }));
 
     const forks = {
-        count: contar(repos, s, "includeForks", agora, (r) => r.isFork),
+        count: conta("includeForks", (r) => r.isFork),
         active: s.includeForks,
         available: repos.some((r) => r.isFork),
     };
@@ -479,7 +478,8 @@ export function activeFilterCount(s: CatalogState): number {
         s.popularity.length +
         s.features.length +
         (s.status !== DEFAULT_CATALOG.status ? 1 : 0) +
-        (s.includeForks !== DEFAULT_CATALOG.includeForks ? 1 : 0)
+        (s.includeForks !== DEFAULT_CATALOG.includeForks ? 1 : 0) +
+        (s.pinnedOnly ? 1 : 0)
     );
 }
 
@@ -539,6 +539,7 @@ export function fromSearch(search: string): CatalogState {
         ),
         status: EM(STATUSES, status) ? status : DEFAULT_CATALOG.status,
         includeForks: p.get("forks") === "1",
+        pinnedOnly: p.get("fixados") === "1",
         sort: EM(SORTS, ordem) ? ordem : DEFAULT_CATALOG.sort,
         page: Number.isInteger(pagina) && pagina > 1 ? pagina : 1,
     };
@@ -564,6 +565,7 @@ export function toSearch(s: CatalogState, atual: string): string {
     definir("carac", s.features.join(",") || null);
     definir("status", s.status !== DEFAULT_CATALOG.status ? s.status : null);
     definir("forks", s.includeForks ? "1" : null);
+    definir("fixados", s.pinnedOnly ? "1" : null);
     definir("ordem", s.sort !== DEFAULT_CATALOG.sort ? s.sort : null);
     definir("pagina", s.page > 1 ? String(s.page) : null);
     const texto = p.toString();

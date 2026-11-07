@@ -89,3 +89,47 @@
     height: 7px;
     border-radius: 50%;
 }
+
+/* ── Variante "terminal" (cards): o prompt do repositório ── */
+.pcover--terminal {
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-6);
+}
+
+.pcover__icon {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--color-surface-2) 80%, transparent);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-brand-text);
+}
+
+.pcover__prompt {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.pcover__sign {
+    color: var(--color-brand-text);
+}
+
+.pcover__sub {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
