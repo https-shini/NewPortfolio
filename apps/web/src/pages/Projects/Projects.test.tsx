@@ -216,7 +216,7 @@ describe("/projetos", () => {
         const sec = await catalogo();
         expect(
             within(sec).getAllByRole("link", {
-                name: /Conhecer projeto — Proj 00/,
+                name: /Conhecer projeto: Proj 00/,
             })[0],
         ).toHaveAttribute("href", "/projetos/proj-00");
         expect(
