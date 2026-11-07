@@ -1,28 +1,32 @@
-import React from "react";
+import React, { Suspense, lazy, useState } from "react";
 import "./ProjectCard.css";
 import { RepoThumb } from "@/features/devhub/components/RepoThumb";
+import { TechList } from "@/features/devhub/components/TechList";
 import { displayName } from "@/features/devhub/catalog";
-import {
-    formatDate,
-    formatNumber,
-    formatRelativeDate,
-    languageShares,
-} from "@/features/devhub/format";
+import { formatDate, formatNumber } from "@/features/devhub/format";
 import { lastActivity } from "@/features/devhub/selectors";
+import { techsFromRepo } from "@/features/devhub/tech";
 import {
     NEUTRAL_LANGUAGE_COLOR,
     type Repository,
 } from "@/features/devhub/types";
-import { projectPath } from "@/shared/config/routes";
 import { useLang } from "@/shared/hooks/useLang";
-import { useLinkProps } from "@/shared/hooks/useLinkProps";
 import {
     IconArrowRight,
-    IconCode,
     IconExternalLink,
+    IconEye,
     IconGitBranch,
+    IconGitHub,
     IconStar,
 } from "@/shared/ui/Icons";
+
+/* O modal só baixa quando alguém o abre (ou aponta para abrir): o
+   orçamento do documento da home não paga a galeria. */
+const carregarModal = () => import("@/features/devhub/components/ProjectModal");
+const ProjectModal = lazy(carregarModal);
+const preaquecer = () => {
+    void carregarModal();
+};
 
 /* ─────────────────────────────────────────────────────────
    ProjectCard — o cartão de projeto ÚNICO do site
@@ -32,23 +36,22 @@ import {
 
      mídia   → capa real (imagem social própria ou do README); sem
                ela, o social card do GitHub (só na vitrine) ou o
-               "prompt" `$ cd ~/repositório`. Selos por cima: Fixado
-               (canto superior) e "Aplicação disponível ↗" (link).
-     corpo   → meta · título · descrição · tecnologias · números
-     ações   → principal: "Conhecer projeto" (página interna);
-               secundária: "Ver demo" ou "Ver código" (nova aba)
-     detalhes→ (opcional, vitrine) painel expansível nativo
-               <details> com stack medida, tópicos e links do README.
+               "prompt" `$ cd ~/repositório`. Selo "Fixado" no canto.
+               No hover, o chip "Ver detalhes" — abre o modal.
+     corpo   → meta · título · descrição · tecnologias (ícone oficial
+               ou genérico, ver tech.ts) · números (catálogo)
+     docs    → "Documentação do projeto · Abrir" — abre o modal com
+               galeria, descrição, funcionalidades e stack.
+     ações   → "Acessar projeto" (aplicação publicada, só quando há)
+               e "Acessar repositório" (GitHub). As duas em nova aba.
 
    Variantes:
-     `featured` — vitrine da home: "01 / PROJETO", chips de
-                  tecnologia, ação principal preenchida, detalhes.
-     `default`  — catálogo: linguagem + estado, números e data,
-                  ação principal com contorno.
+     `featured` — vitrine da home: "01 / PROJETO", até 4 chips.
+     `default`  — catálogo: linguagem + estado, até 3 chips, números.
 
-   Sem link esticado sobre o cartão: as ações são explícitas e o
-   título é o link para a página do projeto — nada de link dentro de
-   link, e cada alvo diz o que faz.
+   Quem abre o modal são BOTÕES (título, linha de documentação e a
+   mídia, esta só para o mouse); quem sai do site são LINKS. Nada de
+   link dentro de link, e cada alvo diz o que faz.
 ───────────────────────────────────────────────────────── */
 
 interface Props {
@@ -72,7 +75,7 @@ export const ProjectCard: React.FC<Props> = ({
     headingLevel = 3,
 }) => {
     const { lang, t } = useLang();
-    const detalhes = useLinkProps(projectPath(repo.name));
+    const [aberto, setAberto] = useState(false);
     const destaque = variant === "featured";
     const Titulo = headingLevel === 2 ? "h2" : "h3";
     const tituloId = `pcard-${repo.id}`;
@@ -80,19 +83,14 @@ export const ProjectCard: React.FC<Props> = ({
     const demo = repo.homepageUrl;
     const tinta = repo.primaryLanguage?.color ?? NEUTRAL_LANGUAGE_COLOR;
     const atividade = new Date(lastActivity(repo)).toISOString();
-
-    const fatias = languageShares(repo.languages);
-    const linguagens: { name: string; color: string | null; pct?: number }[] =
-        fatias.length > 0
-            ? fatias
-            : repo.languages.length > 0
-              ? repo.languages
-              : repo.primaryLanguage
-                ? [repo.primaryLanguage]
-                : [];
-    const fmtPct = new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "en-US", {
-        maximumFractionDigits: 1,
-    });
+    const techs = techsFromRepo(repo);
+    const abrir = () => setAberto(true);
+    const gatilho = {
+        onClick: abrir,
+        onPointerEnter: preaquecer,
+        onFocus: preaquecer,
+        "aria-haspopup": "dialog" as const,
+    };
 
     const estado = repo.isArchived
         ? t("devhub.card.archived")
@@ -120,19 +118,21 @@ export const ProjectCard: React.FC<Props> = ({
                         {t("card.pinned")}
                     </span>
                 )}
-                {demo && (
-                    <a
-                        className="pcard__live"
-                        href={demo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`${t("card.available")}: ${nome} (${t("card.newTab")})`}
-                    >
-                        <span className="pcard__live-dot" aria-hidden="true" />
-                        {t("card.available")}
-                        <IconExternalLink width={12} height={12} aria-hidden />
-                    </a>
-                )}
+                {/* Atalho de mouse: o teclado já tem o título e a linha
+                    de documentação, então este fica fora da ordem de Tab
+                    e da árvore de acessibilidade. */}
+                <button
+                    type="button"
+                    className="pcard__peek"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    {...gatilho}
+                >
+                    <span className="pcard__peek-chip">
+                        <IconEye width={15} height={15} aria-hidden />
+                        {t("card.details")}
+                    </span>
+                </button>
             </div>
 
             <div className="pcard__body">
@@ -152,25 +152,19 @@ export const ProjectCard: React.FC<Props> = ({
                         </span>
                     )}
                     {destaque ? (
-                        repo.primaryLanguage && (
-                            <span className="pcard__lang">
-                                <span
-                                    className="pcard__dot"
-                                    style={{ background: tinta }}
-                                    aria-hidden="true"
-                                />
-                                {repo.primaryLanguage.name}
-                            </span>
-                        )
+                        <time className="pcard__state" dateTime={atividade}>
+                            {t("devhub.card.updated")}{" "}
+                            {formatDate(atividade, lang)}
+                        </time>
                     ) : (
                         <span className="pcard__state">{estado}</span>
                     )}
                 </p>
 
                 <Titulo className="pcard__title" id={tituloId}>
-                    <a className="pcard__link" {...detalhes.anchorProps}>
+                    <button type="button" className="pcard__link" {...gatilho}>
                         {nome}
-                    </a>
+                    </button>
                 </Titulo>
 
                 <p className="pcard__desc">
@@ -181,27 +175,7 @@ export const ProjectCard: React.FC<Props> = ({
                     )}
                 </p>
 
-                {destaque && linguagens.length > 0 && (
-                    <ul
-                        className="pcard__chips"
-                        aria-label={t("work.block.stack")}
-                    >
-                        {linguagens.slice(0, 3).map((l) => (
-                            <li
-                                key={l.name}
-                                className="pcard__chip"
-                                style={
-                                    {
-                                        "--chip":
-                                            l.color ?? NEUTRAL_LANGUAGE_COLOR,
-                                    } as React.CSSProperties
-                                }
-                            >
-                                {l.name}
-                            </li>
-                        ))}
-                    </ul>
-                )}
+                <TechList techs={techs} limit={destaque ? 4 : 3} />
 
                 {!destaque && (
                     <p className="pcard__stats">
@@ -224,182 +198,63 @@ export const ProjectCard: React.FC<Props> = ({
                     </p>
                 )}
 
-                {/* Ações: a principal leva SEMPRE à página do projeto (é ali
-                    que o visitante conhece o trabalho); a secundária abre a
-                    demo, quando existe, ou o código. */}
-                <div className="pcard__actions">
-                    <a
-                        className={`pcard__btn ${destaque ? "pcard__btn--primary" : "pcard__btn--outline"}`}
-                        {...detalhes.anchorProps}
-                        aria-label={`${t("card.explore")}: ${nome}`}
-                    >
-                        {t("card.explore")}
-                        <IconArrowRight
-                            className="pcard__btn-go"
-                            width={15}
-                            height={15}
-                            aria-hidden
-                        />
-                    </a>
+                <button
+                    type="button"
+                    className="pcard__docs"
+                    aria-label={`${t("card.docs.title")}: ${nome}`}
+                    {...gatilho}
+                >
+                    <span className="pcard__docs-icon" aria-hidden="true">
+                        ▤
+                    </span>
+                    <span className="pcard__docs-label">
+                        {t("card.docs.title")}
+                    </span>
+                    <span className="pcard__docs-open" aria-hidden="true">
+                        {t("card.docs.open")}
+                        <IconArrowRight width={14} height={14} aria-hidden />
+                    </span>
+                </button>
 
-                    {demo ? (
+                <div className="pcard__actions">
+                    {demo && (
                         <a
                             href={demo}
-                            className="pcard__btn pcard__btn--text"
+                            className="pcard__btn pcard__btn--primary"
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label={`${t("card.demo")}: ${nome} (${t("card.newTab")})`}
+                            aria-label={`${t("card.access")}: ${nome} (${t("card.newTab")})`}
                         >
+                            {t("card.access")}
                             <IconExternalLink
-                                width={14}
-                                height={14}
+                                width={15}
+                                height={15}
                                 aria-hidden
                             />
-                            {t("card.demo")}
-                        </a>
-                    ) : (
-                        <a
-                            href={repo.url}
-                            className="pcard__btn pcard__btn--text"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`${t("card.code")}: ${nome} (${t("card.newTab")})`}
-                        >
-                            <IconCode width={15} height={15} aria-hidden />
-                            {t("card.code")}
                         </a>
                     )}
+                    <a
+                        href={repo.url}
+                        className="pcard__btn pcard__btn--secondary"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${t("card.repo")}: ${nome} (${t("card.newTab")})`}
+                    >
+                        <IconGitHub width={16} height={16} aria-hidden />
+                        {t("card.repo")}
+                    </a>
                 </div>
-
-                {destaque && (
-                    <details className="pcard__docs">
-                        <summary className="pcard__docs-summary">
-                            <span className="pcard__docs-label">
-                                <span aria-hidden="true">▤</span>
-                                {t("card.docs.title")}
-                            </span>
-                            <span
-                                className="pcard__docs-icon"
-                                aria-hidden="true"
-                            />
-                        </summary>
-                        <div className="pcard__docs-body">
-                            {fatias.length > 0 && (
-                                <div className="pcard__docs-block">
-                                    <p className="pcard__docs-heading">
-                                        {t("card.docs.stack")}
-                                    </p>
-                                    <span
-                                        className="pcard__bar"
-                                        role="img"
-                                        aria-label={fatias
-                                            .map(
-                                                (f) =>
-                                                    `${f.name} ${fmtPct.format(f.pct)}%`,
-                                            )
-                                            .join(", ")}
-                                    >
-                                        {fatias.map((f) => (
-                                            <span
-                                                key={f.name}
-                                                style={{
-                                                    width: `${f.pct}%`,
-                                                    background:
-                                                        f.color ??
-                                                        NEUTRAL_LANGUAGE_COLOR,
-                                                }}
-                                            />
-                                        ))}
-                                    </span>
-                                </div>
-                            )}
-
-                            {repo.topics.length > 0 && (
-                                <ul
-                                    className="pcard__topics"
-                                    aria-label={t("work.highlights")}
-                                >
-                                    {repo.topics.slice(0, 6).map((tp) => (
-                                        <li key={tp}>#{tp}</li>
-                                    ))}
-                                </ul>
-                            )}
-
-                            <dl className="pcard__facts">
-                                <div>
-                                    <dt>{t("devhub.detail.stars")}</dt>
-                                    <dd>
-                                        {formatNumber(
-                                            repo.stargazerCount,
-                                            lang,
-                                        )}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt>{t("devhub.detail.forks")}</dt>
-                                    <dd>
-                                        {formatNumber(repo.forkCount, lang)}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt>{t("devhub.card.updated")}</dt>
-                                    <dd>
-                                        <time dateTime={atividade}>
-                                            {formatRelativeDate(
-                                                atividade,
-                                                lang,
-                                            )}
-                                        </time>
-                                    </dd>
-                                </div>
-                                {repo.licenseName && (
-                                    <div>
-                                        <dt>{t("devhub.detail.license")}</dt>
-                                        <dd>{repo.licenseName}</dd>
-                                    </div>
-                                )}
-                            </dl>
-
-                            <p className="pcard__docs-links">
-                                {repo.hasReadme && (
-                                    <a
-                                        href={`${repo.url}#readme`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        {t("card.docs.readme")}
-                                        <IconExternalLink
-                                            width={12}
-                                            height={12}
-                                            aria-hidden
-                                        />
-                                    </a>
-                                )}
-                                <a
-                                    href={repo.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {t("card.docs.code")}
-                                    <IconExternalLink
-                                        width={12}
-                                        height={12}
-                                        aria-hidden
-                                    />
-                                </a>
-                                <a {...detalhes.anchorProps}>
-                                    {t("card.docs.page")}
-                                    <IconArrowRight
-                                        width={13}
-                                        height={13}
-                                        aria-hidden
-                                    />
-                                </a>
-                            </p>
-                        </div>
-                    </details>
-                )}
             </div>
+
+            {aberto && (
+                <Suspense fallback={null}>
+                    <ProjectModal
+                        repo={repo}
+                        index={destaque ? index : undefined}
+                        onClose={() => setAberto(false)}
+                    />
+                </Suspense>
+            )}
         </article>
     );
 };
