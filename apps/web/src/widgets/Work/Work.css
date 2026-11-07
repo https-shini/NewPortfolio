@@ -6,12 +6,9 @@
     display: flex;
     align-items: center;
     padding: var(--space-4);
+    position: relative;
+    isolation: isolate;
     background:
-        radial-gradient(
-            120% 90% at 0% 0%,
-            var(--color-brand-subtle),
-            transparent 60%
-        ),
         radial-gradient(
                 color-mix(in srgb, var(--color-text-1) 9%, transparent) 1px,
                 transparent 1px
@@ -19,6 +16,25 @@
             0 0 / 16px 16px,
         var(--color-surface-1);
     border-bottom: 1px solid var(--color-border-1);
+}
+
+/* Brilho na cor da linguagem principal, atrás da janela: a atmosfera
+   muda a cada projeto sem nenhuma imagem extra. */
+.work-card__media::before {
+    content: "";
+    position: absolute;
+    inset: 12% 10%;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(
+        closest-side,
+        color-mix(in srgb, var(--work-tint) 38%, transparent),
+        color-mix(in srgb, var(--color-brand) 10%, transparent) 60%,
+        transparent
+    );
+    filter: blur(24px);
+    opacity: 0.9;
+    pointer-events: none;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -401,7 +417,9 @@
     border-radius: var(--radius-lg);
     overflow: hidden;
     background: var(--color-surface-2);
-    box-shadow: var(--shadow-md);
+    box-shadow:
+        var(--shadow-lg),
+        0 18px 40px -18px color-mix(in srgb, var(--work-tint) 45%, transparent);
     transition:
         transform 0.5s var(--ease-out),
         box-shadow 0.5s var(--ease-out);
@@ -453,6 +471,8 @@
    cabe inteira, sem corte, em qualquer largura. */
 .work-card__thumb {
     position: relative;
+    /* A capa composta dimensiona o título pela largura da janela. */
+    container-type: inline-size;
     aspect-ratio: 2 / 1;
     overflow: hidden;
     background: var(--color-surface-1);
@@ -507,6 +527,14 @@
 
 .work-card__eyebrow {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-3);
+}
+
+.work-card__meta {
+    display: flex;
     align-items: center;
     gap: var(--space-3);
     font-family: var(--font-mono);
@@ -518,10 +546,11 @@
 .work-card__index {
     color: var(--color-brand-text);
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
 }
 
-.work-card__index::after {
-    content: " /";
+.work-card__index-total {
+    margin-left: 2px;
     color: var(--color-text-4);
     font-weight: 400;
 }
@@ -530,6 +559,8 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-2);
+    padding-left: var(--space-3);
+    border-left: 1px solid var(--color-border-2);
     color: var(--color-text-2);
 }
 
@@ -538,6 +569,27 @@
     height: 8px;
     border-radius: 50%;
     flex-shrink: 0;
+    background: var(--work-tint);
+}
+
+/* "Demo online": o projeto tem endereço publicado. */
+.work-card__live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px var(--space-2);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-2);
+}
+
+.work-card__live > span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-brand);
 }
 
 .work-card__title {
@@ -566,12 +618,54 @@
     color: var(--color-text-3);
 }
 
+/* Stack: barra proporcional (bytes por linguagem, como no GitHub) e
+   as quatro maiores com a porcentagem. */
+.work-card__stack {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.work-card__stackbar {
+    display: flex;
+    height: 6px;
+    gap: 2px;
+    overflow: hidden;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-3);
+}
+
+.work-card__stackbar > span {
+    min-width: 3px;
+    height: 100%;
+}
+
 .work-card__tech {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
+    gap: var(--space-2) var(--space-4);
     padding: 0;
+    margin: 0;
     list-style: none;
+}
+
+.work-card__tech-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-1);
+}
+
+.work-card__tech-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.work-card__tech-pct {
+    color: var(--color-text-3);
 }
 
 /* ── Destaques (tópicos do GitHub) e dados ──────────────────────── */
@@ -600,33 +694,51 @@
     color: var(--color-text-2);
 }
 
+/* Números rotulados: rótulo pequeno em cima, valor embaixo — legível
+   para quem não reconhece os ícones do GitHub. */
 .work-card__facts {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2) var(--space-5);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3) var(--space-4);
     margin: 0;
-    padding-top: var(--space-3);
+    padding-block: var(--space-4) 0;
     border-top: 1px solid var(--color-border-1);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-3);
 }
 
 .work-card__fact {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    display: grid;
+    gap: 2px;
+    min-width: 0;
 }
 
 .work-card__fact dt {
     display: inline-flex;
     align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-text-3);
 }
 
 .work-card__fact dd {
     margin: 0;
-    color: var(--color-text-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-1);
+    overflow-wrap: anywhere;
+}
+
+/* Largura natural de cada número: os quatro cabem numa linha no
+   desktop e só quebram quando faltar espaço de verdade. */
+@media (min-width: 480px) {
+    .work-card__facts {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: var(--space-3) var(--space-5);
+    }
 }
 
 /* ── Ações ──────────────────────────────────────────────────────── */
@@ -952,18 +1064,6 @@
     .work-card[data-media="end"] .work-card__media {
         border-right: 0;
         border-left: 1px solid var(--color-border-1);
-        background:
-            radial-gradient(
-                120% 90% at 100% 0%,
-                var(--color-brand-subtle),
-                transparent 60%
-            ),
-            radial-gradient(
-                    color-mix(in srgb, var(--color-text-1) 9%, transparent) 1px,
-                    transparent 1px
-                )
-                0 0 / 16px 16px,
-            var(--color-surface-1);
     }
 
     .work-card__body {
@@ -976,6 +1076,23 @@
     .work-card__actions {
         margin-top: 0;
         padding-top: var(--space-4);
+    }
+}
+
+@media (min-width: 900px) {
+    /* Capa real ou composta: janela mais alta (16:10), ocupando melhor a
+       coluna. O social card do GitHub fica em 2:1 — o texto dele vai
+       quase até as bordas e seria cortado. */
+    .work-card__thumb:has(
+        .work-card__img[data-cover="readme"],
+        .work-card__img[data-cover="custom"],
+        .pcover
+    ) {
+        aspect-ratio: 16 / 10;
+    }
+
+    .work-card__img[data-cover="readme"] {
+        object-position: top center;
     }
 }
 

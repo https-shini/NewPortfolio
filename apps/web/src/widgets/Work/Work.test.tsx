@@ -192,18 +192,40 @@ describe("Work — carrossel dos fixados no GitHub", () => {
         }
     });
 
-    it("até quatro linguagens em badges", async () => {
+    it("stack: até quatro linguagens, com a porcentagem medida", async () => {
         montar(PINNED);
         const s = (await slides())[2]!;
         const stack = within(s).getByRole("list", {
             name: "Stack",
             hidden: true,
         });
+        const itens = within(stack).getAllByRole("listitem", { hidden: true });
         expect(
-            within(stack)
-                .getAllByRole("listitem", { hidden: true })
-                .map((li) => li.textContent),
+            itens.map(
+                (li) => li.querySelector(".work-card__tech-name")?.textContent,
+            ),
         ).toEqual(["TypeScript", "CSS", "JavaScript", "HTML"]);
+        /* Com bytes medidos, a barra soletra a divisão para o leitor de
+           tela e cada item mostra a sua fatia. */
+        if (s.querySelector(".work-card__stackbar")) {
+            expect(itens[0]).toHaveTextContent(/%$/);
+        }
+    });
+
+    it("números rotulados: estrelas, forks e atualização", async () => {
+        montar(PINNED);
+        const s = (await slides())[0]!;
+        const fatos = s.querySelector(
+            'dl[aria-label="Dados do repositório"]',
+        ) as HTMLElement;
+        const rotulos = [...fatos.querySelectorAll("dt")].map((dt) =>
+            dt.textContent?.trim(),
+        );
+        expect(rotulos.slice(0, 3)).toEqual([
+            "Estrelas",
+            "Forks",
+            "Atualizado",
+        ]);
     });
 
     it("destaques são os tópicos do GitHub; sem tópicos, a lista não aparece", async () => {

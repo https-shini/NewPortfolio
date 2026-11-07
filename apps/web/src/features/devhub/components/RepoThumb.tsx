@@ -30,8 +30,11 @@ interface Props {
      * composta pela identidade do projeto; o card automático do
      * GitHub não entra, porque em 86 repositórios ele vira a mesma
      * imagem repetida com textos diferentes.
+     * `showcase` (vitrine da home): capa real primeiro; sem ela, o
+     * social card do GitHub (o slide é grande e único, então a
+     * repetição não pesa); sem nenhum dos dois, a capa composta.
      */
-    source?: "social" | "cover";
+    source?: "social" | "cover" | "showcase";
 }
 
 export const RepoThumb: React.FC<Props> = ({
@@ -39,17 +42,31 @@ export const RepoThumb: React.FC<Props> = ({
     className,
     source = "social",
 }) => {
-    const [falhou, setFalhou] = useState(false);
+    /* Quantas fontes já falharam: cada `onError` passa para a próxima. */
+    const [falhas, setFalhas] = useState(0);
 
     const cor = repo.primaryLanguage?.color ?? NEUTRAL_LANGUAGE_COLOR;
-    const og =
-        source === "cover" ? (repo.cover?.url ?? null) : repo.openGraphImageUrl;
+    const capa = repo.cover
+        ? { url: repo.cover.url, kind: repo.cover.kind as string }
+        : null;
+    const social = repo.openGraphImageUrl
+        ? { url: repo.openGraphImageUrl, kind: "social" }
+        : null;
+    const fontes = (
+        source === "cover"
+            ? [capa]
+            : source === "showcase"
+              ? [capa, social]
+              : [social]
+    ).filter((f): f is { url: string; kind: string } => f !== null);
+    const atual = fontes[falhas];
 
-    if (og && !falhou) {
+    if (atual) {
         return (
             <img
+                key={atual.url}
                 className={className}
-                src={og}
+                src={atual.url}
                 /* Vazio e não decorativo por engano: o cartão já expõe o
                    nome e a descrição como texto, logo abaixo. Uma `alt`
                    repetindo isso faria o leitor de tela anunciar o mesmo
@@ -57,13 +74,13 @@ export const RepoThumb: React.FC<Props> = ({
                 alt=""
                 loading="lazy"
                 decoding="async"
-                onError={() => setFalhou(true)}
-                data-cover={source === "cover" ? repo.cover?.kind : undefined}
+                onError={() => setFalhas((n) => n + 1)}
+                data-cover={source === "social" ? undefined : atual.kind}
             />
         );
     }
 
-    if (source === "cover") {
+    if (source !== "social") {
         return <ProjectCover repo={repo} className={className} />;
     }
 
