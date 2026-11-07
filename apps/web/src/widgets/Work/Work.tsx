@@ -4,7 +4,11 @@ import { useLang } from "@/shared/hooks/useLang";
 import { useLinkProps } from "@/shared/hooks/useLinkProps";
 import { useDevhubPinned } from "@/features/devhub/useDevhub";
 import { RepoThumb } from "@/features/devhub/components/RepoThumb";
-import { formatNumber, formatRelativeDate } from "@/features/devhub/format";
+import {
+    formatNumber,
+    formatRelativeDate,
+    languageShares,
+} from "@/features/devhub/format";
 import { lastActivity } from "@/features/devhub/selectors";
 import {
     NEUTRAL_LANGUAGE_COLOR,
@@ -55,7 +59,6 @@ import {
      · sem avanço automático: o controle é sempre de quem visita.
 ───────────────────────────────────────────────────────── */
 
-const BADGE_VARIANTS = ["brand", "accent", "neutral"] as const;
 const MAX_LINGUAGENS = 4;
 const MAX_DESTAQUES = 6;
 
@@ -63,6 +66,15 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 /* ─────────────────────────────────────────────────────────
    Slide
+   ─────────────────────────────────────────────────────────
+   Mídia: a capa real do projeto (imagem social própria ou do
+   README); sem ela, o social card do GitHub; sem nenhum dos dois,
+   a capa composta. A janela flutua sobre um brilho na cor da
+   linguagem principal — cada projeto tem a sua atmosfera.
+
+   Informações, em ordem de leitura: posição e linguagem → nome →
+   descrição → composição da stack (barra proporcional + as quatro
+   maiores, com %) → tópicos → números rotulados → ações.
 ───────────────────────────────────────────────────────── */
 
 const WorkSlide: React.FC<{
@@ -76,16 +88,25 @@ const WorkSlide: React.FC<{
     const tituloId = `project-${repo.id}`;
     const lado = index % 2 === 0 ? "start" : "end";
     const atividade = new Date(lastActivity(repo)).toISOString();
+    const tinta = repo.primaryLanguage?.color ?? NEUTRAL_LANGUAGE_COLOR;
 
-    /* Até quatro linguagens, das maiores para as menores; sem divisão
-       medida, fica a primária. */
-    const linguagens = (
-        repo.languages.length > 0
-            ? repo.languages
-            : repo.primaryLanguage
-              ? [repo.primaryLanguage]
-              : []
-    ).slice(0, MAX_LINGUAGENS);
+    /* Composição medida (bytes por linguagem). Sem medida, ficam só os
+       nomes — sem barra e sem porcentagem inventada. */
+    const fatias = languageShares(repo.languages);
+    const linguagens: { name: string; color: string | null; pct?: number }[] =
+        fatias.length > 0
+            ? fatias
+            : repo.languages.length > 0
+              ? repo.languages
+              : repo.primaryLanguage
+                ? [repo.primaryLanguage]
+                : [];
+    const fmtPct = new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "en-US", {
+        maximumFractionDigits: 1,
+    });
+    const resumoStack = fatias
+        .map((f) => `${f.name} ${fmtPct.format(f.pct)}%`)
+        .join(", ");
 
     /* "Destaques" são os tópicos que o próprio repositório declara no
        GitHub — dado real, nunca texto escrito aqui. Sem tópicos, a
@@ -102,6 +123,7 @@ const WorkSlide: React.FC<{
             aria-label={`${repo.name} — ${t("work.slide")
                 .replace("{n}", String(index + 1))
                 .replace("{total}", String(total))}`}
+            style={{ "--work-tint": tinta } as React.CSSProperties}
         >
             <div className="work-card__media">
                 {/* Moldura de janela: a linguagem de terminal/IDE do site.
@@ -118,31 +140,41 @@ const WorkSlide: React.FC<{
                         </span>
                     </div>
                     <div className="work-card__thumb">
-                        <RepoThumb repo={repo} className="work-card__img" />
+                        <RepoThumb
+                            repo={repo}
+                            source="showcase"
+                            className="work-card__img"
+                        />
                     </div>
                 </div>
             </div>
 
             <div className="work-card__body">
-                <p className="work-card__eyebrow">
-                    <span className="work-card__index" aria-hidden="true">
-                        {pad(index + 1)}
-                    </span>
-                    {repo.primaryLanguage && (
-                        <span className="work-card__lang">
-                            <span
-                                className="work-card__lang-dot"
-                                style={{
-                                    background:
-                                        repo.primaryLanguage.color ??
-                                        NEUTRAL_LANGUAGE_COLOR,
-                                }}
-                                aria-hidden="true"
-                            />
-                            {repo.primaryLanguage.name}
+                <div className="work-card__eyebrow">
+                    <p className="work-card__meta">
+                        <span className="work-card__index" aria-hidden="true">
+                            {pad(index + 1)}
+                            <span className="work-card__index-total">
+                                /{pad(total)}
+                            </span>
+                        </span>
+                        {repo.primaryLanguage && (
+                            <span className="work-card__lang">
+                                <span
+                                    className="work-card__lang-dot"
+                                    aria-hidden="true"
+                                />
+                                {repo.primaryLanguage.name}
+                            </span>
+                        )}
+                    </p>
+                    {repo.homepageUrl && (
+                        <span className="work-card__live">
+                            <span aria-hidden="true" />
+                            {t("devhub.card.badge.demo")}
                         </span>
                     )}
-                </p>
+                </div>
 
                 <h3 className="work-card__title" id={tituloId}>
                     {repo.name}
@@ -157,19 +189,56 @@ const WorkSlide: React.FC<{
                 </p>
 
                 {linguagens.length > 0 && (
-                    <ul
-                        className="work-card__tech"
-                        aria-label={t("work.block.stack")}
-                    >
-                        {linguagens.map((l, i) => (
-                            <li
-                                key={l.name}
-                                className={`badge badge--${BADGE_VARIANTS[i % BADGE_VARIANTS.length]}`}
+                    <div className="work-card__stack">
+                        {fatias.length > 0 && (
+                            <span
+                                className="work-card__stackbar"
+                                role="img"
+                                aria-label={resumoStack}
                             >
-                                {l.name}
-                            </li>
-                        ))}
-                    </ul>
+                                {fatias.map((f) => (
+                                    <span
+                                        key={f.name}
+                                        style={{
+                                            width: `${f.pct}%`,
+                                            background:
+                                                f.color ??
+                                                NEUTRAL_LANGUAGE_COLOR,
+                                        }}
+                                    />
+                                ))}
+                            </span>
+                        )}
+                        <ul
+                            className="work-card__tech"
+                            aria-label={t("work.block.stack")}
+                        >
+                            {linguagens.slice(0, MAX_LINGUAGENS).map((l) => (
+                                <li
+                                    key={l.name}
+                                    className="work-card__tech-item"
+                                >
+                                    <span
+                                        className="work-card__tech-dot"
+                                        style={{
+                                            background:
+                                                l.color ??
+                                                NEUTRAL_LANGUAGE_COLOR,
+                                        }}
+                                        aria-hidden="true"
+                                    />
+                                    <span className="work-card__tech-name">
+                                        {l.name}
+                                    </span>
+                                    {l.pct !== undefined && (
+                                        <span className="work-card__tech-pct">
+                                            {fmtPct.format(l.pct)}%
+                                        </span>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 )}
 
                 {destaques.length > 0 && (
@@ -188,19 +257,15 @@ const WorkSlide: React.FC<{
                 <dl className="work-card__facts" aria-label={t("work.facts")}>
                     <div className="work-card__fact">
                         <dt>
-                            <IconStar width={13} height={13} aria-hidden />
-                            <span className="sr-only">
-                                {t("devhub.card.stars")}
-                            </span>
+                            <IconStar width={12} height={12} aria-hidden />
+                            {t("devhub.detail.stars")}
                         </dt>
                         <dd>{formatNumber(repo.stargazerCount, lang)}</dd>
                     </div>
                     <div className="work-card__fact">
                         <dt>
-                            <IconGitBranch width={13} height={13} aria-hidden />
-                            <span className="sr-only">
-                                {t("devhub.card.forks")}
-                            </span>
+                            <IconGitBranch width={12} height={12} aria-hidden />
+                            {t("devhub.detail.forks")}
                         </dt>
                         <dd>{formatNumber(repo.forkCount, lang)}</dd>
                     </div>
@@ -214,9 +279,7 @@ const WorkSlide: React.FC<{
                     </div>
                     {repo.licenseName && (
                         <div className="work-card__fact">
-                            <dt className="sr-only">
-                                {t("devhub.detail.license")}
-                            </dt>
+                            <dt>{t("devhub.detail.license")}</dt>
                             <dd>{repo.licenseName}</dd>
                         </div>
                     )}

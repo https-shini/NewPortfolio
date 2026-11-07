@@ -1,4 +1,5 @@
 import React from "react";
+import "./ProjectCover.css";
 import { displayName } from "@/features/devhub/catalog";
 import {
     NEUTRAL_LANGUAGE_COLOR,
