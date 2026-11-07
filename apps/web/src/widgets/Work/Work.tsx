@@ -3,13 +3,8 @@ import "./Work.css";
 import { useLang } from "@/shared/hooks/useLang";
 import { useLinkProps } from "@/shared/hooks/useLinkProps";
 import { useDevhubPinned } from "@/features/devhub/useDevhub";
-import { RepoThumb } from "@/features/devhub/components/RepoThumb";
-import {
-    formatNumber,
-    formatRelativeDate,
-    languageShares,
-} from "@/features/devhub/format";
-import { lastActivity } from "@/features/devhub/selectors";
+import { ProjectCard } from "@/features/devhub/components/ProjectCard";
+import { displayName } from "@/features/devhub/catalog";
 import {
     NEUTRAL_LANGUAGE_COLOR,
     type Repository,
@@ -18,327 +13,69 @@ import { GITHUB_URL } from "@/shared/config/constants";
 import { ROUTES, projectPath } from "@/shared/config/routes";
 import {
     IconArrowRight,
-    IconCode,
     IconExternalLink,
-    IconGitBranch,
     IconGitHub,
-    IconStar,
 } from "@/shared/ui/Icons";
 
 /* ─────────────────────────────────────────────────────────
-   Work — a vitrine da home (#projetos), em grade "bento"
+   Work — a vitrine da home (#projetos)
    ─────────────────────────────────────────────────────────
-   Por que não carrossel: quem chega aqui (recrutador ou cliente)
-   quer VARRER o trabalho. Um carrossel mostrava 1 de 6 projetos e
-   escondia os outros atrás de cliques. A grade mostra os seis
-   fixados do GitHub de uma vez, com hierarquia:
+   Os projetos são os FIXADOS no perfil do GitHub, na ordem escolhida
+   lá. A seção tem quatro blocos, do mais visual ao mais direto:
 
-     ┌──────────────┬───────┐   desktop (3 colunas)
-     │  01  líder   │  02   │   · o 1º fixado é o líder (2×2):
-     │  (2 × 2)     ├───────┤     capa grande, stack completa,
-     │              │  03   │     tópicos e os três CTAs;
-     ├──────┬───────┼───────┤   · os demais são compactos:
-     │  04  │  05   │  06   │     capa, nome, descrição curta,
-     ├──────┴───────┴───────┤     linguagens e atalhos.
-     │  $ ls --all  →  CTA  │   · a última faixa leva ao catálogo.
-     └──────────────────────┘
+     1. cabeçalho   → eyebrow · título · subtítulo curto
+     2. barra       → "06 projetos fixados" + atalho para o GitHub
+     3. destaques   → os três primeiros, no cartão único do site
+                      (ProjectCard `featured`): capa, tecnologias,
+                      "Acessar projeto", "Código" e a documentação
+                      expansível
+     4. outras      → os demais fixados numa lista enxuta
+                      (número, nome, linguagem → página do projeto)
+     5. rodapé      → catálogo completo e GitHub
 
-   Tablet: duas colunas (líder na largura toda). Mobile: uma.
-
-   Interação: o card inteiro abre a página do projeto (o link do
-   título se estica sobre o card). Demo e código ficam por cima,
-   como atalhos próprios — nada de link dentro de link.
-
-   Sem estado, sem JS de navegação: é HTML de lista com CSS grid.
-   A ordem é a que o dono escolheu ao fixar no GitHub.
+   O cartão é o mesmo do catálogo (/projetos): a home e a página
+   falam a mesma língua visual, sem um segundo componente para manter.
 ───────────────────────────────────────────────────────── */
 
-const MAX_DESTAQUES = 5;
+const DESTAQUES = 3;
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-/* ── Card ─────────────────────────────────────────────────────── */
-
-interface CardProps {
-    repo: Repository;
-    index: number;
-    lead: boolean;
-}
-
-const ProjectTile: React.FC<CardProps> = ({ repo, index, lead }) => {
-    const { lang, t } = useLang();
-    const detalhes = useLinkProps(projectPath(repo.name));
-    const tituloId = `project-${repo.id}`;
-    const atividade = new Date(lastActivity(repo)).toISOString();
-    const tinta = repo.primaryLanguage?.color ?? NEUTRAL_LANGUAGE_COLOR;
-
-    /* Composição medida (bytes por linguagem). Sem medida, só os
-       nomes — sem barra e sem porcentagem inventada. */
-    const fatias = languageShares(repo.languages);
-    const linguagens: { name: string; color: string | null; pct?: number }[] =
-        fatias.length > 0
-            ? fatias
-            : repo.languages.length > 0
-              ? repo.languages
-              : repo.primaryLanguage
-                ? [repo.primaryLanguage]
-                : [];
-    const fmtPct = new Intl.NumberFormat(lang === "pt" ? "pt-BR" : "en-US", {
-        maximumFractionDigits: 1,
-    });
-    const resumoStack = fatias
-        .map((f) => `${f.name} ${fmtPct.format(f.pct)}%`)
-        .join(", ");
-
-    /* Tópicos declarados no próprio repositório: dado real, só no
-       card líder (nos compactos virariam ruído). */
-    const destaques = lead ? repo.topics.slice(0, MAX_DESTAQUES) : [];
-
+const OtherRow: React.FC<{ repo: Repository; index: number }> = ({
+    repo,
+    index,
+}) => {
+    const { anchorProps } = useLinkProps(projectPath(repo.name));
     return (
-        <article
-            className="ptile"
-            data-lead={lead || undefined}
-            aria-labelledby={tituloId}
-            style={{ "--ptile-tint": tinta } as React.CSSProperties}
-        >
-            <div className="ptile__media">
-                <RepoThumb
-                    repo={repo}
-                    source="showcase"
-                    className="ptile__img"
-                />
-                {repo.homepageUrl && (
-                    <span className="ptile__live">
-                        <span aria-hidden="true" />
-                        {t("devhub.card.badge.demo")}
-                    </span>
-                )}
-            </div>
-
-            <div className="ptile__body">
-                <p className="ptile__meta">
-                    <span className="ptile__index" aria-hidden="true">
-                        {pad(index + 1)}
-                    </span>
-                    {repo.primaryLanguage && (
-                        <span className="ptile__lang">
-                            <span
-                                className="ptile__dot"
-                                style={{ background: tinta }}
-                                aria-hidden="true"
-                            />
-                            {repo.primaryLanguage.name}
-                        </span>
-                    )}
-                    <time className="ptile__time" dateTime={atividade}>
-                        {formatRelativeDate(atividade, lang)}
-                    </time>
-                </p>
-
-                <h3 className="ptile__title" id={tituloId}>
-                    {/* O link do título cobre o card inteiro (::after):
-                        um alvo grande, um nome acessível só. */}
-                    <a className="ptile__link" {...detalhes.anchorProps}>
-                        {repo.name}
-                    </a>
-                </h3>
-
-                <p className="ptile__desc">
-                    {repo.description ?? (
-                        <em className="ptile__nodesc">
-                            {t("work.noDescription")}
-                        </em>
-                    )}
-                </p>
-
-                {linguagens.length > 0 && (
-                    <div className="ptile__stack">
-                        {lead && fatias.length > 0 && (
-                            <span
-                                className="ptile__bar"
-                                role="img"
-                                aria-label={resumoStack}
-                            >
-                                {fatias.map((f) => (
-                                    <span
-                                        key={f.name}
-                                        style={{
-                                            width: `${f.pct}%`,
-                                            background:
-                                                f.color ??
-                                                NEUTRAL_LANGUAGE_COLOR,
-                                        }}
-                                    />
-                                ))}
-                            </span>
-                        )}
-                        <ul
-                            className="ptile__langs"
-                            aria-label={t("work.block.stack")}
-                        >
-                            {linguagens.slice(0, lead ? 4 : 3).map((l) => (
-                                <li key={l.name} className="ptile__langs-item">
-                                    <span
-                                        className="ptile__dot"
-                                        style={{
-                                            background:
-                                                l.color ??
-                                                NEUTRAL_LANGUAGE_COLOR,
-                                        }}
-                                        aria-hidden="true"
-                                    />
-                                    <span className="ptile__langs-name">
-                                        {l.name}
-                                    </span>
-                                    {lead && l.pct !== undefined && (
-                                        <span className="ptile__langs-pct">
-                                            {fmtPct.format(l.pct)}%
-                                        </span>
-                                    )}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-
-                {destaques.length > 0 && (
-                    <ul
-                        className="ptile__topics"
-                        aria-label={t("work.highlights")}
-                    >
-                        {destaques.map((topico) => (
-                            <li key={topico}>#{topico}</li>
-                        ))}
-                    </ul>
-                )}
-
-                <div className="ptile__foot">
-                    <p className="ptile__stats">
+        <li>
+            <a className="work-other" {...anchorProps}>
+                <span className="work-other__index" aria-hidden="true">
+                    {pad(index + 1)}
+                </span>
+                <span className="work-other__name">
+                    {displayName(repo.name)}
+                </span>
+                {repo.primaryLanguage && (
+                    <span className="work-other__lang">
                         <span
-                            aria-label={`${formatNumber(repo.stargazerCount, lang)} ${t("devhub.detail.stars")}`}
-                        >
-                            <IconStar width={13} height={13} aria-hidden />
-                            {formatNumber(repo.stargazerCount, lang)}
-                        </span>
-                        {lead && (
-                            <span
-                                aria-label={`${formatNumber(repo.forkCount, lang)} ${t("devhub.detail.forks")}`}
-                            >
-                                <IconGitBranch
-                                    width={13}
-                                    height={13}
-                                    aria-hidden
-                                />
-                                {formatNumber(repo.forkCount, lang)}
-                            </span>
-                        )}
-                        {lead && repo.licenseName && (
-                            <span>{repo.licenseName}</span>
-                        )}
-                    </p>
-
-                    {lead ? (
-                        <div className="ptile__actions ptile__actions--lead">
-                            {repo.homepageUrl && (
-                                <a
-                                    href={repo.homepageUrl}
-                                    className="work-btn work-btn--primary work-btn--sm"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={`${t("work.btn.demo")} — ${repo.name}`}
-                                >
-                                    {t("work.btn.demo")}
-                                    <IconExternalLink
-                                        className="work-btn__icon work-btn__icon--go"
-                                        width={15}
-                                        height={15}
-                                        aria-hidden
-                                    />
-                                </a>
-                            )}
-                            <a
-                                href={repo.url}
-                                className="work-btn work-btn--ghost work-btn--sm"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={`${t("work.btn.code")} — ${repo.name}`}
-                            >
-                                <IconCode
-                                    className="work-btn__icon"
-                                    width={15}
-                                    height={15}
-                                    aria-hidden
-                                />
-                                {t("work.btn.code")}
-                            </a>
-                        </div>
-                    ) : (
-                        <div className="ptile__actions">
-                            {repo.homepageUrl && (
-                                <a
-                                    href={repo.homepageUrl}
-                                    className="ptile__action"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={`${t("work.btn.demo")} — ${repo.name}`}
-                                    title={t("work.btn.demo")}
-                                >
-                                    <IconExternalLink
-                                        width={16}
-                                        height={16}
-                                        aria-hidden
-                                    />
-                                </a>
-                            )}
-                            <a
-                                href={repo.url}
-                                className="ptile__action"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                aria-label={`${t("work.btn.code")} — ${repo.name}`}
-                                title={t("work.btn.code")}
-                            >
-                                <IconCode width={16} height={16} aria-hidden />
-                            </a>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </article>
+                            className="work-other__dot"
+                            style={{
+                                background:
+                                    repo.primaryLanguage.color ??
+                                    NEUTRAL_LANGUAGE_COLOR,
+                            }}
+                            aria-hidden="true"
+                        />
+                        {repo.primaryLanguage.name}
+                    </span>
+                )}
+                <span className="work-other__arrow" aria-hidden="true">
+                    ↗
+                </span>
+            </a>
+        </li>
     );
 };
-
-/* ── Esqueleto: mesma grade, sem conteúdo ─────────────────────── */
-
-const Skeleton: React.FC = () => {
-    const { t } = useLang();
-    return (
-        <div
-            className="work-grid work-grid--skeleton"
-            role="status"
-            aria-busy="true"
-            aria-label={t("work.loading")}
-        >
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-                <div
-                    key={i}
-                    className="ptile ptile--skeleton"
-                    data-lead={i === 0 || undefined}
-                    aria-hidden="true"
-                >
-                    <div className="ptile__media" />
-                    <div className="ptile__body">
-                        <span className="ptile__skel ptile__skel--short" />
-                        <span className="ptile__skel ptile__skel--title" />
-                        <span className="ptile__skel" />
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
-};
-
-/* ── Seção ────────────────────────────────────────────────────── */
 
 export const Work: React.FC = () => {
     const { t } = useLang();
@@ -346,6 +83,8 @@ export const Work: React.FC = () => {
     const verTodos = useLinkProps(ROUTES.PROJECTS);
 
     const repos = data?.repositories ?? [];
+    const destaques = repos.slice(0, DESTAQUES);
+    const outros = repos.slice(DESTAQUES);
 
     return (
         <section
@@ -355,23 +94,53 @@ export const Work: React.FC = () => {
             data-reveal
         >
             <div className="container">
-                <header className="work__head">
-                    <div className="work__intro">
-                        <span className="section-eyebrow">
-                            {t("work.eyebrow")}
-                        </span>
-                        <h2 className="section-title" id="work-title">
-                            {t("work.title")}
-                        </h2>
-                        <p className="work__sub">{t("work.sub")}</p>
-                    </div>
-                    <p className="work__sync">
-                        <span aria-hidden="true" />
-                        {t("work.sync")}
+                <header className="work__head section-header">
+                    <span className="section-eyebrow">{t("work.eyebrow")}</span>
+                    <h2 className="section-title" id="work-title">
+                        {t("work.title")}
+                    </h2>
+                    <p className="section-subtitle work__sub">
+                        {t("work.sub")}
                     </p>
                 </header>
 
-                {loading && <Skeleton />}
+                <div className="work__bar">
+                    <p className="work__count">
+                        <strong>{loading ? "··" : pad(repos.length)}</strong>
+                        <span>{t("work.pinnedCount")}</span>
+                    </p>
+                    <a
+                        className="work__gh"
+                        href={GITHUB_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <IconGitHub width={15} height={15} aria-hidden />
+                        {t("work.onGithub")}
+                        <IconExternalLink width={12} height={12} aria-hidden />
+                    </a>
+                </div>
+
+                {loading && (
+                    <ul
+                        className="work__grid"
+                        aria-busy="true"
+                        aria-label={t("work.loading")}
+                    >
+                        {[0, 1, 2].map((i) => (
+                            <li
+                                key={i}
+                                className="work__skeleton"
+                                aria-hidden="true"
+                            >
+                                <span className="work__skeleton-media" />
+                                <span className="work__skeleton-line work__skeleton-line--short" />
+                                <span className="work__skeleton-line work__skeleton-line--title" />
+                                <span className="work__skeleton-line" />
+                            </li>
+                        ))}
+                    </ul>
+                )}
 
                 {!loading && (error || repos.length === 0) && (
                     <p className="work__state" role="status">
@@ -379,32 +148,51 @@ export const Work: React.FC = () => {
                     </p>
                 )}
 
-                {!loading && repos.length > 0 && (
-                    <ul className="work-grid" data-count={repos.length}>
-                        {repos.map((repo, i) => (
-                            <li key={repo.id} className="work-grid__item">
-                                <ProjectTile
+                {destaques.length > 0 && (
+                    <ul className="work__grid">
+                        {destaques.map((repo, i) => (
+                            <li key={repo.id}>
+                                <ProjectCard
                                     repo={repo}
                                     index={i}
-                                    lead={i === 0}
+                                    variant="featured"
                                 />
                             </li>
                         ))}
                     </ul>
                 )}
 
-                {/* Fechamento: o próximo passo é o acervo inteiro. */}
-                <div className="work__more">
-                    <p className="work__prompt" aria-hidden="true">
-                        <span>$</span> ls ~/projetos --all
-                    </p>
-                    <div className="work__more-text">
-                        <p className="work__more-title">
-                            {t("work.moreTitle")}
-                        </p>
-                        <p className="work__more-desc">{t("work.moreDesc")}</p>
-                    </div>
-                    <div className="work__more-actions">
+                {outros.length > 0 && (
+                    <section
+                        className="work__others"
+                        aria-labelledby="work-others-title"
+                    >
+                        <div className="work__others-head">
+                            <h3
+                                className="section-eyebrow work__others-title"
+                                id="work-others-title"
+                            >
+                                {t("work.others")}
+                            </h3>
+                            <p className="work__others-sub">
+                                {t("work.othersSub")}
+                            </p>
+                        </div>
+                        <ol className="work__others-list" start={DESTAQUES + 1}>
+                            {outros.map((repo, i) => (
+                                <OtherRow
+                                    key={repo.id}
+                                    repo={repo}
+                                    index={DESTAQUES + i}
+                                />
+                            ))}
+                        </ol>
+                    </section>
+                )}
+
+                <div className="work__foot">
+                    <p className="work__foot-note">{t("work.footNote")}</p>
+                    <div className="work__foot-actions">
                         <a
                             className="work-btn work-btn--primary"
                             {...verTodos.anchorProps}

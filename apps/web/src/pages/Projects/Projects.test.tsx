@@ -29,6 +29,12 @@ const INDICE = {
     fetchedAt: "2026-11-06T12:00:00Z",
 };
 
+const FIXADOS = {
+    repositories: [muitos[3], muitos[5]],
+    source: "pinned",
+    fetchedAt: "2026-11-06T12:00:00Z",
+};
+
 const montar = (respostas: Record<string, unknown> = { index: INDICE }) => {
     vi.stubGlobal("fetch", vi.fn(fetchPorOp(respostas)));
     localStorage.setItem(LANG_KEY, "pt");
@@ -43,45 +49,54 @@ const montar = (respostas: Record<string, unknown> = { index: INDICE }) => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("/projetos", () => {
-    it("h1, métricas calculadas da coleta e nenhum número fixo", async () => {
-        montar();
-        expect(
-            screen.getByRole("heading", { level: 1, name: "Projetos" }),
-        ).toBeInTheDocument();
-        const metricas = await screen.findByRole("region", {
-            name: "Métricas do GitHub",
+    it("trilha, h1 e números calculados da coleta (sem forks)", async () => {
+        montar({ index: INDICE, pinned: FIXADOS });
+        const trilha = screen.getByRole("navigation", {
+            name: "Trilha de navegação",
         });
-        await within(metricas).findByText("21");
-        const par = (rotulo: string) =>
-            within(metricas)
+        expect(
+            within(trilha).getByRole("link", { name: "Início" }),
+        ).toHaveAttribute("href", "/");
+        expect(
+            screen.getByRole("heading", { level: 1, name: /Projetos/ }),
+        ).toBeInTheDocument();
+        const numeros = screen.getByRole("region", {
+            name: "O acervo em números",
+        });
+        const valor = (rotulo: RegExp) =>
+            within(numeros)
                 .getByText(rotulo)
-                .parentElement?.querySelector("dd")?.textContent;
-        expect(par("repositórios públicos")).toBe("21");
-        expect(par("estrelas recebidas")).toBe("5");
-        expect(par("seguidores")).toBe("7");
-        expect(par("linguagens")).toBe("2");
+                .closest("div")
+                ?.querySelector("dd")?.textContent;
+        await within(numeros).findByText("20");
+        expect(valor(/Projetos autorais/)).toBe("20");
+        expect(valor(/^Fixados/)).toBe("02");
+        expect(valor(/^Linguagens/)).toBe("01");
+        expect(valor(/Com demonstração/)).toBe("00");
     });
 
-    it("projetos recentes: 6 cards, do mais novo ao mais antigo", async () => {
-        montar();
-        const secao = await screen.findByRole("region", {
-            name: "Projetos recentes",
+    it("atalho Fixados: só os fixados, com selo, e vai para a URL", async () => {
+        montar({ index: INDICE, pinned: FIXADOS });
+        const sec = await catalogo();
+        const atalhos = within(sec).getByRole("group", {
+            name: "Atalhos do catálogo",
         });
-        const titulos = within(secao)
-            .getAllByRole("article")
-            .map((a) => within(a).getByRole("heading").textContent);
-        expect(titulos).toEqual([
-            "proj-19",
-            "proj-18",
-            "proj-17",
-            "proj-16",
-            "proj-15",
-            "proj-14",
-        ]);
+        const pino = await within(atalhos).findByRole("button", {
+            name: /Fixados\s*2/,
+        });
+        fireEvent.click(pino);
+        expect(pino).toHaveAttribute("aria-pressed", "true");
+        expect(titulos(sec).sort()).toEqual(["Proj 03", "Proj 05"]);
+        expect(within(sec).getAllByText("Fixado")).toHaveLength(2);
+        expect(window.location.search).toContain("fixados=1");
+        fireEvent.click(within(atalhos).getByRole("button", { name: /Todos/ }));
+        expect(titulos(sec)).toHaveLength(12);
     });
 
     const catalogo = () =>
-        screen.findByRole("region", { name: "Todos os projetos" });
+        screen.findByRole("region", {
+            name: "Encontre seu próximo projeto para explorar.",
+        });
     const titulos = (el: HTMLElement) =>
         within(el)
             .getAllByRole("article")
@@ -96,7 +111,7 @@ describe("/projetos", () => {
             within(sec).getByRole("combobox", { name: "Ordenar por" }),
         ).toHaveValue("recent");
         // proj-00 foi criado por último (createdAt), apesar do push antigo.
-        expect(titulos(sec)[0]).toBe("proj-00");
+        expect(titulos(sec)[0]).toBe("Proj 00");
         expect(titulos(sec)).toHaveLength(12);
         expect(
             within(sec).getByText("Mostrando 1–12 de 20"),
@@ -127,12 +142,12 @@ describe("/projetos", () => {
             within(sec).getByRole("combobox", { name: "Ordenar por" }),
             { target: { value: "stars" } },
         );
-        expect(titulos(sec)[0]).toBe("proj-00");
+        expect(titulos(sec)[0]).toBe("Proj 00");
         fireEvent.change(
             within(sec).getByRole("combobox", { name: "Ordenar por" }),
             { target: { value: "updated" } },
         );
-        expect(titulos(sec)[0]).toBe("proj-19");
+        expect(titulos(sec)[0]).toBe("Proj 19");
         expect(window.location.search).toContain("ordem=updated");
     });
 
@@ -147,7 +162,7 @@ describe("/projetos", () => {
             within(sec).getByText("Mostrando 1–12 de 21"),
         ).toBeInTheDocument();
         fireEvent.click(lateral.getByRole("checkbox", { name: /^Python/ }));
-        expect(titulos(sec)).toEqual(["um-fork"]);
+        expect(titulos(sec)).toEqual(["Um Fork"]);
         const chips = within(sec).getByRole("group", {
             name: "Filtros ativos",
         });
@@ -178,7 +193,7 @@ describe("/projetos", () => {
             </Providers>,
         );
         const sec = await catalogo();
-        expect(titulos(sec)).toEqual(["um-fork"]);
+        expect(titulos(sec)).toEqual(["Um Fork"]);
     });
 
     it("busca por texto com debounce", async () => {
@@ -190,7 +205,7 @@ describe("/projetos", () => {
                 target: { value: "proj-07" },
             });
             await act(() => vi.advanceTimersByTimeAsync(300));
-            expect(titulos(sec)).toEqual(["proj-07"]);
+            expect(titulos(sec)).toEqual(["Proj 07"]);
         } finally {
             vi.useRealTimers();
         }
@@ -198,12 +213,23 @@ describe("/projetos", () => {
 
     it("cada card leva à página do projeto", async () => {
         montar();
-        const secao = await screen.findByRole("region", {
-            name: "Projetos recentes",
-        });
+        const sec = await catalogo();
         expect(
-            within(secao).getByRole("link", { name: "proj-19" }),
-        ).toHaveAttribute("href", "/projetos/proj-19");
+            within(sec).getAllByRole("link", {
+                name: /Conhecer projeto — Proj 00/,
+            })[0],
+        ).toHaveAttribute("href", "/projetos/proj-00");
+        expect(
+            within(sec).getByRole("link", { name: "Proj 00" }),
+        ).toHaveAttribute("href", "/projetos/proj-00");
+    });
+
+    it("chamada final leva ao contato", async () => {
+        montar();
+        await catalogo();
+        expect(
+            screen.getByRole("link", { name: /Entrar em contato/ }),
+        ).toHaveAttribute("href", "/contato");
     });
 
     it("com erro: alerta, tentar de novo e saída para o GitHub", async () => {

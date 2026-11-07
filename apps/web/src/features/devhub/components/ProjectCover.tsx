@@ -32,9 +32,19 @@ function semente(texto: string): number {
 interface Props {
     repo: Repository;
     className?: string;
+    /**
+     * `full` (padrão): nome de exibição grande + caminho + linguagens.
+     * `terminal`: o "prompt" do card — ícone de código, `$ cd ~/nome`
+     * e a linguagem principal. Usado quando o nome já está logo abaixo.
+     */
+    variant?: "full" | "terminal";
 }
 
-export const ProjectCover: React.FC<Props> = ({ repo, className }) => {
+export const ProjectCover: React.FC<Props> = ({
+    repo,
+    className,
+    variant = "full",
+}) => {
     const linguagens = repo.languages.length
         ? repo.languages
         : repo.primaryLanguage
@@ -44,18 +54,36 @@ export const ProjectCover: React.FC<Props> = ({ repo, className }) => {
     const cor2 = linguagens[1]?.color ?? cor1;
     const s = semente(repo.name);
 
+    const estilo = {
+        "--pc-1": cor1,
+        "--pc-2": cor2,
+        "--pc-angle": `${s % 360}deg`,
+        "--pc-x": `${20 + (s % 61)}%`,
+    } as React.CSSProperties;
+
+    if (variant === "terminal") {
+        return (
+            <span
+                className={`${className ?? ""} pcover pcover--terminal`}
+                aria-hidden="true"
+                style={estilo}
+            >
+                <span className="pcover__icon">〈/〉</span>
+                <span className="pcover__prompt">
+                    <span className="pcover__sign">$</span> cd ~/{repo.name}
+                </span>
+                {linguagens[0] && (
+                    <span className="pcover__sub">{linguagens[0].name}</span>
+                )}
+            </span>
+        );
+    }
+
     return (
         <span
             className={`${className ?? ""} pcover`}
             aria-hidden="true"
-            style={
-                {
-                    "--pc-1": cor1,
-                    "--pc-2": cor2,
-                    "--pc-angle": `${s % 360}deg`,
-                    "--pc-x": `${20 + (s % 61)}%`,
-                } as React.CSSProperties
-            }
+            style={estilo}
         >
             <span className="pcover__path">~/{repo.name}</span>
             <span className="pcover__title">{displayName(repo.name)}</span>

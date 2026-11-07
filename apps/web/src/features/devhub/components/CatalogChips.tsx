@@ -120,6 +120,15 @@ export const CatalogChips: React.FC<Props> = ({
                   },
               ]
             : []),
+        ...(state.pinnedOnly
+            ? [
+                  {
+                      key: "p",
+                      label: t("catalog.quick.pinned"),
+                      remover: { pinnedOnly: false },
+                  },
+              ]
+            : []),
     ];
 
     if (chips.length === 0) return null;

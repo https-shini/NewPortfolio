@@ -35,12 +35,15 @@ interface Props {
      * repetição não pesa); sem nenhum dos dois, a capa composta.
      */
     source?: "social" | "cover" | "showcase";
+    /** Versão da capa composta quando não há imagem. */
+    coverVariant?: "full" | "terminal";
 }
 
 export const RepoThumb: React.FC<Props> = ({
     repo,
     className,
     source = "social",
+    coverVariant = "full",
 }) => {
     /* Quantas fontes já falharam: cada `onError` passa para a próxima. */
     const [falhas, setFalhas] = useState(0);
@@ -81,7 +84,13 @@ export const RepoThumb: React.FC<Props> = ({
     }
 
     if (source !== "social") {
-        return <ProjectCover repo={repo} className={className} />;
+        return (
+            <ProjectCover
+                repo={repo}
+                className={className}
+                variant={coverVariant}
+            />
+        );
     }
 
     return (

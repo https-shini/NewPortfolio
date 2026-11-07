@@ -251,3 +251,23 @@ describe("URL", () => {
         ).toBe(3);
     });
 });
+
+describe("catálogo — só fixados", () => {
+    it("pinnedOnly filtra pelo conjunto de fixados e vai/volta da URL", () => {
+        const repos = [
+            repo({ name: "a" }),
+            repo({ name: "b" }),
+            repo({ name: "c" }),
+        ];
+        const fixados = new Set(["b"]);
+        const s = { ...DEFAULT_CATALOG, pinnedOnly: true };
+        expect(
+            runCatalog(repos, s, undefined, fixados).items.map((r) => r.name),
+        ).toEqual(["b"]);
+        expect(activeFilterCount(s)).toBe(1);
+        const url = toSearch(s, "?lang=en");
+        expect(url).toContain("fixados=1");
+        expect(url).toContain("lang=en");
+        expect(fromSearch(url).pinnedOnly).toBe(true);
+    });
+});

@@ -1,526 +1,356 @@
 /* ─────────────────────────────────────────────────────────
-   Work — vitrine da home (#projetos) em grade "bento"
+   Work — vitrine da home (#projetos)
    ─────────────────────────────────────────────────────────
-   Estrutura (ver Work.tsx): cabeçalho → grade de cards → faixa do
-   catálogo. Mobile primeiro; 2 colunas a partir de 640px; 3 colunas
-   com o card líder em 2×2 a partir de 1024px.
+   Cabeçalho → barra de contagem → três destaques (ProjectCard,
+   estilizado em features/devhub/components/ProjectCard.css) →
+   lista "Outras implementações" → rodapé.
 ───────────────────────────────────────────────────────── */
 
-/* ── Cabeçalho ──────────────────────────────────────────────────── */
-.work__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: var(--space-4) var(--space-10);
-    margin-bottom: var(--space-10);
-}
-
-.work__intro {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    flex: 1 1 520px;
-    min-width: 0;
-}
-
-.work__sub {
-    max-width: 66ch;
-    font-size: var(--text-md);
-    line-height: var(--lh-relaxed);
-    color: var(--color-text-3);
+.work .work__sub {
+    max-width: 64ch;
+    text-align: left;
     text-wrap: pretty;
 }
 
-/* Selo de estado — o mesmo do "Aplicação disponível" do destaque. */
-.work__sync {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: 6px var(--space-3);
-    border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-full);
-    background: var(--color-surface-2);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-2);
-    white-space: nowrap;
-}
-
-.work__sync > span {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--color-brand);
-    box-shadow: 0 0 0 3px var(--color-brand-subtle);
-}
-
-/* ── Grade ──────────────────────────────────────────────────────── */
-.work-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--space-5);
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-.work-grid__item {
-    display: flex;
-    min-width: 0;
-}
-
-.work-grid__item > .ptile {
-    flex: 1;
-}
-
-@media (min-width: 640px) {
-    .work-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .work-grid > :first-child {
-        grid-column: 1 / -1;
-    }
-
-    /* Número par de cards: o último ficaria sozinho numa linha — ocupa
-       a largura toda em vez de deixar um buraco. */
-    .work-grid > :last-child:nth-child(even) {
-        grid-column: 1 / -1;
-    }
-}
-
-@media (min-width: 1024px) {
-    .work-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        grid-auto-flow: row dense;
-    }
-
-    .work-grid > :first-child {
-        grid-column: span 2;
-        grid-row: span 2;
-    }
-
-    .work-grid > :last-child:nth-child(even) {
-        grid-column: auto;
-    }
-}
-
-/* ── Card ───────────────────────────────────────────────────────── */
-.ptile {
-    --ptile-radius: var(--radius-xl);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    overflow: hidden;
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-border-1);
-    border-radius: var(--ptile-radius);
-    box-shadow: var(--surface-edge);
-    transition:
-        border-color 0.25s var(--ease-out),
-        box-shadow 0.3s var(--ease-out),
-        transform 0.3s var(--ease-out);
-}
-
-.ptile:hover {
-    border-color: var(--color-border-brand);
-    box-shadow:
-        var(--surface-edge),
-        0 24px 48px -28px color-mix(in srgb, var(--ptile-tint) 55%, transparent),
-        var(--shadow-md);
-    transform: translateY(-3px);
-}
-
-/* Foco do teclado no link que cobre o card: anel no card inteiro. */
-.ptile:has(.ptile__link:focus-visible) {
-    outline: 2px solid var(--color-brand-text);
-    outline-offset: 3px;
-}
-
-/* ── Mídia ── */
-.ptile__media {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    container-type: inline-size;
-    background:
-        radial-gradient(
-            80% 100% at 50% 100%,
-            color-mix(in srgb, var(--ptile-tint) 28%, transparent),
-            transparent 70%
-        ),
-        var(--color-surface-1);
-    border-bottom: 1px solid var(--color-border-1);
-}
-
-.ptile__img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s var(--ease-out);
-}
-
-.ptile__img[data-cover="readme"] {
-    object-position: top center;
-}
-
-/* Social card do GitHub: inteiro (o texto dele vai até as bordas e
-   seria cortado em 16:9), emoldurado sobre o brilho da linguagem. */
-.ptile__img[data-cover="social"] {
-    object-fit: contain;
-    padding: var(--space-4);
-    filter: drop-shadow(0 12px 24px rgb(0 0 0 / 0.28));
-}
-
-/* Capa composta, versão do card: o nome e as linguagens já estão logo
-   abaixo, então a capa fica só com o caminho — um "prompt" no centro
-   da grade de pontos, sobre a cor do projeto. */
-.ptile .pcover {
-    align-items: center;
-    justify-content: center;
-}
-
-.ptile .pcover__title,
-.ptile .pcover__langs {
-    display: none;
-}
-
-.ptile .pcover__path {
-    max-width: 90%;
-    padding: 6px var(--space-3);
-    border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-md);
-    background: color-mix(in srgb, var(--color-surface-2) 85%, transparent);
-    font-size: var(--text-xs);
-    color: var(--color-text-1);
-}
-
-.ptile .pcover__path::before {
-    content: "$ cd ";
-    color: var(--color-brand-text);
-}
-
-.ptile:hover .ptile__img {
-    transform: scale(1.04);
-}
-
-/* Fallback do social card (repo sem nenhuma imagem): nome sobre a cor. */
-.ptile__img[data-fallback] {
-    display: grid;
-    place-items: center;
-    background: color-mix(in srgb, var(--thumb-tint) 22%, transparent);
-}
-
-.ptile__live {
-    position: absolute;
-    top: var(--space-3);
-    right: var(--space-3);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px var(--space-2);
-    border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-full);
-    background: color-mix(in srgb, var(--color-surface-2) 88%, transparent);
-    backdrop-filter: blur(8px);
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    color: var(--color-text-1);
-}
-
-.ptile__live > span {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-brand);
-}
-
-/* ── Corpo ── */
-.ptile__body {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: var(--space-3);
-    padding: var(--space-5);
-}
-
-.ptile__meta {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    min-width: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-3);
-}
-
-.ptile__index {
-    font-weight: 600;
-    color: var(--color-brand-text);
-    font-variant-numeric: tabular-nums;
-}
-
-.ptile__lang {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-width: 0;
-    color: var(--color-text-2);
-    white-space: nowrap;
-}
-
-.ptile__time {
-    margin-left: auto;
-    white-space: nowrap;
-}
-
-.ptile__dot {
-    width: 8px;
-    height: 8px;
-    flex-shrink: 0;
-    border-radius: 50%;
-}
-
-.ptile__title {
-    font-family: var(--font-display);
-    font-size: var(--text-xl);
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    overflow-wrap: anywhere;
-}
-
-.ptile__link {
-    color: var(--color-text-1);
-    text-decoration: none;
-}
-
-.ptile__link:focus-visible {
-    outline: none;
-}
-
-/* O alvo do link é o card inteiro. */
-.ptile__link::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    border-radius: var(--ptile-radius);
-}
-
-.ptile:hover .ptile__link {
-    color: var(--color-brand-text);
-}
-
-.ptile__desc {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    font-size: var(--text-sm);
-    line-height: var(--lh-relaxed);
-    color: var(--color-text-2);
-}
-
-.ptile__nodesc {
-    font-style: italic;
-    color: var(--color-text-3);
-}
-
-/* ── Stack ── */
-.ptile__stack {
-    display: grid;
-    gap: var(--space-3);
-}
-
-.ptile__bar {
-    display: flex;
-    gap: 2px;
-    height: 6px;
-    overflow: hidden;
-    border-radius: var(--radius-full);
-    background: var(--color-surface-3);
-}
-
-.ptile__bar > span {
-    min-width: 3px;
-    height: 100%;
-}
-
-.ptile__langs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1) var(--space-4);
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-.ptile__langs-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-2);
-}
-
-.ptile__langs-pct {
-    color: var(--color-text-3);
-}
-
-.ptile__topics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-.ptile__topics li {
-    padding: 2px var(--space-2);
-    border-radius: var(--radius-sm);
-    background: var(--color-surface-3);
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    color: var(--color-text-2);
-}
-
-/* ── Rodapé do card ── */
-.ptile__foot {
+/* ── Barra: contagem + GitHub ───────────────────────────────────── */
+.work__bar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-3);
-    margin-top: auto;
-    padding-top: var(--space-4);
-    border-top: 1px solid var(--color-border-1);
+    gap: var(--space-3) var(--space-6);
+    margin-top: var(--space-8);
+    padding: var(--space-4) var(--space-6);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--surface-edge);
 }
 
-.ptile__stats {
-    display: inline-flex;
-    flex-wrap: wrap;
+.work__count {
+    display: flex;
     align-items: center;
-    gap: var(--space-1) var(--space-4);
+    gap: var(--space-4);
+}
+
+.work__count strong {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(
+        135deg,
+        var(--color-brand-text),
+        var(--color-accent)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.work__count span {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
     color: var(--color-text-3);
 }
 
-.ptile__stats > span {
+.work__gh {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-}
-
-/* Atalhos ficam ACIMA do link esticado. */
-.ptile__actions {
-    position: relative;
-    z-index: 2;
-    display: inline-flex;
-    flex-wrap: wrap;
     gap: var(--space-2);
-}
-
-.ptile__action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
+    min-height: 40px;
+    padding: 0 var(--space-4);
     border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-md);
-    background: var(--color-surface-1);
-    color: var(--color-text-2);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-text-1);
+    text-decoration: none;
     transition:
-        color 0.2s var(--ease-out),
         border-color 0.2s var(--ease-out),
+        color 0.2s var(--ease-out),
         background-color 0.2s var(--ease-out);
 }
 
-.ptile__action:hover {
+.work__gh:hover {
     border-color: var(--color-border-brand);
     background: var(--color-brand-subtle);
     color: var(--color-brand-text);
 }
 
-.ptile__action:focus-visible {
+.work__gh:focus-visible {
     outline: 2px solid var(--color-brand-text);
     outline-offset: 2px;
 }
 
-/* ── Card líder ── */
-@media (min-width: 640px) {
-    .ptile[data-lead] .ptile__body {
-        gap: var(--space-4);
-        padding: var(--space-6) var(--space-8) var(--space-6);
+/* ── Destaques ──────────────────────────────────────────────────── */
+.work__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+    padding: 0;
+    list-style: none;
+}
+
+.work__grid > li {
+    display: flex;
+    min-width: 0;
+}
+
+.work__grid > li > * {
+    flex: 1;
+}
+
+@media (min-width: 720px) {
+    .work__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .ptile[data-lead] .ptile__title {
-        font-size: var(--text-2xl);
-    }
-
-    .ptile[data-lead] .ptile__desc {
-        -webkit-line-clamp: 3;
-        line-clamp: 3;
-        font-size: var(--text-md);
+    /* Com três: o terceiro ocupa a linha toda no tablet. */
+    .work__grid > li:nth-child(3):last-child {
+        grid-column: 1 / -1;
     }
 }
 
-/* Tablet: cards na largura toda (o líder e o último quando sobra
-   sozinho) ficam lado a lado (capa | texto) — uma capa 16:9 em 700px
-   de largura viraria um bloco alto e vazio. */
-@media (min-width: 640px) and (max-width: 1023px) {
-    .ptile[data-lead],
-    .work-grid > :last-child:nth-child(even) .ptile {
+@media (min-width: 1080px) {
+    .work__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .work__grid > li:nth-child(3):last-child {
+        grid-column: auto;
+    }
+}
+
+/* Tablet: o 3º na largura toda vira horizontal (capa | texto). */
+@media (min-width: 720px) and (max-width: 1079px) {
+    .work__grid > li:nth-child(3):last-child .pcard {
         display: grid;
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
 
-    .work-grid > :last-child:nth-child(even) .ptile__media {
+    .work__grid > li:nth-child(3):last-child .pcard__media {
         height: 100%;
-        min-height: 220px;
         aspect-ratio: auto;
-        border-bottom: 0;
-        border-right: 1px solid var(--color-border-1);
-    }
-
-    .ptile[data-lead] .ptile__media {
-        height: 100%;
-        min-height: 280px;
-        aspect-ratio: auto;
+        min-height: 240px;
         border-bottom: 0;
         border-right: 1px solid var(--color-border-1);
     }
 }
 
-@media (min-width: 1024px) {
-    .ptile[data-lead] .ptile__media {
-        aspect-ratio: auto;
-        flex: 1 1 auto;
-        min-height: 300px;
+/* ── Outras implementações ──────────────────────────────────────── */
+.work__others {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-5);
+    padding: var(--space-6);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--surface-edge);
+}
+
+.work__others-head {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.work__others-title {
+    margin: 0;
+}
+
+.work__others-sub {
+    font-size: var(--text-sm);
+    color: var(--color-text-3);
+}
+
+.work__others-list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.work-other {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+        "index index arrow"
+        "name name arrow"
+        "lang lang arrow";
+    align-items: center;
+    gap: 4px var(--space-3);
+    min-height: 56px;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    color: var(--color-text-1);
+    text-decoration: none;
+    transition:
+        background-color 0.2s var(--ease-out),
+        border-color 0.2s var(--ease-out);
+}
+
+.work-other:hover {
+    border-color: var(--color-border-2);
+    background: var(--color-surface-3);
+}
+
+.work-other:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.work-other__index {
+    grid-area: index;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+.work-other__name {
+    grid-area: name;
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.work-other__lang {
+    grid-area: lang;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+.work-other__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+
+.work-other__arrow {
+    grid-area: arrow;
+    font-size: var(--text-md);
+    color: var(--color-brand-text);
+    transition: transform 0.2s var(--ease-out);
+}
+
+.work-other:hover .work-other__arrow {
+    transform: translate(2px, -2px);
+}
+
+@media (min-width: 720px) {
+    .work__others-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .ptile[data-lead] .ptile__img[data-cover="social"] {
-        padding: var(--space-8);
-    }
-
-    .ptile[data-lead] .ptile__body {
-        flex: 0 0 auto;
-    }
-
-    .ptile[data-lead] .ptile__title {
-        font-size: var(--text-3xl);
+    .work__others-list li + li {
+        border-left: 1px solid var(--color-border-1);
+        padding-left: var(--space-2);
     }
 }
 
-/* ── Botões (CTAs da seção e do card líder) ─────────────────────── */
+/* ── Rodapé ─────────────────────────────────────────────────────── */
+.work__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-6);
+    margin-top: var(--space-8);
+}
+
+.work__foot-note {
+    font-size: var(--text-md);
+    color: var(--color-text-3);
+}
+
+.work__foot-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+}
+
+@media (max-width: 479px) {
+    .work__foot-actions,
+    .work__foot-actions .work-btn {
+        width: 100%;
+    }
+}
+
+/* ── Estados ────────────────────────────────────────────────────── */
+.work__state {
+    margin-top: var(--space-5);
+    padding: var(--space-6);
+    text-align: center;
+    color: var(--color-text-2);
+    border: 1px dashed var(--color-border-2);
+    border-radius: var(--radius-lg);
+}
+
+.work__skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding-bottom: var(--space-5);
+    overflow: hidden;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-xl);
+}
+
+.work__skeleton-media,
+.work__skeleton-line {
+    display: block;
+    background: linear-gradient(
+        90deg,
+        var(--color-surface-3) 25%,
+        var(--color-surface-1) 50%,
+        var(--color-surface-3) 75%
+    );
+    background-size: 200% 100%;
+    animation: work-skeleton 1.4s linear infinite;
+}
+
+.work__skeleton-media {
+    aspect-ratio: 16 / 9;
+    margin-bottom: var(--space-2);
+}
+
+.work__skeleton-line {
+    height: 12px;
+    margin-inline: var(--space-5);
+    border-radius: var(--radius-sm);
+}
+
+.work__skeleton-line--short {
+    width: 30%;
+}
+
+.work__skeleton-line--title {
+    width: 55%;
+    height: 22px;
+}
+
+@keyframes work-skeleton {
+    to {
+        background-position: -200% 0;
+    }
+}
+
+/* ── Botões da seção ─────────────────────── */
 .work-btn {
     --work-btn-h: 44px;
     position: relative;
@@ -673,157 +503,17 @@
     transform: translateX(3px);
 }
 
-.work-btn--sm {
-    --work-btn-h: 40px;
-    padding: 0 var(--space-4);
-}
-
-/* ── Faixa do catálogo ──────────────────────────────────────────── */
-.work__more {
-    position: relative;
-    display: grid;
-    gap: var(--space-4) var(--space-8);
-    margin-top: var(--space-5);
-    padding: var(--space-6);
-    overflow: hidden;
-    background:
-        radial-gradient(
-            60% 140% at 100% 0%,
-            var(--color-brand-subtle),
-            transparent 70%
-        ),
-        var(--color-surface-2);
-    border: 1px dashed var(--color-border-2);
-    border-radius: var(--radius-xl);
-}
-
-.work__prompt {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-text-3);
-}
-
-.work__prompt span {
-    color: var(--color-brand-text);
-}
-
-.work__more-text {
-    display: grid;
-    gap: var(--space-1);
-}
-
-.work__more-title {
-    font-family: var(--font-display);
-    font-size: var(--text-lg);
-    font-weight: 700;
-    color: var(--color-text-1);
-}
-
-.work__more-desc {
-    max-width: 60ch;
-    font-size: var(--text-sm);
-    line-height: var(--lh-relaxed);
-    color: var(--color-text-3);
-}
-
-.work__more-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3);
-}
-
-@media (min-width: 900px) {
-    .work__more {
-        grid-template-columns: minmax(0, 1fr) auto;
-        grid-template-areas:
-            "prompt actions"
-            "text actions";
-        align-items: center;
-        padding: var(--space-6) var(--space-8);
-    }
-
-    .work__prompt {
-        grid-area: prompt;
-    }
-
-    .work__more-text {
-        grid-area: text;
-    }
-
-    .work__more-actions {
-        grid-area: actions;
-    }
-}
-
-@media (max-width: 479px) {
-    .work__more-actions,
-    .work__more-actions .work-btn {
-        width: 100%;
-    }
-}
-
-/* ── Estados ────────────────────────────────────────────────────── */
-.work__state {
-    padding: var(--space-6);
-    text-align: center;
-    color: var(--color-text-2);
-    border: 1px dashed var(--color-border-2);
-    border-radius: var(--radius-lg);
-}
-
-.ptile--skeleton .ptile__media,
-.ptile__skel {
-    background: linear-gradient(
-        90deg,
-        var(--color-surface-3) 25%,
-        var(--color-surface-1) 50%,
-        var(--color-surface-3) 75%
-    );
-    background-size: 200% 100%;
-    animation: work-skeleton 1.4s linear infinite;
-}
-
-.ptile__skel {
-    display: block;
-    height: 12px;
-    border-radius: var(--radius-sm);
-}
-
-.ptile__skel--short {
-    width: 35%;
-}
-
-.ptile__skel--title {
-    width: 60%;
-    height: 22px;
-}
-
-@keyframes work-skeleton {
-    to {
-        background-position: -200% 0;
-    }
-}
-
-/* ── Movimento reduzido ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-    .ptile,
-    .ptile__img,
-    .ptile__action,
+    .work__gh,
+    .work-other,
+    .work-other__arrow,
     .work-btn,
     .work-btn__icon {
         transition: none;
     }
 
-    .ptile:hover {
-        transform: none;
-    }
-
-    .ptile:hover .ptile__img {
-        transform: none;
-    }
-
-    .ptile--skeleton .ptile__media,
-    .ptile__skel {
+    .work__skeleton-media,
+    .work__skeleton-line {
         animation: none;
     }
 }

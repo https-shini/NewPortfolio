@@ -210,10 +210,10 @@ describe("/projetos/:nome", () => {
             name: "Projetos relacionados",
         });
         expect(
-            within(sec).getByRole("link", { name: "outro-python" }),
+            within(sec).getByRole("link", { name: "Outro Python" }),
         ).toBeInTheDocument();
         expect(
-            within(sec).queryByRole("link", { name: "sem-relacao" }),
+            within(sec).queryByRole("link", { name: "Sem Relacao" }),
         ).toBeNull();
     });
 

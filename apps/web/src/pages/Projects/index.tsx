@@ -15,6 +15,7 @@ import { CatalogChips } from "@/features/devhub/components/CatalogChips";
 import { CatalogPagination } from "@/features/devhub/components/CatalogPagination";
 import { useCatalogState } from "@/features/devhub/useCatalogState";
 import {
+    DEFAULT_CATALOG,
     SORTS,
     activeFilterCount,
     buildFacets,
@@ -22,20 +23,19 @@ import {
     type CatalogSort,
 } from "@/features/devhub/catalog";
 import { Modal } from "@/shared/ui/Modal/Modal";
-import { ProjectMetrics } from "@/features/devhub/components/ProjectMetrics";
 import { ProfileWidgets } from "@/features/devhub/components/ProfileWidgets";
-import { useDevhubIndex } from "@/features/devhub/useDevhub";
-import { recentRepos, repoStats } from "@/features/devhub/selectors";
-import { formatNumber } from "@/features/devhub/format";
+import { useDevhubIndex, useDevhubPinned } from "@/features/devhub/useDevhub";
+import { formatDate, formatNumber } from "@/features/devhub/format";
 import { useLang } from "@/shared/hooks/useLang";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
-import { scrollToSection } from "@/shared/lib/smoothScroll";
+import { useLinkProps } from "@/shared/hooks/useLinkProps";
 import { ROUTES } from "@/shared/config/routes";
 import { GITHUB_URL } from "@/shared/config/constants";
 import { PROFILE } from "@/shared/config/profile";
 import {
     IconArrowRight,
+    IconExternalLink,
     IconFilter,
     IconGitHub,
     IconSearch,
@@ -46,19 +46,27 @@ import type { TranslationKey } from "@/shared/lib/translations";
 /* ─────────────────────────────────────────────────────────
    /projetos — o DevHub integrado ao portfólio
    ─────────────────────────────────────────────────────────
-   Página DO SITE: mesmo Header, mesmo Footer, mesmos tokens. A
-   ordem responde a três perguntas, da mais rápida à mais funda:
+   Página DO SITE: mesmo Header, mesmo Footer, mesmos tokens.
 
-     1. Métricas — o tamanho do acervo, em números do GitHub.
-     2. Projetos recentes — no que estou trabalhando agora.
-     3. Todos os projetos — a galeria completa, com busca,
-        filtros, ordenação e carregamento progressivo.
+     trilha     → Início / Projetos
+     hero       → título, subtítulo, perfil no GitHub · painel lateral
+     números    → autorais · fixados · linguagens · com demonstração
+     acervo     → busca + ordenação, atalhos (Todos/Fixados/Demo),
+                  filtros na lateral (gaveta no mobile), chips,
+                  cartões (o mesmo ProjectCard da home) e paginação
+     panorama   → widgets do perfil no GitHub
+     contato    → chamada para conversar
 
-   Tudo vem de UMA coleta (`op=index`): as métricas e a contagem da
-   galeria nunca discordam entre si.
+   A antiga seção "Projetos recentes" saiu: o catálogo já abre
+   ordenado pelos mais recentes, e ela repetia os mesmos cartões.
+
+   Números e catálogo vêm de UMA coleta (`op=index`) — nunca
+   discordam. Os fixados vêm de `op=pinned` (o mesmo cache da home).
 ───────────────────────────────────────────────────────── */
 
 const ID_TODOS = "todos-os-projetos";
+
+const pad = (n: number) => String(n).padStart(2, "0");
 
 export const ProjectsPage: React.FC = () => {
     const { lang, t } = useLang();
@@ -71,6 +79,21 @@ export const ProjectsPage: React.FC = () => {
     });
 
     const { data, loading, error } = useDevhubIndex();
+    const fixadosRemotos = useDevhubPinned();
+    const inicio = useLinkProps(ROUTES.HOME);
+    const contato = useLinkProps(ROUTES.CONTACT);
+
+    /* Nomes fixados no perfil. Se a API caiu no recorte "recentes"
+       (perfil sem fixados), não há fixados de verdade: conjunto vazio. */
+    const fixados = useMemo(
+        () =>
+            new Set(
+                fixadosRemotos.data?.source === "pinned"
+                    ? fixadosRemotos.data.repositories.map((r) => r.name)
+                    : [],
+            ),
+        [fixadosRemotos.data],
+    );
 
     const { state, update, reset } = useCatalogState();
     const [busca, setBusca] = useState(state.query);
@@ -96,18 +119,105 @@ export const ProjectsPage: React.FC = () => {
     useEffect(() => () => window.clearTimeout(temporizador.current), []);
 
     const resultado = useMemo(
-        () => runCatalog(repositories, state),
-        [repositories, state],
+        () => runCatalog(repositories, state, undefined, fixados),
+        [repositories, state, fixados],
     );
     const facets = useMemo(
-        () => buildFacets(repositories, state),
-        [repositories, state],
+        () => buildFacets(repositories, state, undefined, fixados),
+        [repositories, state, fixados],
     );
-    const recentes = useMemo(() => recentRepos(repositories), [repositories]);
-    const stats = useMemo(
-        () => (data ? repoStats(repositories, data.followers) : null),
-        [data, repositories],
+    /* Números do acervo: o que o visitante vê por padrão (públicos,
+       sem forks). Linguagens = linguagens principais distintas. */
+    const autorais = useMemo(
+        () => repositories.filter((r) => !r.isFork),
+        [repositories],
     );
+    const numeros = useMemo(
+        () =>
+            [
+                {
+                    id: "own",
+                    label: "pp.stats.own",
+                    hint: "pp.stats.own.hint",
+                    value: autorais.length,
+                },
+                {
+                    id: "pinned",
+                    label: "pp.stats.pinned",
+                    hint: "pp.stats.pinned.hint",
+                    value: fixados.size,
+                },
+                {
+                    id: "langs",
+                    label: "pp.stats.langs",
+                    hint: "pp.stats.langs.hint",
+                    value: new Set(
+                        autorais.flatMap((r) =>
+                            r.primaryLanguage ? [r.primaryLanguage.name] : [],
+                        ),
+                    ).size,
+                },
+                {
+                    id: "demo",
+                    label: "pp.stats.demo",
+                    hint: "pp.stats.demo.hint",
+                    value: autorais.filter((r) => r.homepageUrl).length,
+                },
+            ] satisfies {
+                id: string;
+                label: TranslationKey;
+                hint: TranslationKey;
+                value: number;
+            }[],
+        [autorais, fixados],
+    );
+
+    /* Atalhos (Todos · Fixados · Com demonstração): recortes rápidos
+       sobre a visão padrão, com a contagem de cada um. */
+    const base = useMemo(
+        () => runCatalog(repositories, DEFAULT_CATALOG, undefined, fixados),
+        [repositories, fixados],
+    );
+    const semDemo = state.features.filter((f) => f !== "demo");
+    const atalhos = [
+        {
+            id: "all",
+            label: "catalog.quick.all" as TranslationKey,
+            count: base.total,
+            ativo: !state.pinnedOnly && !state.features.includes("demo"),
+            aplicar: () => update({ pinnedOnly: false, features: semDemo }),
+        },
+        ...(fixados.size > 0
+            ? [
+                  {
+                      id: "pinned",
+                      label: "catalog.quick.pinned" as TranslationKey,
+                      count: runCatalog(
+                          repositories,
+                          { ...DEFAULT_CATALOG, pinnedOnly: true },
+                          undefined,
+                          fixados,
+                      ).total,
+                      ativo: state.pinnedOnly,
+                      aplicar: () =>
+                          update({ pinnedOnly: true, features: semDemo }),
+                  },
+              ]
+            : []),
+        {
+            id: "demo",
+            label: "catalog.quick.demo" as TranslationKey,
+            count: runCatalog(
+                repositories,
+                { ...DEFAULT_CATALOG, features: ["demo"] },
+                undefined,
+                fixados,
+            ).total,
+            ativo: state.features.includes("demo") && !state.pinnedOnly,
+            aplicar: () =>
+                update({ pinnedOnly: false, features: [...semDemo, "demo"] }),
+        },
+    ];
     const qtdFiltros = activeFilterCount(state);
 
     const limparTudo = useCallback(() => {
@@ -147,31 +257,79 @@ export const ProjectsPage: React.FC = () => {
             <ScrollUtils label={t("a11y.backToTop")} />
             <Header />
 
-            <main id="main-content" className="devhub">
-                <header className="devhub-hero">
-                    <div className="container">
-                        <p className="devhub-hero__eyebrow">
-                            {t("devhub.eyebrow")}
-                        </p>
-                        <h1 className="devhub-hero__title">
-                            {t("devhub.title")}
-                        </h1>
-                        <p className="devhub-hero__sub">
-                            {t("devhub.subtitle")}
-                        </p>
-                        {!error && (
-                            <ProjectMetrics
-                                stats={stats}
-                                fetchedAt={data?.fetchedAt ?? null}
-                            />
-                        )}
-                        <a
-                            className="devhub-hero__link"
-                            href="#panorama-github"
+            <main id="main-content" className="devhub pp">
+                <div className="container">
+                    <nav
+                        className="pp-crumbs"
+                        aria-label={t("pp.crumbs.label")}
+                    >
+                        <ol>
+                            <li>
+                                <a {...inicio.anchorProps}>
+                                    {t("pp.crumbs.home")}
+                                </a>
+                            </li>
+                            <li aria-current="page">{t("devhub.title")}</li>
+                        </ol>
+                    </nav>
+                </div>
+
+                <header className="pp-hero">
+                    <div className="container pp-hero__grid">
+                        <div className="pp-hero__main">
+                            <p className="section-eyebrow">{t("pp.eyebrow")}</p>
+                            <h1 className="pp-hero__title">
+                                {t("devhub.title")}
+                                <span
+                                    className="pp-hero__dot"
+                                    aria-hidden="true"
+                                >
+                                    .
+                                </span>
+                            </h1>
+                            <p className="pp-hero__sub">
+                                {t("devhub.subtitle")}
+                            </p>
+                            <p className="pp-hero__gh">
+                                <span
+                                    className="pp-hero__gh-icon"
+                                    aria-hidden="true"
+                                >
+                                    〈/〉
+                                </span>
+                                <span className="pp-hero__gh-user">
+                                    {PROFILE.githubUsername}
+                                </span>
+                                <a
+                                    href={GITHUB_URL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {t("pp.github")}
+                                    <IconExternalLink
+                                        width={12}
+                                        height={12}
+                                        aria-hidden
+                                    />
+                                </a>
+                            </p>
+                        </div>
+                        <aside
+                            className="pp-hero__aside"
+                            aria-label={t("pp.aside.eyebrow")}
                         >
-                            {t("widgets.link")}
-                            <span aria-hidden="true"> ↓</span>
-                        </a>
+                            <p className="pp-hero__aside-eyebrow">
+                                {t("pp.aside.eyebrow")}
+                            </p>
+                            <p className="pp-hero__aside-quote">
+                                <span>{t("pp.aside.l1")}</span>
+                                <strong>{t("pp.aside.l2")}</strong>
+                            </p>
+                            <p className="pp-hero__aside-note">
+                                <span aria-hidden="true" />
+                                {t("pp.aside.note")}
+                            </p>
+                        </aside>
                     </div>
                 </header>
 
@@ -215,69 +373,62 @@ export const ProjectsPage: React.FC = () => {
 
                     {!error && (
                         <section
-                            className="devhub-section"
-                            aria-labelledby="devhub-recent"
+                            className="pp-stats"
+                            aria-labelledby="pp-stats-title"
                         >
-                            <div className="devhub-section__head devhub-section__head--split">
-                                <div>
-                                    <h2
-                                        className="devhub-section__title"
-                                        id="devhub-recent"
-                                    >
-                                        {t("devhub.recent.title")}
-                                    </h2>
-                                    <p className="devhub-section__desc">
-                                        {t("devhub.recent.desc")}
-                                    </p>
-                                </div>
-                                <button
-                                    type="button"
-                                    className="btn btn--outline devhub-section__cta"
-                                    onClick={() => scrollToSection(ID_TODOS)}
-                                    disabled={loading}
-                                >
-                                    {t("work.viewAll")}
-                                    <IconArrowRight
-                                        width={16}
-                                        height={16}
-                                        aria-hidden
-                                    />
-                                </button>
-                            </div>
-
-                            {loading ? (
-                                <Esqueleto
-                                    quantidade={6}
-                                    rotulo={t("devhub.loading")}
-                                />
-                            ) : (
-                                <ul className="devhub-grid">
-                                    {recentes.map((repo, i) => (
-                                        <li key={repo.id}>
-                                            <ProjectCard
-                                                repo={repo}
-                                                index={i}
-                                            />
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
+                            <h2 id="pp-stats-title" className="sr-only">
+                                {t("pp.stats.label")}
+                            </h2>
+                            <dl
+                                className="pp-stats__grid"
+                                aria-busy={loading || undefined}
+                            >
+                                {numeros.map((n) => (
+                                    <div key={n.id} className="pp-stats__item">
+                                        <dt className="pp-stats__label">
+                                            {t(n.label)}
+                                            <span className="pp-stats__hint">
+                                                {t(n.hint)}
+                                            </span>
+                                        </dt>
+                                        <dd className="pp-stats__value">
+                                            {loading ? "··" : pad(n.value)}
+                                        </dd>
+                                    </div>
+                                ))}
+                            </dl>
                         </section>
                     )}
 
-                    {!error && !loading && (
+                    {!error && (
                         <section
-                            className="devhub-section catalog"
+                            className="catalog"
                             id={ID_TODOS}
                             aria-labelledby="devhub-all"
                         >
-                            <div className="catalog__head">
-                                <h2
-                                    className="devhub-section__title"
-                                    id="devhub-all"
-                                >
-                                    {t("devhub.all.title")}
-                                </h2>
+                            <div className="pp-explore">
+                                <div>
+                                    <p className="section-eyebrow">
+                                        {t("pp.explore.eyebrow")}
+                                    </p>
+                                    <h2
+                                        className="pp-explore__title"
+                                        id="devhub-all"
+                                    >
+                                        {t("pp.explore.title")}
+                                    </h2>
+                                </div>
+                                {data?.fetchedAt && (
+                                    <p className="pp-explore__captured">
+                                        {t("pp.explore.captured").replace(
+                                            "{date}",
+                                            formatDate(data.fetchedAt, lang),
+                                        )}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="pp-toolbar">
                                 <div className="catalog__search" role="search">
                                     <label
                                         htmlFor="catalog-busca"
@@ -307,6 +458,53 @@ export const ProjectsPage: React.FC = () => {
                                         maxLength={100}
                                     />
                                 </div>
+                                <label className="catalog__sort">
+                                    <span>{t("catalog.sort.label")}</span>
+                                    <select
+                                        value={state.sort}
+                                        onChange={(e) =>
+                                            update({
+                                                sort: e.target
+                                                    .value as CatalogSort,
+                                            })
+                                        }
+                                    >
+                                        {SORTS.map((o) => (
+                                            <option key={o} value={o}>
+                                                {t(
+                                                    `catalog.sort.${o}` as TranslationKey,
+                                                )}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
+                            </div>
+
+                            <div
+                                className="pp-quick"
+                                role="group"
+                                aria-label={t("catalog.quick.label")}
+                            >
+                                {atalhos.map((a) => (
+                                    <button
+                                        key={a.id}
+                                        type="button"
+                                        className="pp-quick__pill"
+                                        aria-pressed={a.ativo}
+                                        onClick={a.aplicar}
+                                        disabled={loading}
+                                    >
+                                        {a.id === "pinned" && (
+                                            <span aria-hidden="true">⌖</span>
+                                        )}
+                                        {t(a.label)}
+                                        <span className="pp-quick__count">
+                                            {loading
+                                                ? "·"
+                                                : formatNumber(a.count, lang)}
+                                        </span>
+                                    </button>
+                                ))}
                             </div>
 
                             <div className="catalog__layout">
@@ -314,17 +512,54 @@ export const ProjectsPage: React.FC = () => {
                                     className="catalog__sidebar"
                                     aria-labelledby="catalog-filtros"
                                 >
-                                    <h3
-                                        className="catalog__sidebar-title"
-                                        id="catalog-filtros"
-                                    >
-                                        {t("catalog.filters")}
-                                    </h3>
+                                    <div className="catalog__sidebar-head">
+                                        <h3
+                                            className="catalog__sidebar-title"
+                                            id="catalog-filtros"
+                                        >
+                                            {t("pp.filters.title")}
+                                        </h3>
+                                        <button
+                                            type="button"
+                                            className="catalog__sidebar-clear"
+                                            onClick={limparTudo}
+                                            disabled={
+                                                qtdFiltros === 0 && !state.query
+                                            }
+                                        >
+                                            {t("pp.filters.clear")}
+                                        </button>
+                                    </div>
                                     <CatalogFilters
                                         state={state}
                                         facets={facets}
                                         update={update}
                                     />
+                                    <div className="pp-promo">
+                                        <span
+                                            className="pp-promo__icon"
+                                            aria-hidden="true"
+                                        >
+                                            〈/〉
+                                        </span>
+                                        <p className="pp-promo__text">
+                                            {t("pp.promo.l1")}
+                                            <br />
+                                            {t("pp.promo.l2")}
+                                        </p>
+                                        <a
+                                            href={GITHUB_URL}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {t("pp.promo.link")}
+                                            <IconExternalLink
+                                                width={12}
+                                                height={12}
+                                                aria-hidden
+                                            />
+                                        </a>
+                                    </div>
                                 </aside>
 
                                 <div className="catalog__main">
@@ -340,51 +575,30 @@ export const ProjectsPage: React.FC = () => {
                                                 <span>{rotuloIntervalo}</span>
                                             )}
                                         </p>
-                                        <div className="catalog__bar-actions">
-                                            <button
-                                                type="button"
-                                                className="catalog__filters-btn"
-                                                aria-haspopup="dialog"
-                                                onClick={() => setGaveta(true)}
-                                            >
-                                                <IconFilter
-                                                    width={16}
-                                                    height={16}
-                                                    aria-hidden
-                                                />
-                                                {t("catalog.filters")}
-                                                {qtdFiltros > 0 && (
-                                                    <span className="catalog__filters-badge">
-                                                        {qtdFiltros}
-                                                    </span>
-                                                )}
-                                            </button>
-                                            <label className="catalog__sort">
-                                                <span>
-                                                    {t("catalog.sort.label")}
+                                        <button
+                                            type="button"
+                                            className="catalog__filters-btn"
+                                            aria-haspopup="dialog"
+                                            onClick={() => setGaveta(true)}
+                                        >
+                                            <IconFilter
+                                                width={16}
+                                                height={16}
+                                                aria-hidden
+                                            />
+                                            {t("catalog.filters")}
+                                            {qtdFiltros > 0 && (
+                                                <span className="catalog__filters-badge">
+                                                    {qtdFiltros}
                                                 </span>
-                                                <select
-                                                    value={state.sort}
-                                                    onChange={(e) =>
-                                                        update({
-                                                            sort: e.target
-                                                                .value as CatalogSort,
-                                                        })
-                                                    }
-                                                >
-                                                    {SORTS.map((o) => (
-                                                        <option
-                                                            key={o}
-                                                            value={o}
-                                                        >
-                                                            {t(
-                                                                `catalog.sort.${o}` as TranslationKey,
-                                                            )}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </label>
-                                        </div>
+                                            )}
+                                        </button>
+                                        <p
+                                            className="catalog__tag"
+                                            aria-hidden="true"
+                                        >
+                                            {t("pp.results.tag")}
+                                        </p>
                                     </div>
 
                                     <CatalogChips
@@ -396,7 +610,12 @@ export const ProjectsPage: React.FC = () => {
                                         onClearAll={limparTudo}
                                     />
 
-                                    {resultado.total === 0 ? (
+                                    {loading ? (
+                                        <Esqueleto
+                                            quantidade={6}
+                                            rotulo={t("devhub.loading")}
+                                        />
+                                    ) : resultado.total === 0 ? (
                                         <div
                                             className="devhub-state"
                                             role="status"
@@ -416,23 +635,28 @@ export const ProjectsPage: React.FC = () => {
                                             </button>
                                         </div>
                                     ) : (
-                                        <ul className="devhub-grid catalog__grid">
+                                        <ul className="catalog__grid">
                                             {resultado.items.map((repo, i) => (
                                                 <li key={repo.id}>
                                                     <ProjectCard
                                                         repo={repo}
                                                         index={i}
+                                                        pinned={fixados.has(
+                                                            repo.name,
+                                                        )}
                                                     />
                                                 </li>
                                             ))}
                                         </ul>
                                     )}
 
-                                    <CatalogPagination
-                                        page={resultado.page}
-                                        pageCount={resultado.pageCount}
-                                        onChange={irParaPagina}
-                                    />
+                                    {!loading && (
+                                        <CatalogPagination
+                                            page={resultado.page}
+                                            pageCount={resultado.pageCount}
+                                            onChange={irParaPagina}
+                                        />
+                                    )}
                                 </div>
                             </div>
 
@@ -446,7 +670,7 @@ export const ProjectsPage: React.FC = () => {
                             >
                                 <div className="catalog-drawer__head">
                                     <h3 id="catalog-gaveta-titulo">
-                                        {t("catalog.filters")}
+                                        {t("pp.filters.title")}
                                     </h3>
                                     <button
                                         type="button"
@@ -491,6 +715,29 @@ export const ProjectsPage: React.FC = () => {
                     )}
 
                     <ProfileWidgets />
+
+                    <section className="pp-cta" aria-labelledby="pp-cta-title">
+                        <div>
+                            <p className="section-eyebrow">
+                                {t("pp.cta.eyebrow")}
+                            </p>
+                            <h2 className="pp-cta__title" id="pp-cta-title">
+                                {t("pp.cta.title")}
+                            </h2>
+                            <p className="pp-cta__desc">{t("pp.cta.desc")}</p>
+                        </div>
+                        <a
+                            className="btn btn--primary pp-cta__btn"
+                            {...contato.anchorProps}
+                        >
+                            {t("pp.cta.button")}
+                            <IconArrowRight
+                                width={16}
+                                height={16}
+                                aria-hidden
+                            />
+                        </a>
+                    </section>
                 </div>
             </main>
 
