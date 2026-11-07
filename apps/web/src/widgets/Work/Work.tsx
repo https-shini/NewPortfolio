@@ -32,6 +32,12 @@ import {
    imagem de um lado e as informações do outro — o lado alterna a
    cada projeto (desktop); no mobile, imagem em cima.
 
+   Composição (mesma gramática do "Projeto em destaque" logo acima):
+     cabeçalho  → eyebrow + selo de sincronização · título · subtítulo
+     carrossel  → card na largura do container (alinhado ao título)
+     barra      → contador · progresso · dots · setas, numa linha só
+     rodapé     → faixa "acervo completo" com os dois CTAs
+
    O trilho é NATIVO: `overflow-x` + `scroll-snap`. Arrastar no
    celular, deslizar no trackpad e a inércia vêm do navegador, sem
    biblioteca e sem código de toque próprio. Setas, dots, teclado
@@ -434,16 +440,6 @@ const Carousel: React.FC<{ repos: Repository[] }> = ({ repos }) => {
             aria-label={t("work.carousel")}
             onKeyDown={aoTeclar}
         >
-            <button
-                type="button"
-                className="work-carousel__arrow work-carousel__arrow--prev"
-                onClick={() => irPara(atual - 1)}
-                disabled={atual === 0}
-                aria-label={t("work.prev")}
-            >
-                <IconChevronLeft width={20} height={20} aria-hidden />
-            </button>
-
             <div
                 className="work-carousel__viewport"
                 ref={trilhoRef}
@@ -463,17 +459,16 @@ const Carousel: React.FC<{ repos: Repository[] }> = ({ repos }) => {
                 ))}
             </div>
 
-            <button
-                type="button"
-                className="work-carousel__arrow work-carousel__arrow--next"
-                onClick={() => irPara(atual + 1)}
-                disabled={atual === total - 1}
-                aria-label={t("work.next")}
+            {/* Barra única: contador e progresso à esquerda, dots e setas à
+                direita. O progresso é o próprio filete superior da barra. */}
+            <div
+                className="work-carousel__nav"
+                style={
+                    {
+                        "--progresso": total > 1 ? atual / (total - 1) : 1,
+                    } as React.CSSProperties
+                }
             >
-                <IconChevronRight width={20} height={20} aria-hidden />
-            </button>
-
-            <div className="work-carousel__nav">
                 <p className="work-carousel__counter" aria-hidden="true">
                     <span className="work-carousel__counter-now">
                         {pad(atual + 1)}
@@ -503,16 +498,26 @@ const Carousel: React.FC<{ repos: Repository[] }> = ({ repos }) => {
                     ))}
                 </div>
 
-                {/* Progresso contínuo: a fração já percorrida do acervo. */}
-                <span
-                    className="work-carousel__progress"
-                    aria-hidden="true"
-                    style={
-                        {
-                            "--progresso": total > 1 ? atual / (total - 1) : 1,
-                        } as React.CSSProperties
-                    }
-                />
+                <div className="work-carousel__arrows">
+                    <button
+                        type="button"
+                        className="work-carousel__arrow"
+                        onClick={() => irPara(atual - 1)}
+                        disabled={atual === 0}
+                        aria-label={t("work.prev")}
+                    >
+                        <IconChevronLeft width={18} height={18} aria-hidden />
+                    </button>
+                    <button
+                        type="button"
+                        className="work-carousel__arrow"
+                        onClick={() => irPara(atual + 1)}
+                        disabled={atual === total - 1}
+                        aria-label={t("work.next")}
+                    >
+                        <IconChevronRight width={18} height={18} aria-hidden />
+                    </button>
+                </div>
             </div>
 
             <p className="sr-only" aria-live="polite" aria-atomic="true">
@@ -541,13 +546,20 @@ export const Work: React.FC = () => {
             data-reveal
         >
             <div className="container">
-                <header className="section-header">
-                    <span className="section-eyebrow">{t("work.eyebrow")}</span>
+                <header className="work__head section-header">
+                    <div className="work__eyebrow-row">
+                        <span className="section-eyebrow">
+                            {t("work.eyebrow")}
+                        </span>
+                        <span className="work__sync">
+                            <span aria-hidden="true" />
+                            {t("work.sync")}
+                        </span>
+                    </div>
                     <h2 className="section-title" id="work-title">
                         {t("work.title")}
                     </h2>
-                    <p className="section-subtitle">{t("work.sub")}</p>
-                    <p className="work__note">{t("work.sub2")}</p>
+                    <p className="work__sub">{t("work.sub")}</p>
                 </header>
 
                 {loading && (
@@ -585,33 +597,41 @@ export const Work: React.FC = () => {
 
                 {!loading && repos.length > 0 && <Carousel repos={repos} />}
 
-                <div className="work__cta">
-                    <a
-                        className="work-btn work-btn--primary work-btn--lg"
-                        {...verTodos.anchorProps}
-                    >
-                        {t("work.viewAll")}
-                        <IconArrowRight
-                            className="work-btn__icon work-btn__icon--go"
-                            width={18}
-                            height={18}
-                            aria-hidden
-                        />
-                    </a>
-                    <a
-                        href={GITHUB_URL}
-                        className="work-btn work-btn--ghost work-btn--lg"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        <IconGitHub
-                            className="work-btn__icon"
-                            width={18}
-                            height={18}
-                            aria-hidden
-                        />
-                        {t("work.more")}
-                    </a>
+                <div className="work__more">
+                    <div className="work__more-text">
+                        <p className="work__more-title">
+                            {t("work.moreTitle")}
+                        </p>
+                        <p className="work__more-desc">{t("work.moreDesc")}</p>
+                    </div>
+                    <div className="work__more-actions">
+                        <a
+                            className="work-btn work-btn--primary"
+                            {...verTodos.anchorProps}
+                        >
+                            {t("work.viewAll")}
+                            <IconArrowRight
+                                className="work-btn__icon work-btn__icon--go"
+                                width={18}
+                                height={18}
+                                aria-hidden
+                            />
+                        </a>
+                        <a
+                            href={GITHUB_URL}
+                            className="work-btn work-btn--ghost"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <IconGitHub
+                                className="work-btn__icon"
+                                width={18}
+                                height={18}
+                                aria-hidden
+                            />
+                            {t("work.more")}
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>

@@ -1,3 +1,26 @@
+/* ── Mídia: moldura de janela ───────────────────────────────────── */
+/* Painel com grade de pontos (o "papel" de terminal do site) e um
+   brilho da marca no canto do lado da imagem. */
+.work-card__media {
+    grid-area: media;
+    display: flex;
+    align-items: center;
+    padding: var(--space-4);
+    background:
+        radial-gradient(
+            120% 90% at 0% 0%,
+            var(--color-brand-subtle),
+            transparent 60%
+        ),
+        radial-gradient(
+                color-mix(in srgb, var(--color-text-1) 9%, transparent) 1px,
+                transparent 1px
+            )
+            0 0 / 16px 16px,
+        var(--color-surface-1);
+    border-bottom: 1px solid var(--color-border-1);
+}
+
 /* ─────────────────────────────────────────────────────────
    Work — a vitrine de projetos da home (#projetos), em carrossel
    ─────────────────────────────────────────────────────────
@@ -18,24 +41,55 @@
     background: transparent;
 }
 
+/* ── Cabeçalho ──────────────────────────────────────────────────── */
+/* Mesma gramática do "Projeto em destaque": eyebrow à esquerda, selo
+   de estado à direita, título e um subtítulo de leitura confortável
+   (alinhado à esquerda, ~70 caracteres por linha — o texto justificado
+   em largura total abria "rios" entre as palavras). */
+.work__eyebrow-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+}
+
+.work__sync {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-2);
+}
+
+.work__sync > span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    /* Mesmo ponto da marca do selo "Aplicação disponível" do destaque. */
+    background: var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-subtle);
+}
+
+.work__sub {
+    max-width: 70ch;
+    font-size: var(--text-md);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-3);
+    text-wrap: pretty;
+}
+
 /* ── Carrossel ──────────────────────────────────────────────────── */
-/* Mobile: as setas descem para a barra de navegação, ao lado dos dots.
-   Desktop: viram setas laterais, numa coluna própria — nunca por cima
-   do card (ver o fim do arquivo). */
+/* O card ocupa a largura do container — alinhado ao título — e todos
+   os controles moram numa barra só, embaixo dele. */
 .work-carousel {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    grid-template-areas:
-        "view view view"
-        "prev nav next";
-    align-items: center;
-    column-gap: var(--space-3);
-    row-gap: var(--space-5);
-    margin-top: var(--space-8);
+    gap: var(--space-5);
+    margin-top: var(--space-10);
 }
 
 .work-carousel__viewport {
-    grid-area: view;
     position: relative;
     display: grid;
     grid-auto-flow: column;
@@ -48,6 +102,7 @@
     scrollbar-width: none;
     /* Espaço para a sombra do card não ser cortada pelo overflow. */
     padding: var(--space-2) 0 var(--space-4);
+    margin-block: calc(var(--space-2) * -1) calc(var(--space-4) * -1);
     border-radius: var(--radius-xl);
 }
 
@@ -67,88 +122,44 @@
     min-width: 0;
 }
 
-/* Setas: discretas em repouso, assumem a marca no hover. */
-.work-carousel__arrow {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--color-border-2);
-    border-radius: var(--radius-full);
-    background: var(--color-surface-2);
-    color: var(--color-text-1);
-    box-shadow: var(--surface-edge), var(--shadow-sm);
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition:
-        background-color 0.2s var(--ease-out),
-        border-color 0.2s var(--ease-out),
-        color 0.2s var(--ease-out),
-        box-shadow 0.25s var(--ease-out),
-        transform 0.2s var(--ease-out),
-        opacity 0.2s var(--ease-out);
-}
-
-.work-carousel__arrow--prev {
-    grid-area: prev;
-}
-
-.work-carousel__arrow--next {
-    grid-area: next;
-}
-
-.work-carousel__arrow:hover:not(:disabled) {
-    border-color: var(--color-border-brand);
-    color: var(--color-brand-text);
-    box-shadow:
-        var(--surface-edge),
-        0 6px 18px var(--color-brand-glow);
-}
-
-.work-carousel__arrow--prev:hover:not(:disabled) {
-    transform: translateX(-2px);
-}
-
-.work-carousel__arrow--next:hover:not(:disabled) {
-    transform: translateX(2px);
-}
-
-.work-carousel__arrow:active:not(:disabled) {
-    transform: scale(0.94);
-    transition-duration: 0.08s;
-}
-
-.work-carousel__arrow:focus-visible {
-    outline: 2px solid var(--color-brand-text);
-    outline-offset: 3px;
-}
-
-.work-carousel__arrow:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-/* Barra de navegação: contador · dots · progresso. */
+/* Barra: contador · dots · setas. O filete superior é o progresso. */
 .work-carousel__nav {
-    grid-area: nav;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-areas:
-        "count dots"
-        "bar bar";
+    position: relative;
+    display: flex;
     align-items: center;
-    column-gap: var(--space-4);
-    row-gap: var(--space-3);
-    min-width: 0;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+}
+
+.work-carousel__nav::before,
+.work-carousel__nav::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    border-radius: var(--radius-full);
+}
+
+.work-carousel__nav::before {
+    background: var(--color-border-1);
+}
+
+.work-carousel__nav::after {
+    background: linear-gradient(
+        to right,
+        var(--color-brand),
+        var(--color-accent)
+    );
+    transform: scaleX(var(--progresso, 0));
+    transform-origin: left center;
+    transition: transform 0.45s var(--ease-out);
 }
 
 .work-carousel__counter {
-    grid-area: count;
     display: inline-flex;
     align-items: baseline;
     gap: 6px;
+    margin-right: auto;
     font-family: var(--font-mono);
     font-size: var(--text-sm);
     color: var(--color-text-3);
@@ -166,20 +177,18 @@
 }
 
 .work-carousel__dots {
-    grid-area: dots;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 2px;
+    flex-wrap: nowrap;
+    gap: 0;
 }
 
-/* Alvo de 32px por dot (o visível é a pílula de dentro). */
+/* Alvo de 24px por dot (WCAG 2.5.8); o visível é a pílula de dentro. */
 .work-carousel__dot {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     padding: 0;
     border: 0;
     background: transparent;
@@ -190,8 +199,8 @@
 
 .work-carousel__dot-fill {
     display: block;
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: var(--radius-full);
     background: var(--color-border-3);
     transition:
@@ -206,7 +215,7 @@
 }
 
 .work-carousel__dot[aria-current="true"] .work-carousel__dot-fill {
-    width: 24px;
+    width: 20px;
     background: var(--color-brand);
     transform: none;
 }
@@ -216,35 +225,52 @@
     outline-offset: 0;
 }
 
-.work-carousel__progress {
-    grid-area: bar;
-    position: relative;
-    height: 2px;
-    border-radius: var(--radius-full);
-    background: var(--color-border-1);
-    overflow: hidden;
+.work-carousel__arrows {
+    display: inline-flex;
+    gap: var(--space-2);
 }
 
-.work-carousel__progress::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        to right,
-        var(--color-brand),
-        var(--color-accent)
-    );
-    transform: scaleX(var(--progresso, 0));
-    transform-origin: left center;
-    transition: transform 0.45s var(--ease-out);
+/* Setas quadradas, na família dos botões da galeria do destaque. */
+.work-carousel__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    color: var(--color-text-1);
+    box-shadow: var(--surface-edge);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+        background-color 0.2s var(--ease-out),
+        border-color 0.2s var(--ease-out),
+        color 0.2s var(--ease-out),
+        transform 0.2s var(--ease-out),
+        opacity 0.2s var(--ease-out);
 }
 
-.work__note {
-    margin-top: var(--space-3);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.04em;
-    color: var(--color-text-3);
+.work-carousel__arrow:hover:not(:disabled) {
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+    color: var(--color-brand-text);
+}
+
+.work-carousel__arrow:active:not(:disabled) {
+    transform: scale(0.94);
+    transition-duration: 0.08s;
+}
+
+.work-carousel__arrow:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 3px;
+}
+
+.work-carousel__arrow:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
 }
 
 .work__state {
@@ -768,21 +794,47 @@
     transform: translateX(3px);
 }
 
-/* Variante grande — os CTAs do fim da seção. */
-.work-btn--lg {
-    --work-btn-h: 52px;
-    padding: 0 var(--space-7);
-    font-size: var(--text-md);
-    border-radius: var(--radius-lg);
-}
-
-/* ── CTA ────────────────────────────────────────────────────────── */
-.work__cta {
+/* ── Rodapé: acervo completo ────────────────────────────────────── */
+/* Uma faixa com texto e os dois CTAs — o próximo passo fica explicado,
+   em vez de dois botões soltos no meio da página. */
+.work__more {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-5) var(--space-8);
+    margin-top: var(--space-10);
+    padding: var(--space-6);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--surface-edge);
+}
+
+.work__more-text {
+    flex: 1 1 320px;
+    display: grid;
+    gap: var(--space-1);
+}
+
+.work__more-title {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-text-1);
+}
+
+.work__more-desc {
+    max-width: 60ch;
+    font-size: var(--text-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-3);
+}
+
+.work__more-actions {
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-3);
-    margin-top: var(--space-12);
 }
 
 /* ── Esqueleto ──────────────────────────────────────────────────── */
@@ -834,36 +886,16 @@
     }
 }
 
-/* ── Telas estreitas: a barra de navegação cabe numa linha ───────── */
-/* Com 32px por dot, seis dots + contador + duas setas passavam da
-   largura útil em 375px e os dots quebravam em duas linhas (medido).
-   24px é o alvo mínimo do WCAG 2.5.8 (AA). */
-@media (max-width: 600px) {
-    .work-carousel {
-        column-gap: var(--space-2);
-    }
-
+/* ── Telas estreitas ────────────────────────────────────────────── */
+@media (max-width: 480px) {
     .work-carousel__nav {
-        column-gap: var(--space-3);
-    }
-
-    .work-carousel__dots {
-        flex-wrap: nowrap;
-        gap: 0;
-    }
-
-    .work-carousel__dot {
-        width: 24px;
-        height: 24px;
+        gap: var(--space-2);
     }
 
     .work-carousel__counter-now {
         font-size: var(--text-md);
     }
-}
 
-/* ── Telas estreitas: botões ocupam a linha ─────────────────────── */
-@media (max-width: 480px) {
     .work-card__actions .work-btn {
         flex: 1 1 0;
         padding: 0 var(--space-3);
@@ -873,17 +905,18 @@
         flex-basis: 100%;
     }
 
-    .work__cta .work-btn {
+    .work__more {
+        padding: var(--space-5);
+    }
+
+    .work__more-actions,
+    .work__more-actions .work-btn {
         width: 100%;
     }
 }
 
 /* ── Tablet: respiro maior, ainda empilhado ─────────────────────── */
 @media (min-width: 601px) {
-    .work-carousel {
-        margin-top: var(--space-12);
-    }
-
     .work-card__media {
         padding: var(--space-6);
     }
@@ -891,32 +924,22 @@
     .work-card__body {
         padding: var(--space-8);
     }
+
+    .work__more {
+        padding: var(--space-6) var(--space-8);
+    }
 }
 
-/* ── Desktop: faixas horizontais alternadas ─────────────────────── */
+/* ── Desktop: imagem como protagonista, lado alternado ──────────── */
 @media (min-width: 900px) {
-    /* Setas laterais, numa coluna própria de cada lado do card. */
-    .work-carousel {
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        grid-template-areas:
-            "prev view next"
-            ". nav .";
-        column-gap: var(--space-4);
-    }
-
-    .work-carousel__arrow {
-        width: 48px;
-        height: 48px;
-    }
-
     .work-card {
-        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
         grid-template-areas: "media body";
         align-items: stretch;
     }
 
     .work-card[data-media="end"] {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
         grid-template-areas: "body media";
     }
 
@@ -935,16 +958,20 @@
                 var(--color-brand-subtle),
                 transparent 60%
             ),
+            radial-gradient(
+                    color-mix(in srgb, var(--color-text-1) 9%, transparent) 1px,
+                    transparent 1px
+                )
+                0 0 / 16px 16px,
             var(--color-surface-1);
     }
 
     .work-card__body {
         justify-content: center;
-        padding: var(--space-10);
+        padding: var(--space-8) var(--space-10);
     }
 
-    /* No mobile os botões descem até o fim do card; aqui o bloco inteiro
-       fica centralizado e unido — senão a descrição curta deixava um
+    /* Bloco centralizado e unido — senão a descrição curta deixava um
        vão entre as tecnologias e os botões. */
     .work-card__actions {
         margin-top: 0;
@@ -968,7 +995,7 @@
     .work-card[data-active] .work-card__window,
     .work-carousel__arrow,
     .work-carousel__dot-fill,
-    .work-carousel__progress::after,
+    .work-carousel__nav::after,
     .work-btn--link::before,
     .work[data-reveal],
     .work-card,
