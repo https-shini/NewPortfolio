@@ -1895,9 +1895,6 @@ a.devhub-tree__item:hover {
 /* Alinhado à esquerda em qualquer largura — a regra do site inteiro
    (ver `.section-subtitle` em globals.css). */
 .pp-hero__sub {
-    /* Em 1920 a coluna do hero passa de 1200px; a frase para na medida
-       de leitura e o resto da coluna fica para o título e a trilha. */
-    max-width: var(--measure-wide);
     font-size: var(--text-md);
     line-height: var(--lh-relaxed);
     color: var(--color-text-2);

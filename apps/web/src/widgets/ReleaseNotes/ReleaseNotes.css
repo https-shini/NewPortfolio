@@ -16,16 +16,23 @@
     min-height: 100dvh;
 }
 
-/* Fora do modal a coluna precisa de um limite próprio — o container do
-   site vai até 1720px (tokens.css), largo demais para uma linha do tempo.
-   Fluido em vez dos 820px fixos de antes: em Full HD a coluna deixava
-   ~550px vazios de cada lado. As frases não acompanham — resumo e
-   corpo têm teto em `ch` (`.release-card__summary`, `__body`), então
-   o que ganha espaço são as duas colunas de categorias do cartão. */
+/* Fora do modal a coluna precisa de um limite de leitura próprio até o
+   tablet. A partir de 1440px a página segue a composição da /projetos:
+   ocupa o container inteiro (até 1720px), e quem limita a linha são os
+   parágrafos (`--measure-wide` em `.release-card__paragraph`, `__body`
+   e `.release-item__summary`). Antes, uma coluna central de 820–1120px
+   deixava faixas vazias de ~300px de cada lado em Full HD. */
 .release-page .release-notes,
 .release-page__content {
-    max-width: clamp(820px, 62vw, 1120px);
+    max-width: 820px;
     margin-inline: auto;
+}
+
+@media (min-width: 1440px) {
+    .release-page .release-notes,
+    .release-page__content {
+        max-width: none;
+    }
 }
 
 .release-notes {

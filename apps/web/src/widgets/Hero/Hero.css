@@ -592,11 +592,11 @@
     }
 
     .hero__content {
-        max-width: 760px;
+        max-width: 920px;
     }
 
     .hero__desc {
-        max-width: var(--measure);
+        max-width: var(--measure-wide);
     }
 
     .hero__avatar-wrap {

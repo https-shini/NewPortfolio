@@ -357,6 +357,63 @@ code {
     margin-inline: auto;
 }
 
+/* ── Cabeçalho de seção em Full HD (a partir de 1440px) ─────────────
+   O mesmo desenho do cabeçalho da /projetos: identidade à esquerda
+   (rótulo + título), texto de apoio à direita, separado por um filete
+   vertical — o `.pp-hero__aside`. Em coluna única, num container de até
+   1720px, o subtítulo ocupava metade da largura e deixava a outra
+   metade vazia em toda seção da home.
+
+   Só quando há subtítulo; cabeçalho centralizado (Contato) fica como
+   está. */
+@media (min-width: 1440px) {
+    .section-header:has(> .section-subtitle):not(.section-header--center):not(
+            .contact__header
+        ) {
+        display: grid;
+        grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+        grid-template-areas:
+            "eyebrow texto"
+            "titulo texto";
+        column-gap: clamp(var(--space-12), 5vw, 7rem);
+        row-gap: var(--space-3);
+        align-items: end;
+    }
+
+    .section-header:has(> .section-subtitle):not(.section-header--center):not(
+            .contact__header
+        )
+        > .section-eyebrow {
+        grid-area: eyebrow;
+        align-self: end;
+    }
+
+    .section-header:has(> .section-subtitle):not(.section-header--center):not(
+            .contact__header
+        )
+        > .section-title {
+        grid-area: titulo;
+        align-self: start;
+    }
+
+    .section-header:has(> .section-subtitle):not(.section-header--center):not(
+            .contact__header
+        )
+        > .section-subtitle {
+        grid-area: texto;
+        align-self: center;
+        max-width: var(--measure-wide);
+        padding-left: clamp(var(--space-6), 2vw, var(--space-10));
+        border-left: 1px solid var(--color-border-2);
+    }
+
+    /* Ritmo vertical mais contido, como na /projetos: o espaço entre
+       seções cai de 160px para 128px em Full HD. */
+    .section {
+        padding-block: var(--space-16);
+    }
+}
+
 /* Light mode ajustes */
 body.light-mode .section-subtitle {
     color: var(--color-text-3);

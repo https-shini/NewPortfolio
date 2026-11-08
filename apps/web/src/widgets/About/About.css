@@ -546,7 +546,8 @@
     font-weight: 600;
     letter-spacing: 0;
     margin-left: 1px;
-    opacity: 0.75;
+    /* Sem `opacity`: a 75% o sufixo caía para 3,9–4,4:1 nos dois temas,
+       abaixo do AA para texto de 18px. A hierarquia vem do tamanho. */
 }
 
 /* ── Labels ───────────────────────────────────────────────────────────────── */
@@ -659,41 +660,71 @@
     }
 }
 
-/* ── A partir de 1440px: o container passa de 1200px (tokens.css) ─
-   Em coluna única, a biografia chegava a ~150 caracteres por linha.
-   Biografia e objetivo viram duas colunas de leitura lado a lado, e
-   as áreas de especialização ocupam a largura inteira abaixo.
-   A ordem do DOM (bio → áreas → objetivo) não muda: leitor de tela e
-   teclado seguem a mesma sequência de antes. */
+/* ── A partir de 1440px: composição Full HD ─────────────────────────
+   Uma grade só para a seção inteira, no lugar de "corpo + barra lateral
+   fixa": biografia, objetivo e foto lado a lado na primeira linha; as
+   quatro áreas de especialização e o stack na segunda. Antes, a barra
+   lateral grudava no topo e deixava um vão escuro sob o stack, e o corpo
+   esticava em três colunas desiguais.
+
+   `display: contents` dissolve os dois invólucros (corpo e barra) para
+   os cinco blocos virarem filhos diretos da grade. A ordem do DOM — e
+   com ela a do leitor de tela e do Tab — não muda. */
 @media (min-width: 1440px) {
     .about__layout {
-        grid-template-columns: minmax(0, 1fr) clamp(360px, 23vw, 420px);
+        grid-template-columns:
+            minmax(0, 1.15fr)
+            minmax(0, 1fr)
+            clamp(320px, 21vw, 400px);
+        grid-template-areas:
+            "bio objetivo foto"
+            "areas areas tech"
+            "numeros numeros numeros";
+        gap: var(--space-12) clamp(var(--space-8), 3vw, var(--space-12));
+        align-items: start;
     }
 
-    .about__body {
-        display: grid;
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-        grid-template-areas:
-            "bio objetivo"
-            "areas areas";
-        gap: var(--space-10) var(--space-12);
-        align-items: start;
+    .about__body,
+    .about__sidebar {
+        display: contents;
     }
 
     .about__bio {
         grid-area: bio;
     }
 
+    .about__objective {
+        grid-area: objetivo;
+        margin: 0;
+    }
+
     .about__specs {
         grid-area: areas;
     }
 
-    .about__objective {
-        grid-area: objetivo;
+    .about__photo-wrap {
+        grid-area: foto;
     }
 
-    /* As áreas continuam 2×2: em quatro colunas cada cartão cairia
-       para ~280px, e o texto justificado abria buracos entre palavras. */
+    .about__tech {
+        grid-area: tech;
+    }
+
+    /* Os números viram uma faixa de quatro cartões na largura toda — o
+       mesmo recurso do painel de números da /projetos. Antes, dissolvida a
+       barra lateral, eles caíam numa linha solta da grade. */
+    .about__stats {
+        grid-area: numeros;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--space-4);
+    }
+
+    /* Áreas em 4 colunas: a linha tem ~1200px, cada cartão fica com
+       ~290px — com o texto alinhado à esquerda, sem os rios do
+       justificado. */
+    .about__specs-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
 }
 
 /* ── prefers-reduced-motion ─────────────────────────────────────── */
@@ -708,5 +739,14 @@
     .about__goal {
         animation: none !important;
         transition: none !important;
+    }
+
+    /* O cartão de número nasce em `opacity: 0` e só a animação de entrada
+       o trazia para 1 — com a animação desligada acima, os quatro números
+       ficavam invisíveis para quem pede menos movimento (medido em
+       produção: opacidade 0 nos quatro). O estado final é declarado. */
+    .stat-card {
+        opacity: 1;
+        transform: none;
     }
 }
