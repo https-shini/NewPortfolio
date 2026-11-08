@@ -213,10 +213,19 @@ describe("paginação", () => {
         });
         expect(runCatalog(muitos, s({ page: 99 }), AGORA).page).toBe(4);
     });
-    it("lista de páginas com reticências", () => {
+    it("3 primeiras e 3 últimas sempre; o meio vira reticências", () => {
         expect(pageList(1, 3)).toEqual([1, 2, 3]);
-        expect(pageList(5, 10)).toEqual([1, null, 4, 5, 6, null, 10]);
-        expect(pageList(1, 10)).toEqual([1, 2, null, 10]);
+        expect(pageList(1, 6)).toEqual([1, 2, 3, 4, 5, 6]);
+        /* lacuna de uma página mostra o número */
+        expect(pageList(1, 7)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+        expect(pageList(1, 8)).toEqual([1, 2, 3, null, 6, 7, 8]);
+        expect(pageList(8, 8)).toEqual([1, 2, 3, null, 6, 7, 8]);
+        expect(pageList(1, 10)).toEqual([1, 2, 3, null, 8, 9, 10]);
+        /* a atual no meio aparece entre reticências */
+        expect(pageList(6, 12)).toEqual([1, 2, 3, null, 6, null, 10, 11, 12]);
+        expect(pageList(5, 10)).toEqual([1, 2, 3, 4, 5, null, 8, 9, 10]);
+        expect(pageList(4, 10)).toEqual([1, 2, 3, 4, null, 8, 9, 10]);
+        expect(pageList(5, 9)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
     });
 });
 
