@@ -80,7 +80,6 @@ export const ProjectsPage: React.FC = () => {
 
     const { data, loading, error } = useDevhubIndex();
     const fixadosRemotos = useDevhubPinned();
-    const inicio = useLinkProps(ROUTES.HOME);
     const contato = useLinkProps(ROUTES.CONTACT);
 
     /* Nomes fixados no perfil. Se a API caiu no recorte "recentes"
@@ -258,60 +257,15 @@ export const ProjectsPage: React.FC = () => {
             <Header />
 
             <main id="main-content" className="devhub pp">
-                <div className="container">
-                    <nav
-                        className="pp-crumbs"
-                        aria-label={t("pp.crumbs.label")}
-                    >
-                        <ol>
-                            <li>
-                                <a {...inicio.anchorProps}>
-                                    {t("pp.crumbs.home")}
-                                </a>
-                            </li>
-                            <li aria-current="page">{t("devhub.title")}</li>
-                        </ol>
-                    </nav>
-                </div>
-
                 <header className="pp-hero">
                     <div className="container pp-hero__grid">
                         <div className="pp-hero__main">
                             <p className="section-eyebrow">{t("pp.eyebrow")}</p>
                             <h1 className="pp-hero__title">
                                 {t("devhub.title")}
-                                <span
-                                    className="pp-hero__dot"
-                                    aria-hidden="true"
-                                >
-                                    .
-                                </span>
                             </h1>
                             <p className="pp-hero__sub">
                                 {t("devhub.subtitle")}
-                            </p>
-                            <p className="pp-hero__gh">
-                                <span
-                                    className="pp-hero__gh-icon"
-                                    aria-hidden="true"
-                                >
-                                    〈/〉
-                                </span>
-                                <span className="pp-hero__gh-user">
-                                    {PROFILE.githubUsername}
-                                </span>
-                                <a
-                                    href={GITHUB_URL}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {t("pp.github")}
-                                    <IconExternalLink
-                                        width={12}
-                                        height={12}
-                                        aria-hidden
-                                    />
-                                </a>
                             </p>
                         </div>
                         <aside

@@ -1793,41 +1793,6 @@ a.devhub-tree__item:hover {
 }
 
 /* Trilha */
-.pp-crumbs ol {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2);
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    font-size: var(--text-sm);
-    color: var(--color-text-3);
-}
-
-.pp-crumbs li + li::before {
-    content: "/";
-    margin-right: var(--space-2);
-    color: var(--color-text-4);
-}
-
-.pp-crumbs a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 32px;
-    color: var(--color-text-2);
-    text-decoration: none;
-}
-
-.pp-crumbs a:hover {
-    color: var(--color-brand-text);
-    text-decoration: underline;
-}
-
-.pp-crumbs [aria-current] {
-    color: var(--color-text-1);
-}
-
 /* Hero */
 .pp-hero {
     padding-block: var(--space-10) var(--space-12);
@@ -1853,50 +1818,20 @@ a.devhub-tree__item:hover {
     color: var(--color-text-1);
 }
 
-.pp-hero__dot {
-    color: var(--color-brand);
-}
-
+/* Texto justificado a partir do tablet; no celular, alinhado à
+   esquerda — em colunas estreitas a justificação abre "rios" de espaço. */
 .pp-hero__sub {
-    max-width: 60ch;
+    max-width: 82ch;
     font-size: var(--text-md);
     line-height: var(--lh-relaxed);
     color: var(--color-text-2);
     text-wrap: pretty;
 }
 
-.pp-hero__gh {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3);
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--color-text-2);
-}
-
-.pp-hero__gh-icon {
-    color: var(--color-brand-text);
-    font-weight: 700;
-}
-
-.pp-hero__gh-user {
-    font-weight: 600;
-    color: var(--color-text-1);
-}
-
-.pp-hero__gh a {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    min-height: 32px;
-    color: var(--color-text-3);
-    text-decoration: none;
-}
-
-.pp-hero__gh a:hover {
-    color: var(--color-brand-text);
-    text-decoration: underline;
+@media (min-width: 768px) {
+    .pp-hero__sub {
+        text-align: justify;
+    }
 }
 
 .pp-hero__aside {
