@@ -1,6 +1,6 @@
 {
   "/ · dark": {
-    ".hero": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 68px | 0px | 0px | 0px | rgb(226, 232, 240) | 16px | 400",
+    ".hero": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 92px | 0px | 24px | 0px | rgb(226, 232, 240) | 16px | 400",
     ".about": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 80px | 0px | 80px | 0px | rgb(226, 232, 240) | 16px | 400",
     ".career": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 80px | 0px | 80px | 0px | rgb(226, 232, 240) | 16px | 400",
     ".formations": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 80px | 0px | 80px | 0px | rgb(226, 232, 240) | 16px | 400",
@@ -31,7 +31,7 @@
     ".footer": "rgb(7, 13, 25) | none | none | 1 | 4px | 0px | 0px | 0px | solid | color(srgb 0.882353 0.113725 0.282353 / 0.18) | rgb(226, 232, 240) | rgb(226, 232, 240) | rgb(226, 232, 240) | 0px | 0px | 0px | 0px | 0px | 0px | 0px | 0px | rgb(226, 232, 240) | 16px | 400"
   },
   "/ · light": {
-    ".hero": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | 0px | 0px | 0px | 0px | 68px | 0px | 0px | 0px | rgb(30, 41, 59) | 16px | 400",
+    ".hero": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | 0px | 0px | 0px | 0px | 92px | 0px | 24px | 0px | rgb(30, 41, 59) | 16px | 400",
     ".about": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | 0px | 0px | 0px | 0px | 80px | 0px | 80px | 0px | rgb(30, 41, 59) | 16px | 400",
     ".career": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | 0px | 0px | 0px | 0px | 80px | 0px | 80px | 0px | rgb(30, 41, 59) | 16px | 400",
     ".formations": "rgba(0, 0, 0, 0) | none | none | 1 | 0px | 0px | 0px | 0px | none | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | rgb(30, 41, 59) | 0px | 0px | 0px | 0px | 80px | 0px | 80px | 0px | rgb(30, 41, 59) | 16px | 400",

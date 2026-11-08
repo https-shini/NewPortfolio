@@ -215,6 +215,12 @@ export const IconArrowUp: React.FC<IconProps> = (props) => (
     </S>
 );
 
+export const IconArrowDown: React.FC<IconProps> = (props) => (
+    <S {...props}>
+        <path d="M12 5V19M5 12L12 19L19 12" />
+    </S>
+);
+
 export const IconMenu: React.FC<IconProps> = (props) => (
     <S {...props}>
         <path d="M4 6H20M4 12H20M4 18H20" />

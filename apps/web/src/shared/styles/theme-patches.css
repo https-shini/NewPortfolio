@@ -143,34 +143,23 @@ body.light-mode .mobile-nav__cta:hover {
 
 /* ══════════════════════════════════════════════════════════════════════════════
    3. HERO
+   O Hero foi refeito para Full HD (widgets/Hero/Hero.css); só o que muda de
+   cor no tema claro mora aqui.
 ══════════════════════════════════════════════════════════════════════════════ */
 
-/* ── Fundo ── */
-body.light-mode .hero {
-    background: transparent;
-}
-
-/* ── Status badge de disponibilidade ── */
+/* ── Status de disponibilidade ── */
 body.light-mode .hero__status {
     background: color-mix(in srgb, var(--_green-500) 10%, transparent);
     border-color: color-mix(in srgb, var(--_green-600) 28%, transparent);
     color: var(--_green-700);
 }
 
-body.light-mode .hero__status-dot {
+body.light-mode .hero__status-dot,
+body.light-mode .hero__portrait-dot {
     background: var(--_green-600);
 }
 
-/* ── Tipografia ── */
-body.light-mode .hero__greeting {
-    color: var(--color-text-3);
-}
-
-body.light-mode .hero__name {
-    color: var(--color-text-1);
-}
-
-/* Gradiente do role adaptado para fundos claros */
+/* Gradiente do cargo adaptado para fundos claros */
 body.light-mode .hero__role {
     background: linear-gradient(
         135deg,
@@ -185,65 +174,13 @@ body.light-mode .hero__role {
     background-clip: text;
 }
 
-body.light-mode .hero__subrole {
-    color: var(--color-text-4);
-}
-
-body.light-mode .hero__desc {
-    color: var(--color-text-3);
-}
-
-/* ── Avatar — frame e glow mais sutis ── */
-body.light-mode .hero__avatar {
-    border-color: var(--color-border-2);
+/* ── Retrato e faixa de fatos: superfícies elevadas, sombra mais leve ── */
+body.light-mode .hero__portrait {
     box-shadow: var(--shadow-md);
 }
 
-body.light-mode .hero__avatar-frame {
-    opacity: 0.22;
-}
-
-body.light-mode .hero__avatar-glow {
-    opacity: 0.28;
-}
-
-body.light-mode .hero__avatar-wrap:hover .hero__avatar-glow {
-    opacity: 0.5;
-}
-
-body.light-mode .hero__avatar-wrap:hover .hero__avatar-frame {
-    opacity: 0.38;
-}
-
-body.light-mode .hero__avatar-wrap:hover .hero__avatar {
-    border-color: color-mix(in srgb, var(--color-brand) 35%, transparent);
-}
-
-/* ── Scroll indicator ── */
-body.light-mode .hero__scroll {
-    color: var(--color-text-4);
-}
-
-body.light-mode .hero__scroll-dot {
-    background: var(--color-brand);
-}
-
-body.light-mode .hero__scroll-line {
-    background: linear-gradient(
-        to bottom,
-        transparent,
-        var(--color-border-3),
-        transparent
-    );
-}
-
-/* ── Social bar ── */
-body.light-mode .hero__social-divider {
-    background: var(--color-border-3);
-}
-
-body.light-mode .hero__social-label {
-    color: var(--color-text-4);
+body.light-mode .hero__facts {
+    background: color-mix(in srgb, var(--color-surface-1) 85%, transparent);
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════

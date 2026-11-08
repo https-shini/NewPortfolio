@@ -21,6 +21,14 @@ export type TranslationKey =
     | "hero.cta.work"
     | "hero.cta.cv"
     | "hero.scroll"
+    | "hero.social.label"
+    | "hero.social.github"
+    | "hero.social.linkedin"
+    | "hero.social.email"
+    | "hero.scrollLabel"
+    | "hero.facts.stack"
+    | "hero.facts.focus"
+    | "hero.facts.base"
 
     /* ── ABOUT ─────────────────────────────────────── */
     | "about.title"

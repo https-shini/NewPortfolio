@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { LangProvider } from "@/app/LangContext";
 import { Hero } from "./Hero";
 import { PROFILE } from "@/shared/config/profile";
 import { getCvUrl, LANG_KEY } from "@/shared/config/constants";
 import { linkedInNoticePath } from "@/shared/config/linkedin";
 
-const setup = () => {
-    /* Fixa o idioma para tornar a asserção do CV determinística */
-    localStorage.setItem(LANG_KEY, "pt");
+const setup = (lang: "pt" | "en" = "pt") => {
+    /* Fixa o idioma para tornar as asserções determinísticas */
+    localStorage.setItem(LANG_KEY, lang);
     return render(
         <LangProvider>
             <Hero />
@@ -45,5 +45,42 @@ describe("Hero", () => {
         setup();
         const mail = screen.getByRole("link", { name: /e-mail|email/i });
         expect(mail).toHaveAttribute("href", `mailto:${PROFILE.email}`);
+    });
+
+    it("anuncia a disponibilidade como status", () => {
+        setup();
+        expect(screen.getByRole("status")).toHaveTextContent(
+            "Disponível para oportunidades",
+        );
+    });
+
+    it("resume stack, atuação e base na faixa de fatos, com dados do perfil", () => {
+        setup();
+        const stack = screen.getByText("Stack principal").closest("div")!;
+        expect(within(stack).getAllByRole("listitem")).toHaveLength(6);
+        expect(within(stack).getByText("React")).toBeInTheDocument();
+        expect(screen.getByText(PROFILE.roles.join(" · "))).toBeInTheDocument();
+        /* A base aparece no rótulo superior e na faixa. */
+        expect(
+            screen.getAllByText(new RegExp(PROFILE.location.pt)).length,
+        ).toBeGreaterThanOrEqual(2);
+    });
+
+    it("oferece o botão de rolagem para a próxima seção", () => {
+        setup();
+        expect(
+            screen.getByRole("button", { name: "Rolar para a próxima seção" }),
+        ).toBeInTheDocument();
+    });
+
+    it("traduz rótulos e nomes acessíveis em inglês", () => {
+        setup("en");
+        expect(screen.getByText("Core stack")).toBeInTheDocument();
+        expect(
+            screen.getByRole("link", { name: "Guilherme Cruz on GitHub" }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole("button", { name: "Scroll to the next section" }),
+        ).toBeInTheDocument();
     });
 });
