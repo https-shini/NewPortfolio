@@ -497,20 +497,33 @@ export function activeFilterCount(s: CatalogState): number {
     );
 }
 
+/** Quantas páginas ficam sempre visíveis em cada ponta. */
+const PONTA = 3;
+
 /**
- * Páginas a mostrar na paginação: primeira, última e vizinhas da atual,
- * com `null` no lugar de cada intervalo omitido.
+ * Páginas a mostrar na paginação: as 3 primeiras e as 3 últimas sempre;
+ * o meio fica oculto atrás de `null` (reticências). A página atual,
+ * quando cai no meio, aparece sozinha entre duas reticências — o
+ * visitante nunca perde de vista onde está. Uma lacuna de uma página só
+ * mostra o número (reticências no lugar de um único número não poupam
+ * espaço).
  */
 export function pageList(page: number, pageCount: number): (number | null)[] {
-    if (pageCount <= 7)
-        return Array.from({ length: pageCount }, (_, i) => i + 1);
-    const conjunto = new Set([1, pageCount, page - 1, page, page + 1]);
+    const conjunto = new Set<number>([page]);
+    for (let i = 1; i <= Math.min(PONTA, pageCount); i++) {
+        conjunto.add(i);
+        conjunto.add(pageCount - i + 1);
+    }
     const ordenadas = [...conjunto]
         .filter((p) => p >= 1 && p <= pageCount)
         .sort((a, b) => a - b);
     const saida: (number | null)[] = [];
     ordenadas.forEach((p, i) => {
-        if (i > 0 && p - ordenadas[i - 1]! > 1) saida.push(null);
+        const anterior = ordenadas[i - 1];
+        if (anterior !== undefined) {
+            if (p - anterior === 2) saida.push(anterior + 1);
+            else if (p - anterior > 2) saida.push(null);
+        }
         saida.push(p);
     });
     return saida;
