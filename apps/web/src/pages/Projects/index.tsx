@@ -23,7 +23,7 @@ import {
     type CatalogSort,
 } from "@/features/devhub/catalog";
 import { Modal } from "@/shared/ui/Modal/Modal";
-import { ProfileWidgets } from "@/features/devhub/components/ProfileWidgets";
+import { GithubPanorama } from "@/features/devhub/components/GithubPanorama";
 import { useDevhubIndex, useDevhubPinned } from "@/features/devhub/useDevhub";
 import { formatDate, formatNumber } from "@/features/devhub/format";
 import { useLang } from "@/shared/hooks/useLang";
@@ -647,7 +647,7 @@ export const ProjectsPage: React.FC = () => {
                         </section>
                     )}
 
-                    <ProfileWidgets />
+                    <GithubPanorama />
 
                     <section className="pp-cta" aria-labelledby="pp-cta-title">
                         <div>

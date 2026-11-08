@@ -13,6 +13,7 @@ import {
     listarFixados,
     type Repository,
 } from "./_github-repos.js";
+import { buscarPerfil } from "./_github-perfil.js";
 
 /* ─────────────────────────────────────────────────────────
    /api/devhub — os projetos do GitHub para a /projetos
@@ -47,7 +48,14 @@ interface VercelResponse {
    Operações — a lista fechada
 ───────────────────────────────────────────────────────── */
 
-const OPERACOES = ["index", "pinned", "project", "readme", "stats"] as const;
+const OPERACOES = [
+    "index",
+    "pinned",
+    "profile",
+    "project",
+    "readme",
+    "stats",
+] as const;
 type Operacao = (typeof OPERACOES)[number];
 
 /** Operações que exigem `name`; as demais o recusam. */
@@ -254,11 +262,13 @@ export default async function handler(
                 ? await opIndex()
                 : pedido.op === "pinned"
                   ? await opPinned()
-                  : pedido.op === "stats"
-                    ? await buscarEstatisticas(pedido.name!)
-                    : pedido.op === "project"
-                      ? await buscarRepositorio(pedido.name!)
-                      : await opReadme(pedido.name!);
+                  : pedido.op === "profile"
+                    ? await buscarPerfil()
+                    : pedido.op === "stats"
+                      ? await buscarEstatisticas(pedido.name!)
+                      : pedido.op === "project"
+                        ? await buscarRepositorio(pedido.name!)
+                        : await opReadme(pedido.name!);
 
         res.setHeader("Cache-Control", CACHE_PADRAO);
         res.status(200).json(corpo);

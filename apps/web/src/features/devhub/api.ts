@@ -2,6 +2,7 @@ import { readCache, writeCache } from "@/shared/lib/cache";
 import type {
     DevhubIndex,
     DevhubPinned,
+    GithubProfile,
     Repository,
     RepositoryDetail,
     RepositoryStats,
@@ -32,6 +33,7 @@ const TTL = 1000 * 60 * 30;
 const CACHE_INDEX = "devhub:v2:index";
 const CACHE_PINNED = "devhub:v2:pinned";
 const CACHE_STATS = "devhub:v2:stats:";
+const CACHE_PROFILE = "devhub:v2:profile";
 const cacheProjeto = (name: string) => `devhub:v2:project:${name}`;
 
 /** Falha de transporte ou de contrato — a página decide o que mostrar. */
@@ -127,6 +129,24 @@ async function comCache<T>(
     }
     writeCache(chave, resposta);
     return resposta;
+}
+
+function ehPerfil(valor: unknown): valor is GithubProfile {
+    return (
+        ehObjeto(valor) &&
+        typeof valor.login === "string" &&
+        typeof valor.publicRepos === "number" &&
+        ehObjeto(valor.lastYear) &&
+        ehObjeto(valor.calendar) &&
+        Array.isArray(valor.calendar.counts) &&
+        ehObjeto(valor.streak) &&
+        Array.isArray(valor.languages)
+    );
+}
+
+/** Panorama do perfil — números calculados no servidor. */
+export function fetchProfile(): Promise<GithubProfile> {
+    return comCache(CACHE_PROFILE, ehPerfil, () => pedir({ op: "profile" }));
 }
 
 /** O acervo inteiro, com seguidores — galeria e métricas da /projetos. */

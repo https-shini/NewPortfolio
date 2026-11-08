@@ -41,7 +41,11 @@ const TETOS = [
     // projeto (números, abas, atividade, estrutura), o chunk lazy foi de
     // ~3.7 para 5.9 KB gzip; o CSS principal da home (22.1 KB) não muda
     // com isso. Teto refeito sobre 45.1 KB medidos, com ~10% de folga.
-    { nome: "CSS total", limite: 50, alvo: (f) => f.tipo === "css" },
+    // Depois: modal de projeto (lazy) e o panorama do GitHub, que trocou
+    // quatro imagens de terceiros por componentes próprios (calendário,
+    // linguagens, sequências). Tudo em chunks de rota/lazy; a home não
+    // muda. Teto refeito sobre 49.7 KB medidos, com ~10% de folga.
+    { nome: "CSS total", limite: 55, alvo: (f) => f.tipo === "css" },
 ];
 
 function listar(dir, tipo) {
