@@ -691,10 +691,29 @@ body.light-mode {
    8. LAYOUT
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
+    /* ── Largura do conteúdo — UM padrão para o site inteiro ──────────
+       Referência de composição: 1920×1080. Até 1439px o teto é 1200px
+       (em notebook a janela já é menor que isso, e manda o gutter). Daí
+       para cima a medida cresce com a janela até 1720px, deixando ~100px
+       de moldura de cada lado em Full HD — em vez dos 360px que 1200px
+       deixava. Era a escala que só a /projetos usava; virou a regra.
+
+       Quem consome: `.container`, o Header, o Hero e a /links. Trocar
+       o token aqui mantém logotipo, conteúdo e rodapé na mesma margem.
+
+       Linha de texto NÃO acompanha: parágrafos têm teto próprio em
+       `--measure` / `--measure-wide` (ver globals.css). Container largo
+       serve para colunas, cartões e imagens, não para frases de 150
+       caracteres. */
     --layout-max: 1200px;
     --layout-narrow: 768px;
     --layout-wide: 1440px;
     --layout-xwide: 1720px;
+
+    /* Medida de leitura: ~65–75 caracteres por linha no corpo, um pouco
+       mais em textos de apoio curtos. Em `ch` para acompanhar a fonte. */
+    --measure: 68ch;
+    --measure-wide: 82ch;
 
     /* Moldura de IDE (tema Radical do GitHub): fixa nos dois temas, porque
        o que vai dentro dela — os cartões SVG dos widgets do perfil — já
@@ -724,6 +743,25 @@ body.light-mode {
    */
     --tap-min: 24px;
     --tap-comfort: 44px;
+}
+
+/* Degraus da largura do conteúdo. Media query e não `clamp()` porque o
+   teto de 1200px precisa valer inteiro até 1439px — em 1366 a janela
+   menos o gutter já é quase 1300px, e um crescimento contínuo desde ali
+   abriria a home em notebook sem que nada tivesse sido composto para
+   isso. */
+@media (min-width: 1440px) {
+    :root {
+        --layout-max: var(--layout-wide);
+    }
+}
+
+@media (min-width: 1600px) {
+    :root {
+        /* 92% da janela, até 1720px: em 1920 sobram ~100px de cada lado
+           (além do gutter) — respiro de moldura, sem faixas vazias. */
+        --layout-max: min(var(--layout-xwide), 92vw);
+    }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

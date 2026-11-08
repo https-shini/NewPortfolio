@@ -400,6 +400,12 @@
     margin-top: var(--space-4);
 }
 
+/* Texto corrido do README para na medida de leitura; código, tabelas e
+   imagens continuam usando a largura inteira do painel. */
+.devhub-readme__body > :is(p, ul, ol, blockquote, h2, h3, h4) {
+    max-width: var(--measure-wide);
+}
+
 .devhub-readme__body h1,
 .devhub-readme__body h2,
 .devhub-readme__body h3 {
@@ -1845,25 +1851,9 @@ a.devhub-tree__item:hover {
     padding-top: calc(var(--header-height) + var(--space-6));
 }
 
-/* Monitores largos (referência: 1920×1080). O catálogo é a única página
-   que é uma grade de muitos cartões, e em 1200px ela cabia em 3 colunas
-   de ~270px — cartões espremidos. Aqui a medida cresce com a janela
-   (até --layout-xwide) para a PÁGINA INTEIRA, cabeçalho e rodapé inclusos: trocar o
-   token na raiz mantém o logotipo, o conteúdo e o rodapé na mesma
-   margem, que é a regra do site (ver pages/Links/Links.css). */
-@media (min-width: 1440px) {
-    :root:has(main.pp) {
-        --layout-max: var(--layout-wide);
-    }
-}
-
-@media (min-width: 1600px) {
-    :root:has(main.pp) {
-        /* 92% da janela, até 1720px: em 1920 sobram ~100px de cada lado
-           (além do gutter) — respiro de moldura, sem faixas vazias. */
-        --layout-max: min(var(--layout-xwide), 92vw);
-    }
-}
+/* A largura desta página (1200 → 1440 → até 1720px) nasceu aqui, num
+   `:root:has(main.pp)`, e virou o padrão do site inteiro: ver o bloco
+   LAYOUT em shared/styles/tokens.css. Nada a sobrescrever. */
 
 .pp section + section,
 .pp .catalog {
@@ -1905,6 +1895,9 @@ a.devhub-tree__item:hover {
 /* Texto justificado a partir do tablet; no celular, alinhado à
    esquerda — em colunas estreitas a justificação abre "rios" de espaço. */
 .pp-hero__sub {
+    /* Em 1920 a coluna do hero passa de 1200px; a frase para na medida
+       de leitura e o resto da coluna fica para o título e a trilha. */
+    max-width: var(--measure-wide);
     font-size: var(--text-md);
     line-height: var(--lh-relaxed);
     color: var(--color-text-2);

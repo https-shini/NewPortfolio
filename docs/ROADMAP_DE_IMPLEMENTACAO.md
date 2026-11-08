@@ -32,7 +32,7 @@
 
 > Objetivo: eliminar os cenários de tela vazia e fechar os portões que deixaram os defeitos passar.
 
-### F1-01 · Confirmar o defeito de `/contato` em produção
+### F1-01 · Confirmar o defeito de `/contato` em produção — ✅ confirmado no build local
 
 - **Objetivo:** registrar a evidência de P-01 antes de corrigir.
 - **Prioridade / Complexidade:** Crítica / Baixa
@@ -41,7 +41,7 @@
 - **Conclusão:** captura de tela e `getComputedStyle(document.querySelector('#contato')).opacity` anotados na issue.
 - **Riscos:** se o conteúdo estiver visível, investigar a causa antes de seguir com F1-02 (a análise estática pode ter perdido uma regra).
 
-### F1-02 · Revelar o conteúdo de `/contato` (MEL-01)
+### F1-02 · Revelar o conteúdo de `/contato` (MEL-01) — ✅ feito (`pages/Contact/Contact.test.tsx`)
 
 - **Objetivo:** a página exibe o conteúdo.
 - **Prioridade / Complexidade:** Crítica / Baixa

@@ -6,6 +6,7 @@ import { ScrollUtils } from "@/shared/ui/ScrollUtils";
 import { Contact } from "@/widgets/Contact/Contact";
 import { useLang } from "@/shared/hooks/useLang";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
+import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
 import { ROUTES } from "@/shared/config/routes";
 import { PROFILE } from "@/shared/config/profile";
@@ -45,6 +46,10 @@ import { PROFILE } from "@/shared/config/profile";
 export const ContactPage: React.FC = () => {
     const { lang, t } = useLang();
     useReducedMotion();
+    /* O widget Contact marca a seção inteira com `data-reveal`, que nasce
+       em `opacity: 0` (globals.css). Na home quem revela é a HomePage;
+       aqui faltava a chamada, e a página abria só com Header e rodapé. */
+    useScrollReveal();
 
     useDocumentMeta({
         title: `${t("contact.title")} — ${PROFILE.name}`,
