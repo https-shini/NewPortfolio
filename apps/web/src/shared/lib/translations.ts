@@ -304,9 +304,6 @@ export type TranslationKey =
     | "pp.filters.title"
     | "pp.filters.clear"
     | "pp.results.tag"
-    | "pp.promo.l1"
-    | "pp.promo.l2"
-    | "pp.promo.link"
     | "pp.cta.eyebrow"
     | "pp.cta.title"
     | "pp.cta.desc"
@@ -475,6 +472,8 @@ export type TranslationKey =
     | "catalog.pagination"
     | "catalog.page"
     | "catalog.prev"
+    | "catalog.first"
+    | "catalog.last"
     | "catalog.next"
     | "catalog.searchChip"
 

@@ -271,9 +271,6 @@
         "pp.filters.title": "Filtrar projetos",
         "pp.filters.clear": "Limpar",
         "pp.results.tag": "Repositórios públicos",
-        "pp.promo.l1": "Código aberto.",
-        "pp.promo.l2": "Aprendizado contínuo.",
-        "pp.promo.link": "Explorar perfil",
         "pp.cta.eyebrow": "Vamos construir juntos?",
         "pp.cta.title": "Uma ideia pode ser o próximo projeto.",
         "pp.cta.desc": "Aberto a oportunidades, colaborações e novos desafios.",
@@ -444,7 +441,9 @@
         "modal.loading": "Carregando a documentação do projeto…",
         "modal.noImages": "Este projeto ainda não tem capturas de tela no README.",
         "modal.error": "Não foi possível carregar a documentação completa agora. O repositório continua disponível no GitHub.",
-        "tech.moreOne": "Mais 1 tecnologia"
+        "tech.moreOne": "Mais 1 tecnologia",
+        "catalog.first": "Primeira",
+        "catalog.last": "Última"
     },
     "en": {
         "nav.home": "Home",
@@ -718,9 +717,6 @@
         "pp.filters.title": "Filter projects",
         "pp.filters.clear": "Clear",
         "pp.results.tag": "Public repositories",
-        "pp.promo.l1": "Open source.",
-        "pp.promo.l2": "Always learning.",
-        "pp.promo.link": "Explore profile",
         "pp.cta.eyebrow": "Shall we build together?",
         "pp.cta.title": "An idea could be the next project.",
         "pp.cta.desc": "Open to opportunities, collaborations and new challenges.",
@@ -891,6 +887,8 @@
         "modal.loading": "Loading the project documentation…",
         "modal.noImages": "This project has no screenshots in its README yet.",
         "modal.error": "The full documentation couldn't be loaded right now. The repository is still available on GitHub.",
-        "tech.moreOne": "1 more technology"
+        "tech.moreOne": "1 more technology",
+        "catalog.first": "First",
+        "catalog.last": "Last"
     }
 }

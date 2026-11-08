@@ -35,7 +35,6 @@ import { GITHUB_URL } from "@/shared/config/constants";
 import { PROFILE } from "@/shared/config/profile";
 import {
     IconArrowRight,
-    IconExternalLink,
     IconFilter,
     IconGitHub,
     IconSearch,
@@ -489,31 +488,6 @@ export const ProjectsPage: React.FC = () => {
                                         facets={facets}
                                         update={update}
                                     />
-                                    <div className="pp-promo">
-                                        <span
-                                            className="pp-promo__icon"
-                                            aria-hidden="true"
-                                        >
-                                            〈/〉
-                                        </span>
-                                        <p className="pp-promo__text">
-                                            {t("pp.promo.l1")}
-                                            <br />
-                                            {t("pp.promo.l2")}
-                                        </p>
-                                        <a
-                                            href={GITHUB_URL}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            {t("pp.promo.link")}
-                                            <IconExternalLink
-                                                width={12}
-                                                height={12}
-                                                aria-hidden
-                                            />
-                                        </a>
-                                    </div>
                                 </aside>
 
                                 <div className="catalog__main">
@@ -603,15 +577,20 @@ export const ProjectsPage: React.FC = () => {
                                             ))}
                                         </ul>
                                     )}
+                                </div>
 
-                                    {!loading && (
+                                {/* Fora de .catalog__main: assim a barra de
+                                    filtros termina junto com a última linha
+                                    de cartões, e a paginação fica abaixo. */}
+                                {!loading && (
+                                    <div className="catalog__pager">
                                         <CatalogPagination
                                             page={resultado.page}
                                             pageCount={resultado.pageCount}
                                             onChange={irParaPagina}
                                         />
-                                    )}
-                                </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Mobile: os mesmos filtros numa gaveta (Modal do
