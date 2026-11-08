@@ -110,19 +110,32 @@ describe("Featured — ações e conteúdo", () => {
         expect(docs.className).toContain("btn--outline");
     });
 
-    it("resumo integrado: TCC, pontuação 0–1000 e linguagens", () => {
-        montar();
-        expect(
-            screen.getByText("TCC em Engenharia de Software"),
-        ).toBeInTheDocument();
+    it("resumo integrado com a pontuação; sem prompt nem linha de linguagens", () => {
+        const { container } = montar();
+        expect(screen.getByText("Pontuação de qualidade")).toBeInTheDocument();
         expect(screen.getByText("0–1000")).toBeInTheDocument();
-        expect(
-            screen.getByText(
-                (_, el) =>
-                    el?.textContent ===
-                    "Linguagens: Python, JavaScript/TypeScript e Go",
-            ),
-        ).toBeInTheDocument();
+        expect(container.querySelector(".featured__prompt")).toBeNull();
+        expect(container.querySelector(".featured__langs")).toBeNull();
+    });
+
+    it("todas as tecnologias, agrupadas por camada, no padrão do TechList", () => {
+        montar();
+        const stack = screen.getByRole("group", {
+            name: "Tecnologias do projeto",
+        });
+        for (const camada of [
+            "Interface",
+            "API e infraestrutura",
+            "Análise estática",
+            "Integrações e IA",
+        ])
+            expect(
+                within(stack).getByRole("list", { name: camada }),
+            ).toBeInTheDocument();
+        const chips = within(stack)
+            .getAllByRole("listitem")
+            .map((li) => li.textContent);
+        expect(chips).toEqual(FEATURED_PROJECT.tech.map((t) => t.label));
     });
 
     it("cartões de recurso com introdução e lista vindas dos dados", () => {
@@ -152,9 +165,7 @@ describe("Featured — ações e conteúdo", () => {
         expect(
             screen.getByRole("link", { name: "Project documentation" }),
         ).toHaveAttribute("href", `${FEATURED_PROJECT.detailsUrl}?lang=en`);
-        expect(
-            screen.getByText("Software engineering capstone"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("Quality score")).toBeInTheDocument();
     });
 });
 
