@@ -29,13 +29,9 @@ export function LinkedInNoticePage() {
             <Header />
             <main
                 id="main-content"
-                className="container section"
-                style={{
-                    paddingTop: "calc(var(--header-height) + var(--space-16))",
-                    minHeight: "65svh",
-                }}
+                className="container page-shell linkedin-page"
             >
-                <h1 className="section-title">{copy.title}</h1>
+                <h1 className="page-title">{copy.title}</h1>
                 <p className="section-subtitle">{copy.body}</p>
                 <button
                     type="button"

@@ -222,7 +222,8 @@
        coluna estreita do celular — sem ela o justificado abre buracos
        entre as palavras. O dicionário sai do `lang` do documento, que o
        LangContext mantém em dia. */
-    text-align: justify;
+    text-align: start;
+    text-wrap: pretty;
     hyphens: auto;
 }
 

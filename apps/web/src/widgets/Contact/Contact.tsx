@@ -134,7 +134,14 @@ export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
                         {t("hero.status")}
                     </div>
 
-                    <Heading className="section-title" id="contact-title">
+                    <Heading
+                        className={
+                            headingLevel === 1
+                                ? "section-title page-title"
+                                : "section-title"
+                        }
+                        id="contact-title"
+                    >
                         {t("contact.title")}
                     </Heading>
 

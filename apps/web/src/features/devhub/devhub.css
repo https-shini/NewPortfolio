@@ -643,7 +643,7 @@ h3.devhub-stats__label {
 .devhub-detail__loading {
     display: grid;
     gap: var(--space-4);
-    padding-top: calc(var(--header-height) + var(--space-10));
+    padding-top: var(--page-pad-top);
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -1848,7 +1848,7 @@ a.devhub-tree__item:hover {
 ───────────────────────────────────────────────────────── */
 
 .pp {
-    padding-top: calc(var(--header-height) + var(--space-6));
+    padding-top: var(--page-pad-top);
 }
 
 /* A largura desta página (1200 → 1440 → até 1720px) nasceu aqui, num
@@ -1885,15 +1885,15 @@ a.devhub-tree__item:hover {
 
 .pp-hero__title {
     font-family: var(--font-display);
-    font-size: clamp(var(--text-4xl), 7vw, var(--text-6xl));
+    font-size: var(--page-title-size);
     font-weight: 700;
     line-height: 1;
     letter-spacing: -0.03em;
     color: var(--color-text-1);
 }
 
-/* Texto justificado a partir do tablet; no celular, alinhado à
-   esquerda — em colunas estreitas a justificação abre "rios" de espaço. */
+/* Alinhado à esquerda em qualquer largura — a regra do site inteiro
+   (ver `.section-subtitle` em globals.css). */
 .pp-hero__sub {
     /* Em 1920 a coluna do hero passa de 1200px; a frase para na medida
        de leitura e o resto da coluna fica para o título e a trilha. */
@@ -1902,12 +1902,6 @@ a.devhub-tree__item:hover {
     line-height: var(--lh-relaxed);
     color: var(--color-text-2);
     text-wrap: pretty;
-}
-
-@media (min-width: 768px) {
-    .pp-hero__sub {
-        text-align: justify;
-    }
 }
 
 .pp-hero__aside {

@@ -715,6 +715,17 @@ body.light-mode {
     --measure: 68ch;
     --measure-wide: 82ch;
 
+    /* ── Páginas internas (tudo que não é a home) ─────────────────
+       Cada página calculava o próprio recuo sob o header fixo (de +24
+       a +80px) e o próprio tamanho de título (de 30 a 60px). Medido em
+       1920: o primeiro título caía entre 132 e 202px do topo, e o h1 de
+       /release-notes tinha metade do tamanho do de /projetos. A escala
+       de /projetos — a página de referência do layout — vira a regra. */
+    --page-pad-top: calc(
+        var(--header-height) + clamp(var(--space-6), 3vw, var(--space-10))
+    );
+    --page-title-size: clamp(var(--text-4xl), 7vw, var(--text-6xl));
+
     /* Moldura de IDE (tema Radical do GitHub): fixa nos dois temas, porque
        o que vai dentro dela — os cartões SVG dos widgets do perfil — já
        chega com fundo #0d1117. Contraste: texto 15.8:1, apagado 7.6:1. */
