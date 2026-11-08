@@ -46,7 +46,7 @@ try {
         });
         await visit(page, preview.url, "/");
 
-        const gatilho = ".featured__slide.is-active .featured__slide-trigger";
+        const gatilho = ".featured__shot";
         await page.locator(gatilho).first().scrollIntoViewIfNeeded();
         await page.waitForTimeout(400);
 
@@ -127,7 +127,7 @@ try {
         });
         await visit(page, preview.url, "/");
 
-        const gatilho = ".featured__slide.is-active .featured__slide-trigger";
+        const gatilho = ".featured__shot";
         await page.locator(gatilho).first().scrollIntoViewIfNeeded();
         await page.locator(gatilho).first().click();
         await page.waitForSelector(".modal-dialog", { timeout: 8000 });
