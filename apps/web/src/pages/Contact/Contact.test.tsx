@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { Providers } from "@/app/providers";
 import { Routes } from "@/app/routes";
 
@@ -50,6 +50,8 @@ describe("página /contato", () => {
         const titulo = await screen.findByRole("heading", { level: 1 });
         const secao = titulo.closest("section");
         expect(secao).toHaveAttribute("data-reveal");
-        expect(secao).toHaveClass("is-visible");
+        /* A classe vem de um efeito que roda depois de a página lazy
+           aparecer; sob carga, a asserção síncrona via o estado anterior. */
+        await waitFor(() => expect(secao).toHaveClass("is-visible"));
     });
 });
