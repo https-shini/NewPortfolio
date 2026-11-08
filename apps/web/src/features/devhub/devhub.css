@@ -1162,11 +1162,10 @@ h3.devhub-stats__label {
         grid-template-columns: 248px minmax(0, 1fr);
     }
 
+    /* Rola junto com a página (não fixa): com a grade de 4 colunas, o
+       painel fixo ficava solto ao lado dos cartões. */
     .catalog__sidebar {
         display: block;
-        position: sticky;
-        top: calc(var(--header-height) + var(--space-6));
-        max-height: calc(100dvh - var(--header-height) - var(--space-12));
         overflow-y: auto;
         padding: var(--space-5);
         border: 1px solid var(--color-border-1);
@@ -1821,7 +1820,6 @@ a.devhub-tree__item:hover {
 /* Texto justificado a partir do tablet; no celular, alinhado à
    esquerda — em colunas estreitas a justificação abre "rios" de espaço. */
 .pp-hero__sub {
-    max-width: 82ch;
     font-size: var(--text-md);
     line-height: var(--lh-relaxed);
     color: var(--color-text-2);
