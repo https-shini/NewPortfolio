@@ -87,6 +87,12 @@ describe("busca", () => {
     it("todos os termos precisam aparecer", () => {
         expect(matchesQuery(ACERVO[1]!, "jwt react")).toBe(false);
     });
+    it("ignora espaço, hífen e sublinhado entre as palavras", () => {
+        expect(matchesQuery(ACERVO[2]!, "newportfolio")).toBe(true);
+        expect(matchesQuery(ACERVO[2]!, "new-portfolio")).toBe(true);
+        expect(matchesQuery(ACERVO[0]!, "financasreactjs")).toBe(true);
+        expect(matchesQuery(ACERVO[2]!, "newportfolioxyz")).toBe(false);
+    });
     it("displayName separa hífen e camelCase", () => {
         expect(displayName("financas-reactjs")).toBe("Financas Reactjs");
         expect(displayName("NewPortfolio")).toBe("New Portfolio");
@@ -196,16 +202,16 @@ describe("paginação", () => {
             createdAt: new Date(Date.UTC(2026, 0, 1 + i)).toISOString(),
         }),
     );
-    it("12 por página, com intervalo e página fora do limite corrigida", () => {
-        const r = runCatalog(muitos, s({ page: 3 }), AGORA);
+    it("9 por página (3 × 3), com intervalo e página fora do limite corrigida", () => {
+        const r = runCatalog(muitos, s({ page: 4 }), AGORA);
         expect(r).toMatchObject({
             total: 30,
-            pageCount: 3,
-            page: 3,
-            from: 25,
+            pageCount: 4,
+            page: 4,
+            from: 28,
             to: 30,
         });
-        expect(runCatalog(muitos, s({ page: 99 }), AGORA).page).toBe(3);
+        expect(runCatalog(muitos, s({ page: 99 }), AGORA).page).toBe(4);
     });
     it("lista de páginas com reticências", () => {
         expect(pageList(1, 3)).toEqual([1, 2, 3]);

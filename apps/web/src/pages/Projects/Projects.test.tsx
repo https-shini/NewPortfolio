@@ -81,7 +81,7 @@ describe("/projetos", () => {
         expect(within(sec).getAllByText("Fixado")).toHaveLength(2);
         expect(window.location.search).toContain("fixados=1");
         fireEvent.click(within(atalhos).getByRole("button", { name: /Todos/ }));
-        expect(titulos(sec)).toHaveLength(12);
+        expect(titulos(sec)).toHaveLength(9);
     });
 
     const catalogo = () =>
@@ -95,7 +95,7 @@ describe("/projetos", () => {
     const filtros = (el: HTMLElement) =>
         within(el.querySelector("aside") as HTMLElement);
 
-    it("catálogo: padrão 'Mais recentes' por data de criação e 12 por página", async () => {
+    it("catálogo: padrão 'Mais recentes' por data de criação e 9 por página (3 × 3)", async () => {
         montar();
         const sec = await catalogo();
         expect(
@@ -103,9 +103,9 @@ describe("/projetos", () => {
         ).toHaveValue("recent");
         // proj-00 foi criado por último (createdAt), apesar do push antigo.
         expect(titulos(sec)[0]).toBe("Proj 00");
-        expect(titulos(sec)).toHaveLength(12);
+        expect(titulos(sec)).toHaveLength(9);
         expect(
-            within(sec).getByText("Mostrando 1–12 de 20"),
+            within(sec).getByText("Mostrando 1–9 de 20"),
         ).toBeInTheDocument();
     });
 
@@ -116,14 +116,39 @@ describe("/projetos", () => {
             name: "Paginação dos resultados",
         });
         fireEvent.click(within(nav).getByRole("button", { name: "Página 2" }));
-        expect(titulos(sec)).toHaveLength(8);
+        expect(titulos(sec)).toHaveLength(9);
         expect(
-            within(sec).getByText("Mostrando 13–20 de 20"),
+            within(sec).getByText("Mostrando 10–18 de 20"),
         ).toBeInTheDocument();
         expect(
             within(nav).getByRole("button", { name: "Página 2" }),
         ).toHaveAttribute("aria-current", "page");
         expect(window.location.search).toContain("pagina=2");
+    });
+
+    it("busca: atalho /, limpar e estado vazio com o termo", async () => {
+        vi.useFakeTimers({ shouldAdvanceTime: true });
+        montar();
+        const sec = await catalogo();
+        const campo = within(sec).getByRole("searchbox", {
+            name: "Buscar projetos",
+        });
+        fireEvent.keyDown(document.body, { key: "/" });
+        expect(campo).toHaveFocus();
+        fireEvent.change(campo, { target: { value: "zzzinexistente" } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(
+            within(sec).getByText("Nada encontrado para “zzzinexistente”"),
+        ).toBeInTheDocument();
+        /* o "x" do campo e o botão do estado vazio fazem o mesmo */
+        fireEvent.click(
+            within(sec).getAllByRole("button", { name: "Limpar busca" })[0]!,
+        );
+        expect(campo).toHaveValue("");
+        expect(titulos(sec)).toHaveLength(9);
+        vi.useRealTimers();
     });
 
     it("ordenação muda a ordem e persiste na URL", async () => {
@@ -146,11 +171,16 @@ describe("/projetos", () => {
         montar();
         const sec = await catalogo();
         const lateral = filtros(sec);
+        /* Status começa recolhido: o grupo abre pelo botão do título. */
+        const status = lateral.getByRole("button", { name: /^Status/ });
+        expect(status).toHaveAttribute("aria-expanded", "false");
+        fireEvent.click(status);
+        expect(status).toHaveAttribute("aria-expanded", "true");
         fireEvent.click(
             lateral.getByRole("checkbox", { name: /Incluir forks/ }),
         );
         expect(
-            within(sec).getByText("Mostrando 1–12 de 21"),
+            within(sec).getByText("Mostrando 1–9 de 21"),
         ).toBeInTheDocument();
         fireEvent.click(lateral.getByRole("checkbox", { name: /^Python/ }));
         expect(titulos(sec)).toEqual(["Um Fork"]);
@@ -167,7 +197,7 @@ describe("/projetos", () => {
             within(chips).getByRole("button", { name: "Limpar tudo" }),
         );
         expect(
-            within(sec).getByText("Mostrando 1–12 de 20"),
+            within(sec).getByText("Mostrando 1–9 de 20"),
         ).toBeInTheDocument();
         expect(
             within(sec).queryByRole("group", { name: "Filtros ativos" }),
