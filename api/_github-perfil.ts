@@ -3,27 +3,36 @@ import { consultarGraphQL, GITHUB_USER } from "./_github.js";
 /* ─────────────────────────────────────────────────────────
    _github-perfil.ts — o panorama do perfil (op=profile)
    ─────────────────────────────────────────────────────────
-   Substitui os cartões SVG de terceiros (readme-stats, streak-stats,
-   profile-trophy) por números tirados direto da API GraphQL do
-   GitHub, com o token do servidor:
+   Números tirados direto da API GraphQL do GitHub, com o token do
+   servidor, num formato que deixa o NAVEGADOR filtrar com exatidão:
 
-     · totais do perfil   → repositórios públicos, estrelas e forks
-                            recebidos, PRs e issues abertos (histórico)
-     · últimos 12 meses   → contribuições, com o detalhamento que o
-                            próprio GitHub dá (commits, PRs, issues,
-                            revisões) e o calendário dia a dia
-     · sequências         → calculadas aqui, sobre o calendário de
-                            CADA ano desde a criação da conta
-     · linguagens         → bytes por linguagem nos repositórios
-                            públicos próprios, sem forks
-     · marcos             → fatos dos mesmos dados (ano e dia mais
-                            ativos, repositório mais estrelado)
+     · repos     → todos os repositórios públicos do dono (autorais e
+                   forks), com estrelas, forks e bytes por linguagem;
+     · days      → o calendário oficial, dia a dia, desde a criação
+                   da conta (total por dia, como o GitHub mostra);
+     · activity  → cada contribuição pública por dia, TIPO (commits,
+                   PRs, issues, revisões) e REPOSITÓRIO.
 
-   Nada de "rank", pontuação ou troféu: são classificações inventadas
-   por cada serviço, não dados do GitHub.
+   Com isso, recortes por período, tipo, repositório e agrupamento são
+   somas sobre dados reais, nunca estimativas.
 
-   As consultas são texto fixo; só datas e o login entram como
-   variáveis. Os cálculos são funções puras, exportadas para teste.
+   ── Por que janelas trimestrais ──────────────────────────────
+   `commitContributionsByRepository` traz, por repositório, um nó por
+   DIA com commits — até 100 nós por página. Um trimestre tem no máximo
+   92 dias, então nenhum repositório estoura a página e não é preciso
+   paginar conexões aninhadas (o que o GraphQL não faz por item). PRs,
+   issues e revisões vêm até 100 por trimestre; se algum dia passar
+   disso, `truncated` sobe e a interface avisa.
+
+   ── Privacidade ──────────────────────────────────────────────
+   O token pode enxergar repositórios privados. Toda contribuição em
+   repositório privado é DESCARTADA do detalhamento — nem nome, nem
+   contagem por repositório saem daqui. O calendário oficial pode
+   incluir contagens privadas (se o perfil assim configurar); o total
+   delas no último ano vai em `lastYear.restricted`, só como número.
+
+   Sem "rank", pontuação ou troféus de terceiros. As consultas são
+   texto fixo; só login e datas entram como variáveis.
 ───────────────────────────────────────────────────────── */
 
 const CONSULTA_PERFIL = `
@@ -35,20 +44,20 @@ query Perfil($login: String!) {
     followers { totalCount }
     pullRequests { totalCount }
     issues { totalCount }
-    publicos: repositories(privacy: PUBLIC, ownerAffiliations: OWNER) { totalCount }
-    proprios: repositories(
+    repositories(
       privacy: PUBLIC
       ownerAffiliations: OWNER
-      isFork: false
       first: 100
       orderBy: { field: STARGAZERS, direction: DESC }
     ) {
-      totalCount
       nodes {
         name
+        isFork
         stargazerCount
         forkCount
-        languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
+        createdAt
+        primaryLanguage { name }
+        languages(first: 12, orderBy: { field: SIZE, direction: DESC }) {
           edges { size node { name color } }
         }
       }
@@ -62,44 +71,71 @@ query Perfil($login: String!) {
       totalPullRequestReviewContributions
       totalRepositoriesWithContributedCommits
       restrictedContributionsCount
-      contributionCalendar {
-        totalContributions
-        weeks { contributionDays { date contributionCount } }
-      }
+      contributionCalendar { totalContributions }
     }
   }
 }`;
 
-/* Um ano de calendário por chamada: o GitHub limita cada
-   contributionsCollection a, no máximo, um ano. */
-const CONSULTA_ANO = `
-query Ano($login: String!, $from: DateTime!, $to: DateTime!) {
+const CONSULTA_JANELA = `
+query Janela($login: String!, $from: DateTime!, $to: DateTime!) {
   user(login: $login) {
     contributionsCollection(from: $from, to: $to) {
       contributionCalendar {
         weeks { contributionDays { date contributionCount } }
       }
+      commitContributionsByRepository(maxRepositories: 100) {
+        repository { nameWithOwner isPrivate }
+        contributions(first: 100) {
+          pageInfo { hasNextPage }
+          nodes { occurredAt commitCount }
+        }
+      }
+      pullRequestContributions(first: 100) {
+        pageInfo { hasNextPage }
+        nodes { occurredAt pullRequest { repository { nameWithOwner isPrivate } } }
+      }
+      issueContributions(first: 100) {
+        pageInfo { hasNextPage }
+        nodes { occurredAt issue { repository { nameWithOwner isPrivate } } }
+      }
+      pullRequestReviewContributions(first: 100) {
+        pageInfo { hasNextPage }
+        nodes { occurredAt pullRequestReview { repository { nameWithOwner isPrivate } } }
+      }
     }
   }
 }`;
+
+/* ─────────────────────────────────────────────────────────
+   Formas de entrada (só o que é lido)
+───────────────────────────────────────────────────────── */
 
 interface Dia {
     date: string;
     contributionCount: number;
 }
 interface Calendario {
-    totalContributions?: number;
     weeks: { contributionDays: Dia[] }[];
 }
-interface RepoProprio {
+interface RepoRef {
+    nameWithOwner: string;
+    isPrivate: boolean;
+}
+interface Pagina<T> {
+    pageInfo: { hasNextPage: boolean };
+    nodes: T[];
+}
+interface RepoBruto {
     name: string;
+    isFork: boolean;
     stargazerCount: number;
     forkCount: number;
+    createdAt: string;
+    primaryLanguage: { name: string } | null;
     languages: {
         edges: { size: number; node: { name: string; color: string | null } }[];
     };
 }
-
 interface RespostaPerfil {
     user: {
         login: string;
@@ -108,11 +144,7 @@ interface RespostaPerfil {
         followers: { totalCount: number };
         pullRequests: { totalCount: number };
         issues: { totalCount: number };
-        publicos: { totalCount: number };
-        proprios: {
-            totalCount: number;
-            nodes: RepoProprio[];
-        };
+        repositories: { nodes: RepoBruto[] };
         contributionsCollection: {
             startedAt: string;
             endedAt: string;
@@ -122,14 +154,31 @@ interface RespostaPerfil {
             totalPullRequestReviewContributions: number;
             totalRepositoriesWithContributedCommits: number;
             restrictedContributionsCount: number;
-            contributionCalendar: Calendario & { totalContributions: number };
+            contributionCalendar: { totalContributions: number };
         };
     } | null;
 }
-interface RespostaAno {
-    user: {
-        contributionsCollection: { contributionCalendar: Calendario };
-    } | null;
+export interface Janela {
+    contributionCalendar: Calendario;
+    commitContributionsByRepository: {
+        repository: RepoRef;
+        contributions: Pagina<{ occurredAt: string; commitCount: number }>;
+    }[];
+    pullRequestContributions: Pagina<{
+        occurredAt: string;
+        pullRequest: { repository: RepoRef };
+    }>;
+    issueContributions: Pagina<{
+        occurredAt: string;
+        issue: { repository: RepoRef };
+    }>;
+    pullRequestReviewContributions: Pagina<{
+        occurredAt: string;
+        pullRequestReview: { repository: RepoRef };
+    }>;
+}
+interface RespostaJanela {
+    user: { contributionsCollection: Janela } | null;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -142,21 +191,12 @@ export interface Sequencia {
     end: string | null;
 }
 
-export interface LinguagemPerfil {
-    name: string;
-    color: string | null;
-    percent: number;
-}
-
 export interface PerfilGitHub {
     login: string;
     name: string | null;
     createdAt: string;
     followers: number;
-    publicRepos: number;
-    ownRepos: number;
-    stars: number;
-    forks: number;
+    /** Totais históricos do perfil (contagem do GitHub). */
     pullRequests: number;
     issues: number;
     lastYear: {
@@ -170,15 +210,34 @@ export interface PerfilGitHub {
         reposContributed: number;
         restricted: number;
     };
-    /** Calendário dos últimos 12 meses: primeiro dia + contagem diária. */
-    calendar: { start: string; counts: number[] };
+    /** Calendário oficial desde a criação da conta. */
+    days: { start: string; counts: number[] };
     streak: {
         total: number;
         since: string;
         current: Sequencia;
         longest: Sequencia;
     };
-    languages: LinguagemPerfil[];
+    /** Dicionário de linguagens (índices usados em `repos`). */
+    langs: { name: string; color: string | null }[];
+    repos: {
+        name: string;
+        fork: boolean;
+        stars: number;
+        forks: number;
+        createdAt: string;
+        lang: number | null;
+        languages: [number, number][];
+    }[];
+    /** Contribuições públicas detalhadas: [dia, repositório(, quantidade)]. */
+    activity: {
+        repos: string[];
+        commits: [number, number, number][];
+        pullRequests: [number, number][];
+        issues: [number, number][];
+        reviews: [number, number][];
+        truncated: boolean;
+    };
     milestones: {
         busiestYear: { year: number; count: number } | null;
         busiestDay: { date: string; count: number } | null;
@@ -191,7 +250,7 @@ export interface PerfilGitHub {
    Cálculos puros
 ───────────────────────────────────────────────────────── */
 
-/** Dias de um calendário, em ordem, sem datas repetidas. */
+/** Dias de um ou mais calendários, em ordem, sem datas repetidas. */
 export function achatar(calendarios: Calendario[]): Dia[] {
     const porData = new Map<string, number>();
     for (const c of calendarios) {
@@ -206,12 +265,8 @@ export function achatar(calendarios: Calendario[]): Dia[] {
 }
 
 /**
- * Sequências sobre dias em ordem crescente.
- *
- * A sequência ATUAL segue a convenção do próprio GitHub (e do
- * streak-stats): um dia de hoje ainda sem contribuição não a quebra —
- * o dia não acabou. Ela conta a partir do último dia com atividade,
- * desde que seja hoje ou ontem.
+ * Sequências sobre dias em ordem crescente. A ATUAL segue a convenção
+ * do GitHub: um hoje ainda sem contribuição não a quebra.
  */
 export function calcularSequencias(
     dias: Dia[],
@@ -227,9 +282,8 @@ export function calcularSequencias(
         if (d.contributionCount > 0) {
             if (corrida === 0) inicio = d.date;
             corrida++;
-            if (corrida > longest.days) {
+            if (corrida > longest.days)
                 longest = { days: corrida, start: inicio, end: d.date };
-            }
         } else {
             corrida = 0;
         }
@@ -254,45 +308,28 @@ export function calcularSequencias(
         }
         current = { days: n, start: ini, end: fim };
     }
-
     return { current, longest, total };
 }
 
-/** Participação por bytes; até `max` linguagens + "Outras". */
-export function distribuirLinguagens(
-    repos: RepoProprio[],
-    max = 8,
-): LinguagemPerfil[] {
-    const soma = new Map<string, { size: number; color: string | null }>();
-    for (const r of repos) {
-        for (const e of r.languages.edges) {
-            const atual = soma.get(e.node.name);
-            soma.set(e.node.name, {
-                size: (atual?.size ?? 0) + e.size,
-                color: e.node.color,
-            });
-        }
+/** Contagens diárias contíguas a partir do primeiro dia (lacunas = 0). */
+export function denso(dias: Dia[]): { start: string; counts: number[] } {
+    if (dias.length === 0) return { start: "", counts: [] };
+    const start = dias[0].date;
+    const base = Date.parse(`${start}T00:00:00Z`);
+    const fim = Math.round(
+        (Date.parse(`${dias[dias.length - 1].date}T00:00:00Z`) - base) /
+            86_400_000,
+    );
+    const counts = new Array<number>(fim + 1).fill(0);
+    for (const d of dias) {
+        counts[
+            Math.round((Date.parse(`${d.date}T00:00:00Z`) - base) / 86_400_000)
+        ] = d.contributionCount;
     }
-    const total = [...soma.values()].reduce((s, v) => s + v.size, 0);
-    if (total === 0) return [];
-    const ordenadas = [...soma.entries()].sort((a, b) => b[1].size - a[1].size);
-    const topo = ordenadas.slice(0, max).map(([name, v]) => ({
-        name,
-        color: v.color,
-        percent: Math.round((v.size / total) * 1000) / 10,
-    }));
-    const resto = ordenadas.slice(max).reduce((s, [, v]) => s + v.size, 0);
-    if (resto > 0) {
-        topo.push({
-            name: "Outras",
-            color: null,
-            percent: Math.round((resto / total) * 1000) / 10,
-        });
-    }
-    return topo;
+    return { start, counts };
 }
 
-/** Ano e dia de maior atividade, sobre todos os dias da conta. */
+/** Ano e dia de maior atividade. */
 export function marcos(dias: Dia[]): {
     busiestYear: { year: number; count: number } | null;
     busiestDay: { date: string; count: number } | null;
@@ -316,29 +353,174 @@ export function marcos(dias: Dia[]): {
     return { busiestYear: ano, busiestDay: dia };
 }
 
-/** Janelas de um ano (UTC) desde a criação da conta até agora. */
-export function janelasAnuais(
+/**
+ * Deslocamento do fuso do perfil, em minutos, lido do início da coleção
+ * padrão (meia-noite local expressa em UTC: "…T03:00:00Z" → 180).
+ */
+export function deslocamentoDoFuso(startedAt: string): number {
+    const d = new Date(startedAt);
+    const min = d.getUTCHours() * 60 + d.getUTCMinutes();
+    return min > 720 ? min - 1440 : min;
+}
+
+/** Data local (YYYY-MM-DD) de um instante, dado o deslocamento. */
+export function dataLocal(iso: string, deslocamento: number): string {
+    return new Date(Date.parse(iso) - deslocamento * 60_000)
+        .toISOString()
+        .slice(0, 10);
+}
+
+/** Trimestres (meia-noite local) da criação da conta até agora. */
+export function janelasTrimestrais(
     criacao: string,
     agora: Date,
+    deslocamento: number,
 ): { from: string; to: string }[] {
     const out: { from: string; to: string }[] = [];
-    const inicio = new Date(criacao);
-    for (
-        let ano = inicio.getUTCFullYear();
-        ano <= agora.getUTCFullYear();
-        ano++
-    ) {
-        const de =
-            ano === inicio.getUTCFullYear()
-                ? inicio
-                : new Date(Date.UTC(ano, 0, 1));
+    const c = new Date(Date.parse(criacao) - deslocamento * 60_000);
+    let ano = c.getUTCFullYear();
+    let tri = Math.floor(c.getUTCMonth() / 3);
+    const local = (a: number, m: number) =>
+        new Date(Date.UTC(a, m, 1) + deslocamento * 60_000);
+    for (;;) {
+        const de = local(ano, tri * 3);
+        if (de.getTime() > agora.getTime()) break;
+        const prox = local(
+            ano + Math.floor((tri + 1) / 4),
+            ((tri + 1) % 4) * 3,
+        );
         const ate =
-            ano === agora.getUTCFullYear()
+            prox.getTime() > agora.getTime()
                 ? agora
-                : new Date(Date.UTC(ano, 11, 31, 23, 59, 59));
+                : new Date(prox.getTime() - 1000);
         out.push({ from: de.toISOString(), to: ate.toISOString() });
+        tri++;
+        if (tri === 4) {
+            tri = 0;
+            ano++;
+        }
     }
     return out;
+}
+
+/**
+ * Detalhamento das janelas: só repositórios públicos, índices de dia
+ * relativos a `inicio`, repositórios num dicionário.
+ */
+export function detalhar(
+    janelas: Janela[],
+    inicio: string,
+    deslocamento: number,
+): PerfilGitHub["activity"] {
+    const base = Date.parse(`${inicio}T00:00:00Z`);
+    const indiceDia = (data: string) =>
+        Math.round((Date.parse(`${data}T00:00:00Z`) - base) / 86_400_000);
+    const repos: string[] = [];
+    const idRepo = new Map<string, number>();
+    const repo = (r: RepoRef) => {
+        let id = idRepo.get(r.nameWithOwner);
+        if (id === undefined) {
+            id = repos.length;
+            repos.push(r.nameWithOwner);
+            idRepo.set(r.nameWithOwner, id);
+        }
+        return id;
+    };
+    const out: PerfilGitHub["activity"] = {
+        repos,
+        commits: [],
+        pullRequests: [],
+        issues: [],
+        reviews: [],
+        truncated: false,
+    };
+    for (const j of janelas) {
+        for (const c of j.commitContributionsByRepository) {
+            if (c.repository.isPrivate) continue;
+            if (c.contributions.pageInfo.hasNextPage) out.truncated = true;
+            const r = repo(c.repository);
+            for (const n of c.contributions.nodes) {
+                if (n.commitCount > 0) {
+                    out.commits.push([
+                        indiceDia(dataLocal(n.occurredAt, deslocamento)),
+                        r,
+                        n.commitCount,
+                    ]);
+                }
+            }
+        }
+        const simples = <T extends { occurredAt: string }>(
+            p: Pagina<T>,
+            ref: (n: T) => RepoRef,
+            destino: [number, number][],
+        ) => {
+            if (p.pageInfo.hasNextPage) out.truncated = true;
+            for (const n of p.nodes) {
+                const r = ref(n);
+                if (r.isPrivate) continue;
+                destino.push([
+                    indiceDia(dataLocal(n.occurredAt, deslocamento)),
+                    repo(r),
+                ]);
+            }
+        };
+        simples(
+            j.pullRequestContributions,
+            (n) => n.pullRequest.repository,
+            out.pullRequests,
+        );
+        simples(j.issueContributions, (n) => n.issue.repository, out.issues);
+        simples(
+            j.pullRequestReviewContributions,
+            (n) => n.pullRequestReview.repository,
+            out.reviews,
+        );
+    }
+    const porDia = (a: [number, ...number[]], b: [number, ...number[]]) =>
+        a[0] - b[0];
+    out.commits.sort(porDia);
+    out.pullRequests.sort(porDia);
+    out.issues.sort(porDia);
+    out.reviews.sort(porDia);
+    return out;
+}
+
+/** Repositórios com linguagens num dicionário compartilhado. */
+export function normalizarRepos(nodes: RepoBruto[]): {
+    langs: PerfilGitHub["langs"];
+    repos: PerfilGitHub["repos"];
+} {
+    const langs: PerfilGitHub["langs"] = [];
+    const idLang = new Map<string, number>();
+    const lang = (name: string, color: string | null) => {
+        let id = idLang.get(name);
+        if (id === undefined) {
+            id = langs.length;
+            langs.push({ name, color });
+            idLang.set(name, id);
+        }
+        return id;
+    };
+    const repos = nodes.map((r) => {
+        const languages = r.languages.edges.map(
+            (e) =>
+                [lang(e.node.name, e.node.color), e.size] as [number, number],
+        );
+        const principal = r.primaryLanguage
+            ? (idLang.get(r.primaryLanguage.name) ??
+              lang(r.primaryLanguage.name, null))
+            : null;
+        return {
+            name: r.name,
+            fork: r.isFork,
+            stars: r.stargazerCount,
+            forks: r.forkCount,
+            createdAt: r.createdAt,
+            lang: principal,
+            languages,
+        };
+    });
+    return { langs, repos };
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -351,38 +533,34 @@ export async function buscarPerfil(agora = new Date()): Promise<PerfilGitHub> {
     });
     const u = dados.user;
     if (!u) throw new Error("perfil não encontrado");
+    const cc = u.contributionsCollection;
+    const deslocamento = deslocamentoDoFuso(cc.startedAt);
 
-    const anos = await Promise.all(
-        janelasAnuais(u.createdAt, agora).map((j) =>
-            consultarGraphQL<RespostaAno>(CONSULTA_ANO, {
+    const janelas = await Promise.all(
+        janelasTrimestrais(u.createdAt, agora, deslocamento).map(async (j) => {
+            const r = await consultarGraphQL<RespostaJanela>(CONSULTA_JANELA, {
                 login: GITHUB_USER,
                 from: j.from,
                 to: j.to,
-            }),
-        ),
+            });
+            return r.user?.contributionsCollection ?? null;
+        }),
     );
-    const todosOsDias = achatar(
-        anos
-            .map((a) => a.user?.contributionsCollection.contributionCalendar)
-            .filter((c): c is Calendario => Boolean(c)),
-    );
-
-    const cc = u.contributionsCollection;
-    const ultimoAno = achatar([cc.contributionCalendar]);
-    const hoje = agora.toISOString().slice(0, 10);
+    const validas = janelas.filter((j): j is Janela => j !== null);
+    const todosOsDias = achatar(validas.map((j) => j.contributionCalendar));
+    const hoje = dataLocal(agora.toISOString(), deslocamento);
     const seq = calcularSequencias(todosOsDias, hoje);
-    const repos = u.proprios.nodes;
-    const topo = repos[0];
+    const inicio = todosOsDias[0]?.date ?? hoje;
+    const { langs, repos } = normalizarRepos(u.repositories.nodes);
+    const topo = repos
+        .filter((r) => !r.fork)
+        .sort((a, b) => b.stars - a.stars)[0];
 
     return {
         login: u.login,
         name: u.name,
         createdAt: u.createdAt,
         followers: u.followers.totalCount,
-        publicRepos: u.publicos.totalCount,
-        ownRepos: u.proprios.totalCount,
-        stars: repos.reduce((s, r) => s + r.stargazerCount, 0),
-        forks: repos.reduce((s, r) => s + r.forkCount, 0),
         pullRequests: u.pullRequests.totalCount,
         issues: u.issues.totalCount,
         lastYear: {
@@ -396,22 +574,23 @@ export async function buscarPerfil(agora = new Date()): Promise<PerfilGitHub> {
             reposContributed: cc.totalRepositoriesWithContributedCommits,
             restricted: cc.restrictedContributionsCount,
         },
-        calendar: {
-            start: ultimoAno[0]?.date ?? hoje,
-            counts: ultimoAno.map((d) => d.contributionCount),
-        },
+        days: todosOsDias.length
+            ? denso(todosOsDias)
+            : { start: hoje, counts: [] },
         streak: {
             total: seq.total,
             since: u.createdAt,
             current: seq.current,
             longest: seq.longest,
         },
-        languages: distribuirLinguagens(repos),
+        langs,
+        repos,
+        activity: detalhar(validas, inicio, deslocamento),
         milestones: {
             ...marcos(todosOsDias),
             topRepo:
-                topo && topo.stargazerCount > 0
-                    ? { name: topo.name, stars: topo.stargazerCount }
+                topo && topo.stars > 0
+                    ? { name: topo.name, stars: topo.stars }
                     : null,
         },
         fetchedAt: agora.toISOString(),

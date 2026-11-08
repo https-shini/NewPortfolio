@@ -33,7 +33,7 @@ const TTL = 1000 * 60 * 30;
 const CACHE_INDEX = "devhub:v2:index";
 const CACHE_PINNED = "devhub:v2:pinned";
 const CACHE_STATS = "devhub:v2:stats:";
-const CACHE_PROFILE = "devhub:v2:profile";
+const CACHE_PROFILE = "devhub:v3:profile";
 const cacheProjeto = (name: string) => `devhub:v2:project:${name}`;
 
 /** Falha de transporte ou de contrato — a página decide o que mostrar. */
@@ -135,12 +135,15 @@ function ehPerfil(valor: unknown): valor is GithubProfile {
     return (
         ehObjeto(valor) &&
         typeof valor.login === "string" &&
-        typeof valor.publicRepos === "number" &&
         ehObjeto(valor.lastYear) &&
-        ehObjeto(valor.calendar) &&
-        Array.isArray(valor.calendar.counts) &&
+        ehObjeto(valor.days) &&
+        Array.isArray(valor.days.counts) &&
         ehObjeto(valor.streak) &&
-        Array.isArray(valor.languages)
+        Array.isArray(valor.langs) &&
+        Array.isArray(valor.repos) &&
+        ehObjeto(valor.activity) &&
+        Array.isArray(valor.activity.repos) &&
+        Array.isArray(valor.activity.commits)
     );
 }
 

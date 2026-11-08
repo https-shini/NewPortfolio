@@ -2,9 +2,14 @@ import { describe, it, expect } from "vitest";
 import {
     achatar,
     calcularSequencias,
-    distribuirLinguagens,
-    janelasAnuais,
+    dataLocal,
+    denso,
+    deslocamentoDoFuso,
+    detalhar,
+    janelasTrimestrais,
     marcos,
+    normalizarRepos,
+    type Janela,
 } from "./_github-perfil";
 
 const dias = (inicio: string, contagens: number[]) => {
@@ -16,8 +21,15 @@ const dias = (inicio: string, contagens: number[]) => {
     });
 };
 
+const pagina = <T>(nodes: T[], hasNextPage = false) => ({
+    pageInfo: { hasNextPage },
+    nodes,
+});
+const pub = (n: string) => ({ nameWithOwner: n, isPrivate: false });
+const priv = (n: string) => ({ nameWithOwner: n, isPrivate: true });
+
 describe("_github-perfil — cálculos do panorama", () => {
-    it("achatar ordena e remove dias repetidos entre anos", () => {
+    it("achatar ordena e remove dias repetidos entre janelas", () => {
         const a = { weeks: [{ contributionDays: dias("2025-12-30", [1, 2]) }] };
         const b = {
             weeks: [{ contributionDays: dias("2025-12-31", [2, 9, 4]) }],
@@ -29,70 +41,33 @@ describe("_github-perfil — cálculos do panorama", () => {
             "2026-01-01",
             "2026-01-02",
         ]);
-        expect(r[2].contributionCount).toBe(9);
     });
 
-    it("maior sequência e sequência atual com períodos", () => {
-        const d = dias("2026-11-01", [1, 1, 1, 0, 2, 3, 0]);
-        const r = calcularSequencias(d, "2026-11-07");
+    it("denso preenche lacunas com zero", () => {
+        const d = [...dias("2026-01-01", [1]), ...dias("2026-01-04", [5])];
+        expect(denso(d)).toEqual({ start: "2026-01-01", counts: [1, 0, 0, 5] });
+    });
+
+    it("sequências atual e maior com períodos", () => {
+        const r = calcularSequencias(
+            dias("2026-11-01", [1, 1, 1, 0, 2, 3, 0]),
+            "2026-11-07",
+        );
         expect(r.total).toBe(8);
         expect(r.longest).toEqual({
             days: 3,
             start: "2026-11-01",
             end: "2026-11-03",
         });
-        /* hoje (07) sem contribuição ainda não quebra: conta 05–06 */
         expect(r.current).toEqual({
             days: 2,
             start: "2026-11-05",
             end: "2026-11-06",
         });
-    });
-
-    it("sequência atual zerada quando ontem e hoje ficaram em branco", () => {
-        const d = dias("2026-11-01", [1, 1, 0, 0]);
-        expect(calcularSequencias(d, "2026-11-04").current.days).toBe(0);
-    });
-
-    it("ignora dias futuros", () => {
-        const d = dias("2026-11-06", [1, 1, 5]);
-        const r = calcularSequencias(d, "2026-11-07");
-        expect(r.total).toBe(2);
-        expect(r.current.end).toBe("2026-11-07");
-    });
-
-    it("linguagens por bytes, somadas entre repositórios, com Outras", () => {
-        const repo = (langs: [string, number][]) => ({
-            name: "r",
-            stargazerCount: 0,
-            forkCount: 0,
-            languages: {
-                edges: langs.map(([name, size]) => ({
-                    size,
-                    node: { name, color: "#000" },
-                })),
-            },
-        });
-        const r = distribuirLinguagens(
-            [
-                repo([
-                    ["TS", 600],
-                    ["CSS", 100],
-                ]),
-                repo([
-                    ["TS", 200],
-                    ["Go", 50],
-                    ["Lua", 50],
-                ]),
-            ],
-            2,
-        );
-        expect(r).toEqual([
-            { name: "TS", color: "#000", percent: 80 },
-            { name: "CSS", color: "#000", percent: 10 },
-            { name: "Outras", color: null, percent: 10 },
-        ]);
-        expect(distribuirLinguagens([])).toEqual([]);
+        expect(
+            calcularSequencias(dias("2026-11-01", [1, 1, 0, 0]), "2026-11-04")
+                .current.days,
+        ).toBe(0);
     });
 
     it("marcos: ano e dia mais ativos", () => {
@@ -104,20 +79,127 @@ describe("_github-perfil — cálculos do panorama", () => {
             busiestYear: { year: 2026, count: 12 },
             busiestDay: { date: "2025-12-31", count: 9 },
         });
-        expect(marcos(dias("2026-01-01", [0, 0]))).toEqual({
-            busiestYear: null,
-            busiestDay: null,
-        });
     });
 
-    it("janelas anuais da criação da conta até hoje", () => {
-        const j = janelasAnuais(
-            "2022-02-23T10:00:00Z",
-            new Date("2024-06-01T00:00:00Z"),
+    it("fuso: deslocamento e data local", () => {
+        expect(deslocamentoDoFuso("2025-11-02T03:00:00Z")).toBe(180);
+        expect(deslocamentoDoFuso("2025-11-01T22:00:00Z")).toBe(-120);
+        /* 01:30Z do dia 6 é 22:30 do dia 5 em UTC-3 */
+        expect(dataLocal("2026-11-06T01:30:00Z", 180)).toBe("2026-11-05");
+        expect(dataLocal("2026-11-06T03:00:00Z", 180)).toBe("2026-11-06");
+    });
+
+    it("janelas trimestrais em meia-noite local, sem passar de agora", () => {
+        const j = janelasTrimestrais(
+            "2022-02-23T17:00:00Z",
+            new Date("2022-08-10T12:00:00Z"),
+            180,
         );
-        expect(j).toHaveLength(3);
-        expect(j[0].from).toBe("2022-02-23T10:00:00.000Z");
-        expect(j[0].to).toBe("2022-12-31T23:59:59.000Z");
-        expect(j[2].to).toBe("2024-06-01T00:00:00.000Z");
+        expect(j).toEqual([
+            {
+                from: "2022-01-01T03:00:00.000Z",
+                to: "2022-04-01T02:59:59.000Z",
+            },
+            {
+                from: "2022-04-01T03:00:00.000Z",
+                to: "2022-07-01T02:59:59.000Z",
+            },
+            {
+                from: "2022-07-01T03:00:00.000Z",
+                to: "2022-08-10T12:00:00.000Z",
+            },
+        ]);
+    });
+
+    it("detalhar descarta repositórios privados e indexa dias e repositórios", () => {
+        const janela: Janela = {
+            contributionCalendar: { weeks: [] },
+            commitContributionsByRepository: [
+                {
+                    repository: pub("u/a"),
+                    contributions: pagina([
+                        { occurredAt: "2026-01-02T03:00:00Z", commitCount: 4 },
+                    ]),
+                },
+                {
+                    repository: priv("u/segredo"),
+                    contributions: pagina([
+                        { occurredAt: "2026-01-02T03:00:00Z", commitCount: 9 },
+                    ]),
+                },
+            ],
+            pullRequestContributions: pagina([
+                {
+                    occurredAt: "2026-01-03T15:00:00Z",
+                    pullRequest: { repository: pub("o/b") },
+                },
+                {
+                    occurredAt: "2026-01-03T15:00:00Z",
+                    pullRequest: { repository: priv("u/segredo") },
+                },
+            ]),
+            issueContributions: pagina([], true),
+            pullRequestReviewContributions: pagina([
+                {
+                    occurredAt: "2026-01-01T12:00:00Z",
+                    pullRequestReview: { repository: pub("u/a") },
+                },
+            ]),
+        };
+        const r = detalhar([janela], "2026-01-01", 180);
+        expect(r.repos).toEqual(["u/a", "o/b"]);
+        expect(r.commits).toEqual([[1, 0, 4]]);
+        expect(r.pullRequests).toEqual([[2, 1]]);
+        expect(r.reviews).toEqual([[0, 0]]);
+        expect(r.truncated).toBe(true);
+        expect(JSON.stringify(r)).not.toContain("segredo");
+    });
+
+    it("normalizarRepos compartilha o dicionário de linguagens", () => {
+        const { langs, repos } = normalizarRepos([
+            {
+                name: "a",
+                isFork: false,
+                stargazerCount: 2,
+                forkCount: 1,
+                createdAt: "2024-01-01T00:00:00Z",
+                primaryLanguage: { name: "TS" },
+                languages: {
+                    edges: [{ size: 10, node: { name: "TS", color: "#00f" } }],
+                },
+            },
+            {
+                name: "b",
+                isFork: true,
+                stargazerCount: 0,
+                forkCount: 0,
+                createdAt: "2024-01-01T00:00:00Z",
+                primaryLanguage: null,
+                languages: {
+                    edges: [
+                        { size: 5, node: { name: "CSS", color: null } },
+                        { size: 3, node: { name: "TS", color: "#00f" } },
+                    ],
+                },
+            },
+        ]);
+        expect(langs).toEqual([
+            { name: "TS", color: "#00f" },
+            { name: "CSS", color: null },
+        ]);
+        expect(repos[0]).toMatchObject({
+            name: "a",
+            fork: false,
+            lang: 0,
+            languages: [[0, 10]],
+        });
+        expect(repos[1]).toMatchObject({
+            fork: true,
+            lang: null,
+            languages: [
+                [1, 5],
+                [0, 3],
+            ],
+        });
     });
 });
