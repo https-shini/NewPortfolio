@@ -49,25 +49,21 @@ const montar = (respostas: Record<string, unknown> = { index: INDICE }) => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("/projetos", () => {
-    it("h1 e números calculados da coleta (sem forks)", async () => {
+    it("h1 sem bloco de números no topo (métricas só no panorama)", () => {
         montar({ index: INDICE, pinned: FIXADOS });
         expect(
             screen.getByRole("heading", { level: 1, name: "Projetos" }),
         ).toBeInTheDocument();
         expect(screen.getByText("Acervo de projetos")).toBeInTheDocument();
-        const numeros = screen.getByRole("region", {
-            name: "O acervo em números",
-        });
-        const valor = (rotulo: RegExp) =>
-            within(numeros)
-                .getByText(rotulo)
-                .closest("div")
-                ?.querySelector("dd")?.textContent;
-        await within(numeros).findByText("20");
-        expect(valor(/Projetos autorais/)).toBe("20");
-        expect(valor(/^Fixados/)).toBe("02");
-        expect(valor(/^Linguagens/)).toBe("01");
-        expect(valor(/Com demonstração/)).toBe("00");
+        expect(
+            screen.queryByRole("region", { name: "O acervo em números" }),
+        ).toBeNull();
+        expect(
+            screen.getByRole("heading", {
+                level: 2,
+                name: "Panorama do perfil no GitHub",
+            }),
+        ).toBeInTheDocument();
     });
 
     it("atalho Fixados: só os fixados, com selo, e vai para a URL", async () => {

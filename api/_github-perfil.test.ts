@@ -19,7 +19,9 @@ const dias = (inicio: string, contagens: number[]) => {
 describe("_github-perfil — cálculos do panorama", () => {
     it("achatar ordena e remove dias repetidos entre anos", () => {
         const a = { weeks: [{ contributionDays: dias("2025-12-30", [1, 2]) }] };
-        const b = { weeks: [{ contributionDays: dias("2025-12-31", [2, 9, 4]) }] };
+        const b = {
+            weeks: [{ contributionDays: dias("2025-12-31", [2, 9, 4]) }],
+        };
         const r = achatar([b, a]);
         expect(r.map((d) => d.date)).toEqual([
             "2025-12-30",
@@ -34,9 +36,17 @@ describe("_github-perfil — cálculos do panorama", () => {
         const d = dias("2026-11-01", [1, 1, 1, 0, 2, 3, 0]);
         const r = calcularSequencias(d, "2026-11-07");
         expect(r.total).toBe(8);
-        expect(r.longest).toEqual({ days: 3, start: "2026-11-01", end: "2026-11-03" });
+        expect(r.longest).toEqual({
+            days: 3,
+            start: "2026-11-01",
+            end: "2026-11-03",
+        });
         /* hoje (07) sem contribuição ainda não quebra: conta 05–06 */
-        expect(r.current).toEqual({ days: 2, start: "2026-11-05", end: "2026-11-06" });
+        expect(r.current).toEqual({
+            days: 2,
+            start: "2026-11-05",
+            end: "2026-11-06",
+        });
     });
 
     it("sequência atual zerada quando ontem e hoje ficaram em branco", () => {
@@ -57,11 +67,24 @@ describe("_github-perfil — cálculos do panorama", () => {
             stargazerCount: 0,
             forkCount: 0,
             languages: {
-                edges: langs.map(([name, size]) => ({ size, node: { name, color: "#000" } })),
+                edges: langs.map(([name, size]) => ({
+                    size,
+                    node: { name, color: "#000" },
+                })),
             },
         });
         const r = distribuirLinguagens(
-            [repo([["TS", 600], ["CSS", 100]]), repo([["TS", 200], ["Go", 50], ["Lua", 50]])],
+            [
+                repo([
+                    ["TS", 600],
+                    ["CSS", 100],
+                ]),
+                repo([
+                    ["TS", 200],
+                    ["Go", 50],
+                    ["Lua", 50],
+                ]),
+            ],
             2,
         );
         expect(r).toEqual([
@@ -73,7 +96,10 @@ describe("_github-perfil — cálculos do panorama", () => {
     });
 
     it("marcos: ano e dia mais ativos", () => {
-        const d = [...dias("2025-12-30", [2, 9]), ...dias("2026-01-01", [3, 3, 3, 3])];
+        const d = [
+            ...dias("2025-12-30", [2, 9]),
+            ...dias("2026-01-01", [3, 3, 3, 3]),
+        ];
         expect(marcos(d)).toEqual({
             busiestYear: { year: 2026, count: 12 },
             busiestDay: { date: "2025-12-31", count: 9 },
@@ -85,7 +111,10 @@ describe("_github-perfil — cálculos do panorama", () => {
     });
 
     it("janelas anuais da criação da conta até hoje", () => {
-        const j = janelasAnuais("2022-02-23T10:00:00Z", new Date("2024-06-01T00:00:00Z"));
+        const j = janelasAnuais(
+            "2022-02-23T10:00:00Z",
+            new Date("2024-06-01T00:00:00Z"),
+        );
         expect(j).toHaveLength(3);
         expect(j[0].from).toBe("2022-02-23T10:00:00.000Z");
         expect(j[0].to).toBe("2022-12-31T23:59:59.000Z");

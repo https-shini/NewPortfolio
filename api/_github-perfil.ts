@@ -127,7 +127,9 @@ interface RespostaPerfil {
     } | null;
 }
 interface RespostaAno {
-    user: { contributionsCollection: { contributionCalendar: Calendario } } | null;
+    user: {
+        contributionsCollection: { contributionCalendar: Calendario };
+    } | null;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -194,7 +196,8 @@ export function achatar(calendarios: Calendario[]): Dia[] {
     const porData = new Map<string, number>();
     for (const c of calendarios) {
         for (const w of c.weeks) {
-            for (const d of w.contributionDays) porData.set(d.date, d.contributionCount);
+            for (const d of w.contributionDays)
+                porData.set(d.date, d.contributionCount);
         }
     }
     return [...porData.entries()]
@@ -234,7 +237,12 @@ export function calcularSequencias(
 
     let current: Sequencia = { days: 0, start: null, end: null };
     let i = validos.length - 1;
-    if (i >= 0 && validos[i].date === hoje && validos[i].contributionCount === 0) i--;
+    if (
+        i >= 0 &&
+        validos[i].date === hoje &&
+        validos[i].contributionCount === 0
+    )
+        i--;
     if (i >= 0 && validos[i].contributionCount > 0) {
         const fim = validos[i].date;
         let n = 0;
@@ -294,7 +302,10 @@ export function marcos(dias: Dia[]): {
     for (const d of dias) {
         const ano = Number(d.date.slice(0, 4));
         porAno.set(ano, (porAno.get(ano) ?? 0) + d.contributionCount);
-        if (d.contributionCount > 0 && (!dia || d.contributionCount > dia.count)) {
+        if (
+            d.contributionCount > 0 &&
+            (!dia || d.contributionCount > dia.count)
+        ) {
             dia = { date: d.date, count: d.contributionCount };
         }
     }
@@ -306,12 +317,25 @@ export function marcos(dias: Dia[]): {
 }
 
 /** Janelas de um ano (UTC) desde a criação da conta até agora. */
-export function janelasAnuais(criacao: string, agora: Date): { from: string; to: string }[] {
+export function janelasAnuais(
+    criacao: string,
+    agora: Date,
+): { from: string; to: string }[] {
     const out: { from: string; to: string }[] = [];
     const inicio = new Date(criacao);
-    for (let ano = inicio.getUTCFullYear(); ano <= agora.getUTCFullYear(); ano++) {
-        const de = ano === inicio.getUTCFullYear() ? inicio : new Date(Date.UTC(ano, 0, 1));
-        const ate = ano === agora.getUTCFullYear() ? agora : new Date(Date.UTC(ano, 11, 31, 23, 59, 59));
+    for (
+        let ano = inicio.getUTCFullYear();
+        ano <= agora.getUTCFullYear();
+        ano++
+    ) {
+        const de =
+            ano === inicio.getUTCFullYear()
+                ? inicio
+                : new Date(Date.UTC(ano, 0, 1));
+        const ate =
+            ano === agora.getUTCFullYear()
+                ? agora
+                : new Date(Date.UTC(ano, 11, 31, 23, 59, 59));
         out.push({ from: de.toISOString(), to: ate.toISOString() });
     }
     return out;

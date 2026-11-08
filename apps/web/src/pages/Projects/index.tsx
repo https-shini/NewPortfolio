@@ -47,13 +47,11 @@ import type { TranslationKey } from "@/shared/lib/translations";
    ─────────────────────────────────────────────────────────
    Página DO SITE: mesmo Header, mesmo Footer, mesmos tokens.
 
-     trilha     → Início / Projetos
-     hero       → título, subtítulo, perfil no GitHub · painel lateral
-     números    → autorais · fixados · linguagens · com demonstração
+     hero       → rótulo, título e introdução · painel lateral
      acervo     → busca + ordenação, atalhos (Todos/Fixados/Demo),
                   filtros na lateral (gaveta no mobile), chips,
                   cartões (o mesmo ProjectCard da home) e paginação
-     panorama   → widgets do perfil no GitHub
+     panorama   → métricas do perfil no GitHub (as únicas da página)
      contato    → chamada para conversar
 
    A antiga seção "Projetos recentes" saiu: o catálogo já abre
@@ -64,8 +62,6 @@ import type { TranslationKey } from "@/shared/lib/translations";
 ───────────────────────────────────────────────────────── */
 
 const ID_TODOS = "todos-os-projetos";
-
-const pad = (n: number) => String(n).padStart(2, "0");
 
 export const ProjectsPage: React.FC = () => {
     const { lang, t } = useLang();
@@ -124,52 +120,6 @@ export const ProjectsPage: React.FC = () => {
         () => buildFacets(repositories, state, undefined, fixados),
         [repositories, state, fixados],
     );
-    /* Números do acervo: o que o visitante vê por padrão (públicos,
-       sem forks). Linguagens = linguagens principais distintas. */
-    const autorais = useMemo(
-        () => repositories.filter((r) => !r.isFork),
-        [repositories],
-    );
-    const numeros = useMemo(
-        () =>
-            [
-                {
-                    id: "own",
-                    label: "pp.stats.own",
-                    hint: "pp.stats.own.hint",
-                    value: autorais.length,
-                },
-                {
-                    id: "pinned",
-                    label: "pp.stats.pinned",
-                    hint: "pp.stats.pinned.hint",
-                    value: fixados.size,
-                },
-                {
-                    id: "langs",
-                    label: "pp.stats.langs",
-                    hint: "pp.stats.langs.hint",
-                    value: new Set(
-                        autorais.flatMap((r) =>
-                            r.primaryLanguage ? [r.primaryLanguage.name] : [],
-                        ),
-                    ).size,
-                },
-                {
-                    id: "demo",
-                    label: "pp.stats.demo",
-                    hint: "pp.stats.demo.hint",
-                    value: autorais.filter((r) => r.homepageUrl).length,
-                },
-            ] satisfies {
-                id: string;
-                label: TranslationKey;
-                hint: TranslationKey;
-                value: number;
-            }[],
-        [autorais, fixados],
-    );
-
     /* Atalhos (Todos · Fixados · Com demonstração): recortes rápidos
        sobre a visão padrão, com a contagem de cada um. */
     const base = useMemo(
@@ -322,35 +272,6 @@ export const ProjectsPage: React.FC = () => {
                                 </a>
                             </div>
                         </div>
-                    )}
-
-                    {!error && (
-                        <section
-                            className="pp-stats"
-                            aria-labelledby="pp-stats-title"
-                        >
-                            <h2 id="pp-stats-title" className="sr-only">
-                                {t("pp.stats.label")}
-                            </h2>
-                            <dl
-                                className="pp-stats__grid"
-                                aria-busy={loading || undefined}
-                            >
-                                {numeros.map((n) => (
-                                    <div key={n.id} className="pp-stats__item">
-                                        <dt className="pp-stats__label">
-                                            {t(n.label)}
-                                            <span className="pp-stats__hint">
-                                                {t(n.hint)}
-                                            </span>
-                                        </dt>
-                                        <dd className="pp-stats__value">
-                                            {loading ? "··" : pad(n.value)}
-                                        </dd>
-                                    </div>
-                                ))}
-                            </dl>
-                        </section>
                     )}
 
                     {!error && (
