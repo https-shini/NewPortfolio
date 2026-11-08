@@ -95,10 +95,27 @@ function deReportTo(payload: unknown[]): Violacao[] {
  */
 function linha(v: Violacao): string {
     return [
-        `diretiva=${v.diretiva ?? "?"}`,
-        `bloqueado=${v.bloqueado ?? "?"}`,
-        `documento=${v.documento ?? "?"}`,
+        `diretiva=${limpo(v.diretiva)}`,
+        `bloqueado=${limpo(v.bloqueado)}`,
+        `documento=${limpo(v.documento)}`,
     ].join(" · ");
+}
+
+/* ── Limites ─────────────────────────────────────────────────
+   O endpoint é público e não autenticado — é assim que relatório de
+   CSP funciona. Sem teto, qualquer um podia mandar um array com
+   milhares de "violações" e encher o log (e a conta de invocações), ou
+   pôr quebras de linha num campo para forjar linhas de log com cara de
+   legítimas. Um navegador de verdade manda poucos relatórios por vez. */
+const MAX_CORPO = 16 * 1024;
+const MAX_VIOLACOES = 20;
+const MAX_CAMPO = 300;
+
+/** Campo de log: uma linha só, tamanho limitado, sem caractere de controle. */
+function limpo(valor: unknown): string {
+    if (typeof valor !== "string" || !valor) return "?";
+    // eslint-disable-next-line no-control-regex
+    return valor.replace(/[\u0000-\u001f\u007f]+/g, " ").slice(0, MAX_CAMPO);
 }
 
 export default async function handler(
@@ -122,10 +139,15 @@ export default async function handler(
            acidente da ordem de avaliação — a atribuição não completa
            quando o JSON.parse lança —, e acidente não é garantia. */
         const cru = payload;
+        if (cru.length > MAX_CORPO) {
+            console.warn(`[csp] corpo descartado: ${cru.length} bytes`);
+            res.status(204).send();
+            return;
+        }
         try {
             payload = JSON.parse(cru);
         } catch {
-            console.warn(`[csp] corpo não-JSON: ${cru.slice(0, 500)}`);
+            console.warn(`[csp] corpo não-JSON: ${limpo(cru)}`);
             res.status(204).send();
             return;
         }
@@ -144,10 +166,17 @@ export default async function handler(
            um POST sem corpo derrubava a função aqui com TypeError (500). */
         const amostra = JSON.stringify(payload) ?? String(payload);
         console.warn(
-            `[csp] relatório em formato não reconhecido: ${amostra.slice(0, 500)}`,
+            `[csp] relatório em formato não reconhecido: ${limpo(amostra)}`,
         );
     } else {
-        for (const v of violacoes) console.warn(`[csp] ${linha(v)}`);
+        for (const v of violacoes.slice(0, MAX_VIOLACOES)) {
+            console.warn(`[csp] ${linha(v)}`);
+        }
+        if (violacoes.length > MAX_VIOLACOES) {
+            console.warn(
+                `[csp] ${violacoes.length - MAX_VIOLACOES} violação(ões) a mais descartada(s)`,
+            );
+        }
     }
 
     res.status(204).send();

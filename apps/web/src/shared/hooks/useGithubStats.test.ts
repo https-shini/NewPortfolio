@@ -31,6 +31,17 @@ describe("useGithubStats", () => {
         expect(sessionStorage.getItem("github-stats")).toContain("1234");
     });
 
+    it("não guarda no cache uma resposta toda nula", async () => {
+        vi.mocked(fetch).mockResolvedValue({
+            ok: true,
+            json: async () => ({ commits: null, repos: null }),
+        } as Response);
+        renderHook(() => useGithubStats());
+        await waitFor(() => expect(fetch).toHaveBeenCalled());
+        await new Promise((r) => setTimeout(r, 0));
+        expect(sessionStorage.getItem("github-stats")).toBeNull();
+    });
+
     it("mantém nulos (fallback) quando a chamada falha", async () => {
         vi.mocked(fetch).mockRejectedValue(new Error("rate limit"));
         const { result } = renderHook(() => useGithubStats());

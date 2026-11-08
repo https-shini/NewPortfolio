@@ -42,10 +42,14 @@ function esc(value: string): string {
         .replaceAll('"', "&quot;");
 }
 
-/** "2026-08-04" → "2026-08-04T00:00:00Z", como o Atom exige. */
-function toRfc3339(date: string): string {
-    if (/T/.test(date)) return new Date(date).toISOString();
-    return `${date}T00:00:00Z`;
+/**
+ * "2026-08-04" → "2026-08-04T00:00:00Z", como o Atom exige. Devolve
+ * `null` para data ilegível: `toISOString()` LANÇA com data inválida, e
+ * uma única release malformada derrubava o feed inteiro com 500.
+ */
+function toRfc3339(date: string): string | null {
+    const instante = new Date(/T/.test(date) ? date : `${date}T00:00:00Z`);
+    return Number.isNaN(instante.getTime()) ? null : instante.toISOString();
 }
 
 export default async function handler(
@@ -53,11 +57,17 @@ export default async function handler(
     res: VercelResponse,
 ): Promise<void> {
     const github = await fetchGithubReleases();
-    const releases = mergeReleaseNotes(RELEASE_NOTES, github);
+    /* Entrada com data ilegível sai do feed (com aviso no log) em vez de
+       derrubar a resposta para todos os leitores. */
+    const releases = mergeReleaseNotes(RELEASE_NOTES, github).filter((r) => {
+        if (toRfc3339(r.date)) return true;
+        console.warn(`[feed] versão ${r.version} sem data válida: "${r.date}"`);
+        return false;
+    });
 
-    const atualizado = releases.length
-        ? toRfc3339(releases[0]!.date)
-        : new Date().toISOString();
+    const atualizado =
+        (releases.length && toRfc3339(releases[0]!.date)) ||
+        new Date().toISOString();
 
     const entradas = releases
         .map((r) => {
