@@ -16,10 +16,11 @@ qual era qual.
 
 ## `guides/` — vivo
 
-| documento                                                   | o que responde                                                    |
-| ----------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`github-project.md`](guides/github-project.md)             | como este repositório é planejado: fluxo, campos, rótulos, regras |
-| [`github-project-setup.md`](guides/github-project-setup.md) | o que clicar para configurar o board, e como usá-lo no dia a dia  |
+| documento                                                   | o que responde                                                         |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [`github-project.md`](guides/github-project.md)             | como este repositório é planejado: fluxo, campos, rótulos, regras      |
+| [`github-project-setup.md`](guides/github-project-setup.md) | o que clicar para configurar o board, e como usá-lo no dia a dia       |
+| [`vulnerabilidades.md`](guides/vulnerabilidades.md)         | alertas do `npm audit` em aberto: risco, motivo e condição para fechar |
 
 Se algo aqui divergir do board, do README ou de uma issue,
 **`github-project.md` vale** e a divergência é defeito.
