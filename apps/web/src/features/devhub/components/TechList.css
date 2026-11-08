@@ -26,7 +26,7 @@
             var(--tech, var(--color-border-3)) 55%,
             var(--color-border-2)
         );
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--tech, transparent) 10%, transparent);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
