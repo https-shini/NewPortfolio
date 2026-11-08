@@ -1,28 +1,27 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
+import {
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+    within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LangProvider } from "@/app/LangContext";
 import { Featured } from "./Featured";
 import { FEATURED_PROJECT } from "./Featured.data";
 import { LANG_KEY } from "@/shared/config/constants";
-import { TRANSLATIONS } from "@/shared/lib/translations";
 
 /**
- * O carrossel tem duas coisas que só um teste pega: a circularidade do
- * índice, que é aritmética e não se vê olhando, e o autoplay não começar sob
- * `prefers-reduced-motion` — invariante de acessibilidade que vive num
- * `&&` dentro do `startAuto`.
- *
- * O autoplay usa `setInterval` de 7 s. Os casos que o envolvem usam
- * temporizadores falsos; os que não, usam os reais. Misturar os dois é o que
- * faz teste de carrossel ficar lento e intermitente.
+ * Janela com uma aba única do projeto e um carrossel MANUAL das
+ * capturas: setas circulares, ←/→ com o carrossel em foco, gesto
+ * horizontal no toque e legenda anunciada (aria-live).
  */
-const SLIDES = FEATURED_PROJECT.slides.length;
-const t = (k: "featured.autoplay.pause" | "featured.autoplay.play") =>
-    TRANSLATIONS.pt[k];
+const SLIDES = FEATURED_PROJECT.slides;
+const N = SLIDES.length;
 
-const montar = () => {
-    localStorage.setItem(LANG_KEY, "pt");
+const montar = (lang: "pt" | "en" = "pt") => {
+    localStorage.setItem(LANG_KEY, lang);
     return render(
         <LangProvider>
             <Featured />
@@ -30,215 +29,155 @@ const montar = () => {
     );
 };
 
-/** O índice do slide marcado como ativo, lido do DOM. */
-function indiceAtivo(): number {
-    const slides = [...document.querySelectorAll(".featured__slide")];
-    return slides.findIndex((s) => s.classList.contains("is-active"));
-}
+const carrossel = () =>
+    screen.getByRole("region", { name: "Capturas do projeto" });
+const contador = (i: number) => `0${i} / 0${N}`;
 
-const setaProxima = () =>
-    screen.getByRole("button", { name: /pr[óo]xim|next/i });
-const setaAnterior = () =>
-    screen.getByRole("button", { name: /anterior|previous|prev/i });
-
-/** matchMedia respondendo o que se pedir sobre movimento reduzido. */
-function comMovimentoReduzido(reduzido: boolean) {
-    vi.mocked(window.matchMedia).mockImplementation(
-        (query: string) =>
-            ({
-                matches: reduzido && query.includes("prefers-reduced-motion"),
-                media: query,
-                onchange: null,
-                addListener: vi.fn(),
-                removeListener: vi.fn(),
-                addEventListener: vi.fn(),
-                removeEventListener: vi.fn(),
-                dispatchEvent: vi.fn(),
-            }) as unknown as MediaQueryList,
-    );
-}
-
-beforeEach(() => comMovimentoReduzido(false));
-afterEach(() => vi.useRealTimers());
-
-describe("Featured — o carrossel", () => {
-    it("começa no primeiro slide", () => {
-        montar();
-        expect(SLIDES).toBeGreaterThan(1);
-        expect(indiceAtivo()).toBe(0);
-    });
-
-    it("avançar anda um slide", async () => {
+describe("Featured — aba única e carrossel", () => {
+    it("aba única do projeto e navegação circular pelas setas", async () => {
         const user = userEvent.setup();
         montar();
-
-        await user.click(setaProxima());
-        expect(indiceAtivo()).toBe(1);
-    });
-
-    /* Duas navegações seguidas precisam de 700 ms entre elas quando há
-       movimento: o temporizador bloqueia cliques repetidos nesse intervalo.
-       Não é defeito — é o que impede pular dois slides no meio do movimento.
-       Descobri porque o caso de circularidade reprovou antes de eu respeitar
-       o guarda, e o número que aparecia era o de uma navegação engolida. */
-    const usuarioComTempo = () => {
-        vi.useFakeTimers({ shouldAdvanceTime: true });
-        return userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    };
-    const passarTransicao = () => act(() => vi.advanceTimersByTimeAsync(750));
-
-    it("uma segunda navegação dentro da transição é ignorada", async () => {
-        const user = usuarioComTempo();
-        montar();
-
-        await user.click(setaProxima());
-        await user.click(setaProxima());
-
-        /* Andou UM, não dois — o guarda está de pé. */
-        expect(indiceAtivo()).toBe(1);
-    });
-
-    /* A circularidade é `((index % len) + len) % len`. Aritmética não se
-       confere olhando o carrossel — e o erro clássico aqui é o módulo de
-       número negativo, que em JavaScript devolve negativo. */
-    it("do último volta ao primeiro", async () => {
-        const user = usuarioComTempo();
-        montar();
-
-        for (let i = 0; i < SLIDES; i++) {
-            await user.click(setaProxima());
-            await passarTransicao();
-        }
-
-        expect(indiceAtivo()).toBe(0);
-    });
-
-    it("voltar do primeiro leva ao último", async () => {
-        const user = userEvent.setup();
-        montar();
-
-        await user.click(setaAnterior());
-
-        expect(indiceAtivo()).toBe(SLIDES - 1);
-    });
-
-    it("as setas do teclado navegam", async () => {
-        const user = usuarioComTempo();
-        montar();
-
-        const galeria = screen.getByRole("region", {
-            name: /capturas do projeto/i,
-        });
-        act(() => galeria.focus());
-
-        await user.keyboard("{ArrowRight}");
-        expect(indiceAtivo()).toBe(1);
-
-        await passarTransicao();
-
-        await user.keyboard("{ArrowLeft}");
-        expect(indiceAtivo()).toBe(0);
-    });
-
-    it("o botão de autoplay alterna o próprio rótulo", async () => {
-        const user = userEvent.setup();
-        montar();
-
-        /* Começa tocando, então o botão oferece pausar. */
-        await user.click(
-            screen.getByRole("button", { name: t("featured.autoplay.pause") }),
+        expect(screen.queryAllByRole("tab")).toHaveLength(0);
+        expect(screen.getByText("Codex Code Validator")).toBeInTheDocument();
+        expect(carrossel()).toHaveAttribute(
+            "aria-roledescription",
+            "carrossel",
         );
+        expect(screen.getByText(contador(1))).toBeInTheDocument();
+
+        await user.click(
+            screen.getByRole("button", { name: "Slide anterior" }),
+        );
+        expect(screen.getByText(contador(N))).toBeInTheDocument();
+        await user.click(screen.getByRole("button", { name: "Próximo slide" }));
+        expect(screen.getByText(contador(1))).toBeInTheDocument();
         expect(
-            screen.getByRole("button", { name: t("featured.autoplay.play") }),
+            screen.getByRole("img", { name: new RegExp(SLIDES[0]!.label.pt) }),
         ).toBeInTheDocument();
     });
 
-    it("seleção direta cancela o bloqueio anterior e mantém navegação por teclado", async () => {
-        comMovimentoReduzido(true);
+    it("legenda vinculada à captura e anunciada com aria-live", async () => {
         const user = userEvent.setup();
         montar();
-        const thumbnail = screen.getByRole("button", {
-            name: /ver captura 3/i,
-        });
-        await user.click(thumbnail);
-        expect(indiceAtivo()).toBe(2);
-        await user.keyboard("{ArrowRight}");
-        expect(indiceAtivo()).toBe(3);
-        await user.click(setaProxima());
-        expect(indiceAtivo()).toBe(0);
+        await user.click(screen.getByRole("button", { name: "Próximo slide" }));
+        const legenda = screen.getByText(contador(2)).parentElement!;
+        expect(legenda).toHaveAttribute("aria-live", "polite");
+        expect(
+            within(legenda).getByText(SLIDES[1]!.label.pt),
+        ).toBeInTheDocument();
     });
 
-    it("limpa os temporizadores quando o componente é desmontado", async () => {
-        const user = usuarioComTempo();
-        const { unmount } = montar();
-        await user.click(setaProxima());
-        unmount();
-        expect(vi.getTimerCount()).toBe(0);
+    it("←/→ com o carrossel em foco e gesto horizontal no toque", async () => {
+        const user = userEvent.setup();
+        montar();
+        carrossel().focus();
+        await user.keyboard("{ArrowRight}");
+        expect(screen.getByText(contador(2))).toBeInTheDocument();
+        await user.keyboard("{ArrowLeft}{ArrowLeft}");
+        expect(screen.getByText(contador(N))).toBeInTheDocument();
+
+        const foto = screen.getByRole("button", { name: /^Ampliar:/ });
+        fireEvent.touchStart(foto, {
+            touches: [{ clientX: 300, clientY: 100 }],
+        });
+        fireEvent.touchEnd(foto, {
+            changedTouches: [{ clientX: 100, clientY: 110 }],
+        });
+        expect(screen.getByText(contador(1))).toBeInTheDocument();
+    });
+
+    it("não troca sozinho (sem autoplay)", async () => {
+        montar();
+        await new Promise((r) => setTimeout(r, 50));
+        expect(screen.getByText(contador(1))).toBeInTheDocument();
     });
 });
 
-describe("Featured — o autoplay e o movimento reduzido", () => {
-    it("avança sozinho depois do intervalo", async () => {
-        vi.useFakeTimers({ shouldAdvanceTime: true });
+describe("Featured — ações e conteúdo", () => {
+    it("Acessar Projeto abre a aplicação em nova aba; documentação é interna", () => {
         montar();
+        const acessar = screen.getByRole("link", { name: /Acessar Projeto/ });
+        expect(acessar).toHaveAttribute("href", FEATURED_PROJECT.liveUrl);
+        expect(acessar).toHaveAttribute("target", "_blank");
+        expect(acessar).toHaveAttribute("rel", "noopener noreferrer");
+        expect(acessar.className).toContain("btn--primary");
 
-        expect(indiceAtivo()).toBe(0);
-        await act(() => vi.advanceTimersByTimeAsync(7000));
-
-        await waitFor(() => expect(indiceAtivo()).toBe(1));
-    });
-
-    /* O invariante. Quem pede menos movimento no sistema não deve receber
-       uma imagem trocando sozinha — e a garantia é um `&&` no startAuto que
-       nada conferia. */
-    it("NÃO avança sozinho sob prefers-reduced-motion", async () => {
-        comMovimentoReduzido(true);
-        vi.useFakeTimers({ shouldAdvanceTime: true });
-        montar();
-
-        expect(indiceAtivo()).toBe(0);
-        /* Três intervalos inteiros: se houvesse timer, teria andado três. */
-        await act(() => vi.advanceTimersByTimeAsync(7000 * 3));
-
-        expect(indiceAtivo()).toBe(0);
-    });
-
-    it("pausado, não avança sozinho", async () => {
-        const user = userEvent.setup();
-        montar();
-        await user.click(
-            screen.getByRole("button", { name: t("featured.autoplay.pause") }),
-        );
-
-        vi.useFakeTimers({ shouldAdvanceTime: true });
-        await act(() => vi.advanceTimersByTimeAsync(7000 * 2));
-
-        expect(indiceAtivo()).toBe(0);
-    });
-
-    it("não troca slides enquanto a galeria tem foco", async () => {
-        vi.useFakeTimers({ shouldAdvanceTime: true });
-        montar();
-        const gallery = screen.getByRole("region", {
-            name: /capturas do projeto/i,
+        const docs = screen.getByRole("link", {
+            name: "Documentação do Projeto",
         });
-        act(() => gallery.focus());
-        await act(() => vi.advanceTimersByTimeAsync(14000));
-        expect(indiceAtivo()).toBe(0);
+        expect(docs).toHaveAttribute("href", FEATURED_PROJECT.detailsUrl);
+        expect(docs).not.toHaveAttribute("target");
+        expect(docs.className).toContain("btn--outline");
+    });
+
+    it("resumo integrado com a pontuação; sem prompt nem linha de linguagens", () => {
+        const { container } = montar();
+        expect(screen.getByText("Pontuação de qualidade")).toBeInTheDocument();
+        expect(screen.getByText("0–1000")).toBeInTheDocument();
+        expect(container.querySelector(".featured__prompt")).toBeNull();
+        expect(container.querySelector(".featured__langs")).toBeNull();
+    });
+
+    it("todas as tecnologias, agrupadas por camada, no padrão do TechList", () => {
+        montar();
+        const stack = screen.getByRole("group", {
+            name: "Tecnologias do projeto",
+        });
+        for (const camada of [
+            "Interface",
+            "API e infraestrutura",
+            "Análise estática",
+            "Integrações e IA",
+        ])
+            expect(
+                within(stack).getByRole("list", { name: camada }),
+            ).toBeInTheDocument();
+        const chips = within(stack)
+            .getAllByRole("listitem")
+            .map((li) => li.textContent);
+        expect(chips).toEqual(FEATURED_PROJECT.tech.map((t) => t.label));
+    });
+
+    it("cartões de recurso com introdução e lista vindas dos dados", () => {
+        montar();
+        expect(
+            screen.getByRole("heading", {
+                name: "Cada resultado, uma visão mais clara do projeto.",
+            }),
+        ).toBeInTheDocument();
+        const recursos = screen.getByRole("list", {
+            name: "Principais recursos",
+        });
+        for (const item of FEATURED_PROJECT.architecture) {
+            expect(
+                within(recursos).getByRole("heading", { name: item.title.pt }),
+            ).toBeInTheDocument();
+            expect(
+                within(recursos).getByText(item.summary.pt),
+            ).toBeInTheDocument();
+            for (const d of item.details)
+                expect(within(recursos).getByText(d.pt)).toBeInTheDocument();
+        }
+    });
+
+    it("em inglês, textos e link da documentação mudam de idioma", () => {
+        montar("en");
+        expect(
+            screen.getByRole("link", { name: "Project documentation" }),
+        ).toHaveAttribute("href", `${FEATURED_PROJECT.detailsUrl}?lang=en`);
+        expect(screen.getByText("Quality score")).toBeInTheDocument();
     });
 });
 
 describe("Featured — o lightbox", () => {
-    /* Carregado por `lazy`, então o caso espera o Suspense resolver. */
-    it("abre pelo gatilho do slide ativo", async () => {
+    it("abre pela captura atual", async () => {
         const user = userEvent.setup();
         montar();
-
-        const gatilhos = screen.getAllByRole("button", {
-            name: /ampliar|expand|abrir/i,
-        });
-        await user.click(gatilhos[0]!);
-
+        await user.click(
+            screen.getByRole("button", {
+                name: `Ampliar: ${SLIDES[0]!.label.pt}`,
+            }),
+        );
         await waitFor(() =>
             expect(screen.getByRole("dialog")).toBeInTheDocument(),
         );

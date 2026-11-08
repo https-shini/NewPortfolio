@@ -4,9 +4,10 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import { readFile, writeFile, copyFile } from "node:fs/promises";
+import { readFile, writeFile, copyFile, mkdir } from "node:fs/promises";
 import { renderNotFoundHtml } from "./config/notFound.ts";
 import { fillHomeMetadata } from "./config/homeMetadata.ts";
+import { ROUTE_DOCUMENTS, renderRouteHtml } from "./config/routeHtml.ts";
 import {
     assertNoPrivateCodexDocuments,
     isPrivateCodexDocument,
@@ -141,6 +142,16 @@ function sitemapPlugin() {
                     priority: "0.9",
                 },
                 {
+                    /* Catálogo de repositórios sincronizado com o GitHub. */
+                    loc: `${SITE_URL}/projetos`,
+                    lastmod: lastModified([
+                        "apps/web/src/pages/Projects",
+                        "apps/web/src/features/devhub",
+                    ]),
+                    changefreq: "weekly",
+                    priority: "0.9",
+                },
+                {
                     /* A /contato tem endereço próprio, canonical próprio
                        (`useDocumentMeta` com `ROUTES.CONTACT`) e metadados
                        próprios em api/crawler.ts, então é URL e não âncora.
@@ -263,6 +274,30 @@ function notFoundPlugin() {
     };
 }
 
+/** Um HTML por rota estática, com título, descrição e canonical próprios
+    (config/routeHtml.ts). O vercel.json reescreve cada rota para o seu. */
+function routeDocumentsPlugin() {
+    return {
+        name: "route-documents-html",
+        apply: "build" as const,
+        async closeBundle() {
+            const output = path.resolve(__dirname, "dist");
+            const html = await readFile(
+                path.join(output, "index.html"),
+                "utf8",
+            );
+            await mkdir(path.join(output, "rotas"), { recursive: true });
+            for (const meta of ROUTE_DOCUMENTS) {
+                await writeFile(
+                    path.join(output, meta.file),
+                    renderRouteHtml(html, meta, SITE_URL),
+                    "utf8",
+                );
+            }
+        },
+    };
+}
+
 /** Preserve the shorter URL without maintaining a second HTML source. */
 function codexPageAliasPlugin() {
     return {
@@ -313,6 +348,7 @@ export default defineConfig({
         siteUrlHtmlPlugin(),
         sitemapPlugin(),
         notFoundPlugin(),
+        routeDocumentsPlugin(),
         codexPageAliasPlugin(),
         privateDocumentsPlugin(),
     ],
@@ -355,6 +391,15 @@ export default defineConfig({
         cssMinify: "esbuild",
 
         cssCodeSplit: true,
+
+        /* Ícones de tecnologia nunca entram no JS como data: URI. São ~80
+           SVGs e o registro (shared/config/skillIcons.ts) importa todos:
+           embutidos, viravam base64 — que comprime mal — no chunk de quem
+           importa o registro. Como arquivos, ficam em cache próprio e só
+           baixam quando aparecem (o SkillIcon usa loading="lazy"). O resto
+           segue a regra padrão do Vite (embute abaixo de 4 KB). */
+        assetsInlineLimit: (arquivo: string) =>
+            /[\\/]assets[\\/]skills[\\/]/.test(arquivo) ? false : undefined,
 
         rolldownOptions: {
             input: {

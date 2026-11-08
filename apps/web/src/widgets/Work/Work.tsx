@@ -1,70 +1,236 @@
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import "./Work.css";
 import { useLang } from "@/shared/hooks/useLang";
-import { type WorkProject } from "./Work.types";
-import { IconGitHub, IconExternalLink } from "@/shared/ui/Icons";
+import { useLinkProps } from "@/shared/hooks/useLinkProps";
+import { useDevhubPinned } from "@/features/devhub/useDevhub";
+import { ProjectCard } from "@/features/devhub/components/ProjectCard";
+import type { Repository } from "@/features/devhub/types";
 import { GITHUB_URL } from "@/shared/config/constants";
-import { PROJECT_URLS } from "@/shared/config/links";
-import webchatImg from "@/assets/projects/webchat.webp";
-import financasImg from "@/assets/projects/financas.webp";
-import authLoginImg from "@/assets/authservice/login.webp";
+import { ROUTES } from "@/shared/config/routes";
+import {
+    IconArrowRight,
+    IconChevronLeft,
+    IconChevronRight,
+    IconExternalLink,
+    IconGitHub,
+} from "@/shared/ui/Icons";
 
-const PROJECTS: WorkProject[] = [
-    {
-        id: "webchat",
-        emoji: "💬",
-        title: { pt: "Web Chat", en: "Web Chat" },
-        desc: {
-            pt: "Aplicação de chat em tempo real utilizando WebSocket, com suporte a múltiplas salas e interação direta no navegador.",
-            en: "Real-time chat application built with WebSocket, supporting multiple rooms and direct in-browser interaction.",
-        },
-        imageUrl: webchatImg,
-        tech: [
-            { label: "Node.js", variant: "accent" },
-            { label: "JavaScript", variant: "brand" },
-            { label: "WebSocket", variant: "neutral" },
-        ],
-        demoUrl: PROJECT_URLS.webChat.live,
-        repoUrl: PROJECT_URLS.webChat.repo,
-    },
-    {
-        id: "auth",
-        emoji: "🔐",
-        title: { pt: "Auth Service", en: "Auth Service" },
-        desc: {
-            pt: "Serviço de autenticação com foco em segurança, gerenciamento de usuários e implementação de fluxo com JWT.",
-            en: "Authentication service focused on security, user management and a complete JWT-based login flow.",
-        },
-        imageUrl: authLoginImg,
-        tech: [
-            { label: "Node.js", variant: "accent" },
-            { label: "TypeScript", variant: "brand" },
-            { label: "JWT", variant: "neutral" },
-        ],
-        demoUrl: PROJECT_URLS.authService.live,
-        repoUrl: PROJECT_URLS.authService.repo,
-    },
-    {
-        id: "financas",
-        emoji: "💰",
-        title: { pt: "Controle Financeiro", en: "Financial Control" },
-        desc: {
-            pt: "Aplicação para gestão financeira pessoal com controle de entradas, saídas e visualização de saldo em tempo real.",
-            en: "Personal finance app for managing income and expenses with real-time balance tracking.",
-        },
-        imageUrl: financasImg,
-        tech: [
-            { label: "React", variant: "brand" },
-            { label: "JavaScript", variant: "brand" },
-            { label: "CSS3", variant: "neutral" },
-        ],
-        demoUrl: PROJECT_URLS.finances.live,
-        repoUrl: PROJECT_URLS.finances.repo,
-    },
-];
+/* ─────────────────────────────────────────────────────────
+   Work — a vitrine da home (#projetos)
+   ─────────────────────────────────────────────────────────
+   Todos os projetos FIXADOS no GitHub, na ordem escolhida lá, num
+   carrossel que mostra três por vez (dois no tablet, um e um
+   pedaço do próximo no celular — o "pedaço" avisa que há mais).
+
+     cabeçalho → eyebrow · título · subtítulo
+     barra     → "06 projetos em destaque" · "01–03 de 06" · ‹ ›
+     trilho    → cartões (o ProjectCard único do site)
+     dots      → uma bolinha por página
+     rodapé    → "Explore o acervo completo" → /projetos
+
+   O trilho é NATIVO (`overflow-x` + `scroll-snap`): arrastar,
+   deslizar no trackpad e a inércia vêm do navegador. Setas, dots e
+   teclado só pedem para rolar; a posição é lida de volta da rolagem.
+
+   Acessibilidade: região "carrossel" rotulada; cada cartão é um
+   grupo "slide" ("4 de 6"); ←/→ com o foco dentro navegam; a troca
+   é anunciada numa região viva, só depois de uma ação do visitante;
+   sem avanço automático. Cartões fora de vista continuam no Tab — ao
+   receber foco, o navegador os traz para a vista.
+───────────────────────────────────────────────────────── */
+
+const pad = (n: number) => String(n).padStart(2, "0");
+
+const Carousel: React.FC<{ repos: Repository[] }> = ({ repos }) => {
+    const { t } = useLang();
+    const trilhoRef = useRef<HTMLDivElement>(null);
+    const [primeiro, setPrimeiro] = useState(0);
+    const [porVez, setPorVez] = useState(3);
+    const [interagiu, setInteragiu] = useState(false);
+    const total = repos.length;
+
+    /* Lê do layout quantos cabem e qual é o primeiro visível. */
+    const medir = useCallback(() => {
+        const trilho = trilhoRef.current;
+        const item = trilho?.firstElementChild as HTMLElement | null;
+        if (!trilho || !item || item.offsetWidth === 0) return;
+        const gap = parseFloat(getComputedStyle(trilho).columnGap) || 0;
+        const passo = item.offsetWidth + gap;
+        setPorVez(
+            Math.max(1, Math.floor((trilho.clientWidth + gap + 1) / passo)),
+        );
+        setPrimeiro(
+            Math.min(
+                total - 1,
+                Math.max(0, Math.round(trilho.scrollLeft / passo)),
+            ),
+        );
+    }, [total]);
+
+    useEffect(() => {
+        medir();
+        const trilho = trilhoRef.current;
+        if (!trilho || typeof ResizeObserver === "undefined") return;
+        const obs = new ResizeObserver(medir);
+        obs.observe(trilho);
+        return () => obs.disconnect();
+    }, [medir]);
+
+    const ultimoInicio = Math.max(0, total - porVez);
+    const inicio = Math.min(primeiro, ultimoInicio);
+    const fim = Math.min(total, inicio + porVez);
+    const paginas = Math.max(1, Math.ceil(total / porVez));
+    const paginaAtual =
+        inicio >= ultimoInicio ? paginas - 1 : Math.floor(inicio / porVez);
+
+    const irPara = (indice: number) => {
+        const trilho = trilhoRef.current;
+        const alvo = Math.min(Math.max(0, indice), ultimoInicio);
+        const item = trilho?.children[alvo] as HTMLElement | undefined;
+        if (!trilho || !item) return;
+        setInteragiu(true);
+        const reduzir =
+            typeof window.matchMedia === "function" &&
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        trilho.scrollTo?.({
+            left: item.offsetLeft - trilho.offsetLeft,
+            behavior: reduzir ? "auto" : "smooth",
+        });
+        setPrimeiro(alvo);
+    };
+
+    const anterior = () => irPara(inicio - porVez);
+    const proximo = () => irPara(inicio + porVez);
+
+    const aoTeclar = (e: React.KeyboardEvent) => {
+        if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            anterior();
+        } else if (e.key === "ArrowRight") {
+            e.preventDefault();
+            proximo();
+        }
+    };
+
+    const intervalo = (fim - inicio === 1 ? t("work.single") : t("work.range"))
+        .replace("{from}", pad(inicio + 1))
+        .replace("{to}", pad(fim))
+        .replace("{total}", pad(total));
+    const temMais = total > porVez;
+
+    return (
+        <section
+            className="work-carousel"
+            aria-roledescription={t("work.carousel")}
+            aria-label={t("work.featured")}
+            onKeyDown={aoTeclar}
+        >
+            <div className="work__bar">
+                <p className="work__count">
+                    <strong>{pad(total)}</strong>
+                    <span>{t("work.featured")}</span>
+                </p>
+                {temMais && (
+                    <div className="work__nav">
+                        <p className="work__range" aria-hidden="true">
+                            {intervalo}
+                        </p>
+                        <button
+                            type="button"
+                            className="work__arrow"
+                            onClick={anterior}
+                            disabled={inicio === 0}
+                            aria-label={t("work.prev")}
+                        >
+                            <IconChevronLeft
+                                width={18}
+                                height={18}
+                                aria-hidden
+                            />
+                        </button>
+                        <button
+                            type="button"
+                            className="work__arrow"
+                            onClick={proximo}
+                            disabled={inicio >= ultimoInicio}
+                            aria-label={t("work.next")}
+                        >
+                            <IconChevronRight
+                                width={18}
+                                height={18}
+                                aria-hidden
+                            />
+                        </button>
+                    </div>
+                )}
+            </div>
+
+            {/* div, não ul: os itens são grupos "slide" (padrão de
+                carrossel), e uma lista só pode conter itens de lista. */}
+            <div
+                ref={trilhoRef}
+                className="work__track"
+                onScroll={medir}
+                data-fits={!temMais || undefined}
+            >
+                {repos.map((repo, i) => (
+                    <div
+                        key={repo.id}
+                        className="work__slide"
+                        role="group"
+                        aria-roledescription={t("work.slide")}
+                        aria-label={t("work.slideOf")
+                            .replace("{n}", String(i + 1))
+                            .replace("{total}", String(total))}
+                    >
+                        <ProjectCard repo={repo} index={i} variant="featured" />
+                    </div>
+                ))}
+            </div>
+
+            {temMais && paginas > 1 && (
+                <div
+                    className="work__dots"
+                    role="group"
+                    aria-label={t("work.pages")}
+                >
+                    {Array.from({ length: paginas }, (_, p) => (
+                        <button
+                            key={p}
+                            type="button"
+                            className="work__dot"
+                            aria-current={
+                                p === paginaAtual ? "true" : undefined
+                            }
+                            aria-label={t("work.goTo").replace(
+                                "{n}",
+                                String(p + 1),
+                            )}
+                            onClick={() => irPara(p * porVez)}
+                        >
+                            <span />
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            <p className="sr-only" aria-live="polite" aria-atomic="true">
+                {interagiu
+                    ? t("work.announce")
+                          .replace("{from}", String(inicio + 1))
+                          .replace("{to}", String(fim))
+                          .replace("{total}", String(total))
+                    : ""}
+            </p>
+        </section>
+    );
+};
 
 export const Work: React.FC = () => {
-    const { t, lang } = useLang();
+    const { t } = useLang();
+    const { data, loading, error } = useDevhubPinned();
+    const catalogo = useLinkProps(ROUTES.PROJECTS);
+    const repos = data?.repositories ?? [];
 
     return (
         <section
@@ -74,122 +240,88 @@ export const Work: React.FC = () => {
             data-reveal
         >
             <div className="container">
-                {/* Header */}
-                <header className="section-header">
+                <header className="work__head section-header">
                     <span className="section-eyebrow">{t("work.eyebrow")}</span>
-
                     <h2 className="section-title" id="work-title">
                         {t("work.title")}
                     </h2>
-
-                    <p className="section-subtitle">{t("work.sub")}</p>
+                    <p className="section-subtitle work__sub">
+                        {t("work.sub")}
+                    </p>
                 </header>
 
-                {/* Grid */}
-                <div className="work__grid">
-                    {PROJECTS.map((project, i) => (
-                        <article
-                            className="work-card"
-                            key={project.id}
-                            aria-labelledby={`project-${project.id}`}
-                            style={{ ["--card-index" as string]: i }}
-                        >
-                            {/* Thumbnail */}
-                            <div className="work-card__thumb">
-                                <img
-                                    src={project.imageUrl}
-                                    alt={`${t("work.preview")} — ${project.title[lang]}`}
-                                    loading="lazy"
-                                    decoding="async"
-                                />
-                                <span
-                                    className="work-card__thumb-grad"
-                                    aria-hidden="true"
-                                />
-                                <span
-                                    className="work-card__emoji"
-                                    aria-hidden="true"
-                                >
-                                    {project.emoji}
-                                </span>
-                            </div>
-
-                            {/* Conteúdo */}
-                            <div className="work-card__body">
-                                <h3
-                                    className="work-card__title"
-                                    id={`project-${project.id}`}
-                                >
-                                    {project.title[lang]}
-                                </h3>
-
-                                <p className="work-card__desc">
-                                    {project.desc[lang]}
-                                </p>
-
-                                {/* Tecnologias */}
-                                <div
-                                    className="work-card__tech"
-                                    aria-label={t("work.block.stack")}
-                                >
-                                    {project.tech.map((tech) => (
-                                        <span
-                                            key={tech.label}
-                                            className={`badge badge--${tech.variant}`}
-                                        >
-                                            {tech.label}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Footer */}
-                            <div className="work-card__footer">
-                                <a
-                                    href={project.demoUrl}
-                                    className="work-btn work-btn--primary"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={`${t("work.btn.demo")} — ${project.title[lang]}`}
-                                >
-                                    <IconExternalLink
-                                        width={14}
-                                        height={14}
-                                        aria-hidden="true"
-                                    />
-                                    {t("work.btn.demo")}
-                                </a>
-
-                                <a
-                                    href={project.repoUrl}
-                                    className="work-btn work-btn--outline"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={`${t("work.btn.repo")} — ${project.title[lang]}`}
-                                >
-                                    <IconGitHub
-                                        width={15}
-                                        height={15}
-                                        aria-hidden="true"
-                                    />
-                                    {t("work.btn.repo")}
-                                </a>
-                            </div>
-                        </article>
-                    ))}
-                </div>
-
-                {/* CTA */}
-                <div className="work__cta">
-                    <a
-                        href={GITHUB_URL}
-                        className="btn btn--outline"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                {loading && (
+                    <ul
+                        className="work__track work__track--skeleton"
+                        aria-busy="true"
+                        aria-label={t("work.loading")}
                     >
-                        {t("work.more")}
-                        <IconGitHub width={16} height={16} />
-                    </a>
+                        {[0, 1, 2].map((i) => (
+                            <li
+                                key={i}
+                                className="work__skeleton"
+                                aria-hidden="true"
+                            >
+                                <span className="work__skeleton-media" />
+                                <span className="work__skeleton-line work__skeleton-line--short" />
+                                <span className="work__skeleton-line work__skeleton-line--title" />
+                                <span className="work__skeleton-line" />
+                            </li>
+                        ))}
+                    </ul>
+                )}
+
+                {!loading && (error || repos.length === 0) && (
+                    <p className="work__state" role="status">
+                        {t("work.error")}
+                    </p>
+                )}
+
+                {!loading && repos.length > 0 && <Carousel repos={repos} />}
+
+                {/* Próximo passo: o acervo inteiro, com busca e filtros. */}
+                <div className="work__more">
+                    <div className="work__more-text">
+                        <p className="work__more-title">
+                            {t("work.moreTitle")}
+                        </p>
+                        <p className="work__more-desc">{t("work.moreDesc")}</p>
+                    </div>
+                    <div className="work__more-actions">
+                        <a
+                            className="work-btn work-btn--primary"
+                            {...catalogo.anchorProps}
+                        >
+                            {t("work.viewAll")}
+                            <IconArrowRight
+                                className="work-btn__icon work-btn__icon--go"
+                                width={18}
+                                height={18}
+                                aria-hidden
+                            />
+                        </a>
+                        <a
+                            href={GITHUB_URL}
+                            className="work-btn work-btn--ghost"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${t("work.more")} (${t("card.newTab")})`}
+                        >
+                            <IconGitHub
+                                className="work-btn__icon"
+                                width={18}
+                                height={18}
+                                aria-hidden
+                            />
+                            {t("work.more")}
+                            <IconExternalLink
+                                className="work-btn__icon"
+                                width={13}
+                                height={13}
+                                aria-hidden
+                            />
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>

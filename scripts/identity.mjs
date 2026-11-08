@@ -80,19 +80,22 @@ const ALVOS = {
         ".spec-card__icon",
         ".stat-card",
         ".about__objective",
-        ".work-card",
-        ".work-card__emoji",
+        /* A seção de projetos da home virou carrossel com dados do
+           GitHub: `.work-card`, `.work-card__emoji` e o `.badge` das
+           tecnologias saíram com ela. `.work__more` é o cartão estático
+           da seção (não depende da API) e `.work-btn--primary` o seu CTA. */
+        ".work__more",
+        ".work-btn--primary",
         ".rec-card",
         ".career-aside__card",
         ".career-aside__tag",
         ".formation-card",
         ".featured__capability",
         ".contact__cta-card",
-        ".featured__gallery",
+        ".featured__window",
         ".featured__arrow",
         ".btn--primary",
         ".btn--outline",
-        ".badge",
         ".header",
         ".header__ctrl",
         ".footer",

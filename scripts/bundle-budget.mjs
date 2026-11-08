@@ -22,13 +22,30 @@ const DIST = "apps/web/dist/assets";
 
 const TETOS = [
     // Página técnica do Codex: ~5.7 KB gzip adicionais, carregados por rota.
-    { nome: "JS total", limite: 132, alvo: (f) => f.tipo === "js" },
+    // DevHub (/projetos e /projetos/:nome): ~8.8 KB gzip adicionais, também
+    // só na rota — o JS principal da home não cresceu (45.7 → 45.6 KB).
+    // Teto refeito sobre 137.2 KB medidos, com a folga de ~10% de sempre.
+    // Modal de projeto (galeria + documentação do README): ~3.0 KB gzip
+    // num chunk lazy, baixado só ao abrir. Na home entram ~2 KB: chips
+    // de tecnologia (catálogo + TechList) e o ícone do TypeScript, que o
+    // Vite embute como data URI junto dos outros. Teto refeito sobre
+    // 151.1 KB medidos, com ~10% de folga.
+    { nome: "JS total", limite: 165, alvo: (f) => f.tipo === "js" },
     {
         nome: "vendor (react + react-dom)",
         limite: 50,
         alvo: (f) => f.nome.startsWith("vendor-"),
     },
-    { nome: "CSS total", limite: 38, alvo: (f) => f.tipo === "css" },
+    // DevHub: CSS próprio carregado só nas rotas dele. Com o catálogo
+    // (filtros, chips, paginação), as capas compostas e a página do
+    // projeto (números, abas, atividade, estrutura), o chunk lazy foi de
+    // ~3.7 para 5.9 KB gzip; o CSS principal da home (22.1 KB) não muda
+    // com isso. Teto refeito sobre 45.1 KB medidos, com ~10% de folga.
+    // Depois: modal de projeto (lazy) e o panorama do GitHub, que trocou
+    // quatro imagens de terceiros por componentes próprios (calendário,
+    // linguagens, sequências). Tudo em chunks de rota/lazy; a home não
+    // muda. Teto refeito sobre 49.7 KB medidos, com ~10% de folga.
+    { nome: "CSS total", limite: 55, alvo: (f) => f.tipo === "css" },
 ];
 
 function listar(dir, tipo) {

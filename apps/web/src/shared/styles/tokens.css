@@ -72,6 +72,7 @@
     --_green-700: #15803d;
     --_amber-400: #fbbf24;
     --_amber-500: #f59e0b;
+    --_amber-800: #92400e;
     --_red-400: #f87171;
     --_red-500: #ef4444;
     --_red-600: #dc2626;
@@ -249,6 +250,7 @@
     );
 
     --color-warning: var(--_amber-500);
+    --color-warning-text: var(--color-warning);
     --color-warning-subtle: color-mix(
         in srgb,
         var(--_amber-500) 14%,
@@ -367,6 +369,9 @@ body.light-mode {
    */
     --color-brand: var(--_crimson-600);
     --color-brand-text: var(--_crimson-700);
+    /* Mesmo motivo do brand: amber-500 sobre o off-white fica abaixo de
+       4.5:1 (axe, selo "Pré-release"). Texto de aviso usa amber-800. */
+    --color-warning-text: var(--_amber-800);
     --color-brand-hover: var(--_crimson-700);
     --color-brand-light: var(--_crimson-600);
     --color-brand-muted: var(--_crimson-100);
@@ -689,6 +694,16 @@ body.light-mode {
     --layout-max: 1200px;
     --layout-narrow: 768px;
     --layout-wide: 1440px;
+    --layout-xwide: 1720px;
+
+    /* Moldura de IDE (tema Radical do GitHub): fixa nos dois temas, porque
+       o que vai dentro dela — os cartões SVG dos widgets do perfil — já
+       chega com fundo #0d1117. Contraste: texto 15.8:1, apagado 7.6:1. */
+    --ide-bg: #0d1117;
+    --ide-surface: #161b22;
+    --ide-border: #30363d;
+    --ide-text: #e6edf3;
+    --ide-muted: #9da7b3;
     --header-height: 68px;
 
     /* Espaçamento vertical de seção — fluido (48px → 80px) */

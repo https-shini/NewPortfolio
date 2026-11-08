@@ -136,6 +136,15 @@ describe("/api/csp-report", () => {
         expect(avisos[0]).toContain("formato não reconhecido");
     });
 
+    /* Erro visto em produção: POST sem corpo chegava com `body`
+       indefinido e `JSON.stringify(undefined)` não tem `.slice`. */
+    it("não estoura com POST sem corpo", async () => {
+        const r = await chamar(undefined);
+
+        expect(r.codigo).toBe(204);
+        expect(avisos[0]).toContain("formato não reconhecido: undefined");
+    });
+
     it("recusa método diferente de POST, dizendo qual aceita", async () => {
         const r = await chamar(undefined, "GET");
 

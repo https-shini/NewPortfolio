@@ -1,0 +1,2186 @@
+/* ─────────────────────────────────────────────────────────
+   DevHub — a camada técnica do produto
+   ─────────────────────────────────────────────────────────
+   Só tokens do design system. O registro é mais técnico que o do
+   portfólio — monoespaçada nos nomes de repositório, superfícies
+   mais densas, menos respiro entre blocos —, mas as cores, os
+   raios, as sombras e as transições são exatamente os mesmos da
+   home. É o que faz a troca de rota não parecer troca de site.
+─────────────────────────────────────────────────────────── */
+
+.devhub {
+    min-height: 70vh;
+    padding-bottom: var(--space-16);
+}
+
+/* ── Hero ──────────────────────────────────────────────── */
+
+/* Clarão de marca atrás do título, igual ao da home. */
+
+/* ── Métricas ──────────────────────────────────────────── */
+
+/* ── Toolbar ───────────────────────────────────────────── */
+
+/* Pílula — ordenação, filtros e o botão de mais filtros. */
+
+/* O estado selecionado sai do próprio ARIA — uma fonte, não duas. */
+
+/* ── Painel de mais filtros ────────────────────────────── */
+
+/* ── Contagem e seções ─────────────────────────────────── */
+
+.devhub-section + .devhub-section {
+    margin-top: var(--space-12);
+}
+
+.devhub-section__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+}
+
+.devhub-section__title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    color: var(--color-text-1);
+}
+
+.devhub-section__title svg {
+    color: var(--color-brand-text);
+}
+
+.devhub-section__desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-3);
+}
+
+/* ── Grade ─────────────────────────────────────────────── */
+
+.devhub-grid {
+    display: grid;
+    /* `min(…, 100%)`: em 320px de tela, 290px fixos estouravam a
+       largura útil e criavam rolagem horizontal. */
+    grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr));
+    gap: var(--space-5);
+    list-style: none;
+    padding: 0;
+}
+
+.devhub-thumb__name {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-align: center;
+    overflow-wrap: anywhere;
+    color: var(--thumb-tint);
+}
+
+/* ── Chips ─────────────────────────────────────────────── */
+
+.devhub-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 3px var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-2);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-full);
+}
+
+.devhub-chip--muted {
+    color: var(--color-text-3);
+}
+
+.devhub-chip--warn {
+    color: var(--color-warning-text);
+    background: var(--color-warning-subtle);
+    border-color: transparent;
+}
+
+/* ── Barra de linguagens ───────────────────────────────── */
+
+.devhub-langbar__track {
+    display: flex;
+    overflow: hidden;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-2);
+}
+
+.devhub-langbar__seg {
+    height: 100%;
+}
+
+.devhub-langbar__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+    list-style: none;
+}
+
+.devhub-langbar__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-2);
+}
+
+.devhub-langbar__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.devhub-langbar__pct {
+    color: var(--color-text-3);
+}
+
+/* ── Estados ───────────────────────────────────────────── */
+
+.devhub-state {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    padding: var(--space-12) var(--space-5);
+    text-align: center;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-lg);
+}
+
+.devhub-state--error {
+    border-color: var(--color-error-border);
+    background: var(--color-error-subtle);
+}
+
+.devhub-state--error svg {
+    color: var(--color-error);
+}
+
+.devhub-state__title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    color: var(--color-text-1);
+}
+
+.devhub-state__desc {
+    max-width: 48ch;
+    font-size: var(--text-sm);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-2);
+}
+
+.devhub-state code {
+    font-family: var(--font-mono);
+    color: var(--color-brand-text);
+}
+
+/* ── Esqueleto de carregamento ─────────────────────────── */
+
+.devhub-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-lg);
+}
+
+.devhub-skeleton__thumb,
+.devhub-skeleton__line {
+    display: block;
+    background: var(--color-surface-3);
+    border-radius: var(--radius-md);
+    animation: devhub-pulse 1.5s ease-in-out infinite;
+}
+
+.devhub-skeleton__thumb {
+    aspect-ratio: 16 / 9;
+}
+
+.devhub-skeleton__line {
+    height: 12px;
+}
+
+.devhub-skeleton__line--short {
+    width: 60%;
+}
+
+.devhub-skeleton__line--title {
+    height: 32px;
+    width: 45%;
+    margin-bottom: var(--space-4);
+}
+
+@keyframes devhub-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.45;
+    }
+}
+
+/* ── Detalhe ───────────────────────────────────────────── */
+
+.devhub-detail {
+    padding-top: 0;
+}
+
+.devhub-detail__banner {
+    position: relative;
+    padding-block: calc(var(--header-height) + var(--space-8)) var(--space-10);
+    margin-bottom: var(--space-10);
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border-1);
+}
+
+/* O social card ao fundo, muito atenuado: dá identidade por projeto
+   sem disputar leitura com o título. */
+.devhub-detail__banner-media {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.12;
+    filter: blur(2px);
+}
+
+.devhub-detail__veil {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent, var(--color-bg) 92%);
+    pointer-events: none;
+}
+
+.devhub-detail__banner > .container {
+    position: relative;
+}
+
+.devhub-crumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-6);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.devhub-crumb a {
+    color: var(--color-text-2);
+    text-decoration: none;
+}
+
+.devhub-crumb a:hover {
+    color: var(--color-brand-text);
+}
+
+.devhub-crumb a:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+
+.devhub-detail__grid {
+    display: grid;
+    gap: var(--space-8);
+}
+
+.devhub-detail__flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.devhub-detail__title {
+    font-family: var(--font-mono);
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    line-height: var(--lh-tight);
+    color: var(--color-text-1);
+    overflow-wrap: anywhere;
+}
+
+.devhub-detail__desc {
+    max-width: 62ch;
+    margin-top: var(--space-4);
+    font-size: var(--text-lg);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-2);
+}
+
+.devhub-detail__topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+    list-style: none;
+}
+
+.devhub-detail__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+}
+
+/* ── Painel de estatísticas ────────────────────────────── */
+
+.devhub-stats {
+    align-self: start;
+    padding: var(--space-5);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+}
+
+.devhub-stats__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-2);
+}
+
+.devhub-stats__row + .devhub-stats__row {
+    border-top: 1px solid var(--color-border-1);
+}
+
+.devhub-stats__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.devhub-stats__value {
+    font-size: var(--text-sm);
+    color: var(--color-text-1);
+    text-align: end;
+}
+
+.devhub-stats__langs {
+    margin-top: var(--space-5);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-1);
+}
+
+.devhub-stats__langs .devhub-langbar {
+    margin-top: var(--space-3);
+}
+
+/* ── README ────────────────────────────────────────────── */
+
+.devhub-readme__body {
+    padding: var(--space-6) var(--space-5);
+    font-size: var(--text-md);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-2);
+    overflow-wrap: anywhere;
+}
+
+.devhub-readme__body > * + * {
+    margin-top: var(--space-4);
+}
+
+.devhub-readme__body h1,
+.devhub-readme__body h2,
+.devhub-readme__body h3 {
+    margin-top: var(--space-8);
+    font-family: var(--font-display);
+    color: var(--color-text-1);
+    line-height: var(--lh-snug);
+}
+
+.devhub-readme__body h1 {
+    font-size: var(--text-2xl);
+}
+.devhub-readme__body h2 {
+    font-size: var(--text-xl);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border-1);
+}
+.devhub-readme__body h3 {
+    font-size: var(--text-lg);
+}
+
+/* Sublinhado sempre: link no meio do texto não pode depender só da cor
+   (WCAG 1.4.1 — o axe reprovou a versão do fork). */
+.devhub-readme__body a {
+    color: var(--color-brand-text);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+.devhub-readme__body ul,
+.devhub-readme__body ol {
+    padding-inline-start: var(--space-6);
+}
+
+.devhub-readme__body li + li {
+    margin-top: var(--space-2);
+}
+
+.devhub-readme__body code {
+    padding: 2px 6px;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    color: var(--color-text-1);
+    background: var(--color-surface-3);
+    border-radius: var(--radius-sm);
+}
+
+.devhub-readme__body pre {
+    padding: var(--space-4);
+    overflow-x: auto;
+    background: var(--color-surface-3);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-md);
+}
+
+.devhub-readme__body pre code {
+    padding: 0;
+    background: none;
+}
+
+.devhub-readme__body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+}
+
+.devhub-readme__body blockquote {
+    padding-inline-start: var(--space-4);
+    border-inline-start: 3px solid var(--color-brand);
+    color: var(--color-text-3);
+}
+
+.devhub-readme__body table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+}
+
+.devhub-readme__body th,
+.devhub-readme__body td {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border-1);
+    text-align: start;
+}
+
+.devhub-readme__body th {
+    background: var(--color-surface-2);
+    color: var(--color-text-1);
+}
+
+/* ── Navegação entre projetos ──────────────────────────── */
+
+.devhub-siblings {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+}
+
+.devhub-sibling {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--tap-comfort);
+    padding: var(--space-4);
+    color: var(--color-text-2);
+    text-decoration: none;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-lg);
+    transition:
+        color var(--transition-base),
+        border-color var(--transition-base);
+}
+
+.devhub-sibling[data-direction="next"] {
+    justify-content: flex-end;
+    text-align: end;
+}
+
+.devhub-sibling:hover {
+    color: var(--color-text-1);
+    border-color: var(--color-border-brand);
+}
+
+.devhub-sibling:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+}
+
+.devhub-sibling__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.devhub-sibling__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.devhub-sibling__name {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: inherit;
+    overflow-wrap: anywhere;
+}
+
+/* ── Respiro maior a partir do tablet ──────────────────── */
+
+@media (min-width: 768px) {
+    .devhub-siblings {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1024px) {
+    .devhub-detail__grid {
+        grid-template-columns: minmax(0, 1fr) 320px;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Acréscimos da integração ao NewPortfolio
+───────────────────────────────────────────────────────── */
+
+/* Métricas: o <dt> (rótulo) vem antes no DOM, para o leitor de tela
+   anunciar "estrelas recebidas: 12"; na tela, o número vem primeiro. */
+
+/* Seções da /projetos */
+.devhub-section {
+    margin-top: var(--space-12);
+}
+
+.devhub-state__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+}
+
+/* Detalhe: painel "Atividade e manutenção" */
+.devhub-stats__title {
+    margin-bottom: var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    color: var(--color-text-1);
+}
+
+.devhub-stats__list {
+    margin: 0;
+}
+
+.devhub-stats__value {
+    margin: 0;
+    text-align: end;
+    overflow-wrap: anywhere;
+}
+
+.devhub-stats__value code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+}
+
+h3.devhub-stats__label {
+    margin-bottom: var(--space-2);
+    font-weight: 500;
+}
+
+.devhub-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.devhub-status::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-text-3);
+    flex-shrink: 0;
+}
+
+.devhub-status[data-status="active"]::before {
+    background: var(--color-success);
+}
+
+.devhub-status[data-status="archived"]::before {
+    background: var(--color-warning);
+}
+
+.devhub-detail__loading {
+    display: grid;
+    gap: var(--space-4);
+    padding-top: calc(var(--header-height) + var(--space-10));
+}
+
+/* ─────────────────────────────────────────────────────────
+   Catálogo (/projetos → Todos os projetos)
+   ─────────────────────────────────────────────────────────
+   Mobile primeiro: busca em largura total, filtros numa gaveta,
+   uma coluna de cards. A partir de 1024px a barra lateral aparece
+   e o botão "Filtros" some.
+───────────────────────────────────────────────────────── */
+
+.catalog__search {
+    position: relative;
+}
+
+.catalog__search-icon {
+    position: absolute;
+    top: 50%;
+    left: var(--space-4);
+    transform: translateY(-50%);
+    color: var(--color-text-3);
+    pointer-events: none;
+}
+
+.catalog__search-input {
+    width: 100%;
+    min-height: 52px;
+    padding: 0 var(--space-4) 0 calc(var(--space-4) * 2 + 18px);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-2);
+    color: var(--color-text-1);
+    font: inherit;
+    font-size: var(--text-md);
+    box-shadow: var(--surface-edge);
+    transition:
+        border-color 0.2s var(--ease-out),
+        box-shadow 0.2s var(--ease-out);
+}
+
+.catalog__search-input::placeholder {
+    color: var(--color-text-3);
+}
+
+.catalog__search-input:hover {
+    border-color: var(--color-border-3);
+}
+
+.catalog__search-input:focus-visible {
+    outline: none;
+    border-color: var(--color-border-brand);
+    box-shadow:
+        var(--surface-edge),
+        0 0 0 3px var(--color-brand-subtle);
+}
+
+/* Espaço à direita para o botão de limpar / dica do atalho; o "x"
+   nativo do type=search sai para não duplicar. */
+.catalog__search-input {
+    padding-right: calc(var(--space-4) + 36px);
+}
+
+.catalog__search-input::-webkit-search-cancel-button {
+    appearance: none;
+}
+
+.catalog__search-clear,
+.catalog__search-kbd {
+    position: absolute;
+    top: 50%;
+    right: var(--space-3);
+    transform: translateY(-50%);
+}
+
+.catalog__search-clear {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-3);
+    color: var(--color-text-2);
+    cursor: pointer;
+    transition:
+        background-color 0.15s var(--ease-out),
+        color 0.15s var(--ease-out);
+}
+
+.catalog__search-clear:hover {
+    background: var(--color-surface-4);
+    color: var(--color-text-1);
+}
+
+.catalog__search-clear:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog__search-kbd {
+    display: inline-grid;
+    place-items: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 var(--space-1);
+    border: 1px solid var(--color-border-2);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+    pointer-events: none;
+}
+
+/* Sem teclado físico, a dica do atalho não ajuda. */
+@media (hover: none) {
+    .catalog__search-kbd {
+        display: none;
+    }
+}
+
+.catalog__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+    align-items: start;
+}
+
+.catalog__sidebar {
+    display: none;
+}
+
+.catalog__sidebar-title {
+    margin-bottom: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.catalog__main {
+    min-width: 0;
+}
+
+/* Barra de resultados: contagem · filtros (mobile) · ordenação */
+.catalog__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-5);
+    margin-bottom: var(--space-4);
+}
+
+.catalog__count {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-3);
+    margin: 0;
+    color: var(--color-text-3);
+    font-size: var(--text-sm);
+    scroll-margin-top: calc(var(--header-height) + var(--space-6));
+}
+
+.catalog__count:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 4px;
+    border-radius: var(--radius-xs);
+}
+
+.catalog__count strong {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    color: var(--color-text-1);
+}
+
+.catalog__filters-btn,
+.catalog__sort select {
+    min-height: 44px;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    color: var(--color-text-1);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    transition:
+        border-color 0.2s var(--ease-out),
+        background-color 0.2s var(--ease-out);
+}
+
+.catalog__filters-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0 var(--space-4);
+    cursor: pointer;
+}
+
+.catalog__filters-btn:hover,
+.catalog__sort select:hover {
+    border-color: var(--color-border-brand);
+}
+
+.catalog__filters-btn:focus-visible,
+.catalog__sort select:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog__filters-badge {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-brand);
+    color: #fff;
+    font-size: var(--text-2xs);
+    font-weight: 700;
+}
+
+.catalog__sort {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-3);
+}
+
+.catalog__sort select {
+    padding: 0 var(--space-8) 0 var(--space-3);
+    cursor: pointer;
+    appearance: none;
+    background-image:
+        linear-gradient(45deg, transparent 50%, currentcolor 50%),
+        linear-gradient(135deg, currentcolor 50%, transparent 50%);
+    background-position:
+        calc(100% - 18px) 50%,
+        calc(100% - 13px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+}
+
+/* Chips de filtros ativos */
+.catalog-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    margin-bottom: var(--space-5);
+}
+
+.catalog-chips__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.catalog-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 32px;
+    padding: 0 var(--space-2) 0 var(--space-3);
+    border: 1px solid var(--color-border-brand);
+    border-radius: var(--radius-full);
+    background: var(--color-brand-subtle);
+    color: var(--color-text-1);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+        background-color 0.2s var(--ease-out),
+        transform 0.15s var(--ease-out);
+}
+
+.catalog-chip:hover {
+    background: var(--color-brand-muted);
+}
+
+.catalog-chip:active {
+    transform: scale(0.96);
+}
+
+.catalog-chip:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog-chip__x {
+    display: inline-grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: var(--text-md);
+    line-height: 1;
+    color: var(--color-brand-text);
+}
+
+.catalog-chips__clear {
+    min-height: 32px;
+    padding: 0 var(--space-1);
+    border: 0;
+    background: transparent;
+    color: var(--color-brand-text);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.catalog-chips__clear:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+/* Grupos de filtro */
+.catalog-filters {
+    display: grid;
+    gap: var(--space-6);
+}
+
+.catalog-filter {
+    min-width: 0;
+    margin: 0;
+    padding: 0 0 var(--space-6);
+    border: 0;
+    border-bottom: 1px solid var(--color-border-1);
+}
+
+.catalog-filter:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.catalog-filter:not([data-open]) {
+    padding-bottom: var(--space-3);
+}
+
+.catalog-filter__legend {
+    width: 100%;
+    padding: 0;
+}
+
+.catalog-filter__toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 36px;
+    padding: 0 var(--space-2);
+    margin-inline: calc(var(--space-2) * -1);
+    width: calc(100% + var(--space-2) * 2);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    color: var(--color-text-1);
+    cursor: pointer;
+}
+
+.catalog-filter__toggle:hover {
+    background: var(--color-surface-3);
+}
+
+.catalog-filter__toggle:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 0;
+}
+
+.catalog-filter__title {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.catalog-filter__active {
+    flex: none;
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-brand-subtle);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    color: var(--color-brand-text);
+}
+
+.catalog-filter__chevron {
+    flex: none;
+    color: var(--color-text-3);
+    transform: rotate(-90deg);
+    transition: transform 0.2s var(--ease-out);
+}
+
+.catalog-filter[data-open] .catalog-filter__chevron {
+    transform: none;
+}
+
+.catalog-filter__body {
+    margin-top: var(--space-2);
+}
+
+.catalog-filter__search {
+    position: relative;
+    margin-bottom: var(--space-2);
+}
+
+.catalog-filter__search svg {
+    position: absolute;
+    top: 50%;
+    left: var(--space-3);
+    transform: translateY(-50%);
+    color: var(--color-text-3);
+    pointer-events: none;
+}
+
+.catalog-filter__search input {
+    width: 100%;
+    min-height: 36px;
+    padding: 0 var(--space-3) 0 calc(var(--space-3) * 2 + 14px);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-1);
+    font: inherit;
+    font-size: var(--text-sm);
+    color: var(--color-text-1);
+}
+
+.catalog-filter__search input::placeholder {
+    color: var(--color-text-3);
+}
+
+.catalog-filter__search input:focus-visible {
+    outline: none;
+    border-color: var(--color-border-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-subtle);
+}
+
+.catalog-filter__empty {
+    padding: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.catalog-filter__list {
+    display: grid;
+    gap: 2px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.catalog-filter__option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 36px;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-2);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition:
+        background-color 0.15s var(--ease-out),
+        color 0.15s var(--ease-out);
+}
+
+.catalog-filter__option:hover {
+    background: var(--color-surface-3);
+    color: var(--color-text-1);
+}
+
+.catalog-filter__option:has(input:checked) {
+    color: var(--color-text-1);
+    font-weight: 500;
+}
+
+/* Opção que zera o resultado: continua clicável (não é "disabled"),
+   então mantém contraste AA — esmaece só a cor, sem opacidade. */
+.catalog-filter__option[data-empty] {
+    color: var(--color-text-3);
+}
+
+.catalog-filter__option input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: var(--color-brand);
+    cursor: pointer;
+}
+
+.catalog-filter__option input:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog-filter__label {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.catalog-filter__count {
+    min-width: 28px;
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    text-align: center;
+    color: var(--color-text-3);
+}
+
+.catalog-filter__option--toggle {
+    margin-top: var(--space-2);
+}
+
+.catalog-filter__more {
+    margin-top: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    border: 0;
+    background: transparent;
+    color: var(--color-brand-text);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.catalog-filter__more:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+/* Paginação */
+.catalog-pages {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+}
+
+.catalog__pager {
+    margin-top: var(--space-10);
+}
+
+.catalog-pages__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.catalog-pages__num,
+.catalog-pages__step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 var(--space-3);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-2);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition:
+        background-color 0.2s var(--ease-out),
+        border-color 0.2s var(--ease-out),
+        color 0.2s var(--ease-out);
+}
+
+.catalog-pages__step {
+    border-color: var(--color-border-2);
+}
+
+.catalog-pages__num:hover,
+.catalog-pages__step:hover:not(:disabled) {
+    background: var(--color-surface-3);
+    color: var(--color-text-1);
+}
+
+.catalog-pages__num[aria-current="page"] {
+    background: var(--color-brand);
+    border-color: var(--color-brand);
+    color: #fff;
+    font-weight: 700;
+}
+
+.catalog-pages__num:focus-visible,
+.catalog-pages__step:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog-pages__step:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* Celular: números na primeira linha; « ‹ › » só com ícones abaixo. */
+@media (max-width: 639px) {
+    .catalog-pages__list {
+        flex-basis: 100%;
+        justify-content: center;
+        order: -1;
+    }
+
+    .catalog-pages__label {
+        display: none;
+    }
+}
+
+.catalog-pages__gap {
+    display: inline-grid;
+    place-items: center;
+    min-width: 28px;
+    color: var(--color-text-3);
+}
+
+/* Gaveta de filtros (mobile) — usa o Modal do projeto */
+.catalog-drawer {
+    --modal-width: 480px;
+    --modal-max-height: min(88dvh, 760px);
+    display: flex;
+    flex-direction: column;
+}
+
+.catalog-drawer__head,
+.catalog-drawer__foot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    flex-shrink: 0;
+}
+
+.catalog-drawer__head {
+    justify-content: space-between;
+    border-bottom: 1px solid var(--color-border-1);
+}
+
+.catalog-drawer__head h3 {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+}
+
+.catalog-drawer__close {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-1);
+    font-size: var(--text-xl);
+    line-height: 1;
+    cursor: pointer;
+}
+
+.catalog-drawer__close:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog-drawer__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: var(--space-5);
+    overscroll-behavior: contain;
+}
+
+.catalog-drawer__foot {
+    border-top: 1px solid var(--color-border-1);
+}
+
+.catalog-drawer__foot .btn {
+    flex: 1;
+}
+
+@media (min-width: 1024px) {
+    .catalog__layout {
+        grid-template-columns: 248px minmax(0, 1fr);
+    }
+
+    /* Rola junto com a página (não fixa): com a grade de 4 colunas, o
+       painel fixo ficava solto ao lado dos cartões. */
+    /* A barra termina na base da última linha de cartões: altura zero
+       (não aumenta a linha da grade) e min-height 100% (estica até a
+       base da coluna de resultados). Filtro que não couber rola por
+       dentro — todos continuam alcançáveis, inclusive pelo teclado. */
+    .catalog__layout {
+        grid-template-rows: auto auto;
+    }
+
+    .catalog__sidebar {
+        display: block;
+        grid-row: 1;
+        height: 0;
+        min-height: 100%;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
+        scrollbar-width: thin;
+        padding: var(--space-5) var(--space-5) 0;
+        border: 1px solid var(--color-border-1);
+        border-radius: var(--radius-xl);
+        background: var(--color-surface-2);
+        box-shadow: var(--surface-edge);
+        overscroll-behavior: contain;
+    }
+
+    /* Esmaecido fixo na base da barra: sinaliza que há mais filtros
+       abaixo, sem apagar a borda do painel (por isso não é mask). */
+    .catalog__sidebar::after {
+        content: "";
+        position: sticky;
+        bottom: 0;
+        display: block;
+        height: var(--space-10);
+        margin-inline: calc(var(--space-5) * -1);
+        background: linear-gradient(transparent, var(--color-surface-2));
+        pointer-events: none;
+    }
+
+    .catalog__filters-btn {
+        display: none;
+    }
+
+    .catalog__pager {
+        grid-column: 2;
+        margin-top: 0;
+    }
+}
+
+@media (min-width: 1440px) {
+    .catalog__layout {
+        grid-template-columns: 272px minmax(0, 1fr);
+        gap: var(--space-10);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .catalog-chip,
+    .catalog-filter__chevron,
+    .catalog__search-clear,
+    .catalog-filter__option,
+    .catalog-pages__num,
+    .catalog-pages__step,
+    .catalog__search-input {
+        transition: none;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────
+   Página do projeto — números, abas, atividade, estrutura,
+   releases e relacionados
+───────────────────────────────────────────────────────── */
+
+.devhub-numbers {
+    margin-block: var(--space-10) var(--space-8);
+}
+
+.devhub-numbers__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+}
+
+.devhub-numbers__item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-4);
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-md);
+}
+
+.devhub-numbers__label {
+    order: 1;
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.devhub-numbers__value {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-1);
+}
+
+.devhub-numbers__item[data-state="unavailable"] .devhub-numbers__value {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-3);
+}
+
+.devhub-numbers__item[data-state="loading"] .devhub-numbers__value {
+    color: var(--color-text-3);
+}
+
+.devhub-numbers__hint {
+    order: 2;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+.devhub-numbers__note {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text-3);
+}
+
+/* Abas */
+.devhub-tabs {
+    overflow: hidden;
+    background: var(--color-surface-1);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-lg);
+}
+
+.devhub-tabs__list {
+    display: flex;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3) 0;
+    overflow-x: auto;
+    background: var(--color-surface-2);
+    border-bottom: 1px solid var(--color-border-1);
+    scrollbar-width: thin;
+}
+
+.devhub-tabs__tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: 0 var(--space-4);
+    border: 0;
+    background: transparent;
+    color: var(--color-text-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color var(--transition-base);
+}
+
+.devhub-tabs__tab::after {
+    content: "";
+    position: absolute;
+    inset: auto var(--space-3) -1px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--color-brand);
+    transform: scaleX(0);
+    transition: transform var(--transition-base);
+}
+
+.devhub-tabs__tab:hover {
+    color: var(--color-text-1);
+}
+
+.devhub-tabs__tab[aria-selected="true"] {
+    color: var(--color-text-1);
+    font-weight: 600;
+}
+
+.devhub-tabs__tab[aria-selected="true"]::after {
+    transform: scaleX(1);
+}
+
+.devhub-tabs__tab:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: -4px;
+    border-radius: var(--radius-sm);
+}
+
+.devhub-tabs__badge {
+    padding: 0 7px;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-3);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+.devhub-tabs__panel {
+    padding: var(--space-6) var(--space-5);
+}
+
+.devhub-tabs__panel .devhub-readme__body {
+    padding: 0;
+}
+
+.devhub-tabs__panel .devhub-state {
+    margin: 0;
+    border: 0;
+    background: none;
+}
+
+.devhub-empty {
+    font-size: var(--text-sm);
+    color: var(--color-text-3);
+}
+
+.devhub-subtitle {
+    margin-bottom: var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.devhub-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-brand-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Atividade */
+.devhub-activity__chart {
+    margin: 0 0 var(--space-8);
+}
+
+.devhub-activity__caption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    margin-bottom: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text-3);
+}
+
+.devhub-activity__caption strong {
+    color: var(--color-text-1);
+}
+
+.devhub-activity__svg {
+    display: block;
+    width: 100%;
+    height: 96px;
+}
+
+.devhub-activity__axis {
+    stroke: var(--color-border-2);
+}
+
+.devhub-activity__bar {
+    fill: var(--color-brand);
+}
+
+.devhub-activity__bar[data-empty] {
+    fill: var(--color-border-2);
+}
+
+.devhub-activity__scale {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+.devhub-activity__cols {
+    display: grid;
+    gap: var(--space-8);
+}
+
+.devhub-commits,
+.devhub-people,
+.devhub-tree__list,
+.devhub-releases__list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.devhub-commits__item,
+.devhub-releases__item {
+    display: grid;
+    gap: 4px;
+    padding-block: var(--space-3);
+    border-top: 1px solid var(--color-border-1);
+}
+
+.devhub-commits__item:first-child,
+.devhub-releases__item:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+
+.devhub-commits__msg,
+.devhub-releases__name {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-1);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.devhub-commits__msg:hover,
+.devhub-releases__name:hover {
+    color: var(--color-brand-text);
+    text-decoration: underline;
+}
+
+.devhub-commits__meta,
+.devhub-releases__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+.devhub-people {
+    display: grid;
+    gap: var(--space-2);
+}
+
+.devhub-people__item {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 44px;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-md);
+    color: var(--color-text-1);
+    text-decoration: none;
+}
+
+.devhub-people__item:hover {
+    background: var(--color-surface-3);
+}
+
+.devhub-people__item img,
+.devhub-people__fallback {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.devhub-people__fallback {
+    display: grid;
+    place-items: center;
+    background: var(--color-surface-3);
+    font-weight: 700;
+}
+
+.devhub-people__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--text-sm);
+}
+
+.devhub-people__count {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+/* Estrutura */
+.devhub-tree__path {
+    margin-bottom: var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.devhub-tree__list {
+    overflow: hidden;
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-md);
+}
+
+.devhub-tree__list li + li {
+    border-top: 1px solid var(--color-border-1);
+}
+
+.devhub-tree__item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 40px;
+    padding: 0 var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-1);
+    text-decoration: none;
+}
+
+a.devhub-tree__item:hover {
+    background: var(--color-surface-3);
+    color: var(--color-brand-text);
+}
+
+.devhub-tree__name {
+    overflow-wrap: anywhere;
+}
+
+/* Ícone desenhado em CSS: pasta (aba + corpo) ou folha. */
+.devhub-tree__icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 14px;
+    height: 11px;
+    border: 1.5px solid var(--color-text-3);
+    border-radius: 2px;
+}
+
+.devhub-tree__icon[data-type="tree"] {
+    border-color: var(--color-brand-text);
+    background: color-mix(in srgb, var(--color-brand) 18%, transparent);
+}
+
+.devhub-tree__icon[data-type="blob"] {
+    width: 11px;
+    height: 14px;
+}
+
+.devhub-tree__icon[data-type="commit"] {
+    border-style: dashed;
+}
+
+.devhub-related {
+    margin-top: var(--space-16);
+}
+
+.devhub-related .devhub-grid {
+    margin-top: var(--space-6);
+}
+
+@media (min-width: 640px) {
+    .devhub-numbers__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .devhub-numbers__grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+    .devhub-tabs__panel {
+        padding: var(--space-8);
+    }
+
+    .devhub-activity__cols {
+        grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .devhub-tabs__tab::after {
+        transition: none;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────
+   /projetos — estrutura da página (trilha, hero, números,
+   acervo, atalhos, promo e chamada final)
+───────────────────────────────────────────────────────── */
+
+.pp {
+    padding-top: calc(var(--header-height) + var(--space-6));
+}
+
+/* Monitores largos (referência: 1920×1080). O catálogo é a única página
+   que é uma grade de muitos cartões, e em 1200px ela cabia em 3 colunas
+   de ~270px — cartões espremidos. Aqui a medida cresce com a janela
+   (até --layout-xwide) para a PÁGINA INTEIRA, cabeçalho e rodapé inclusos: trocar o
+   token na raiz mantém o logotipo, o conteúdo e o rodapé na mesma
+   margem, que é a regra do site (ver pages/Links/Links.css). */
+@media (min-width: 1440px) {
+    :root:has(main.pp) {
+        --layout-max: var(--layout-wide);
+    }
+}
+
+@media (min-width: 1600px) {
+    :root:has(main.pp) {
+        /* 92% da janela, até 1720px: em 1920 sobram ~100px de cada lado
+           (além do gutter) — respiro de moldura, sem faixas vazias. */
+        --layout-max: min(var(--layout-xwide), 92vw);
+    }
+}
+
+.pp section + section,
+.pp .catalog {
+    margin-top: var(--space-16);
+}
+
+/* Sem o bloco de números, o acervo vem logo depois do hero: o respiro
+   é o padding inferior do próprio hero. */
+.pp .container > .catalog:first-child {
+    margin-top: var(--space-2);
+}
+
+/* Trilha */
+/* Hero */
+.pp-hero {
+    padding-block: var(--space-10) var(--space-12);
+}
+
+.pp-hero__grid {
+    display: grid;
+    gap: var(--space-10);
+    align-items: center;
+}
+
+.pp-hero__main {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.pp-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(var(--text-4xl), 7vw, var(--text-6xl));
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--color-text-1);
+}
+
+/* Texto justificado a partir do tablet; no celular, alinhado à
+   esquerda — em colunas estreitas a justificação abre "rios" de espaço. */
+.pp-hero__sub {
+    font-size: var(--text-md);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-2);
+    text-wrap: pretty;
+}
+
+@media (min-width: 768px) {
+    .pp-hero__sub {
+        text-align: justify;
+    }
+}
+
+.pp-hero__aside {
+    display: grid;
+    gap: var(--space-3);
+    padding-left: var(--space-6);
+    border-left: 1px solid var(--color-border-2);
+}
+
+.pp-hero__aside-eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.pp-hero__aside-quote {
+    display: grid;
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    line-height: 1.25;
+    color: var(--color-text-2);
+}
+
+.pp-hero__aside-quote strong {
+    color: var(--color-text-1);
+}
+
+.pp-hero__aside-note {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.pp-hero__aside-note span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-success);
+}
+
+@media (min-width: 960px) {
+    .pp-hero__grid {
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+    }
+}
+
+/* Cabeçalho do acervo */
+.pp-explore {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-6);
+    margin-bottom: var(--space-6);
+}
+
+.pp-explore > div {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.pp-explore__title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-1);
+}
+
+.pp-explore__captured {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+/* Busca + ordenação */
+.pp-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+}
+
+.pp-toolbar .catalog__search {
+    flex: 1 1 320px;
+}
+
+/* Atalhos */
+.pp-quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-block: var(--space-5) var(--space-8);
+}
+
+.pp-quick__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 40px;
+    padding: 0 var(--space-4);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    background: transparent;
+    color: var(--color-text-2);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition:
+        border-color 0.2s var(--ease-out),
+        background-color 0.2s var(--ease-out),
+        color 0.2s var(--ease-out);
+}
+
+.pp-quick__pill:hover:not(:disabled) {
+    border-color: var(--color-border-brand);
+    color: var(--color-text-1);
+}
+
+.pp-quick__pill[aria-pressed="true"] {
+    border-color: var(--color-border-brand);
+    background: var(--color-brand-subtle);
+    color: var(--color-text-1);
+    font-weight: 600;
+}
+
+.pp-quick__pill:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.pp-quick__count {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+/* Lateral: cabeçalho com "Limpar" e o bloco do perfil */
+.catalog__sidebar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.catalog__sidebar-head .catalog__sidebar-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--color-text-1);
+}
+
+.catalog__sidebar-clear {
+    min-height: 32px;
+    padding: 0 var(--space-2);
+    border: 0;
+    background: transparent;
+    color: var(--color-brand-text);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.catalog__sidebar-clear:disabled {
+    color: var(--color-text-3);
+    cursor: default;
+}
+
+.catalog__sidebar-clear:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+/* Resultados */
+.catalog__tag {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--ls-wider);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+/* Grade 3 × 3 (9 por página): 1 coluna no celular, 2 no tablet e
+   com a barra lateral até 1279px, 3 a partir de 1280px. Colunas fixas
+   em vez de auto-fill: a página sempre fecha linhas inteiras. */
+.catalog__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.catalog__grid > li {
+    display: flex;
+    min-width: 0;
+}
+
+.catalog__grid > li > * {
+    flex: 1;
+}
+
+@media (max-width: 599px) {
+    .catalog__tag {
+        display: none;
+    }
+}
+
+/* Chamada final */
+.pp-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding: var(--space-8);
+    background:
+        radial-gradient(
+            70% 160% at 100% 0%,
+            var(--color-brand-subtle),
+            transparent 70%
+        ),
+        var(--color-surface-2);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--surface-edge);
+}
+
+.pp-cta > div {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.pp-cta__title {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    color: var(--color-text-1);
+}
+
+.pp-cta__desc {
+    color: var(--color-text-3);
+}
+
+.pp-cta__btn {
+    gap: var(--space-2);
+}
+
+@media (min-width: 640px) {
+    .catalog__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .catalog__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
