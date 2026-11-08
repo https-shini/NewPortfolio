@@ -12,14 +12,33 @@ describe("tech — catálogo de tecnologias", () => {
         expect(lookupTech("React 18")?.name).toBe("React");
     });
 
-    it("logotipo oficial só onde o Skill Icons tem um; senão, genérico", () => {
+    it("logotipo do Skill Icons da fork para todo o catálogo", () => {
         expect(lookupTech("React")).toMatchObject({ icon: "react" });
         expect(lookupTech("TypeScript")).toMatchObject({ icon: "ts" });
-        const sc = lookupTech("styled-components");
-        expect(sc?.icon).toBeUndefined();
-        expect(sc?.generic).toBe("style");
-        expect(lookupTech("PostgreSQL")).toMatchObject({ generic: "database" });
-        expect(lookupTech("JWT")).toMatchObject({ generic: "security" });
+        expect(lookupTech("styled-components")).toMatchObject({
+            icon: "styledcomponents",
+        });
+        expect(lookupTech("PostgreSQL")).toMatchObject({ icon: "postgres" });
+        expect(lookupTech("JWT")).toMatchObject({ icon: "jwt" });
+        expect(lookupTech("Framer Motion")).toMatchObject({ icon: "motion" });
+        expect(lookupTech("golangci-lint")).toMatchObject({ icon: "golangci" });
+        expect(lookupTech("GitHub OAuth")).toMatchObject({ icon: "github" });
+    });
+
+    it("linguagens associadas mantêm o nome do GitHub e usam o ícone da fork", () => {
+        expect(lookupTech("Dockerfile")).toMatchObject({
+            name: "Dockerfile",
+            icon: "docker",
+        });
+        expect(lookupTech("Procfile")).toMatchObject({
+            name: "Procfile",
+            icon: "heroku",
+        });
+        expect(lookupTech("PLpgSQL")).toMatchObject({ icon: "postgres" });
+        expect(lookupTech("Jupyter Notebook")).toMatchObject({
+            name: "Jupyter Notebook",
+            icon: "jupyter",
+        });
     });
 
     it("desconhecido no catálogo → null", () => {
@@ -69,6 +88,7 @@ describe("tech — catálogo de tecnologias", () => {
         expect(techs.map((t) => t.name)).toEqual([
             "React",
             "Styled Components",
+            "lucide-react",
             "JavaScript",
             "HTML",
         ]);
