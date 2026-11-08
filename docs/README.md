@@ -14,6 +14,19 @@ qual era qual.
 
 ---
 
+## Na raiz de `docs/` — planejamento vivo
+
+Três documentos da análise de novembro de 2026. Ficam fora das duas pastas
+porque são o ponto de entrada do planejamento técnico: mudam a cada fase
+concluída, e por isso não são `reference/`; não descrevem um processo, e por
+isso não são `guides/`.
+
+| documento                                                            | o que responde                                                       |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| [`ANALISE_E_PLANO_DE_MELHORIAS.md`](ANALISE_E_PLANO_DE_MELHORIAS.md) | diagnóstico, problemas com evidência (`P-NN`) e melhorias (`MEL-NN`) |
+| [`ROADMAP_DE_IMPLEMENTACAO.md`](ROADMAP_DE_IMPLEMENTACAO.md)         | tarefas em 8 fases, ordem, critérios de conclusão e estratégia       |
+| [`INVENTARIO_TECNICO.md`](INVENTARIO_TECNICO.md)                     | tecnologias, módulos, funções, variáveis, integrações e portões      |
+
 ## `guides/` — vivo
 
 | documento                                                   | o que responde                                                         |
