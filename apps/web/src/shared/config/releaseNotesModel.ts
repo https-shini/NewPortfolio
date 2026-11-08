@@ -128,3 +128,14 @@ export type ReleaseTag = "design" | "feature" | "perf" | "a11y" | "fix";
    o que a especificação prevê para versões que antecedem uma
    release. As datas vêm do histórico real do repositório.
 ───────────────────────────────────────────────────────── */
+
+/**
+ * Tags presentes nas entradas, sem repetição e na ordem em que aparecem.
+ *
+ * Mora no modelo, que não importa dados: havia duas cópias — uma em
+ * `releaseNotes.ts` (scripts e testes) e outra em `releaseNotesClient.ts`
+ * (navegador) —, com implementações diferentes para a mesma regra.
+ */
+export function getUsedTags(entries: readonly ReleaseEntry[]): ReleaseTag[] {
+    return [...new Set(entries.flatMap((entry) => entry.tags ?? []))];
+}

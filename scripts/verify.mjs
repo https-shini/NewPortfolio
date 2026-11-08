@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { PORTOES_ESTATICOS, PORTOES_NAVEGADOR } from "./portoes.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const npmCli = process.env.npm_execpath;
@@ -17,40 +18,14 @@ function npm(args, env = process.env) {
         throw new Error(`Verificação falhou: npm ${args.join(" ")}`);
 }
 try {
-    for (const script of [
-        "lint",
-        "lint:api",
-        "type-check",
-        "type-check:api",
-        "format:check",
-        "test",
-        "icones:check",
-        "imagens:check",
-        "changelog:check",
-        "build",
-        "csp:check",
-        "audit:bundle",
-    ])
-        npm(["run", script]);
+    for (const script of PORTOES_ESTATICOS) npm(["run", script]);
     npm(["audit", "--audit-level=low"]);
     if (process.argv.includes("--browser")) {
         const { startPreview } = await import("./lib/browser.mjs");
         const preview = await startPreview();
         try {
             const env = { ...process.env, BASE_URL: preview.url };
-            for (const script of [
-                "audit:a11y",
-                "audit:overflow",
-                "audit:layers",
-                "audit:identity",
-                "audit:release-notes",
-                "audit:not-found",
-                "audit:linkedin",
-                "audit:codex",
-                "audit:contato",
-                "audit:modals",
-            ])
-                npm(["run", script], env);
+            for (const script of PORTOES_NAVEGADOR) npm(["run", script], env);
         } finally {
             await preview.stop();
         }

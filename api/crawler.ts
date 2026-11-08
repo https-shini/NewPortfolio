@@ -1,6 +1,7 @@
 import { RELEASE_NOTES } from "./_releaseNotes.js";
 import { fetchGithubReleases } from "./_releases.js";
 import { mergeReleaseNotes } from "../apps/web/src/shared/lib/mergeReleaseNotes.js";
+import textos from "../apps/web/src/shared/lib/translations.json" with { type: "json" };
 
 /* ─────────────────────────────────────────────────────────
    /api/crawler — HTML com as meta tags certas por rota
@@ -91,6 +92,32 @@ async function resolverMeta(pathname: string): Promise<Meta> {
             descricao:
                 "Fale com Guilherme Cruz — e-mail, LinkedIn, GitHub e central de links, com tempo de resposta e localização.",
             url: `${SITE_URL}/contato`,
+        };
+    }
+
+    /* O acervo de projetos. Título e descrição vêm do MESMO texto que a
+       página usa em `useDocumentMeta` (translations.json), para o cartão
+       de compartilhamento e a aba do navegador não divergirem. */
+    if (/^\/projetos\/?$/.test(pathname)) {
+        return {
+            ...PADRAO,
+            titulo: `${textos.pt["devhub.title"]} — ${AUTHOR}`,
+            descricao: textos.pt["devhub.meta.description"],
+            url: `${SITE_URL}/projetos`,
+        };
+    }
+
+    /* Um repositório. O nome vem da URL: só o formato que o GitHub
+       aceita para nome de repositório entra no texto; o resto cai no
+       cartão padrão, como uma versão desconhecida. Não há busca ao
+       GitHub aqui — o cartão não pode depender da cota da API. */
+    const repo = /^\/projetos\/([A-Za-z0-9._-]{1,100})\/?$/.exec(pathname)?.[1];
+    if (repo) {
+        return {
+            ...PADRAO,
+            titulo: `${repo} — ${textos.pt["devhub.title"]} — ${AUTHOR}`,
+            descricao: `Projeto ${repo} no acervo de ${AUTHOR}: descrição, tecnologias, atividade e README, direto do GitHub.`,
+            url: `${SITE_URL}/projetos/${repo}`,
         };
     }
 

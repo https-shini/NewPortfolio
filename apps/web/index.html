@@ -5,11 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <!-- ── SEO primário ───────────────────────────────────────────
-          As fichas `__ROTA_*__` são preenchidas por rota em
-          `rotaHtmlPlugin` (vite.config.ts). Cada rota é servida por um
-          documento próprio, então título, descrição e canônica chegam
-          certos no HTML — antes, vinham os da home para todo mundo e só
-          o `useDocumentMeta` corrigia, depois do JavaScript. -->
+          As fichas `__ROTA_*__` são preenchidas no build com os dados da
+          home por `fillHomeMetadata` (apps/web/config/homeMetadata.ts,
+          chamado em vite.config.ts). As outras rotas corrigem título,
+          descrição e canônica com `useDocumentMeta`; para rastreadores de
+          redes sociais, que não rodam JavaScript, `api/crawler.ts` serve
+          HTML com as meta tags certas de cada rota. -->
         <title>__ROTA_TITULO__</title>
         <meta name="description" content="__ROTA_DESCRICAO__" />
         <meta name="author" content="Guilherme Cruz" />
