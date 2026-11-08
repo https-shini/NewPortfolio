@@ -58,14 +58,15 @@ O repositório é um monorepo npm simples:
 
 ## 📌 Status atual
 
-| Item                  | Situação                                                                                                                                                                       |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Versão                | `2.0.0` (em produção)                                                                                                                                                          |
-| Manutenção            | Ativa                                                                                                                                                                          |
-| CI                    | GitHub Actions em todo push e PR para `main` (`.github/workflows/ci.yml`)                                                                                                      |
-| CSP                   | Em modo `Report-Only`. Já validada como bloqueante no navegador (fontes, tema e rotas sem violação); falta observar os relatórios de produção antes de aplicá-la               |
-| Formulário de contato | Código pronto; só aparece quando `VITE_FORM_ENDPOINT` está configurada                                                                                                         |
-| Pontos em aberto      | Diagnóstico e plano em [`docs/ANALISE_E_PLANO_DE_MELHORIAS.md`](docs/ANALISE_E_PLANO_DE_MELHORIAS.md) e [`docs/ROADMAP_DE_IMPLEMENTACAO.md`](docs/ROADMAP_DE_IMPLEMENTACAO.md) |
+| Item                  | Situação                                                                                                                                                                                                                                                                                 |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Versão                | `2.0.0` (em produção)                                                                                                                                                                                                                                                                    |
+| Manutenção            | Ativa                                                                                                                                                                                                                                                                                    |
+| CI                    | GitHub Actions em todo push e PR para `main` (`.github/workflows/ci.yml`)                                                                                                                                                                                                                |
+| CSP                   | Em modo `Report-Only`. Já validada como bloqueante no navegador (fontes, tema e rotas sem violação); falta observar os relatórios de produção antes de aplicá-la                                                                                                                         |
+| Dependências          | `npm audit` com 9 alertas moderados em aberto (duas cadeias: `satori` via `@vercel/og`, e `minimatch` via `typescript-eslint`), sem correção compatível publicada — análise, risco real e condição de fechamento em [`docs/guides/vulnerabilidades.md`](docs/guides/vulnerabilidades.md) |
+| Formulário de contato | Código pronto; só aparece quando `VITE_FORM_ENDPOINT` está configurada                                                                                                                                                                                                                   |
+| Pontos em aberto      | Diagnóstico e plano em [`docs/ANALISE_E_PLANO_DE_MELHORIAS.md`](docs/ANALISE_E_PLANO_DE_MELHORIAS.md) e [`docs/ROADMAP_DE_IMPLEMENTACAO.md`](docs/ROADMAP_DE_IMPLEMENTACAO.md)                                                                                                           |
 
 ---
 
