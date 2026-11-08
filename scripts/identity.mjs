@@ -88,7 +88,7 @@ const ALVOS = {
         ".formation-card",
         ".featured__capability",
         ".contact__cta-card",
-        ".featured__gallery",
+        ".featured__window",
         ".featured__arrow",
         ".btn--primary",
         ".btn--outline",

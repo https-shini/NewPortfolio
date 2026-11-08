@@ -157,27 +157,21 @@ try {
             );
             const feature = page.locator("#destaque");
             await feature.scrollIntoViewIfNeeded();
-            assert.equal(
-                await feature.locator(".featured__thumbnail").count(),
-                4,
-            );
-            await feature.locator(".featured__thumbnail").nth(2).click();
+            assert.equal(await feature.locator(".featured__tab").count(), 4);
+            await feature.locator(".featured__tab").nth(2).click();
             assert.equal(
                 await feature
-                    .locator(".featured__thumbnail")
+                    .locator(".featured__tab")
                     .nth(2)
-                    .getAttribute("aria-pressed"),
+                    .getAttribute("aria-selected"),
                 "true",
             );
-            await feature
-                .locator(".featured__thumbnail")
-                .nth(2)
-                .press("ArrowRight");
+            await feature.locator(".featured__tab").nth(2).press("ArrowRight");
             assert.equal(
                 await feature
-                    .locator(".featured__thumbnail")
+                    .locator(".featured__tab")
                     .nth(3)
-                    .getAttribute("aria-pressed"),
+                    .getAttribute("aria-selected"),
                 "true",
             );
             for (const arrow of await feature
@@ -192,14 +186,12 @@ try {
             await feature.locator(".featured__arrow").last().click();
             assert.equal(
                 await feature
-                    .locator(".featured__thumbnail")
+                    .locator(".featured__tab")
                     .first()
-                    .getAttribute("aria-pressed"),
+                    .getAttribute("aria-selected"),
                 "true",
             );
-            const featureTrigger = feature.locator(
-                ".featured__slide.is-active .featured__slide-trigger",
-            );
+            const featureTrigger = feature.locator(".featured__shot");
             await featureTrigger.click();
             await page.getByRole("dialog").waitFor();
             await page.keyboard.press("Escape");
