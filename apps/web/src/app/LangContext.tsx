@@ -6,6 +6,7 @@ import React, {
     useEffect,
 } from "react";
 import { LANG_KEY } from "@/shared/config/constants";
+import { gravarPreferencia, lerPreferencia } from "@/shared/lib/storage";
 import { LANG_PARAM, DEFAULT_LANG } from "@/shared/config/routes";
 import {
     type Lang,
@@ -45,16 +46,14 @@ function langFromSearch(search: string): Lang | null {
 }
 
 function getInitialLang(): Lang {
-    /* No build não há navegador: a pré-renderização da home roda este
-       componente em Node, e `window` não existe. Ali vale o padrão — que é
-       exatamente o que o HTML gerado precisa declarar. Quem chega com outro
-       idioma recebe a correção na hidratação. */
+    /* Sem `window` (testes em Node, ferramentas de build) vale o padrão,
+       que é o idioma que o index.html já declara. */
     if (typeof window === "undefined") return DEFAULT_LANG;
 
     const daUrl = langFromSearch(window.location.search);
     if (daUrl) return daUrl;
 
-    const salvo = localStorage.getItem(LANG_KEY);
+    const salvo = lerPreferencia(LANG_KEY);
     if (isLang(salvo)) return salvo;
 
     return navigator.language?.toLowerCase().startsWith("en") ? "en" : "pt";
@@ -125,7 +124,7 @@ export const LangProvider: React.FC<{ children: React.ReactNode }> = ({
     const toggleLang = useCallback(() => {
         setLang((prev) => {
             const next: Lang = prev === "pt" ? "en" : "pt";
-            localStorage.setItem(LANG_KEY, next);
+            gravarPreferencia(LANG_KEY, next);
             return next;
         });
     }, []);

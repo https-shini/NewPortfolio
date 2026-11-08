@@ -148,7 +148,10 @@
         <!-- Tema inline — evita flash (FOUC) antes do React montar -->
         <script>
             (function () {
-                var saved = localStorage.getItem("portfolio-theme");
+                var saved = null;
+                try {
+                    saved = localStorage.getItem("portfolio-theme");
+                } catch (e) {}
                 var dark =
                     saved === "dark" ||
                     (!saved &&

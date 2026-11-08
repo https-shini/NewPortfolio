@@ -38,6 +38,7 @@ import {
 } from "react";
 import type React from "react";
 import { THEME_KEY } from "@/shared/config/constants";
+import { gravarPreferencia, lerPreferencia } from "@/shared/lib/storage";
 
 export type Theme = "dark" | "light";
 
@@ -53,17 +54,12 @@ interface ThemeContextValue {
 
 /** Lê o tema inicial na ordem: localStorage → prefers-color-scheme → 'dark' */
 function getInitialTheme(): Theme {
-    /* Mesma razão do idioma em LangContext: durante a pré-renderização não
-       há `localStorage` nem `matchMedia`. O escuro é o padrão do site — é o
-       que o <body class="dark-mode"> do index.html já declara. */
+    /* Sem `window` (testes em Node, ferramentas de build) vale o escuro,
+       que é o padrão do site — o <body class="dark-mode"> do index.html. */
     if (typeof window === "undefined") return "dark";
 
-    try {
-        const saved = localStorage.getItem(THEME_KEY) as Theme | null;
-        if (saved === "dark" || saved === "light") return saved;
-    } catch {
-        /* localStorage pode lançar em contextos restritos (iframe, etc.) */
-    }
+    const saved = lerPreferencia(THEME_KEY);
+    if (saved === "dark" || saved === "light") return saved;
     return window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
@@ -111,11 +107,7 @@ function applyTheme(theme: Theme): void {
  * `prefers-color-scheme` abaixo (nunca haveria "sem preferência salva").
  */
 function persistTheme(theme: Theme): void {
-    try {
-        localStorage.setItem(THEME_KEY, theme);
-    } catch {
-        /* silencioso — tema ainda funciona sem persistência */
-    }
+    gravarPreferencia(THEME_KEY, theme);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -141,12 +133,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
         const mq = window.matchMedia("(prefers-color-scheme: dark)");
 
         const handler = (e: MediaQueryListEvent) => {
-            try {
-                if (!localStorage.getItem(THEME_KEY)) {
-                    setTheme(e.matches ? "dark" : "light");
-                }
-            } catch {
-                /* localStorage indisponível — ignora */
+            if (!lerPreferencia(THEME_KEY)) {
+                setTheme(e.matches ? "dark" : "light");
             }
         };
 
