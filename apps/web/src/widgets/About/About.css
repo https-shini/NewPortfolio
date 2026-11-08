@@ -62,7 +62,8 @@
 
 /* Parágrafos de texto corrido */
 .about__text {
-    text-align: justify;
+    text-align: start;
+    text-wrap: pretty;
     font-size: var(--text-md);
     line-height: var(--lh-relaxed);
     color: var(--color-text-3);
@@ -258,7 +259,8 @@
 
 /* ── Descrição ───────────────────────────────── */
 .spec-card__desc {
-    text-align: justify;
+    text-align: start;
+    text-wrap: pretty;
     font-size: var(--text-sm);
     color: var(--color-text-3);
     line-height: var(--lh-relaxed);
@@ -317,7 +319,8 @@
     font-size: var(--text-md);
     line-height: var(--lh-relaxed);
     color: var(--color-text-3);
-    text-align: justify;
+    text-align: start;
+    text-wrap: pretty;
 }
 
 /* strong dentro do objetivo */

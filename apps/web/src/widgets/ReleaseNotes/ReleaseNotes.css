@@ -11,7 +11,7 @@
    duas carregam este arquivo — é o que evita a duplicação. */
 .release-page {
     /* Compensa o header fixo. */
-    padding-top: calc(var(--header-height) + var(--section-pad-y));
+    padding-top: var(--page-pad-top);
     padding-bottom: var(--section-pad-y);
     min-height: 100dvh;
 }
@@ -64,6 +64,15 @@
     letter-spacing: var(--ls-snug);
     line-height: var(--lh-tight);
     color: var(--color-text-1);
+}
+
+/* Como título DA PÁGINA (/release-notes) segue a escala das páginas
+   internas; dentro de outra superfície continua no tamanho de seção. */
+.release-page .release-notes__title {
+    font-size: var(--page-title-size);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
 }
 
 .release-notes__subtitle {

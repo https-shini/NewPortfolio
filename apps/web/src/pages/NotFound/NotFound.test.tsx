@@ -1,5 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { act, render, screen, within, fireEvent } from "@testing-library/react";
+import {
+    act,
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+    within,
+} from "@testing-library/react";
 import { Providers } from "@/app/providers";
 import { Routes } from "@/app/routes";
 import { NOT_FOUND_COPY } from "@/shared/config/notFound";
@@ -39,7 +46,10 @@ describe("página 404", () => {
         expect(window.location.pathname).toBe("/caminho/que/nao/existe");
         expect(document.getElementById("site-header")).toBeInTheDocument();
         expect(screen.getByRole("contentinfo")).toBeInTheDocument();
-        expect(document.title).toContain("404");
+        /* O título vem de um efeito (useDocumentMeta) que roda depois de a
+           página lazy aparecer; sob carga, a asserção síncrona via o
+           título ainda vazio. Esperar é o contrato real. */
+        await waitFor(() => expect(document.title).toContain("404"));
         expect(
             document.head.querySelector('meta[name="robots"]'),
         ).toHaveAttribute("content", "noindex, follow");

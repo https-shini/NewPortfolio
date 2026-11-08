@@ -201,7 +201,8 @@
     font-size: var(--text-lg);
     line-height: var(--lh-relaxed);
     color: var(--color-text-3);
-    text-align: justify;
+    text-align: start;
+    text-wrap: pretty;
     text-wrap: balance;
 }
 
