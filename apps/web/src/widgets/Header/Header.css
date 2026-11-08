@@ -537,9 +537,12 @@
     font-family: var(--font-mono, "JetBrains Mono", monospace);
     font-size: var(--text-xs);
     font-weight: 400;
-    color: var(--color-brand);
+    /* Texto na cor da marca pede --color-brand-text (tokens.css). Era
+       --color-brand a 70% de opacidade: 2,48:1 sobre o fundo escuro, abaixo
+       do AA. O axe só conseguia medir em /contato, onde o fundo atrás do
+       menu é liso; nas outras rotas o resultado saía "inconclusivo". */
+    color: var(--color-brand-text);
     letter-spacing: 0.1em;
-    opacity: 0.7;
     align-self: center;
 }
 

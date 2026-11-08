@@ -195,6 +195,13 @@
 .codex__prose > p + p {
     margin-top: var(--space-5);
 }
+/* Medida de leitura: as colunas desta página crescem com o container do
+   site (tokens.css), os parágrafos e as listas param em ~82 caracteres. */
+.codex__prose > p,
+.codex__callout p,
+.codex__list {
+    max-width: var(--measure-wide);
+}
 .codex__callout {
     border-left: 2px solid var(--color-accent);
     background: var(--color-accent-subtle);
