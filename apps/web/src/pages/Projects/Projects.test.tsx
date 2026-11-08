@@ -49,17 +49,12 @@ const montar = (respostas: Record<string, unknown> = { index: INDICE }) => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("/projetos", () => {
-    it("trilha, h1 e números calculados da coleta (sem forks)", async () => {
+    it("h1 e números calculados da coleta (sem forks)", async () => {
         montar({ index: INDICE, pinned: FIXADOS });
-        const trilha = screen.getByRole("navigation", {
-            name: "Trilha de navegação",
-        });
         expect(
-            within(trilha).getByRole("link", { name: "Início" }),
-        ).toHaveAttribute("href", "/");
-        expect(
-            screen.getByRole("heading", { level: 1, name: /Projetos/ }),
+            screen.getByRole("heading", { level: 1, name: "Projetos" }),
         ).toBeInTheDocument();
+        expect(screen.getByText("Acervo de projetos")).toBeInTheDocument();
         const numeros = screen.getByRole("region", {
             name: "O acervo em números",
         });
