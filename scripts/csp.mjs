@@ -61,6 +61,22 @@ function scriptsInline(html) {
     return achados;
 }
 
+/**
+ * Atributos de evento inline (`onload="…"`, `onclick="…"`).
+ *
+ * Hash em `script-src` NÃO os libera sozinho: a CSP3 exige também a
+ * palavra-chave `'unsafe-hashes'`. Antes este script nem os enxergava —
+ * o `csp:check` passava enquanto o `onload` do carregamento de fontes
+ * seria bloqueado no dia em que a política deixasse de ser Report-Only,
+ * e as fontes nunca sairiam de `media="print"`.
+ */
+function handlersInline(html) {
+    const achados = [];
+    const re = /<[a-z][^>]*?\son[a-z]+\s*=\s*("([^"]*)"|'([^']*)')/gi;
+    for (const m of html.matchAll(re)) achados.push(hashDe(m[2] ?? m[3]));
+    return achados;
+}
+
 const documentos = readdirSync(DIST, { recursive: true })
     .filter((file) => typeof file === "string" && file.endsWith(".html"))
     .sort();
@@ -71,10 +87,16 @@ if (!documentos.length) {
     process.exit(1);
 }
 
-const porDocumento = documentos.map((f) => ({
-    documento: f,
-    hashes: scriptsInline(readFileSync(new URL(f, DIST), "utf8")),
-}));
+const porDocumento = documentos.map((f) => {
+    const html = readFileSync(new URL(f, DIST), "utf8");
+    const handlers = handlersInline(html);
+    return {
+        documento: f,
+        handlers,
+        hashes: [...scriptsInline(html), ...handlers],
+    };
+});
+const temHandler = porDocumento.some((d) => d.handlers.length);
 
 /* Todos os documentos nascem do mesmo modelo — o bootstrap de tema é
    idêntico nos três. Se algum dia divergirem, a CSP precisa do conjunto
@@ -109,10 +131,18 @@ for (const { documento, hashes } of porDocumento) {
     console.log(`  ${ok ? "ok  " : "FALHA"}  ${documento}`);
 }
 
-if (faltando.length || sobrando.length) {
+const semUnsafeHashes = temHandler && !vercel.includes("'unsafe-hashes'");
+
+if (faltando.length || sobrando.length || semUnsafeHashes) {
     console.error("\nA CSP do vercel.json não corresponde ao dist/.\n");
     faltando.forEach((h) => console.error(`  FALTA no vercel.json:   '${h}'`));
     sobrando.forEach((h) => console.error(`  SOBRA no vercel.json:   '${h}'`));
+    if (semUnsafeHashes) {
+        console.error(
+            "  FALTA no vercel.json:   'unsafe-hashes' (há atributo de evento inline;\n" +
+                "                          sem a palavra-chave, o hash dele é ignorado)",
+        );
+    }
     console.error(
         "\nO script inline de bootstrap de tema mudou. Sem o hash certo, o\n" +
             "navegador o bloqueia e o site abre no tema errado.\n\n" +

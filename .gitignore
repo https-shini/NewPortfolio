@@ -7,27 +7,3 @@ dist/
 .DS_Store
 Thumbs.db
 *.log
-
-# Artefatos de empacotamento do desktop — vão para a GitHub Release,
-# nunca para o repositório (o AppImage sozinho tem 106 MB).
-apps/desktop/release/
-
-# Projeto Android gerado por `cap add android` — grande e derivado.
-apps/mobile/android/
-apps/mobile/ios/
-
-# Saída intermediária da pré-renderização (scripts/prerender.mjs).
-# O script a apaga ao terminar; isto cobre o build interrompido no meio.
-.prerender/
-
-# Documentos por rota — derivados do index.html em build.
-# Ver `rotaHtmlPlugin` em apps/web/vite.config.ts.
-#
-# Enumerados um por um, e não por padrão: `apps/web/*.html` esconderia o
-# index.html, que é a FONTE. Rota nova pede uma linha aqui — senão o build
-# passa a sujar a árvore de trabalho.
-apps/web/contato.html
-apps/web/links.html
-apps/web/release-notes.html
-apps/web/build/
-.maestri/

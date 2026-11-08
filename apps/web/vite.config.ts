@@ -100,7 +100,6 @@ function sitemapPlugin() {
             const { RELEASE_NOTES } =
                 await import("./src/shared/config/releaseNotes.ts");
             const {
-                SECTION_IDS,
                 releaseNotePath,
                 releaseNotesPagePath,
                 RELEASE_NOTES_PAGE_SIZE,
@@ -177,15 +176,10 @@ function sitemapPlugin() {
                 },
             ];
 
-            /* Âncoras da home — geradas de SECTION_IDS, não copiadas. */
-            for (const id of Object.values(SECTION_IDS)) {
-                entries.push({
-                    loc: `${SITE_URL}/#${id}`,
-                    lastmod: homeDate,
-                    changefreq: "monthly",
-                    priority: "0.8",
-                });
-            }
+            /* As seções da home (`/#sobre`, `/#carreira`…) NÃO entram: o
+               fragmento não é URL distinta para buscador, e as oito
+               entradas que existiam aqui só repetiam a home com outra
+               prioridade. A home já está listada acima. */
 
             /* Índice paginado: a página 1 é o próprio /release-notes, já
                listado acima, então o laço começa na 2. Com o histórico
@@ -223,7 +217,7 @@ function sitemapPlugin() {
                 '<?xml version="1.0" encoding="UTF-8"?>',
                 "<!--",
                 `    Gerado no build por vite.config.ts — não editar à mão.`,
-                `    As datas vêm do git; as âncoras, de SECTION_IDS.`,
+                `    As datas vêm do git.`,
                 "-->",
                 '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
                 '        xmlns:xhtml="http://www.w3.org/1999/xhtml">',

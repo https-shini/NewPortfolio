@@ -1,6 +1,7 @@
-/* Documento da home — e destino de qualquer rota desconhecida. O import
-   estático da página é o que a prende ao grafo deste documento; ver
-   `entradas/comum.tsx` para o porquê de haver uma entrada por rota. */
+/* Entrada dos dois documentos do build (index.html e a página do Codex).
+   A home entra por import estático porque é o destino da maioria das
+   visitas; as demais páginas são lazy (app/routes.tsx). Ver
+   `entradas/comum.tsx`. */
 import "@/pages/Home";
 import { montar } from "./entradas/comum";
 
