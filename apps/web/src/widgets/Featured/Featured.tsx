@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useId, useRef, useState } from "react";
+import React, { lazy, Suspense, useRef, useState } from "react";
 import "./Featured.css";
 import { useLang } from "@/shared/hooks/useLang";
 import {
@@ -22,13 +22,12 @@ import { FEATURED_PROJECT as project } from "./Featured.data";
    ─────────────────────────────────────────────────────────
    Mesma linguagem de /projetos: painel com a linha de terminal do
    cartão (`$ cd ~/codex`), chips de tecnologia com ícone oficial
-   (TechList) e a janela de navegador do panorama do GitHub, em que
-   cada captura é uma ABA.
+   (TechList) e a janela de navegador do panorama do GitHub, com uma
+   aba única do projeto e um carrossel MANUAL das capturas.
 
-   Abas no lugar do carrossel automático: o visitante escolhe o que
-   ver (WCAG 2.2.2, nada se move sozinho), a navegação existe uma vez
-   só (abas + setas na legenda) e o padrão é o mesmo do panorama —
-   ←/→/Home/End nas abas, foco itinerante.
+   Nada se move sozinho (WCAG 2.2.2): setas anterior/próxima
+   circulares, ←/→ com o carrossel em foco, gesto horizontal no toque
+   e legenda anunciada com aria-live="polite".
 ───────────────────────────────────────────────────────── */
 
 const FeaturedLightbox = lazy(() =>
@@ -60,43 +59,21 @@ export function Featured() {
     const { lang, t } = useLang();
     const [atual, setAtual] = useState(0);
     const [ampliada, setAmpliada] = useState<number | null>(null);
-    const abas = useRef<(HTMLButtonElement | null)[]>([]);
     const toque = useRef<{ x: number; y: number } | null>(null);
-    const base = useId();
     const slides = project.slides;
     const slide = slides[atual]!;
     const total = slides.length;
     const detailsUrl =
         lang === "en" ? `${project.detailsUrl}?lang=en` : project.detailsUrl;
 
-    const ir = (indice: number, focar = false) => {
-        const alvo = (indice + total) % total;
-        setAtual(alvo);
-        if (focar) abas.current[alvo]?.focus();
-    };
+    const ir = (indice: number) => setAtual((indice + total) % total);
 
-    const aoTeclarAba = (e: React.KeyboardEvent, i: number) => {
-        const destino =
-            e.key === "ArrowRight"
-                ? i + 1
-                : e.key === "ArrowLeft"
-                  ? i - 1
-                  : e.key === "Home"
-                    ? 0
-                    : e.key === "End"
-                      ? total - 1
-                      : null;
-        if (destino === null) return;
+    /* ←/→ com o carrossel (ou um controle dele) em foco. */
+    const aoTeclar = (e: React.KeyboardEvent) => {
+        if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
         e.preventDefault();
-        ir(destino, true);
+        ir(atual + (e.key === "ArrowLeft" ? -1 : 1));
     };
-
-    const fatos: [string, string][] = [
-        [t("featured.fact.context"), t("featured.fact.contextValue")],
-        [t("featured.fact.approach"), t("featured.fact.approachValue")],
-        [t("featured.fact.languages"), t("featured.fact.languagesValue")],
-        [t("featured.fact.score"), t("featured.fact.scoreValue")],
-    ];
 
     return (
         <section
@@ -135,15 +112,6 @@ export function Featured() {
                     </ul>
                 </header>
 
-                <dl className="featured__facts">
-                    {fatos.map(([rotulo, valor]) => (
-                        <div key={rotulo} className="featured__fact">
-                            <dt>{rotulo}</dt>
-                            <dd>{valor}</dd>
-                        </div>
-                    ))}
-                </dl>
-
                 <div className="featured__layout">
                     <article
                         className="featured__story"
@@ -161,6 +129,20 @@ export function Featured() {
                         </h3>
                         <p className="featured__desc">{t("featured.body")}</p>
 
+                        <div className="featured__summary">
+                            <p className="featured__label">
+                                {t("featured.summary.label")}
+                            </p>
+                            <p className="featured__score">
+                                <strong>0–1000</strong>
+                                <span>{t("featured.summary.scoreText")}</span>
+                            </p>
+                            <p className="featured__langs">
+                                <span>{t("featured.summary.languages")}</span>{" "}
+                                {t("featured.summary.languagesValue")}
+                            </p>
+                        </div>
+
                         <div className="featured__stack">
                             <p className="featured__label" aria-hidden="true">
                                 {t("featured.stack")}
@@ -172,17 +154,9 @@ export function Featured() {
                         </div>
 
                         <div className="featured__actions">
-                            <a href={detailsUrl} className="btn btn--primary">
-                                {t("featured.cta.details")}
-                                <IconArrowRight
-                                    width={16}
-                                    height={16}
-                                    aria-hidden="true"
-                                />
-                            </a>
                             <a
                                 href={project.liveUrl}
-                                className="btn btn--outline"
+                                className="btn btn--primary"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
@@ -195,6 +169,14 @@ export function Featured() {
                                 <span className="sr-only">
                                     {t("featured.newTab")}
                                 </span>
+                            </a>
+                            <a href={detailsUrl} className="btn btn--outline">
+                                {t("featured.cta.details")}
+                                <IconArrowRight
+                                    width={16}
+                                    height={16}
+                                    aria-hidden="true"
+                                />
                             </a>
                         </div>
                     </article>
@@ -210,42 +192,9 @@ export function Featured() {
                                     <span />
                                     <span />
                                 </span>
-                                <div
-                                    className="featured__tabs"
-                                    role="tablist"
-                                    aria-label={t("featured.gallery.label")}
-                                >
-                                    {slides.map((item, i) => (
-                                        <button
-                                            key={item.src}
-                                            ref={(el) => {
-                                                abas.current[i] = el;
-                                            }}
-                                            type="button"
-                                            role="tab"
-                                            id={`${base}-tab-${i}`}
-                                            className="featured__tab"
-                                            aria-selected={atual === i}
-                                            aria-controls={`${base}-panel`}
-                                            tabIndex={atual === i ? 0 : -1}
-                                            onClick={() => ir(i)}
-                                            onKeyDown={(e) => aoTeclarAba(e, i)}
-                                        >
-                                            <span
-                                                className="featured__tab-index"
-                                                aria-hidden="true"
-                                            >
-                                                {dois(i + 1)}
-                                            </span>
-                                            <span
-                                                className="featured__tab-label"
-                                                title={item.label[lang]}
-                                            >
-                                                {item.label[lang]}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
+                                <span className="featured__tab">
+                                    {project.name.replace(" — ", " ")}
+                                </span>
                             </div>
 
                             <div className="featured__toolbar">
@@ -277,9 +226,11 @@ export function Featured() {
 
                             <div
                                 className="featured__panel"
-                                role="tabpanel"
-                                id={`${base}-panel`}
-                                aria-labelledby={`${base}-tab-${atual}`}
+                                role="region"
+                                aria-roledescription={t("featured.carousel")}
+                                aria-label={t("featured.gallery.label")}
+                                tabIndex={0}
+                                onKeyDown={aoTeclar}
                             >
                                 <button
                                     key={slide.src}
@@ -326,10 +277,15 @@ export function Featured() {
                                 </button>
 
                                 <div className="featured__caption">
-                                    <div className="featured__caption-text">
+                                    <div
+                                        className="featured__caption-text"
+                                        aria-live="polite"
+                                        aria-atomic="true"
+                                    >
                                         <span className="featured__counter">
                                             {dois(atual + 1)} / {dois(total)}
                                         </span>
+                                        <strong>{slide.label[lang]}</strong>
                                         <p>
                                             {slide.description?.[lang] ??
                                                 slide.sub[lang]}
@@ -372,6 +328,14 @@ export function Featured() {
                     </div>
                 </div>
 
+                <div className="featured__features-head">
+                    <p className="section-eyebrow">
+                        {t("featured.features.eyebrow")}
+                    </p>
+                    <h3 className="featured__features-title">
+                        {t("featured.features.title")}
+                    </h3>
+                </div>
                 <ul
                     className="featured__capabilities"
                     aria-label={t("featured.capabilities")}
@@ -397,8 +361,13 @@ export function Featured() {
                                         {dois(i + 1)}
                                     </span>
                                 </div>
-                                <h3>{item.title[lang]}</h3>
-                                <p>{item.text[lang]}</p>
+                                <h4>{item.title[lang]}</h4>
+                                <p>{item.summary[lang]}</p>
+                                <ul className="featured__capability-list">
+                                    {item.details.map((d) => (
+                                        <li key={d.pt}>{d[lang]}</li>
+                                    ))}
+                                </ul>
                             </li>
                         );
                     })}

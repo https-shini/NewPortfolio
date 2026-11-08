@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import {
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+    within,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LangProvider } from "@/app/LangContext";
 import { Featured } from "./Featured";
@@ -7,11 +13,12 @@ import { FEATURED_PROJECT } from "./Featured.data";
 import { LANG_KEY } from "@/shared/config/constants";
 
 /**
- * A galeria é uma janela com abas, no padrão do panorama do GitHub:
- * nada se move sozinho, cada captura é uma aba (←/→/Home/End com foco
- * itinerante) e as setas da legenda são circulares.
+ * Janela com uma aba única do projeto e um carrossel MANUAL das
+ * capturas: setas circulares, ←/→ com o carrossel em foco, gesto
+ * horizontal no toque e legenda anunciada (aria-live).
  */
 const SLIDES = FEATURED_PROJECT.slides;
+const N = SLIDES.length;
 
 const montar = (lang: "pt" | "en" = "pt") => {
     localStorage.setItem(LANG_KEY, lang);
@@ -22,117 +29,142 @@ const montar = (lang: "pt" | "en" = "pt") => {
     );
 };
 
-const abas = () => screen.getAllByRole("tab");
-const ativa = () =>
-    abas().findIndex((a) => a.getAttribute("aria-selected") === "true");
+const carrossel = () =>
+    screen.getByRole("region", { name: "Capturas do projeto" });
+const contador = (i: number) => `0${i} / 0${N}`;
 
-describe("Featured — janela com abas", () => {
-    it("uma aba por captura; a primeira começa ativa e ligada ao painel", () => {
-        montar();
-        expect(abas()).toHaveLength(SLIDES.length);
-        expect(ativa()).toBe(0);
-        const painel = screen.getByRole("tabpanel");
-        expect(painel).toHaveAttribute("aria-labelledby", abas()[0]!.id);
-        expect(abas()[0]).toHaveAttribute("aria-controls", painel.id);
-        expect(abas()[1]).toHaveAttribute("tabindex", "-1");
-    });
-
-    it("clicar numa aba troca a captura e a legenda", async () => {
+describe("Featured — aba única e carrossel", () => {
+    it("aba única do projeto e navegação circular pelas setas", async () => {
         const user = userEvent.setup();
         montar();
-        await user.click(abas()[2]!);
-        expect(ativa()).toBe(2);
-        expect(screen.getByText(`03 / 0${SLIDES.length}`)).toBeInTheDocument();
-        expect(
-            screen.getByRole("img", { name: new RegExp(SLIDES[2]!.label.pt) }),
-        ).toBeInTheDocument();
-    });
+        expect(screen.queryAllByRole("tab")).toHaveLength(0);
+        expect(screen.getByText("Codex Code Validator")).toBeInTheDocument();
+        expect(carrossel()).toHaveAttribute(
+            "aria-roledescription",
+            "carrossel",
+        );
+        expect(screen.getByText(contador(1))).toBeInTheDocument();
 
-    it("←/→/Home/End navegam pelas abas e levam o foco", async () => {
-        const user = userEvent.setup();
-        montar();
-        abas()[0]!.focus();
-        await user.keyboard("{ArrowRight}");
-        expect(ativa()).toBe(1);
-        expect(abas()[1]).toHaveFocus();
-        await user.keyboard("{End}");
-        expect(ativa()).toBe(SLIDES.length - 1);
-        await user.keyboard("{ArrowRight}");
-        expect(ativa()).toBe(0); // circular
-        await user.keyboard("{ArrowLeft}");
-        expect(ativa()).toBe(SLIDES.length - 1);
-        await user.keyboard("{Home}");
-        expect(ativa()).toBe(0);
-    });
-
-    it("setas da legenda são circulares", async () => {
-        const user = userEvent.setup();
-        montar();
         await user.click(
             screen.getByRole("button", { name: "Slide anterior" }),
         );
-        expect(ativa()).toBe(SLIDES.length - 1);
+        expect(screen.getByText(contador(N))).toBeInTheDocument();
         await user.click(screen.getByRole("button", { name: "Próximo slide" }));
-        expect(ativa()).toBe(0);
+        expect(screen.getByText(contador(1))).toBeInTheDocument();
+        expect(
+            screen.getByRole("img", { name: new RegExp(SLIDES[0]!.label.pt) }),
+        ).toBeInTheDocument();
+    });
+
+    it("legenda vinculada à captura e anunciada com aria-live", async () => {
+        const user = userEvent.setup();
+        montar();
+        await user.click(screen.getByRole("button", { name: "Próximo slide" }));
+        const legenda = screen.getByText(contador(2)).parentElement!;
+        expect(legenda).toHaveAttribute("aria-live", "polite");
+        expect(
+            within(legenda).getByText(SLIDES[1]!.label.pt),
+        ).toBeInTheDocument();
+    });
+
+    it("←/→ com o carrossel em foco e gesto horizontal no toque", async () => {
+        const user = userEvent.setup();
+        montar();
+        carrossel().focus();
+        await user.keyboard("{ArrowRight}");
+        expect(screen.getByText(contador(2))).toBeInTheDocument();
+        await user.keyboard("{ArrowLeft}{ArrowLeft}");
+        expect(screen.getByText(contador(N))).toBeInTheDocument();
+
+        const foto = screen.getByRole("button", { name: /^Ampliar:/ });
+        fireEvent.touchStart(foto, {
+            touches: [{ clientX: 300, clientY: 100 }],
+        });
+        fireEvent.touchEnd(foto, {
+            changedTouches: [{ clientX: 100, clientY: 110 }],
+        });
+        expect(screen.getByText(contador(1))).toBeInTheDocument();
     });
 
     it("não troca sozinho (sem autoplay)", async () => {
         montar();
         await new Promise((r) => setTimeout(r, 50));
-        expect(ativa()).toBe(0);
-        expect(screen.queryByRole("button", { name: /autoplay/i })).toBeNull();
+        expect(screen.getByText(contador(1))).toBeInTheDocument();
     });
 });
 
-describe("Featured — conteúdo e links", () => {
-    it("endereço e 'Explorar aplicação' abrem a aplicação em nova aba", () => {
+describe("Featured — ações e conteúdo", () => {
+    it("Acessar Projeto abre a aplicação em nova aba; documentação é interna", () => {
         montar();
-        const endereco = screen.getByRole("link", {
-            name: `Abrir ${FEATURED_PROJECT.repoHost} (abre em nova aba)`,
+        const acessar = screen.getByRole("link", { name: /Acessar Projeto/ });
+        expect(acessar).toHaveAttribute("href", FEATURED_PROJECT.liveUrl);
+        expect(acessar).toHaveAttribute("target", "_blank");
+        expect(acessar).toHaveAttribute("rel", "noopener noreferrer");
+        expect(acessar.className).toContain("btn--primary");
+
+        const docs = screen.getByRole("link", {
+            name: "Documentação do Projeto",
         });
-        expect(endereco).toHaveAttribute("href", FEATURED_PROJECT.liveUrl);
-        expect(endereco).toHaveAttribute("target", "_blank");
-        expect(endereco).toHaveAttribute("rel", "noopener noreferrer");
-        const app = screen.getByRole("link", { name: /Explorar aplicação/ });
-        expect(app).toHaveAttribute("target", "_blank");
-        expect(
-            screen.getByRole("link", { name: /Conhecer o projeto/ }),
-        ).toHaveAttribute("href", FEATURED_PROJECT.detailsUrl);
+        expect(docs).toHaveAttribute("href", FEATURED_PROJECT.detailsUrl);
+        expect(docs).not.toHaveAttribute("target");
+        expect(docs.className).toContain("btn--outline");
     });
 
-    it("tecnologias e recursos vêm dos dados do projeto", () => {
+    it("resumo integrado: TCC, pontuação 0–1000 e linguagens", () => {
         montar();
-        const stack = screen.getByRole("list", {
-            name: "Tecnologias do projeto",
-        });
-        expect(within(stack).getAllByRole("listitem")).toHaveLength(
-            FEATURED_PROJECT.tech.length,
-        );
+        expect(
+            screen.getByText("TCC em Engenharia de Software"),
+        ).toBeInTheDocument();
+        expect(screen.getByText("0–1000")).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                (_, el) =>
+                    el?.textContent ===
+                    "Linguagens: Python, JavaScript/TypeScript e Go",
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it("cartões de recurso com introdução e lista vindas dos dados", () => {
+        montar();
+        expect(
+            screen.getByRole("heading", {
+                name: "Cada resultado, uma visão mais clara do projeto.",
+            }),
+        ).toBeInTheDocument();
         const recursos = screen.getByRole("list", {
             name: "Principais recursos",
         });
-        expect(within(recursos).getAllByRole("heading")).toHaveLength(
-            FEATURED_PROJECT.architecture.length,
-        );
+        for (const item of FEATURED_PROJECT.architecture) {
+            expect(
+                within(recursos).getByRole("heading", { name: item.title.pt }),
+            ).toBeInTheDocument();
+            expect(
+                within(recursos).getByText(item.summary.pt),
+            ).toBeInTheDocument();
+            for (const d of item.details)
+                expect(within(recursos).getByText(d.pt)).toBeInTheDocument();
+        }
     });
 
-    it("em inglês, textos e link de detalhes mudam de idioma", () => {
+    it("em inglês, textos e link da documentação mudam de idioma", () => {
         montar("en");
-        expect(screen.getByText("Featured project")).toBeInTheDocument();
         expect(
-            screen.getByRole("link", { name: /Discover the project/ }),
+            screen.getByRole("link", { name: "Project documentation" }),
         ).toHaveAttribute("href", `${FEATURED_PROJECT.detailsUrl}?lang=en`);
-        expect(abas()[0]).toHaveTextContent(SLIDES[0]!.label.en);
+        expect(
+            screen.getByText("Software engineering capstone"),
+        ).toBeInTheDocument();
     });
 });
 
 describe("Featured — o lightbox", () => {
-    it("abre pela captura ativa", async () => {
+    it("abre pela captura atual", async () => {
         const user = userEvent.setup();
         montar();
         await user.click(
             screen.getByRole("button", {
-                name: new RegExp(`Ampliar: ${SLIDES[0]!.label.pt}`),
+                name: `Ampliar: ${SLIDES[0]!.label.pt}`,
             }),
         );
         await waitFor(() =>

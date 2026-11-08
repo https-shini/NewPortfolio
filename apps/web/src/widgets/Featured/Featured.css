@@ -114,7 +114,7 @@
 .featured__story {
     display: flex;
     flex-direction: column;
-    gap: var(--space-5);
+    gap: var(--space-4);
     padding: var(--space-6);
     border: 1px solid var(--color-border-1);
     border-radius: var(--radius-xl);
@@ -167,32 +167,10 @@
 .featured__desc {
     max-width: 60ch;
     font-size: var(--text-base);
-    line-height: 1.75;
+    line-height: 1.7;
     color: var(--color-text-2);
 }
 
-/* Fatos: faixa de indicadores no padrão dos KPIs do panorama. */
-.featured__facts {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-3);
-    margin: 0 0 var(--space-6);
-}
-
-.featured__fact {
-    display: grid;
-    align-content: start;
-    gap: var(--space-2);
-    min-width: 0;
-    padding: var(--space-4) var(--space-5);
-    border: 1px solid var(--color-border-1);
-    border-left: 2px solid var(--color-brand);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface-2);
-    box-shadow: var(--surface-edge);
-}
-
-.featured__fact dt,
 .featured__label {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
@@ -201,13 +179,47 @@
     color: var(--color-text-3);
 }
 
-.featured__fact dd {
-    margin: 0;
-    overflow-wrap: anywhere;
-    font-size: var(--text-base);
-    font-weight: 600;
-    line-height: 1.4;
+/* Resumo integrado: identificação, pontuação em destaque e linguagens. */
+.featured__summary {
+    display: grid;
+    gap: var(--space-2);
+    padding-block: var(--space-4);
+    border-block: 1px solid var(--color-border-1);
+}
+
+.featured__score {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+}
+
+.featured__score strong {
+    flex: none;
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 3.4vw, 3rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--color-brand-text);
+    font-variant-numeric: tabular-nums;
+}
+
+.featured__score span {
+    flex: 1 1 14rem;
+    min-width: 0;
+    font-size: var(--text-sm);
+    line-height: 1.55;
+    color: var(--color-text-2);
+}
+
+.featured__langs {
+    font-size: var(--text-sm);
     color: var(--color-text-1);
+}
+
+.featured__langs span {
+    color: var(--color-text-3);
 }
 
 .featured__stack {
@@ -220,12 +232,14 @@
     flex-wrap: wrap;
     gap: var(--space-3);
     margin-top: auto;
-    padding-top: var(--space-5);
-    border-top: 1px solid var(--color-border-1);
+    padding-top: var(--space-2);
 }
 
 .featured__actions .btn {
+    flex: 1 1 auto;
+    justify-content: center;
     gap: var(--space-2);
+    min-height: 44px;
     font-size: var(--text-sm);
 }
 
@@ -287,58 +301,28 @@
     background: #28c840;
 }
 
-.featured__tabs {
-    display: flex;
-    flex: 1;
-    gap: 2px;
-    min-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-    /* Esmaece a borda: indica que há mais abas ao rolar. */
-    mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
-}
-
-.featured__tabs::-webkit-scrollbar {
-    display: none;
-}
-
+/* Aba única do projeto, fundida ao conteúdo (como a ativa do panorama). */
 .featured__tab {
     position: relative;
     display: inline-flex;
-    flex: none;
     align-items: center;
-    gap: var(--space-2);
-    min-height: 44px;
+    min-width: 0;
+    min-height: 40px;
     margin-bottom: -1px;
     padding: 0 var(--space-4);
-    border: 1px solid transparent;
+    overflow: hidden;
+    border: 1px solid var(--color-border-2);
     border-bottom: 0;
     border-radius: var(--radius-md) var(--radius-md) 0 0;
-    background: transparent;
-    font: inherit;
+    background: var(--color-surface-1);
     font-size: var(--text-sm);
     font-weight: 500;
     white-space: nowrap;
-    color: var(--color-text-3);
-    cursor: pointer;
-    transition:
-        color 0.2s var(--ease-out),
-        background-color 0.2s var(--ease-out);
-}
-
-.featured__tab:hover {
-    background: color-mix(in srgb, var(--color-surface-1) 50%, transparent);
+    text-overflow: ellipsis;
     color: var(--color-text-1);
 }
 
-.featured__tab[aria-selected="true"] {
-    z-index: 1;
-    border-color: var(--color-border-2);
-    background: var(--color-surface-1);
-    color: var(--color-text-1);
-}
-
-.featured__tab[aria-selected="true"]::before {
+.featured__tab::before {
     content: "";
     position: absolute;
     top: -1px;
@@ -347,21 +331,6 @@
     height: 2px;
     border-radius: 0 0 2px 2px;
     background: var(--color-brand);
-}
-
-.featured__tab:focus-visible {
-    outline: 2px solid var(--color-brand-text);
-    outline-offset: -3px;
-}
-
-.featured__tab-index {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    color: var(--color-text-3);
-}
-
-.featured__tab[aria-selected="true"] .featured__tab-index {
-    color: var(--color-brand-text);
 }
 
 .featured__address {
@@ -409,18 +378,20 @@
 
 .featured__panel {
     display: flex;
+    flex: 1;
     flex-direction: column;
 }
 
-.featured__tab-label {
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.featured__panel:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: -2px;
 }
 
 .featured__shot {
     position: relative;
-    display: block;
+    display: grid;
+    flex: 1;
+    place-items: center;
     width: 100%;
     padding: 0;
     border: 0;
@@ -485,6 +456,11 @@
     min-width: 0;
 }
 
+.featured__caption strong {
+    font-size: var(--text-sm);
+    color: var(--color-text-1);
+}
+
 .featured__counter {
     font-family: var(--font-mono);
     font-size: var(--text-2xs);
@@ -535,11 +511,27 @@
 }
 
 /* ── Recursos ── */
+.featured__features-head {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-10);
+}
+
+.featured__features-title {
+    max-width: 22ch;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.6vw, 2.25rem);
+    line-height: 1.15;
+    letter-spacing: var(--ls-snug);
+    color: var(--color-text-1);
+    text-wrap: balance;
+}
+
 .featured__capabilities {
     display: grid;
     gap: var(--space-4);
     padding: 0;
-    margin: var(--space-8) 0 0;
+    margin: var(--space-6) 0 0;
     list-style: none;
 }
 
@@ -586,7 +578,7 @@
     color: var(--color-text-3);
 }
 
-.featured__capability h3 {
+.featured__capability h4 {
     font-family: var(--font-display);
     font-size: var(--text-lg);
     line-height: 1.3;
@@ -595,8 +587,36 @@
 
 .featured__capability p {
     font-size: var(--text-sm);
-    line-height: 1.75;
+    line-height: 1.7;
     color: var(--color-text-2);
+}
+
+.featured__capability-list {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4) 0 0;
+    margin: var(--space-1) 0 0;
+    border-top: 1px solid var(--color-border-1);
+    list-style: none;
+}
+
+.featured__capability-list li {
+    position: relative;
+    padding-left: var(--space-4);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--color-text-2);
+}
+
+.featured__capability-list li::before {
+    content: "";
+    position: absolute;
+    top: 0.6em;
+    left: 2px;
+    width: 5px;
+    height: 5px;
+    border-radius: var(--radius-full);
+    background: var(--color-brand);
 }
 
 /* ── Pontos de quebra ── */
@@ -608,65 +628,41 @@
     .featured__capabilities {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
-
-    /* Abas que encolhem como no navegador: todas visíveis; o rótulo
-       ganha reticências só se faltar espaço (o nome completo segue no
-       nome acessível e no title). */
-    .featured__tabs {
-        overflow: visible;
-        mask-image: none;
-    }
-
-    /* A ativa mostra o nome inteiro; as inativas encolhem até o
-       número e as primeiras letras. */
-    .featured__tab {
-        flex: 0 1 auto;
-        min-width: 4.5rem;
-    }
-
-    .featured__tab[aria-selected="true"] {
-        flex: none;
-    }
 }
 
+/* Desktop: colunas 1 : 1,15 com a mesma altura; a janela ocupa a
+   altura da coluna e a captura (contida, sem corte) preenche o meio. */
 @media (min-width: 1100px) {
-    .featured__facts {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+    .featured__layout {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        align-items: stretch;
+        gap: var(--space-6);
     }
 
-    .featured__layout {
-        grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-        gap: var(--space-8);
+    .featured__showcase {
+        display: grid;
+        grid-template-rows: minmax(0, 1fr) auto;
+    }
+
+    .featured__window {
+        height: 100%;
+    }
+
+    .featured__shot > img {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        aspect-ratio: auto;
+    }
+
+    .featured__shot {
+        min-height: 18rem;
     }
 }
 
 @media (max-width: 479px) {
     .featured__story {
         padding: var(--space-5);
-    }
-
-    /* Celular: os quatro fatos num painel só, com divisórias. */
-    .featured__facts {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 0;
-        overflow: hidden;
-        border: 1px solid var(--color-border-1);
-        border-left: 2px solid var(--color-brand);
-        border-radius: var(--radius-lg);
-        background: var(--color-surface-2);
-        box-shadow: var(--surface-edge);
-    }
-
-    .featured__fact {
-        gap: var(--space-1);
-        padding: var(--space-3) var(--space-4);
-        border: 0;
-        border-radius: 0;
-        box-shadow: none;
-    }
-
-    .featured__fact + .featured__fact {
-        border-top: 1px solid var(--color-border-1);
     }
 
     .featured__actions .btn {

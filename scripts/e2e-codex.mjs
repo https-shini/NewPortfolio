@@ -157,22 +157,23 @@ try {
             );
             const feature = page.locator("#destaque");
             await feature.scrollIntoViewIfNeeded();
-            assert.equal(await feature.locator(".featured__tab").count(), 4);
-            await feature.locator(".featured__tab").nth(2).click();
+            /* Uma aba única do projeto e um carrossel manual das 4 capturas. */
+            assert.equal(await feature.locator(".featured__tab").count(), 1);
+            const contador = feature.locator(".featured__counter");
             assert.equal(
-                await feature
-                    .locator(".featured__tab")
-                    .nth(2)
-                    .getAttribute("aria-selected"),
-                "true",
+                (await contador.textContent()).replace(/\s+/g, " ").trim(),
+                "01 / 04",
             );
-            await feature.locator(".featured__tab").nth(2).press("ArrowRight");
+            await feature.locator(".featured__arrow").last().click();
             assert.equal(
-                await feature
-                    .locator(".featured__tab")
-                    .nth(3)
-                    .getAttribute("aria-selected"),
-                "true",
+                (await contador.textContent()).replace(/\s+/g, " ").trim(),
+                "02 / 04",
+            );
+            await feature.locator(".featured__panel").focus();
+            await page.keyboard.press("ArrowRight");
+            assert.equal(
+                (await contador.textContent()).replace(/\s+/g, " ").trim(),
+                "03 / 04",
             );
             for (const arrow of await feature
                 .locator(".featured__arrow")
@@ -183,13 +184,12 @@ try {
                     "featured touch controls",
                 );
             }
-            await feature.locator(".featured__arrow").last().click();
+            await feature.locator(".featured__arrow").first().click();
+            await feature.locator(".featured__arrow").first().click();
+            await feature.locator(".featured__arrow").first().click();
             assert.equal(
-                await feature
-                    .locator(".featured__tab")
-                    .first()
-                    .getAttribute("aria-selected"),
-                "true",
+                (await contador.textContent()).replace(/\s+/g, " ").trim(),
+                "04 / 04",
             );
             const featureTrigger = feature.locator(".featured__shot");
             await featureTrigger.click();
