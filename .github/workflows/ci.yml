@@ -11,6 +11,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Job próprio, de propósito: dentro do job de qualidade, a falha do
+  # audit pulava lint, testes e build — o CI ficava vermelho sem validar
+  # nada. Aqui ele continua reprovando à vista (nada foi silenciado nem
+  # rebaixado), e as demais portas rodam e respondem por si. Pendências
+  # em aberto: docs/guides/vulnerabilidades.md.
+  dependencies:
+    name: Auditoria de dependências
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --include=dev
+
+      - name: Auditoria de todas as dependências
+        run: npm audit --audit-level=low
+
   quality:
     name: Lint · Type-check · Test · Build
     runs-on: ubuntu-latest
@@ -30,9 +55,6 @@ jobs:
       # os testes delas, então `@vercel/og` precisa estar presente.
       - name: Install dependencies
         run: npm ci --include=dev
-
-      - name: Auditoria de todas as dependências
-        run: npm audit --audit-level=low
 
       - name: Lint
         run: npm run lint

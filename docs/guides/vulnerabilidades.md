@@ -2,9 +2,10 @@
 
 Documento **vivo**: atualize a cada `npm audit`, sempre que uma
 correção for publicada ou uma pendência for resolvida. Nenhum alerta é
-silenciado no CI: a etapa "Auditoria de todas as dependências"
+silenciado no CI: o job "Auditoria de dependências"
 (`npm audit --audit-level=low`) continua reprovando enquanto houver item
-aberto aqui.
+aberto aqui. Ele roda separado do job de qualidade para não impedir que
+lint, testes e build sejam executados.
 
 Última revisão: **2026-11-08** · `npm audit`: **9 moderadas**, 0 altas,
 0 críticas · todas transitivas de duas origens.
@@ -76,3 +77,4 @@ correção no histórico abaixo e confirme que o job de CI voltou a passar.
 | ---------- | ------------------------------------------------------------------ |
 | 2026-10-28 | auditoria passa a reprovar o CI na `main` (V1 e V2)                |
 | 2026-11-08 | pendências documentadas neste arquivo; nenhuma correção compatível |
+| 2026-11-08 | auditoria vai para job próprio no CI; continua reprovando à vista  |
