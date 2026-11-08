@@ -155,6 +155,43 @@ describe("_github-perfil — cálculos do panorama", () => {
         expect(JSON.stringify(r)).not.toContain("segredo");
     });
 
+    it("detalhar descarta o dia repetido na fronteira entre janelas", () => {
+        const commits = (d: string) => [
+            {
+                repository: pub("u/a"),
+                contributions: pagina([{ occurredAt: d, commitCount: 5 }]),
+            },
+        ];
+        const base = {
+            contributionCalendar: { totalContributions: 0, weeks: [] },
+            pullRequestContributions: pagina([]),
+            issueContributions: pagina([]),
+            pullRequestReviewContributions: pagina([]),
+        };
+        /* fuso -03:00 (180 min): 31/03 15h local aparece nas duas janelas */
+        const r = detalhar(
+            [
+                {
+                    ...base,
+                    limite: { de: "2026-01-01", ate: "2026-03-31" },
+                    commitContributionsByRepository: commits(
+                        "2026-03-31T18:00:00Z",
+                    ),
+                },
+                {
+                    ...base,
+                    limite: { de: "2026-04-01", ate: "2026-06-30" },
+                    commitContributionsByRepository: commits(
+                        "2026-03-31T18:00:00Z",
+                    ),
+                },
+            ],
+            "2026-01-01",
+            180,
+        );
+        expect(r.commits).toEqual([[89, 0, 5]]);
+    });
+
     it("normalizarRepos compartilha o dicionário de linguagens", () => {
         const { langs, repos } = normalizarRepos([
             {

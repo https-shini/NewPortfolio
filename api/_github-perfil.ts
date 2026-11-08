@@ -159,6 +159,10 @@ interface RespostaPerfil {
     } | null;
 }
 export interface Janela {
+    /** Datas locais (inclusivas) da janela: o GitHub repete o último dia
+     *  do trimestre na janela seguinte, então o detalhamento descarta o
+     *  que cai fora destes limites. */
+    limite?: { de: string; ate: string };
     contributionCalendar: Calendario;
     commitContributionsByRepository: {
         repository: RepoRef;
@@ -435,12 +439,16 @@ export function detalhar(
         truncated: false,
     };
     for (const j of janelas) {
+        const dentro = (iso: string) => {
+            const d = dataLocal(iso, deslocamento);
+            return !j.limite || (d >= j.limite.de && d <= j.limite.ate);
+        };
         for (const c of j.commitContributionsByRepository) {
             if (c.repository.isPrivate) continue;
             if (c.contributions.pageInfo.hasNextPage) out.truncated = true;
             const r = repo(c.repository);
             for (const n of c.contributions.nodes) {
-                if (n.commitCount > 0) {
+                if (n.commitCount > 0 && dentro(n.occurredAt)) {
                     out.commits.push([
                         indiceDia(dataLocal(n.occurredAt, deslocamento)),
                         r,
@@ -457,7 +465,7 @@ export function detalhar(
             if (p.pageInfo.hasNextPage) out.truncated = true;
             for (const n of p.nodes) {
                 const r = ref(n);
-                if (r.isPrivate) continue;
+                if (r.isPrivate || !dentro(n.occurredAt)) continue;
                 destino.push([
                     indiceDia(dataLocal(n.occurredAt, deslocamento)),
                     repo(r),
@@ -537,14 +545,28 @@ export async function buscarPerfil(agora = new Date()): Promise<PerfilGitHub> {
     const deslocamento = deslocamentoDoFuso(cc.startedAt);
 
     const janelas = await Promise.all(
-        janelasTrimestrais(u.createdAt, agora, deslocamento).map(async (j) => {
-            const r = await consultarGraphQL<RespostaJanela>(CONSULTA_JANELA, {
-                login: GITHUB_USER,
-                from: j.from,
-                to: j.to,
-            });
-            return r.user?.contributionsCollection ?? null;
-        }),
+        janelasTrimestrais(u.createdAt, agora, deslocamento).map(
+            async (j): Promise<Janela | null> => {
+                const r = await consultarGraphQL<RespostaJanela>(
+                    CONSULTA_JANELA,
+                    {
+                        login: GITHUB_USER,
+                        from: j.from,
+                        to: j.to,
+                    },
+                );
+                const cc = r.user?.contributionsCollection;
+                return cc
+                    ? {
+                          ...cc,
+                          limite: {
+                              de: dataLocal(j.from, deslocamento),
+                              ate: dataLocal(j.to, deslocamento),
+                          },
+                      }
+                    : null;
+            },
+        ),
     );
     const validas = janelas.filter((j): j is Janela => j !== null);
     const todosOsDias = achatar(validas.map((j) => j.contributionCalendar));
