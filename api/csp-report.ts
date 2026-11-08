@@ -140,8 +140,11 @@ export default async function handler(
           : [];
 
     if (!violacoes.length) {
+        /* `JSON.stringify(undefined)` devolve `undefined`, não uma string:
+           um POST sem corpo derrubava a função aqui com TypeError (500). */
+        const amostra = JSON.stringify(payload) ?? String(payload);
         console.warn(
-            `[csp] relatório em formato não reconhecido: ${JSON.stringify(payload).slice(0, 500)}`,
+            `[csp] relatório em formato não reconhecido: ${amostra.slice(0, 500)}`,
         );
     } else {
         for (const v of violacoes) console.warn(`[csp] ${linha(v)}`);
