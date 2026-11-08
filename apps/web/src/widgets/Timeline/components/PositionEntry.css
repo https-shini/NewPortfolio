@@ -436,6 +436,8 @@
 .position-entry__highlight,
 .position-entry__bullet {
     position: relative;
+    /* O cartão do cargo cresce com o container; o tópico, não. */
+    max-width: var(--measure-wide);
     padding-left: var(--space-5);
     font-size: var(--text-sm);
     line-height: 1.6;
