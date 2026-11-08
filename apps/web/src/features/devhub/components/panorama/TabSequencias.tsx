@@ -45,16 +45,6 @@ export const TabSequencias: React.FC<{ p: GithubProfile }> = ({ p }) => {
 
     return (
         <div ref={ref} className={`ghp-tab${visto ? " is-in" : ""}`}>
-            <p className="ghp-scope">
-                <strong>
-                    {t("ghp.period.since").replace(
-                        "{date}",
-                        formatDate(p.streak.since, lang),
-                    )}
-                </strong>{" "}
-                · {t("ghp.streak.note")}
-            </p>
-
             <dl className="ghp-streaks ghp-anim">
                 <div>
                     <dt>{t("ghp.streak.total")}</dt>
@@ -91,7 +81,6 @@ export const TabSequencias: React.FC<{ p: GithubProfile }> = ({ p }) => {
             <Painel
                 id="ghp-years"
                 titulo={t("ghp.years.title")}
-                nota={t("ghp.years.note")}
                 className="ghp-anim"
             >
                 <ul className="ghp-years">

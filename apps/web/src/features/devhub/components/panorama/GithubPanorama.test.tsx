@@ -130,7 +130,7 @@ const kpi = (rotulo: string) =>
         .querySelector("dd")!;
 
 describe("GithubPanorama", () => {
-    it("janela com cinco abas acessíveis e endereço em nova aba", async () => {
+    it("janela com seis abas acessíveis e endereço em nova aba", async () => {
         montar();
         const link = screen.getByRole("link", {
             name: "Abrir o perfil https-shini no GitHub (abre em nova aba)",
@@ -145,6 +145,7 @@ describe("GithubPanorama", () => {
             "Contribuições",
             "Sequências",
             "Conquistas",
+            "API do GitHub",
         ]);
         expect(abas[0]).toHaveAttribute("aria-selected", "true");
         expect(abas[1]).toHaveAttribute("tabindex", "-1");
@@ -156,13 +157,12 @@ describe("GithubPanorama", () => {
         fireEvent.keyDown(screen.getByRole("tab", { name: "Linguagens" }), {
             key: "End",
         });
-        expect(screen.getByRole("tab", { name: "Conquistas" })).toHaveAttribute(
-            "aria-selected",
-            "true",
-        );
+        expect(
+            screen.getByRole("tab", { name: "API do GitHub" }),
+        ).toHaveAttribute("aria-selected", "true");
         expect(screen.getByRole("tabpanel")).toHaveAttribute(
             "aria-labelledby",
-            "ghp-tab-badges",
+            "ghp-tab-api",
         );
     });
 
@@ -198,9 +198,8 @@ describe("GithubPanorama", () => {
             name: "Linguagens mais usadas",
         });
         expect(within(langs).getByText("TypeScript")).toBeInTheDocument();
-        expect(
-            within(langs).getByText(/não domínio técnico/),
-        ).toBeInTheDocument();
+        /* a nota técnica mora na aba "API do GitHub" */
+        expect(within(langs).queryByText(/não domínio técnico/)).toBeNull();
         fireEvent.change(screen.getByLabelText("Repositório"), {
             target: { value: "site" },
         });
@@ -247,7 +246,7 @@ describe("GithubPanorama", () => {
         });
         expect(kpi("Contribuições")).toHaveTextContent("16"); // 5 + 7 + 4
         expect(
-            screen.getByText(/Soma das contribuições públicas/),
+            screen.getByText(/Detalhamento por tipo e repositório/),
         ).toBeInTheDocument();
 
         fireEvent.change(screen.getByLabelText("Repositório"), {
@@ -269,6 +268,41 @@ describe("GithubPanorama", () => {
             await screen.findByText(/de 9 selos conquistados/),
         ).toBeInTheDocument();
         expect(screen.getAllByRole("progressbar")).toHaveLength(9);
+        for (const grupo of ["Constância", "Colaboração", "Portfólio"]) {
+            const r = screen.getByRole("region", { name: grupo });
+            expect(within(r).getAllByRole("progressbar")).toHaveLength(3);
+        }
+        /* sem notas técnicas fora da aba da API */
+        expect(screen.queryByText(/não mudam com os filtros/)).toBeNull();
+    });
+
+    it("API do GitHub: fonte, horário da coleta, critérios e limitações", async () => {
+        montar();
+        fireEvent.click(screen.getByRole("tab", { name: "API do GitHub" }));
+        expect(
+            await screen.findByRole("region", { name: "Fonte dos dados" }),
+        ).toBeInTheDocument();
+        expect(screen.getByText("API pública do GitHub")).toBeInTheDocument();
+        expect(screen.getByText("@https-shini")).toBeInTheDocument();
+        expect(document.querySelector("time")).toHaveAttribute(
+            "datetime",
+            PERFIL.fetchedAt,
+        );
+        const criterios = screen.getByRole("region", {
+            name: "Critérios de contabilização",
+        });
+        expect(
+            within(criterios).getByText(/Commits ≠ contribuições/),
+        ).toBeInTheDocument();
+        expect(
+            within(criterios).getByText(/não domínio técnico/),
+        ).toBeInTheDocument();
+        const limites = screen.getByRole("region", { name: "Limitações" });
+        expect(
+            within(limites).getByText(/só repositórios públicos/),
+        ).toBeInTheDocument();
+        const tabela = screen.getByRole("table");
+        expect(within(tabela).getAllByRole("row")).toHaveLength(10);
     });
 
     it("falha da API vira aviso com link para o perfil", async () => {

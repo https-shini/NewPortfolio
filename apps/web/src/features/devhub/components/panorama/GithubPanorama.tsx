@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import "./Panorama.css";
-import { LOCALE, formatNumber } from "@/features/devhub/format";
 import {
     CONTRIB_PADRAO,
     LINGUAGENS_PADRAO,
@@ -14,6 +13,7 @@ import { GITHUB_URL } from "@/shared/config/constants";
 import { useLang } from "@/shared/hooks/useLang";
 import type { TranslationKey } from "@/shared/lib/translations";
 import { IconExternalLink, IconGitHub } from "@/shared/ui/Icons";
+import { TabApi } from "./TabApi";
 import { TabConquistas } from "./TabConquistas";
 import { TabContribuicoes } from "./TabContribuicoes";
 import { TabLinguagens } from "./TabLinguagens";
@@ -23,7 +23,7 @@ import { TabVisao } from "./TabVisao";
 /* ─────────────────────────────────────────────────────────
    GithubPanorama — o perfil no GitHub, em duas abas
    ─────────────────────────────────────────────────────────
-   Janela de navegador: três pontos (decorativos), CINCO abas de
+   Janela de navegador: três pontos (decorativos), SEIS abas de
    verdade (tablist com setas ←/→, Home e End), cada uma com o seu
    conjunto de métricas e filtros independentes, e o endereço — o
    único link, que abre o perfil em nova aba.
@@ -32,15 +32,19 @@ import { TabVisao } from "./TabVisao";
      Linguagens     → volume de código e principais   (TabLinguagens)
      Contribuições  → calendário, evolução e tipos    (TabContribuicoes)
      Sequências     → constância, anos e marcos       (TabSequencias)
-     Conquistas     → selos com critério explícito    (TabConquistas)
+     Conquistas     → selos agrupados pelo que medem  (TabConquistas)
+     API do GitHub  → fonte, critérios e limitações   (TabApi)
+
+   As notas técnicas (fonte, horário, critérios, limitações) ficam
+   só na aba "API do GitHub"; as demais mostram apenas os dados.
 
    Os filtros de cada aba moram AQUI: trocar de aba não perde o
    recorte nem refaz a busca (os dados vêm de um único `op=profile`,
    com cache na CDN e no navegador).
 ───────────────────────────────────────────────────────── */
 
-type Aba = "visao" | "langs" | "contrib" | "streak" | "badges";
-const ABAS: Aba[] = ["visao", "langs", "contrib", "streak", "badges"];
+type Aba = "visao" | "langs" | "contrib" | "streak" | "badges" | "api";
+const ABAS: Aba[] = ["visao", "langs", "contrib", "streak", "badges", "api"];
 
 /* Ícones das abas (favicons). Desenhos genéricos, não marcas. */
 const ICONE: Record<Exclude<Aba, "visao">, React.ReactNode> = {
@@ -62,11 +66,14 @@ const ICONE: Record<Exclude<Aba, "visao">, React.ReactNode> = {
             <path d="m8.5 14-1.5 8 5-3 5 3-1.5-8" />
         </>
     ),
+    api: (
+        <path d="M8 4H7a2 2 0 0 0-2 2v4l-2 2 2 2v4a2 2 0 0 0 2 2h1M16 4h1a2 2 0 0 1 2 2v4l2 2-2 2v4a2 2 0 0 1-2 2h-1" />
+    ),
 };
 const ENDERECO = GITHUB_URL.replace(/^https:\/\//, "");
 
 export const GithubPanorama: React.FC = () => {
-    const { lang, t } = useLang();
+    const { t } = useLang();
     const { data, loading, error } = useDevhubProfile();
     const [aba, setAba] = useState<Aba>("visao");
     const [fVisao, setFVisao] = useState<FiltrosPanorama>(PANORAMA_PADRAO);
@@ -254,35 +261,13 @@ export const GithubPanorama: React.FC = () => {
                         />
                     ) : aba === "streak" ? (
                         <TabSequencias p={data} />
-                    ) : (
+                    ) : aba === "badges" ? (
                         <TabConquistas p={data} />
+                    ) : (
+                        <TabApi p={data} />
                     )}
                 </div>
             </div>
-
-            {data && (
-                <div className="ghp__foot">
-                    <p>
-                        {t("ghp.source")}{" "}
-                        <time dateTime={data.fetchedAt}>
-                            {new Intl.DateTimeFormat(LOCALE[lang], {
-                                dateStyle: "medium",
-                                timeStyle: "short",
-                            }).format(new Date(data.fetchedAt))}
-                        </time>
-                    </p>
-                    <p>{t("ghp.limits")}</p>
-                    {data.lastYear.restricted > 0 && (
-                        <p>
-                            {t("ghp.private").replace(
-                                "{n}",
-                                formatNumber(data.lastYear.restricted, lang),
-                            )}
-                        </p>
-                    )}
-                    {data.activity.truncated && <p>{t("ghp.truncated")}</p>}
-                </div>
-            )}
         </section>
     );
 };
