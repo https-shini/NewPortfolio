@@ -145,6 +145,42 @@ describe("/api/csp-report", () => {
         expect(avisos[0]).toContain("formato não reconhecido: undefined");
     });
 
+    it("limita o número de violações registradas por envio", async () => {
+        const lote = Array.from({ length: 500 }, (_, i) => ({
+            type: "csp-violation",
+            body: {
+                effectiveDirective: "img-src",
+                blockedURL: `https://x.test/${i}`,
+            },
+        }));
+        const r = await chamar(lote);
+
+        expect(r.codigo).toBe(204);
+        expect(avisos).toHaveLength(21);
+        expect(avisos.at(-1)).toContain("480 violação(ões) a mais");
+    });
+
+    it("descarta corpo grande demais sem interpretá-lo", async () => {
+        const r = await chamar("x".repeat(64 * 1024));
+
+        expect(r.codigo).toBe(204);
+        expect(avisos).toHaveLength(1);
+        expect(avisos[0]).toContain("corpo descartado");
+    });
+
+    it("não deixa um campo forjar linhas novas no log", async () => {
+        await chamar({
+            "csp-report": {
+                "effective-directive": "script-src\n[csp] diretiva=falsa",
+                "blocked-uri": "inline",
+                "document-uri": "https://gcruz.dev.br/",
+            },
+        });
+
+        expect(avisos).toHaveLength(1);
+        expect(avisos[0]).not.toContain("\n");
+    });
+
     it("recusa método diferente de POST, dizendo qual aceita", async () => {
         const r = await chamar(undefined, "GET");
 

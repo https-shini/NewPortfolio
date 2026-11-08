@@ -112,6 +112,27 @@ describe("/api/feed", () => {
         expect(/&(?!(amp|lt|gt|quot|apos|#\d+);)/.test(res.corpo)).toBe(false);
     });
 
+    it("uma data ilegível tira só aquela entrada, sem derrubar o feed", async () => {
+        vi.spyOn(console, "warn").mockImplementation(() => {});
+        releasesFalsas.atual = [
+            {
+                version: "2.0.0",
+                date: "data-que-nao-existe",
+                title: "Data quebrada",
+                html: "",
+                url: "",
+            },
+        ];
+
+        const res = resposta();
+        await handler(req, res as never);
+
+        expect(res.codigo).toBe(200);
+        expect(res.corpo).toContain("<feed");
+        expect(res.corpo).not.toContain("/release-notes/v2.0.0<");
+        expect(res.corpo).not.toContain("Invalid Date");
+    });
+
     /* O histórico do site é curado: a camada local é a lista de permissão
        (ver mergeReleaseNotes). O feed segue sendo função e não arquivo de
        build — é o que deixa data e link virem do GitHub —, mas quem entra

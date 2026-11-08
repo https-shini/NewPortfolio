@@ -1,8 +1,10 @@
 import {
+    CACHE_CURTO,
     CACHE_PADRAO,
     GITHUB_REST,
     GITHUB_USER,
     headersGitHub,
+    sinalComTempo,
 } from "./_github.js";
 
 /* ─────────────────────────────────────────────────────────
@@ -44,9 +46,12 @@ export default async function handler(
         const [commitsRes, userRes] = await Promise.all([
             fetch(
                 `${GITHUB_REST}/search/commits?q=author:${GITHUB_USER}&per_page=1`,
-                { headers },
+                { headers, signal: sinalComTempo() },
             ),
-            fetch(`${GITHUB_REST}/users/${GITHUB_USER}`, { headers }),
+            fetch(`${GITHUB_REST}/users/${GITHUB_USER}`, {
+                headers,
+                signal: sinalComTempo(),
+            }),
         ]);
 
         const commitsJson = commitsRes.ok
@@ -59,10 +64,17 @@ export default async function handler(
         const commits = commitsJson?.total_count ?? null;
         const repos = userJson?.public_repos ?? null;
 
-        res.setHeader("Cache-Control", CACHE_PADRAO);
+        /* Resposta incompleta (rate limit, falha de um dos dois endpoints)
+           fica só um minuto na CDN: antes ela ficava uma hora — e mais um
+           dia como stale —, prendendo os números no fallback. */
+        res.setHeader(
+            "Cache-Control",
+            commits === null || repos === null ? CACHE_CURTO : CACHE_PADRAO,
+        );
         res.status(200).json({ commits, repos });
     } catch {
         /* Falha de rede/API → devolve nulos; o frontend usa o fallback. */
+        res.setHeader("Cache-Control", CACHE_CURTO);
         res.status(200).json({ commits: null, repos: null });
     }
 }
