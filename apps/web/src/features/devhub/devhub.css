@@ -693,6 +693,73 @@ h3.devhub-stats__label {
         0 0 0 3px var(--color-brand-subtle);
 }
 
+/* Espaço à direita para o botão de limpar / dica do atalho; o "x"
+   nativo do type=search sai para não duplicar. */
+.catalog__search-input {
+    padding-right: calc(var(--space-4) + 36px);
+}
+
+.catalog__search-input::-webkit-search-cancel-button {
+    appearance: none;
+}
+
+.catalog__search-clear,
+.catalog__search-kbd {
+    position: absolute;
+    top: 50%;
+    right: var(--space-3);
+    transform: translateY(-50%);
+}
+
+.catalog__search-clear {
+    display: inline-grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-3);
+    color: var(--color-text-2);
+    cursor: pointer;
+    transition:
+        background-color 0.15s var(--ease-out),
+        color 0.15s var(--ease-out);
+}
+
+.catalog__search-clear:hover {
+    background: var(--color-surface-4);
+    color: var(--color-text-1);
+}
+
+.catalog__search-clear:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.catalog__search-kbd {
+    display: inline-grid;
+    place-items: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 var(--space-1);
+    border: 1px solid var(--color-border-2);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+    pointer-events: none;
+}
+
+/* Sem teclado físico, a dica do atalho não ajuda. */
+@media (hover: none) {
+    .catalog__search-kbd {
+        display: none;
+    }
+}
+
 .catalog__layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -919,13 +986,115 @@ h3.devhub-stats__label {
     border-bottom: 0;
 }
 
-.catalog-filter__title {
-    margin-bottom: var(--space-3);
+.catalog-filter:not([data-open]) {
+    padding-bottom: var(--space-3);
+}
+
+.catalog-filter__legend {
+    width: 100%;
     padding: 0;
+}
+
+.catalog-filter__toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 36px;
+    padding: 0 var(--space-2);
+    margin-inline: calc(var(--space-2) * -1);
+    width: calc(100% + var(--space-2) * 2);
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    color: var(--color-text-1);
+    cursor: pointer;
+}
+
+.catalog-filter__toggle:hover {
+    background: var(--color-surface-3);
+}
+
+.catalog-filter__toggle:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 0;
+}
+
+.catalog-filter__title {
+    flex: 1;
+    min-width: 0;
     font-family: var(--font-display);
     font-size: var(--text-sm);
     font-weight: 600;
     color: var(--color-text-1);
+}
+
+.catalog-filter__active {
+    flex: none;
+    padding: 1px 8px;
+    border-radius: var(--radius-full);
+    background: var(--color-brand-subtle);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    color: var(--color-brand-text);
+}
+
+.catalog-filter__chevron {
+    flex: none;
+    color: var(--color-text-3);
+    transform: rotate(-90deg);
+    transition: transform 0.2s var(--ease-out);
+}
+
+.catalog-filter[data-open] .catalog-filter__chevron {
+    transform: none;
+}
+
+.catalog-filter__body {
+    margin-top: var(--space-2);
+}
+
+.catalog-filter__search {
+    position: relative;
+    margin-bottom: var(--space-2);
+}
+
+.catalog-filter__search svg {
+    position: absolute;
+    top: 50%;
+    left: var(--space-3);
+    transform: translateY(-50%);
+    color: var(--color-text-3);
+    pointer-events: none;
+}
+
+.catalog-filter__search input {
+    width: 100%;
+    min-height: 36px;
+    padding: 0 var(--space-3) 0 calc(var(--space-3) * 2 + 14px);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-1);
+    font: inherit;
+    font-size: var(--text-sm);
+    color: var(--color-text-1);
+}
+
+.catalog-filter__search input::placeholder {
+    color: var(--color-text-3);
+}
+
+.catalog-filter__search input:focus-visible {
+    outline: none;
+    border-color: var(--color-border-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-subtle);
+}
+
+.catalog-filter__empty {
+    padding: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
 }
 
 .catalog-filter__list {
@@ -1236,6 +1405,8 @@ h3.devhub-stats__label {
 
 @media (prefers-reduced-motion: reduce) {
     .catalog-chip,
+    .catalog-filter__chevron,
+    .catalog__search-clear,
     .catalog-filter__option,
     .catalog-pages__num,
     .catalog-pages__step,
@@ -1935,12 +2106,12 @@ a.devhub-tree__item:hover {
     color: var(--color-text-3);
 }
 
-/* Coluna mínima de 320px: abaixo disso a linha de documentação e os
-   números quebram em duas linhas e o cartão perde o ritmo. Resultado:
-   3 colunas de ~345px em 1920, 2 de ~410px em 1366, 1 no celular. */
+/* Grade 3 × 3 (9 por página): 1 coluna no celular, 2 no tablet e
+   com a barra lateral até 1279px, 3 a partir de 1280px. Colunas fixas
+   em vez de auto-fill: a página sempre fecha linhas inteiras. */
 .catalog__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-6);
     padding: 0;
     margin: 0;
@@ -2002,8 +2173,14 @@ a.devhub-tree__item:hover {
     gap: var(--space-2);
 }
 
-@media (min-width: 1800px) {
+@media (min-width: 640px) {
     .catalog__grid {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .catalog__grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }

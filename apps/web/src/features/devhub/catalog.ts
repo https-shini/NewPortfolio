@@ -79,7 +79,8 @@ export const DEFAULT_CATALOG: CatalogState = {
     page: 1,
 };
 
-export const PAGE_SIZE = 12;
+/** Grade 3 × 3 no desktop: 9 por página fecha sempre linhas inteiras. */
+export const PAGE_SIZE = 9;
 
 const MS_DIA = 86_400_000;
 
@@ -119,12 +120,25 @@ function textoBuscavel(repo: Repository): string {
     );
 }
 
-/** Todos os termos precisam aparecer, em qualquer campo e ordem. */
+/** Sem espaço, hífen, ponto ou sublinhado: "new-portfolio" = "newportfolio". */
+const compacto = (texto: string) => texto.replace(/[\s\-_.]+/g, "");
+
+/**
+ * Todos os termos precisam aparecer, em qualquer campo e ordem. Cada
+ * termo também é procurado sem separadores, então "newportfolio",
+ * "new portfolio" e "new-portfolio" acham o mesmo repositório.
+ */
 export function matchesQuery(repo: Repository, query: string): boolean {
     const termos = normalize(query).split(/\s+/).filter(Boolean);
     if (termos.length === 0) return true;
     const alvo = textoBuscavel(repo);
-    return termos.every((t) => alvo.includes(t));
+    const alvoCompacto = compacto(alvo);
+    if (termos.every((t) => alvo.includes(t))) return true;
+    /* A consulta inteira, colada: "new portfolio" acha "NewPortfolio". */
+    return (
+        termos.every((t) => alvoCompacto.includes(compacto(t))) ||
+        alvoCompacto.includes(compacto(termos.join("")))
+    );
 }
 
 /* ─────────────────────────────────────────────────────────

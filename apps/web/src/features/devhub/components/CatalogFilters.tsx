@@ -1,13 +1,16 @@
 import React, { useId, useState } from "react";
-import type {
-    ActivityWindow,
-    CatalogState,
-    FacetOption,
-    Facets,
-    FeatureFlag,
-    PopularityFlag,
-    StatusFilter,
+import {
+    DEFAULT_CATALOG,
+    normalize,
+    type ActivityWindow,
+    type CatalogState,
+    type FacetOption,
+    type Facets,
+    type FeatureFlag,
+    type PopularityFlag,
+    type StatusFilter,
 } from "@/features/devhub/catalog";
+import { IconChevronDown, IconSearch } from "@/shared/ui/Icons";
 import { useLang } from "@/shared/hooks/useLang";
 import type { TranslationKey } from "@/shared/lib/translations";
 
@@ -17,6 +20,10 @@ import type { TranslationKey } from "@/shared/lib/translations";
    O mesmo componente vive na barra lateral (desktop) e dentro da
    gaveta (mobile). Cada grupo é um `<fieldset>` com `<legend>`: o
    leitor de tela anuncia "Linguagem, grupo" antes das opções.
+
+   Grupos recolhíveis: os principais (linguagem, tecnologia, último
+   push) abrem por padrão; os demais começam recolhidos, salvo se
+   houver seleção. Listas longas ganham um campo de busca interno.
 
    Multisseleção usa checkbox; escolha única (janela de atividade,
    status) usa rádio — o controle nativo diz ao visitante, antes do
@@ -55,6 +62,8 @@ const WINDOW_LABEL: Record<ActivityWindow, TranslationKey> = {
 
 /** Quantas opções um grupo longo mostra antes do "mostrar mais". */
 const VISIVEIS = 6;
+/** A partir de quantas opções o grupo ganha um campo de busca interno. */
+const COM_BUSCA = 8;
 
 interface Props {
     state: CatalogState;
@@ -74,31 +83,115 @@ const Contador: React.FC<{ n: number }> = ({ n }) => (
     </span>
 );
 
-/** Grupo de checkboxes com "mostrar mais" para listas longas. */
+/**
+ * Grupo recolhível. O título é um botão dentro da `<legend>`: o leitor
+ * de tela anuncia o grupo e o estado (expandido/recolhido). Grupo com
+ * seleção ativa abre sozinho e mostra quantas opções estão marcadas,
+ * mesmo recolhido — o filtro aplicado nunca fica escondido.
+ */
+function Grupo({
+    titulo,
+    ativos,
+    abertoPadrao,
+    children,
+}: {
+    titulo: string;
+    ativos: number;
+    abertoPadrao: boolean;
+    children: React.ReactNode;
+}) {
+    const { t } = useLang();
+    const [aberto, setAberto] = useState(abertoPadrao || ativos > 0);
+    const corpoId = useId();
+    return (
+        <fieldset
+            className="catalog-filter"
+            data-open={aberto ? "" : undefined}
+        >
+            <legend className="catalog-filter__legend">
+                <button
+                    type="button"
+                    className="catalog-filter__toggle"
+                    aria-expanded={aberto}
+                    aria-controls={corpoId}
+                    onClick={() => setAberto((v) => !v)}
+                >
+                    <span className="catalog-filter__title">{titulo}</span>
+                    {ativos > 0 && (
+                        <span className="catalog-filter__active">
+                            {t("catalog.f.selected").replace(
+                                "{n}",
+                                String(ativos),
+                            )}
+                        </span>
+                    )}
+                    <IconChevronDown
+                        className="catalog-filter__chevron"
+                        width={16}
+                        height={16}
+                        aria-hidden
+                    />
+                </button>
+            </legend>
+            <div className="catalog-filter__body" id={corpoId} hidden={!aberto}>
+                {children}
+            </div>
+        </fieldset>
+    );
+}
+
+/** Lista de checkboxes com busca interna e "mostrar mais" para listas longas. */
 function GrupoMarcar<V extends string | number>({
     titulo,
     opcoes,
     rotulo,
     aoAlternar,
+    abertoPadrao = true,
 }: {
     titulo: string;
     opcoes: FacetOption<V>[];
     rotulo: (v: V) => string;
     aoAlternar: (v: V) => void;
+    abertoPadrao?: boolean;
 }) {
     const { t } = useLang();
-    const [aberto, setAberto] = useState(false);
+    const [expandido, setExpandido] = useState(false);
+    const [termo, setTermo] = useState("");
     const listaId = useId();
     if (opcoes.length === 0) return null;
-    /* Opção marcada nunca fica escondida atrás do "mostrar mais". */
-    const visiveis = aberto
-        ? opcoes
-        : opcoes.filter((o, i) => i < VISIVEIS || o.active);
-    const restantes = opcoes.length - visiveis.length;
+    const ativos = opcoes.filter((o) => o.active).length;
+    const busca = normalize(termo.trim());
+    const filtradas = busca
+        ? opcoes.filter((o) => normalize(rotulo(o.value)).includes(busca))
+        : opcoes;
+    /* Com busca, mostra tudo o que casa; sem busca, as 6 primeiras e as
+       marcadas (opção marcada nunca fica atrás do "mostrar mais"). */
+    const visiveis =
+        expandido || busca
+            ? filtradas
+            : filtradas.filter((o, i) => i < VISIVEIS || o.active);
+    const restantes = filtradas.length - visiveis.length;
 
     return (
-        <fieldset className="catalog-filter">
-            <legend className="catalog-filter__title">{titulo}</legend>
+        <Grupo titulo={titulo} ativos={ativos} abertoPadrao={abertoPadrao}>
+            {opcoes.length >= COM_BUSCA && (
+                <div className="catalog-filter__search">
+                    <IconSearch width={14} height={14} aria-hidden />
+                    <input
+                        type="search"
+                        value={termo}
+                        onChange={(e) => setTermo(e.target.value)}
+                        aria-label={t("catalog.f.searchIn").replace(
+                            "{g}",
+                            titulo,
+                        )}
+                        placeholder={t("catalog.f.searchPh")}
+                        aria-controls={listaId}
+                        autoComplete="off"
+                        spellCheck={false}
+                    />
+                </div>
+            )}
             <ul className="catalog-filter__list" id={listaId}>
                 {visiveis.map((o) => (
                     <li key={String(o.value)}>
@@ -122,23 +215,30 @@ function GrupoMarcar<V extends string | number>({
                     </li>
                 ))}
             </ul>
-            {(restantes > 0 || aberto) && opcoes.length > VISIVEIS && (
-                <button
-                    type="button"
-                    className="catalog-filter__more"
-                    aria-expanded={aberto}
-                    aria-controls={listaId}
-                    onClick={() => setAberto((v) => !v)}
-                >
-                    {aberto
-                        ? t("catalog.f.showLess")
-                        : t("catalog.f.showMore").replace(
-                              "{n}",
-                              String(restantes),
-                          )}
-                </button>
+            {busca && filtradas.length === 0 && (
+                <p className="catalog-filter__empty" role="status">
+                    {t("catalog.f.noMatch")}
+                </p>
             )}
-        </fieldset>
+            {!busca &&
+                (restantes > 0 || expandido) &&
+                opcoes.length > VISIVEIS && (
+                    <button
+                        type="button"
+                        className="catalog-filter__more"
+                        aria-expanded={expandido}
+                        aria-controls={listaId}
+                        onClick={() => setExpandido((v) => !v)}
+                    >
+                        {expandido
+                            ? t("catalog.f.showLess")
+                            : t("catalog.f.showMore").replace(
+                                  "{n}",
+                                  String(restantes),
+                              )}
+                    </button>
+                )}
+        </Grupo>
     );
 }
 
@@ -166,10 +266,11 @@ export const CatalogFilters: React.FC<Props> = ({ state, facets, update }) => {
                 }
             />
 
-            <fieldset className="catalog-filter">
-                <legend className="catalog-filter__title">
-                    {t("catalog.f.updated")}
-                </legend>
+            <Grupo
+                titulo={t("catalog.f.updated")}
+                ativos={state.updatedWithin === null ? 0 : 1}
+                abertoPadrao
+            >
                 <ul className="catalog-filter__list">
                     <li>
                         <label className="catalog-filter__option">
@@ -209,9 +310,10 @@ export const CatalogFilters: React.FC<Props> = ({ state, facets, update }) => {
                         </li>
                     ))}
                 </ul>
-            </fieldset>
+            </Grupo>
 
             <GrupoMarcar
+                abertoPadrao={false}
                 titulo={t("catalog.f.created")}
                 opcoes={facets.createdYears}
                 rotulo={(v) => String(v)}
@@ -221,6 +323,7 @@ export const CatalogFilters: React.FC<Props> = ({ state, facets, update }) => {
             />
 
             <GrupoMarcar
+                abertoPadrao={false}
                 titulo={t("catalog.f.popularity")}
                 opcoes={facets.popularity}
                 rotulo={(v) => t(POP_LABEL[v])}
@@ -230,6 +333,7 @@ export const CatalogFilters: React.FC<Props> = ({ state, facets, update }) => {
             />
 
             <GrupoMarcar
+                abertoPadrao={false}
                 titulo={t("catalog.f.features")}
                 opcoes={facets.features}
                 rotulo={(v) => t(FEATURE_LABEL[v])}
@@ -238,10 +342,14 @@ export const CatalogFilters: React.FC<Props> = ({ state, facets, update }) => {
                 }
             />
 
-            <fieldset className="catalog-filter">
-                <legend className="catalog-filter__title">
-                    {t("catalog.f.status")}
-                </legend>
+            <Grupo
+                titulo={t("catalog.f.status")}
+                ativos={
+                    (state.status === DEFAULT_CATALOG.status ? 0 : 1) +
+                    (state.includeForks ? 1 : 0)
+                }
+                abertoPadrao={false}
+            >
                 <ul className="catalog-filter__list">
                     {facets.status.map((o) => (
                         <li key={o.value}>
@@ -277,7 +385,7 @@ export const CatalogFilters: React.FC<Props> = ({ state, facets, update }) => {
                         <span className="sr-only"> ({facets.forks.count})</span>
                     </label>
                 )}
-            </fieldset>
+            </Grupo>
         </div>
     );
 };

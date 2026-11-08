@@ -35,6 +35,7 @@ import { GITHUB_URL } from "@/shared/config/constants";
 import { PROFILE } from "@/shared/config/profile";
 import {
     IconArrowRight,
+    IconClose,
     IconFilter,
     IconGitHub,
     IconSearch,
@@ -111,6 +112,28 @@ export const ProjectsPage: React.FC = () => {
         );
     };
     useEffect(() => () => window.clearTimeout(temporizador.current), []);
+
+    const campoBusca = useRef<HTMLInputElement>(null);
+    const limparBusca = () => {
+        window.clearTimeout(temporizador.current);
+        setBusca("");
+        update({ query: "" });
+        campoBusca.current?.focus();
+    };
+    /* Atalho "/": leva à busca de qualquer ponto da página, salvo
+       quando o visitante já está digitando em outro campo. */
+    useEffect(() => {
+        const aoTeclar = (e: KeyboardEvent) => {
+            if (e.key !== "/" || e.ctrlKey || e.metaKey || e.altKey) return;
+            const alvo = e.target as HTMLElement | null;
+            if (alvo?.closest("input, textarea, select, [contenteditable]"))
+                return;
+            e.preventDefault();
+            campoBusca.current?.focus();
+        };
+        document.addEventListener("keydown", aoTeclar);
+        return () => document.removeEventListener("keydown", aoTeclar);
+    }, []);
 
     const resultado = useMemo(
         () => runCatalog(repositories, state, undefined, fixados),
@@ -317,6 +340,7 @@ export const ProjectsPage: React.FC = () => {
                                         aria-hidden
                                     />
                                     <input
+                                        ref={campoBusca}
                                         id="catalog-busca"
                                         className="catalog__search-input"
                                         type="search"
@@ -324,6 +348,13 @@ export const ProjectsPage: React.FC = () => {
                                         onChange={(e) =>
                                             aoBuscar(e.target.value)
                                         }
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Escape" && busca) {
+                                                e.preventDefault();
+                                                limparBusca();
+                                            }
+                                        }}
+                                        aria-describedby="catalog-busca-dica"
                                         placeholder={t(
                                             "catalog.search.placeholder",
                                         )}
@@ -331,6 +362,35 @@ export const ProjectsPage: React.FC = () => {
                                         spellCheck={false}
                                         maxLength={100}
                                     />
+                                    {busca ? (
+                                        <button
+                                            type="button"
+                                            className="catalog__search-clear"
+                                            onClick={limparBusca}
+                                            aria-label={t(
+                                                "catalog.search.clear",
+                                            )}
+                                        >
+                                            <IconClose
+                                                width={16}
+                                                height={16}
+                                                aria-hidden
+                                            />
+                                        </button>
+                                    ) : (
+                                        <kbd
+                                            className="catalog__search-kbd"
+                                            aria-hidden="true"
+                                        >
+                                            /
+                                        </kbd>
+                                    )}
+                                    <span
+                                        id="catalog-busca-dica"
+                                        className="sr-only"
+                                    >
+                                        {t("catalog.search.shortcut")}
+                                    </span>
                                 </div>
                                 <label className="catalog__sort">
                                     <span>{t("catalog.sort.label")}</span>
@@ -461,7 +521,7 @@ export const ProjectsPage: React.FC = () => {
 
                                     {loading ? (
                                         <Esqueleto
-                                            quantidade={6}
+                                            quantidade={9}
                                             rotulo={t("devhub.loading")}
                                         />
                                     ) : resultado.total === 0 ? (
@@ -470,18 +530,51 @@ export const ProjectsPage: React.FC = () => {
                                             role="status"
                                         >
                                             <h3 className="devhub-state__title">
-                                                {t("devhub.empty.title")}
+                                                {state.query.trim()
+                                                    ? t(
+                                                          "devhub.empty.query",
+                                                      ).replace(
+                                                          "{q}",
+                                                          state.query.trim(),
+                                                      )
+                                                    : t("devhub.empty.title")}
                                             </h3>
                                             <p className="devhub-state__desc">
-                                                {t("devhub.empty.desc")}
+                                                {state.query.trim()
+                                                    ? t(
+                                                          "devhub.empty.queryDesc",
+                                                      )
+                                                    : t("devhub.empty.desc")}
                                             </p>
-                                            <button
-                                                type="button"
-                                                className="btn btn--outline"
-                                                onClick={limparTudo}
-                                            >
-                                                {t("catalog.filters.clearAll")}
-                                            </button>
+                                            <div className="devhub-state__actions">
+                                                {state.query.trim() && (
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn--outline"
+                                                        onClick={limparBusca}
+                                                    >
+                                                        {t(
+                                                            "catalog.empty.clearSearch",
+                                                        )}
+                                                    </button>
+                                                )}
+                                                {qtdFiltros > 0 && (
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn--outline"
+                                                        onClick={() => {
+                                                            reset();
+                                                            update({
+                                                                query: busca,
+                                                            });
+                                                        }}
+                                                    >
+                                                        {t(
+                                                            "catalog.empty.clearFilters",
+                                                        )}
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     ) : (
                                         <ul className="catalog__grid">
