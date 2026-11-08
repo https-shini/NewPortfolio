@@ -16,22 +16,24 @@
 ## 📋 Índice
 
 - [Sobre o projeto](#-sobre-o-projeto)
-- [Demonstração](#-demonstração)
+- [Status atual](#-status-atual)
+- [Funcionalidades](#-funcionalidades)
 - [Páginas e rotas](#-páginas-e-rotas)
-- [Seções](#-seções)
 - [Tecnologias](#-tecnologias)
 - [Arquitetura](#-arquitetura)
-- [Design System](#-design-system)
-- [Funcionalidades](#-funcionalidades)
-- [Como executar](#-como-executar)
-- [Scripts](#-scripts)
+- [Pré-requisitos](#-pré-requisitos)
+- [Instalação e execução local](#-instalação-e-execução-local)
 - [Variáveis de ambiente](#-variáveis-de-ambiente)
+- [Scripts](#-scripts)
+- [Testes e auditorias](#-testes-e-auditorias)
+- [Build](#-build)
+- [Deploy](#-deploy)
+- [Integrações](#-integrações)
 - [Como adicionar um link](#-como-adicionar-um-link)
 - [Como publicar uma versão](#-como-publicar-uma-versão)
-- [Testes](#-testes)
-- [Qualidade e CI](#-qualidade-e-ci)
-- [Acessibilidade](#-acessibilidade)
-- [Roadmap](#-roadmap)
+- [Design system e acessibilidade](#-design-system-e-acessibilidade)
+- [Documentação complementar](#-documentação-complementar)
+- [Roadmap resumido](#-roadmap-resumido)
 - [Contribuição](#-contribuição)
 - [Autor](#-autor)
 - [Licença](#-licença)
@@ -40,587 +42,462 @@
 
 ## 💡 Sobre o projeto
 
-Portfólio pessoal de **segunda geração** — SPA construída em **React 18 + TypeScript 5 + Vite 8**, evoluindo a versão anterior em HTML/CSS/JS puro. O projeto tem arquitetura por camadas (app → pages → widgets → shared), design system próprio com tokens CSS, internacionalização completa (PT-BR/EN), tema dark/light persistente e **zero dependências de UI externas** — todos os componentes e os 60+ ícones SVG são do próprio design system.
+Portfólio pessoal de **segunda geração** de Guilherme Cruz — uma SPA em **React 18 + TypeScript 5 + Vite 8**, bilíngue (pt-BR/en), com tema claro/escuro, design system próprio em CSS puro e **apenas duas dependências de runtime no navegador** (`react` e `react-dom`). Roteamento, i18n, modais, ícones e ícones de stack são do próprio projeto.
 
-O repositório é um monorepo simples: a raiz orquestra os scripts via npm workspaces e `apps/web/` contém toda a aplicação. Na raiz ficam também as duas peças que a Vercel lê a partir do Root Directory: `vercel.json` (rewrites das rotas) e `api/`, com funções serverless para métricas do GitHub, releases, feed Atom, HTML para rastreadores e imagens Open Graph. O token do GitHub fica apenas no servidor. A pasta `backend/` segue reservada para uma API própria no futuro.
+**Objetivo:** apresentar trajetória, formação, projetos e recomendações, e abrir canais de contato para oportunidades de trabalho e freelance.
+
+O repositório é um monorepo npm simples:
+
+- `apps/web/` — a aplicação;
+- `api/` — funções serverless da Vercel (métricas do GitHub, notas de versão, feed Atom, HTML para rastreadores, imagens Open Graph, coleta de violações de CSP);
+- `scripts/` — automações de qualidade (auditorias com Playwright e axe-core, geradores de ícones/imagens/changelog, verificação completa).
+
+**Produção:** [gcruz.dev.br](https://gcruz.dev.br/)
 
 ---
 
-## 🌐 Demonstração
+## 📌 Status atual
 
-> Acesse o portfólio em produção:
+| Item                  | Situação                                                                                                                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Versão                | `2.0.0` (em produção)                                                                                                                                                          |
+| Manutenção            | Ativa                                                                                                                                                                          |
+| CI                    | GitHub Actions em todo push e PR para `main` (`.github/workflows/ci.yml`)                                                                                                      |
+| CSP                   | Em modo `Report-Only`, ainda não aplicada                                                                                                                                      |
+| Formulário de contato | Código pronto; só aparece quando `VITE_FORM_ENDPOINT` está configurada                                                                                                         |
+| Pontos em aberto      | Diagnóstico e plano em [`docs/ANALISE_E_PLANO_DE_MELHORIAS.md`](docs/ANALISE_E_PLANO_DE_MELHORIAS.md) e [`docs/ROADMAP_DE_IMPLEMENTACAO.md`](docs/ROADMAP_DE_IMPLEMENTACAO.md) |
 
-**[→ gcruz.dev.br](https://gcruz.dev.br/)**
+---
+
+## ✨ Funcionalidades
+
+**Conteúdo**
+
+- Home com oito seções navegáveis por âncora: Início, Sobre, Carreira, Formações, Destaque (TCC Codex), Projetos, Recomendações e Contato.
+- Página técnica do TCC Codex, com capturas e galeria.
+- `/links` — página de links (link-in-bio) autônoma, com controles próprios de tema e idioma e compartilhamento nativo/clipboard.
+- `/contato` — a seção de contato com endereço próprio.
+
+**Notas de versão**
+
+- Índice em `/release-notes` com a versão mais recente aberta, histórico em accordion paginado de 4 em 4 e filtro por tema.
+- Uma página por versão (`/release-notes/v2.0.0`), com navegação entre versões.
+- Duas camadas de dados: releases do GitHub (via função serverless) + camada editorial bilíngue local; sem rede, a camada local sustenta a página e um selo informa o estado.
+- Feed Atom em `/feed.xml`.
+
+**Experiência**
+
+- Tema claro/escuro persistente, sincronizado com o sistema e sem flash na carga.
+- Português/inglês sem recarregar; `?lang=en` em qualquer rota gera um link compartilhável no idioma.
+- Header fixo com scroll spy, menu mobile com focus trap, modais com fundo inerte e trava de rolagem.
+- `prefers-reduced-motion` respeitado (animações e autoplay desligados).
+- Aviso antes de abrir o perfil do LinkedIn (`/linkedin`), com validação do destino contra redirecionamento aberto.
+- Página 404 bilíngue, também gerada como `dist/404.html` com conteúdo básico sem JavaScript.
+
+**SEO e compartilhamento**
+
+- Título, descrição e canonical por página (`useDocumentMeta`), JSON-LD `Person`, sitemap e robots gerados no build, `hreflang` pt/en.
+- Rastreadores de redes sociais recebem HTML com as meta tags certas de cada rota (`api/crawler`), e cada versão tem imagem Open Graph própria (`api/og`).
+
+**Contato**
+
+- CTA de e-mail e caminhos alternativos (LinkedIn, GitHub, `/links`).
+- Formulário com validação, honeypot e estados de envio — ativo apenas com `VITE_FORM_ENDPOINT`.
+- Inscrição no rodapé: envia para `VITE_NEWSLETTER_ENDPOINT` quando configurada; sem ela, abre um e-mail preenchido.
 
 ---
 
 ## 🧭 Páginas e rotas
 
-| Rota                    | Página             | Conteúdo                                                      |
-| ----------------------- | ------------------ | ------------------------------------------------------------- |
-| `/`                     | `HomePage`         | Portfólio completo — as seções abaixo, navegadas por âncora   |
-| `/links`                | `LinksPage`        | **Social tree** (link-in-bio): perfil, stack e links públicos |
-| `/release-notes`        | `ReleaseNotesPage` | Linha do tempo das versões (ver _Como publicar uma versão_)   |
-| `/release-notes/page/2` | `ReleaseNotesPage` | Páginas seguintes do histórico, de 4 em 4                     |
-| `/release-notes/v2.0.0` | `ReleaseNotePage`  | Uma versão, com endereço próprio e conteúdo completo          |
-| rota desconhecida       | `NotFoundPage`     | Página 404 com atalhos para início, links, releases e contato |
-| `/feed.xml`             | `api/feed`         | Atom das notas de versão (função, não arquivo de build)       |
+| Rota                                                 | Página / destino     | Observação                       |
+| ---------------------------------------------------- | -------------------- | -------------------------------- |
+| `/`                                                  | `HomePage`           | carregada de forma síncrona      |
+| `/links`                                             | `LinksPage`          | autônoma, fora do menu principal |
+| `/contato`                                           | `ContactPage`        | reutiliza o widget `Contact`     |
+| `/release-notes`                                     | `ReleaseNotesPage`   | índice                           |
+| `/release-notes/page/N`                              | `ReleaseNotesPage`   | páginas seguintes do histórico   |
+| `/release-notes/vX.Y.Z`                              | `ReleaseNotePage`    | uma versão                       |
+| `/projects/codex/readme.html` (e `/projects/codex/`) | `CodexPage`          | documento HTML próprio no build  |
+| `/linkedin?to=…`                                     | `LinkedInNoticePage` | aviso antes do LinkedIn          |
+| qualquer outra                                       | `NotFoundPage`       | `noindex, follow`                |
+| `/feed.xml`                                          | `api/feed`           | reescrita no `vercel.json`       |
 
-Qualquer rota aceita `?lang=en` para abrir em inglês — é o que permite
-compartilhar um link no idioma de quem compartilha. O padrão (português)
-fica implícito: a URL limpa é a canônica, e o sitemap declara as duas
-formas com `hreflang`.
+O roteamento é próprio, sobre a History API (`app/RouterContext.tsx`). Os pathnames vivem em `shared/config/routes.ts`, o mapa rota → página em `app/routes.tsx` (páginas secundárias via `React.lazy`) e os construtores de URL das notas de versão (`releaseNotePath`, `releaseNotesPagePath`) em `routes.ts` — nenhuma URL é montada à mão.
 
-O feed é servido por função porque a lista é a **fusão** de duas fontes —
-as releases do GitHub e a camada editorial local. Um arquivo estático
-congelaria no último deploy e perderia justamente as releases publicadas
-depois dele.
-
-Rastreadores de rede social não executam JavaScript, então `/links` e
-`/release-notes/*` são roteados por user-agent (`vercel.json`) para
-`api/crawler`, que devolve HTML com as meta tags certas de cada rota. A
-imagem do cartão de cada versão sai de `api/og`.
-
-Rotas desconhecidas exibem uma página **404 bilíngue**, com tema claro/escuro, navegação de recuperação e `noindex, follow`. O build gera `dist/404.html` com os assets da aplicação e conteúdo básico sem JavaScript. A Vercel usa esse arquivo para endereços sem correspondência, preservando o status HTTP 404; os rewrites explícitos continuam atendendo às rotas válidas. O servidor de desenvolvimento e o `vite preview` usam o fallback da SPA e podem responder HTTP 200: o status do acesso direto deve ser confirmado no deploy.
-
-O roteamento é próprio, sobre a History API (`app/RouterContext.tsx`), sem
-`react-router-dom` — o projeto mantém apenas `react` e `react-dom` em runtime.
-Os pathnames vivem em `shared/config/routes.ts` e o mapeamento rota → página em
-`app/routes.tsx`, com as páginas secundárias carregadas por `React.lazy`.
-Cada página declara o próprio título, descrição e canonical via `useDocumentMeta`.
-
-Os links para meu perfil do LinkedIn exibem um aviso sobre a indisponibilidade
-temporária durante a verificação de identidade. O visitante pode fechar o
-aviso, falar por e-mail ou confirmar a abertura do perfil. A proteção inclui
-certificados e links abertos em nova aba: nesses casos, `/linkedin` apresenta
-o mesmo aviso. `ProfileLink` centraliza o comportamento; os textos e a
-validação dos destinos ficam em `shared/config/linkedin.ts`.
-
-A `/links` é **autônoma**: não usa o header nem o rodapé do site, e traz os
-próprios controles de tema e idioma. Por isso **não aparece no menu principal** —
-chega-se a ela pelo card "Redes Sociais" da seção Contato e pelo link no rodapé.
-O acesso direto por URL (`gcruz.dev.br/links`) funciona normalmente — é assim que
-a página é compartilhada.
-
-As notas de versão, ao contrário, são páginas **do site**: usam o mesmo header e
-rodapé e herdam o tema e o idioma correntes. Chega-se a elas pelo badge de versão no
-rodapé, que leva ao índice.
-
-O índice traz a versão mais recente aberta no topo e o histórico em accordion,
-paginado de 4 em 4 conforme cresce. **Cada versão também tem página própria**,
-com título como manchete, navegação para a versão anterior e a seguinte, e volta
-para o índice. O caminho sai sempre dos construtores de `shared/config/routes.ts`
-(`releaseNotePath`, `releaseNotesPagePath`) — nenhuma URL é montada à mão. O
-casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
-
-> O histórico é curado: só versões declaradas em `shared/config/releaseNotes.ts`
-> entram no índice e ganham conteúdo próprio. O GitHub complementa data, link
-> e corpo das versões declaradas; a configuração local mantém o site funcionando sem rede.
-
-> **Deploy — atenção ao Root Directory.** O `vercel.json` fica na **raiz do
-> repositório**, não em `apps/web/`: o Root Directory do projeto na Vercel é a
-> raiz, e um `vercel.json` dentro de `apps/web/` é simplesmente ignorado. Ele
-> reescreve `/links` e `/release-notes/*` para `index.html`; sem isso o acesso
-> direto retorna 404. Ao criar uma rota nova, acrescente-a ali também.
->
-> Pela mesma razão, as funções serverless vivem em **`api/` na raiz** do
-> repositório, e não em `apps/web/api/` — de onde nunca chegaram a ser
-> compiladas. Vale para qualquer função nova.
->
-> **A raiz precisa de uma TypeScript 5.x explícita.** O builder das funções
-> resolve a `typescript` do `node_modules` da raiz, não a do `apps/web/`. Sem
-> uma dependência direta, quem ficava lá era a **7.0.2** que o `@commitlint/cli`
-> puxa por transitividade — a reescrita nativa, cuja API JS mudou —, e o deploy
-> morria em `Cannot read properties of undefined (reading 'readFile')` depois de
-> o Vite já ter buildado. Por isso `typescript` é devDependency da raiz também.
-
----
-
-## 📄 Seções
-
-| #   | Seção               | Descrição                                                                                          |
-| --- | ------------------- | -------------------------------------------------------------------------------------------------- |
-| 01  | **Hero**            | Apresentação com foto, status de disponibilidade, CTAs (projetos + CV) e links sociais             |
-| 02  | **About**           | Bio, 4 áreas de especialização, stats com count-up e tech stack de 16 ícones                       |
-| 03  | **Timeline**        | Carreira por empresa com trilha de posições, acordeão de detalhes e stats gerais                   |
-| 04  | **Formações**       | Educação + certificações com filtros (tabs), limite expansível e cards com stagger                 |
-| 05  | **Featured**        | TCC Codex — Code Validator, com capturas reais, lightbox, página técnica HTML e link para produção |
-| 06  | **Work**            | Grid de projetos com thumbnail local (WebP), badges de tecnologia e ações                          |
-| 07  | **Recommendations** | Depoimentos em carrossel paginado (2 por página · 1 no mobile) com modal de leitura                |
-| 08  | **Contact**         | CTA de e-mail, formulário com validação (via env), links e perfil ATS-friendly                     |
-| —   | **Links**           | Página `/links`: social tree autônoma, fora do menu (ver _Páginas e rotas_)                        |
-| —   | **Release Notes**   | Linha do tempo das versões, aberta pelo badge de versão no rodapé                                  |
-| —   | **Header**          | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile                           |
-| —   | **Footer**          | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV                        |
+> **Rota nova exige quatro lugares:** `ROUTES` em `shared/config/routes.ts`, o caso em `app/routes.tsx`, a reescrita em `vercel.json` (e a reescrita por user-agent, se a rota tiver cartão próprio em `api/crawler.ts`) e a entrada no sitemap em `apps/web/vite.config.ts`. Sem a reescrita, o acesso direto devolve 404.
 
 ---
 
 ## 🛠 Tecnologias
 
-| Tecnologia              | Versão | Uso                                                |
-| ----------------------- | ------ | -------------------------------------------------- |
-| **React**               | 18     | Renderização de UI com hooks e memo                |
-| **TypeScript**          | 5      | Tipagem estrita em todos os componentes            |
-| **Vite**                | 8      | Bundler, dev server e path aliases (`@/`)          |
-| **Vitest + RTL**        | 4 / 16 | Testes unitários e de componentes (jsdom)          |
-| **ESLint 9 (flat)**     | 9      | Lint com typescript-eslint, react-hooks e jsx-a11y |
-| **Prettier**            | 3      | Formatação padronizada                             |
-| **Husky + lint-staged** | 9 / 17 | Formatação dos arquivos staged no pre-commit       |
-| **Commitlint**          | 20+    | Conventional Commits obrigatórios                  |
-| **CSS puro (tokens)**   | —      | Design system próprio, um `.css` por widget        |
-| **skillicons.dev**      | —      | Ícones de tecnologias na seção About               |
+| Tecnologia                                                   | Versão         | Uso                                                 |
+| ------------------------------------------------------------ | -------------- | --------------------------------------------------- |
+| React / ReactDOM                                             | 18.3           | UI                                                  |
+| TypeScript                                                   | 5.x (`strict`) | tipagem do app e das funções                        |
+| Vite (Rolldown)                                              | 8.3.5          | bundler, dev server e plugins próprios de build     |
+| CSS puro com tokens                                          | —              | design system; um `.css` por componente             |
+| Vitest + Testing Library + jsdom                             | 4 / 16 / 29    | testes de unidade e de componente                   |
+| Playwright + axe-core                                        | 1.62 / 4.13    | auditorias de navegador (a11y, E2E, overflow, perf) |
+| ESLint 9 (flat) + typescript-eslint + jsx-a11y + react-hooks | 9 / 8 / 6 / 7  | lint                                                |
+| Prettier                                                     | 3              | formatação                                          |
+| Husky + lint-staged + commitlint                             | 9 / 17 / 21    | formatação no pre-commit e Conventional Commits     |
+| `@vercel/og`                                                 | 1.0.1          | imagens Open Graph na função `api/og`               |
+| `@fontsource/jetbrains-mono`                                 | 5              | fonte mono servida do próprio domínio               |
+
+Fontes Cabinet Grotesk e General Sans vêm do Fontshare. Os ícones de stack são SVGs locais (`src/assets/skills/`, fork MIT de skill-icons — ver `CREDITS.md`).
 
 ---
 
 ## 🏗 Arquitetura
 
 ```
-.                                # Raiz — o que a Vercel lê pelo Root Directory
-├── vercel.json                  # Rewrites das rotas da SPA
-├── api/                         # Serverless (token server-only, cache de CDN)
-│   ├── github-stats.ts          #   Métricas do perfil
-│   ├── devhub.ts                #   Repositórios e README (operações fechadas)
-│   ├── release-notes.ts         #   Releases publicadas, já em HTML
-│   ├── feed.ts                  #   Feed Atom do histórico curado
-│   ├── crawler.ts               #   HTML para prévias de compartilhamento
-│   ├── og.ts                    #   Imagens Open Graph
-│   ├── _markdown.ts             #   Markdown → HTML sem dependências; escapa antes de converter
-│   ├── _github.ts               #   Único acesso ao GitHub: token, transporte, erro público, cache
-│   ├── _github-repos.ts         #   Repositórios no contrato interno, com paginação
-│   └── _devhub-markdown.ts      #   README → HTML + `_devhub-sanitize.ts` (allowlist)
-│
-apps/web/
-│
-├── public/                      # Assets estáticos publicados na raiz do site
-│   ├── favicon.svg · favicon.ico · apple-touch-icon.png
-│   ├── icon-192.png · icon-512.png · manifest.webmanifest
-│   ├── og-preview.jpg         # robots.txt e sitemap.xml são gerados no build
-│   └── docs/                    # Currículo e certificados (PDF)
-│
-└── src/
-    ├── app/                     # Camada de aplicação
-    │   ├── App.tsx              # Composição raiz (Providers + Routes)
-    │   ├── providers.tsx        # RouterProvider + LangProvider
-    │   ├── routes.tsx           # Mapeamento rota → página (lazy nas secundárias)
-    │   ├── LangContext.tsx      # Contexto de idioma: lang, t(), toggleLang()
-    │   └── RouterContext.tsx    # Rota via History API: path, navigate(), isHome
-    │
-    ├── pages/
-    │   ├── Home/                # Portfólio completo (/)
-    │   ├── Links/               # Social tree (/links) — autônoma
-    │   │   ├── index.tsx · Links.css
-    │   │   └── components/      # LinkCard (exclusivo da página)
-    │   ├── ReleaseNotes/        # Linha do tempo das versões (/release-notes)
-    │   ├── ReleaseNote/         # Página individual de uma versão
-    │   └── NotFound/            # Página 404 para rotas desconhecidas
-    │
-    ├── widgets/                 # Um módulo por seção (tsx + css co-locados)
-    │   ├── Header/  Hero/  About/  Timeline/  Formacoes/
-    │   ├── Featured/  Work/  Recommendations/  Contact/  Footer/  ReleaseNotes/
-    │   └── <Widget>/
-    │       ├── <Widget>.tsx · <Widget>.css
-    │       ├── <Widget>.data.ts     # Dados estáticos bilíngues
-    │       ├── <Widget>.types.ts    # Tipos do domínio
-    │       └── components/          # Sub-componentes do widget
-    │
-    ├── shared/
-    │   ├── config/
-    │   │   ├── profile.ts       # ✨ Fonte única de identidade (nome, e-mail, redes)
-    │   │   ├── links.ts         # ✨ Fonte única das URLs públicas e dos projetos
-    │   │   ├── releaseNotes.json # ✨ Histórico de versões (camada local)
-    │   │   ├── routes.ts        # Pathnames das páginas
-    │   │   └── constants.ts     # SECTION_IDS, chaves de storage, aliases do perfil
-    │   ├── hooks/               # useLang, useTheme, useRoute, useLinkProps, useDocumentMeta…
-    │   ├── lib/                 # translations, localized, richText, dateUtils, mailto…
-    │   ├── styles/              # tokens.css → globals.css → theme-patches.css
-    │   └── ui/                  # Modal/ e Accordion/ (bases reutilizáveis), Icons.tsx, ScrollUtils
-    │
-    ├── assets/                  # Imagens otimizadas (WebP) importadas pelo bundle
-    │   └── skills/              # Ícones de stack da /links (skill-icons, MIT — ver CREDITS.md)
-    └── test/setup.ts            # Setup do Vitest (jsdom + stubs)
+.
+├── api/                         # Funções serverless (Vercel, Node)
+│   ├── github-stats.ts          #   métricas do perfil (token só no servidor)
+│   ├── devhub.ts                #   repositórios e README para /projetos (operações fechadas)
+│   ├── release-notes.ts         #   releases do GitHub já em HTML seguro
+│   ├── feed.ts                  #   Atom das notas de versão
+│   ├── crawler.ts               #   HTML com meta tags para rastreadores
+│   ├── og.ts                    #   imagem Open Graph por versão
+│   ├── csp-report.ts            #   recebe relatórios de violação da CSP
+│   ├── _github.ts · _github-repos.ts   # único acesso ao GitHub: token, transporte, cache, paginação
+│   ├── _devhub-markdown.ts · _devhub-sanitize.ts   # README → HTML com allowlist
+│   └── _releases.ts · _releaseNotes.ts · _markdown.ts   # privados (prefixo _)
+├── apps/web/
+│   ├── index.html               # documento principal (SEO, JSON-LD, bootstrap de tema)
+│   ├── projects/codex/readme.html  # segundo documento (página do Codex)
+│   ├── config/                  # código de build: 404, metadados, lastmod, documentos privados
+│   ├── public/                  # favicons, manifest, imagem OG, PDFs (currículo e certificados)
+│   ├── vite.config.ts           # plugins: URL do site, sitemap/robots, 404, alias do Codex, guarda de privados
+│   └── src/
+│       ├── main.tsx · entradas/comum.tsx   # fontes, CSS global, carga das traduções, montagem
+│       ├── app/                 # App, providers (Router → Theme → Lang), routes
+│       ├── pages/               # Home, Links, Contact, ReleaseNotes, ReleaseNote, Codex, LinkedInNotice, NotFound
+│       ├── widgets/             # Header, Hero, About, Timeline, Formacoes, Featured, Work,
+│       │                        # Recommendations, Contact, Footer, ReleaseNotes
+│       ├── shared/
+│       │   ├── config/          # profile.ts, links.ts, routes.ts, constants.ts, releaseNotes.json…
+│       │   ├── hooks/           # useLang, useTheme, useRoute, useDocumentMeta, useReleaseNotes…
+│       │   ├── lib/             # translations.json, cache, mergeReleaseNotes, richText, dateUtils…
+│       │   ├── styles/          # tokens.css → globals.css → theme-patches.css
+│       │   └── ui/              # Modal, Accordion, AmbientBackground, Icons, SkillIcon, Logo…
+│       └── assets/              # WebP e SVG importados pelo bundle
+├── scripts/                     # auditorias e geradores (ver scripts/README.md)
+├── docs/                        # guides/ (vivo), reference/ (congelado), análise e roadmap
+└── vercel.json                  # rewrites, roteamento por user-agent, headers de segurança
 ```
 
-**Padrões aplicados:**
+**Princípios aplicados**
 
-- **Fonte única de verdade** — identidade em `profile.ts`, seções em `SECTION_IDS`, textos em `translations.json` (chaves tipadas em `translations.ts`)
-- `React.memo` + `useCallback` nos sub-componentes com props estáveis
-- `IntersectionObserver` para reveal e scroll spy — sem listeners de scroll
-- i18n em duas camadas: chaves tipadas (`TranslationKey`) para UI e `Localized {pt, en}` para dados
-- Datas de carreira em ISO `YYYY-MM` — período/duração derivados e auto-atualizáveis
-
----
-
-## 🎨 Design System
-
-Tokens CSS em três níveis — primitivos (`--_*`), semânticos dark (`:root`) e overrides light (`body.light-mode`) — com persistência do tema via `localStorage` e sincronização com o SO.
-
-| Categoria           | Exemplos de variáveis                                                    |
-| ------------------- | ------------------------------------------------------------------------ |
-| **Cores**           | `--color-brand`, `--color-accent`, `--color-bg`, `--color-surface-1/2/3` |
-| **Tipografia**      | `--font-display` (Cabinet Grotesk), `--font-mono` (JetBrains Mono)       |
-| **Escala de texto** | `--text-2xs` → `--text-7xl`                                              |
-| **Espaçamento**     | `--space-1` → `--space-16`                                               |
-| **Bordas**          | `--radius-sm` → `--radius-2xl`, `--radius-full`                          |
-| **Sombras**         | `--shadow-md`, `--shadow-xl`, `--shadow-card-hover`                      |
-| **Transições**      | `--transition-fast`, `--transition-base`, `--transition-slow`            |
-
-Utilitários globais: `.btn`, `.badge`, `.section*`, `.container`, `.social-link`, `[data-reveal]`.
+- Camadas `app → pages → widgets → shared`, sem dependência no sentido inverso.
+- Fonte única de dados: identidade em `profile.ts`, URLs em `links.ts`, rotas em `routes.ts`, textos de interface em `translations.json` (chaves tipadas em `translations.ts`), histórico de versões em `releaseNotes.json`.
+- i18n em duas camadas: chaves tipadas para a interface e objetos `Localized { pt, en }` para dados. Parte dos componentes ainda usa textos inline por idioma — a unificação está no roadmap.
+- `IntersectionObserver` para reveal e scroll spy; datas de carreira em ISO `YYYY-MM`, com períodos derivados.
+- As funções importam a regra de fusão das notas de versão do próprio frontend (`shared/lib/mergeReleaseNotes.ts`), para que cliente e servidor nunca divirjam.
 
 ---
 
-## ✨ Funcionalidades
+## 📦 Pré-requisitos
 
-**Navegação e UX**
-
-- Header fixo com blur ao rolar e scroll spy via `IntersectionObserver`
-- Menu mobile com focus trap, `Escape` e scroll lock
-- Smooth scroll com foco programático na seção de destino
-
-**Tema e Idioma**
-
-- Dark/light com persistência, sync com o SO e `theme-color` dinâmico
-- PT-BR/EN sem recarregar a página — zero strings hardcoded
-
-**Contato**
-
-- Formulário com validação completa, estados de loading/sucesso/erro, honeypot anti-spam e endpoint configurável por env
-- Fallback automático para mailto quando o endpoint não está configurado
-
-**Notas de versão**
-
-- Linha do tempo em duas camadas: releases do GitHub pela serverless + edição bilíngue local
-- Badge de versão no rodapé (número vindo do `package.json`, injetado no build) levando ao índice
-- Índice `/release-notes` com filtro por tema, paginação de 4 em 4 e permalink por versão
-- **Uma página por versão** (`/release-notes/v2.0.0`), com navegação entre versões e entrada própria no sitemap, gerada no build
-- Sem rede ou sem token, cai na camada local e segue completa — o selo de sincronização informa o estado
-
-**SEO**
-
-- Meta tags completas (canonical, Open Graph, Twitter Cards), JSON-LD (`Person`), sitemap, robots.txt, favicons e manifest PWA
-
-**Performance**
-
-- Todas as imagens locais em **WebP** (hero: 8,3 MB → 89 KB) com `loading="lazy"` e `fetchpriority="high"` no avatar
-- **Code splitting**: `vendor` (React) em chunk próprio — cache preservado entre deploys — e modais (`FeaturedLightbox`, `RecommendationModal`) carregados sob demanda via `React.lazy`, tirando ~14 KB de CSS do caminho crítico
-- Carrossel pausa em `visibilitychange`; dados estáticos fora dos componentes
+- **Node.js** `^22.22.1` ou `^24.11.1` (recomendado: `24.11.1`, em `.nvmrc`).
+- **npm** `11.6.2` ou superior.
+- **Git** — o build consulta o histórico para o `<lastmod>` do sitemap.
+- Para as auditorias de navegador: Chromium do Playwright (`npx playwright install chromium`).
 
 ---
 
-## 🚀 Como executar
-
-Use **Node.js 22.22.1 ou superior na linha 22, ou Node.js 24+**, e **npm 11.6.2+**. A versão recomendada de Node está em `.nvmrc` (24.11.1).
-As ferramentas de testes e hooks de commit do lockfile não suportam Node 18.
+## 🚀 Instalação e execução local
 
 ```bash
-# 1. Clone o repositório
 git clone https://github.com/https-shini/NewPortfolio.git
+```
+
+```bash
 cd NewPortfolio
+```
 
-# 2. Instale as dependências (raiz + apps/web)
+```bash
 npm ci --include=dev
+```
 
-# 3. (Opcional) Configure as variáveis de ambiente
+```bash
 cp apps/web/.env.example apps/web/.env.local
-
-# 4. Inicie o servidor de desenvolvimento
-npm run dev            # http://localhost:5173
 ```
-
-**Build para produção:**
 
 ```bash
-npm run build          # type-check + build otimizado em apps/web/dist
-npm run preview        # prévia local do build (porta 4173)
+npm run dev
 ```
 
----
-
-## 📜 Scripts
-
-Todos os scripts funcionam na raiz (delegam ao workspace apps/web):
-
-| Script                 | Descrição                          |
-| ---------------------- | ---------------------------------- |
-| `npm run dev`          | Dev server com HMR (porta 5173)    |
-| `npm run build`        | `tsc --noEmit` + build de produção |
-| `npm run preview`      | Prévia do build (porta 4173)       |
-| `npm run type-check`   | Verificação de tipos sem emitir    |
-| `npm run lint`         | ESLint em `src/`                   |
-| `npm run lint:fix`     | ESLint com auto-fix                |
-| `npm run format`       | Prettier (write)                   |
-| `npm run format:check` | Prettier (check — usado no CI)     |
-| `npm run test`         | Vitest (run único)                 |
-| `npm run test:watch`   | Vitest em watch mode               |
-
-**Validação completa em um comando (inclusive testes no navegador):**
-
-```bash
-npx playwright install chromium
-npm run verify -- --browser
-```
-
-Sem `--browser`, `npm run verify` executa lint sem warnings, tipos, formatação,
-testes, artefatos derivados, build, CSP, orçamento e auditoria de dependências.
-Todos os comandos são portáveis para Windows e Linux e não fazem commit nem push.
-A versão estática do build não exige token do GitHub para funcionar.
-
-Os dicionários bilíngues e o histórico público ficam em `translations.json` e
-`releaseNotes.json`. O Vite publica assets com hash; traduções carregam antes da
-renderização e o histórico apenas quando necessário. Isso retira conteúdo
-editorial do JavaScript sem cortar textos ou relaxar os tetos. O custo dos dados
-continua existindo em JSON. Os scripts e o servidor usam a mesma fonte completa.
-
-### Auditorias
-
-Rodam contra o `dist/`, então exigem `npm run build` antes. Sobem o
-preview sozinhas; aponte `BASE_URL` para reaproveitar um servidor de pé.
-Detalhes e o porquê de cada uma em [`scripts/README.md`](scripts/README.md).
-
-| Script                        | O que verifica                                                  |
-| ----------------------------- | --------------------------------------------------------------- |
-| `npm run audit:a11y`          | axe-core em 5 rotas × 2 temas × 2 idiomas, incluindo a 404      |
-| `npm run audit:overflow`      | rolagem horizontal em 5 rotas × 5 larguras                      |
-| `npm run audit:release-notes` | 28 verificações do índice e da página de versão                 |
-| `npm run audit:not-found`     | navegação da 404, recuperação, idioma e conteúdo sem JavaScript |
-| `npm run audit:modals`        | trava de rolagem, fundo inerte, diálogo em tela deitada         |
-| `npm run audit:bundle`        | tetos de tamanho do bundle                                      |
-| `npm run changelog`           | regenera o `CHANGELOG.md` a partir de `RELEASE_NOTES`           |
-
-O `scripts/geometry.mjs` fica fora do CI de propósito: compara a caixa de
-~93 mil elementos contra uma base gravada, o que exige regravá-la a cada
-mudança visual proposital. É ferramenta manual, para refatoração de CSS.
+O servidor de desenvolvimento sobe em `http://localhost:5173`. As funções de `api/` **não** rodam no `vite dev`; sem elas, as métricas do GitHub e as releases remotas caem nos valores locais de reserva, como acontece em produção quando a rede falha.
 
 ---
 
 ## 🔐 Variáveis de ambiente
 
-Definidas em `apps/web/.env.local` (ver `apps/web/.env.example`):
+Arquivo local: `apps/web/.env.local` (modelo em `apps/web/.env.example`). Em produção, no painel da Vercel.
 
-| Variável                   | Obrigatória | Descrição                                                                                                                                                                                                                                                                                |
-| -------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_FORM_ENDPOINT`       | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail.                                                                                                                                                                      |
-| `VITE_NEWSLETTER_ENDPOINT` | Não         | Endpoint de inscrição no rodapé. Sem ele, abre um e-mail preenchido; com ele, envia POST `{ email, lang, source }`.                                                                                                                                                                      |
-| `VITE_SITE_URL`            | Não         | Domínio canônico injetado no `index.html` no build (canonical, Open Graph, JSON-LD). Default: `https://gcruz.dev.br`.                                                                                                                                                                    |
-| `GITHUB_TOKEN`             | Não         | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Lido só em `api/_github.ts` e usado por `/api/github-stats` (sem ele o card de commits cai no valor de fallback), `/api/release-notes` e `/api/devhub` (sem ele as duas caem para a API REST pública, sujeita a 60 req/h). |
+| Variável                   | Escopo               | Obrigatória | Para que serve                                                                                                                                                                   |
+| -------------------------- | -------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_FORM_ENDPOINT`       | build (navegador)    | não         | Endpoint do formulário de contato. Sem ela, o formulário não é exibido e fica o fluxo de e-mail.                                                                                 |
+| `VITE_NEWSLETTER_ENDPOINT` | build (navegador)    | não         | Recebe `POST { email, lang, source }`. Sem ela, a inscrição abre um e-mail preenchido.                                                                                           |
+| `VITE_SITE_URL`            | build e funções      | não         | Domínio canônico (canonical, Open Graph, JSON-LD, sitemap, feed, crawler). Padrão: `https://gcruz.dev.br`.                                                                       |
+| `GITHUB_TOKEN`             | **somente servidor** | não         | Token fine-grained somente leitura, lido só em `api/_github.ts` e usado por `/api/github-stats`, `/api/release-notes` e `/api/devhub`. Sem ele, a API pública limita a 60 req/h. |
 
-> Variáveis com prefixo `VITE_` são expostas ao browser — nunca coloque segredos.
+> Tudo com prefixo `VITE_` é embutido no JavaScript enviado ao navegador — **nunca** coloque segredos nessas variáveis. `GITHUB_TOKEN` só deve existir no painel da Vercel.
+
+---
+
+## 📜 Scripts
+
+Todos rodam a partir da raiz.
+
+**Desenvolvimento e qualidade**
+
+| Script                         | Descrição                                             |
+| ------------------------------ | ----------------------------------------------------- |
+| `npm run dev`                  | servidor de desenvolvimento (porta 5173)              |
+| `npm run build`                | `tsc --noEmit` + build de produção em `apps/web/dist` |
+| `npm run preview`              | serve o build (porta 4173)                            |
+| `npm run type-check`           | tipos do app                                          |
+| `npm run type-check:api`       | tipos das funções (`tsconfig.api.json`)               |
+| `npm run lint`                 | ESLint em `apps/web/src`, sem warnings                |
+| `npm run lint:api`             | ESLint em `api/`                                      |
+| `npm run lint:fix`             | ESLint com correção automática                        |
+| `npm run format`               | Prettier (escrita)                                    |
+| `npm run format:check`         | Prettier (verificação)                                |
+| `npm test`                     | Vitest, execução única                                |
+| `npm run test:watch`           | Vitest em modo watch                                  |
+| `npm run verify`               | todas as portas não visuais em sequência (ver abaixo) |
+| `npm run clean` · `clean:dist` | remove artefatos de build                             |
+
+**Artefatos derivados (gerar / conferir)**
+
+| Script                                  | Descrição                                                    |
+| --------------------------------------- | ------------------------------------------------------------ |
+| `npm run icones` · `icones:check`       | ícones da marca a partir de `scripts/marca/`                 |
+| `npm run imagens` · `imagens:check`     | variantes responsivas em `src/assets/gerado/`                |
+| `npm run changelog` · `changelog:check` | `CHANGELOG.md` a partir de `releaseNotes.json`               |
+| `npm run csp:check`                     | hash dos scripts inline × CSP do `vercel.json` (exige build) |
+
+---
+
+## 🧪 Testes e auditorias
+
+**Testes de unidade e componente** — Vitest + Testing Library em jsdom: 48 arquivos em `apps/web/src` e 5 em `api/` (a suíte inclui as funções, configurada em `vite.config.ts`). Cobrem utilitários, configuração (links, rotas, release notes, conteúdo estático), hooks, contextos, componentes-base (Modal, Accordion), widgets, páginas e a conversão de markdown das funções, incluindo seus casos de segurança.
+
+```bash
+npm test
+```
+
+**Auditorias de navegador** — rodam contra o `dist/` (faça `npm run build` antes); sobem o preview sozinhas, ou usam o servidor indicado em `BASE_URL`.
+
+| Script                        | O que verifica                                                               |
+| ----------------------------- | ---------------------------------------------------------------------------- |
+| `npm run audit:a11y`          | axe-core por rota, tema e idioma, contra `docs/reference/a11y-baseline.json` |
+| `npm run audit:overflow`      | rolagem horizontal em várias larguras                                        |
+| `npm run audit:layers`        | camadas da atmosfera de fundo                                                |
+| `npm run audit:identity`      | identidade visual das superfícies, contra a base gravada                     |
+| `npm run audit:release-notes` | índice e página de versão de ponta a ponta                                   |
+| `npm run audit:not-found`     | 404, recuperação, idioma e conteúdo sem JavaScript                           |
+| `npm run audit:linkedin`      | aviso antes do LinkedIn                                                      |
+| `npm run audit:codex`         | página do Codex (Full HD, galeria, acessibilidade)                           |
+| `npm run audit:contato`       | rota `/contato` e o caminho até ela                                          |
+| `npm run audit:modals`        | trava de rolagem, fundo inerte, diálogo em paisagem                          |
+| `npm run audit:bundle`        | tetos de tamanho do bundle                                                   |
+| `npm run audit:perf`          | FCP/TBT com CPU estrangulada (manual, fora do CI)                            |
+
+**Verificação completa** (o que o autor roda antes de cada push):
+
+```bash
+npx playwright install chromium
+```
+
+```bash
+npm run verify -- --browser
+```
+
+Sem `--browser`, `verify` executa lint (app e funções), tipos (app e funções), formatação, testes, artefatos derivados, build, CSP, orçamento de bundle e `npm audit`. Detalhes de cada auditoria em [`scripts/README.md`](scripts/README.md).
+
+**CI** (`.github/workflows/ci.yml`): o job `check` roda auditoria de dependências, lint, tipos, formatação, testes, artefatos derivados, build e CSP; o job `audit` baixa o build e roda as auditorias de navegador. Hoje `lint:api`, `type-check:api` e `audit:contato` rodam no `verify`, mas ainda não no CI — ver tarefas F1-07 e F1-08 do roadmap.
+
+---
+
+## 🏭 Build
+
+```bash
+npm run build
+```
+
+Gera `apps/web/dist/` com:
+
+- `index.html` e `projects/codex/readme.html` (+ cópia em `projects/codex/index.html`);
+- `404.html` derivado do `index.html`;
+- `sitemap.xml` (datas do `git log`) e `robots.txt`;
+- assets com hash em `assets/js`, `assets/css`, `assets/img`, `assets/fonts`, com React isolado num chunk `vendor`.
+
+O build **falha** se encontrar documentos privados do TCC em `public/projects/codex` ou no `dist/` (`apps/web/config/privateDocuments.ts`).
+
+---
+
+## ☁️ Deploy
+
+Hospedado na **Vercel**, com integração ao GitHub:
+
+| Configuração     | Valor (de `vercel.json`)                     |
+| ---------------- | -------------------------------------------- |
+| Root Directory   | raiz do repositório                          |
+| Install command  | `npx --yes npm@11.6.2 ci --include=dev`      |
+| Build command    | `npm run build`                              |
+| Output directory | `apps/web/dist`                              |
+| Funções          | `api/*.ts` (arquivos com `_` não viram rota) |
+
+- **Produção:** cada push na `main` publica em `gcruz.dev.br`.
+- **Previews:** cada branch enviada ganha um deployment próprio; os links de preview exigem login na Vercel (só o domínio próprio é público).
+- **Variáveis:** configurar em _Settings → Environment Variables_ (ver tabela acima).
+- **Rollback:** promover o deployment anterior no painel da Vercel e, em seguida, reverter o commit.
+
+> **Atenção ao Root Directory.** `vercel.json` e `api/` precisam ficar na **raiz** — um `vercel.json` dentro de `apps/web/` é ignorado, e funções fora de `api/` na raiz não são publicadas.
+>
+> **TypeScript 5.x na raiz.** O builder das funções usa a `typescript` do `node_modules` da raiz. Sem a dependência direta, a versão 7 trazida por transitividade quebra o deploy (`Cannot read properties of undefined (reading 'readFile')`). Por isso `typescript` também é devDependency da raiz.
+
+---
+
+## 🔌 Integrações
+
+| Integração                             | Uso                                                                                                                                        | Configuração                                |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------- |
+| GitHub REST API                        | releases (`/api/release-notes`, `/feed.xml`, `/api/crawler`), métricas (`/api/github-stats`) e repositórios de `/projetos` (`/api/devhub`) | `GITHUB_TOKEN` (opcional)                   |
+| Vercel                                 | hospedagem, funções, CDN, previews, headers                                                                                                | `vercel.json`                               |
+| Fontshare                              | fontes Cabinet Grotesk e General Sans                                                                                                      | `apps/web/index.html`                       |
+| Serviço de formulário (ex.: Formspree) | envio do formulário de contato                                                                                                             | `VITE_FORM_ENDPOINT` (não configurada hoje) |
+| Serviço de newsletter                  | inscrição no rodapé                                                                                                                        | `VITE_NEWSLETTER_ENDPOINT` (opcional)       |
+| GitHub Actions                         | CI                                                                                                                                         | `.github/workflows/ci.yml`                  |
+| GitHub Projects                        | planejamento ([Project #3](https://github.com/users/https-shini/projects/3))                                                               | `docs/guides/github-project.md`             |
+
+Segurança na borda (`vercel.json`): `Content-Security-Policy-Report-Only` com relatório em `/api/csp-report`, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` e `Permissions-Policy`.
 
 ---
 
 ## 🔗 Como adicionar um link
 
-Toda URL pública do site mora em **`apps/web/src/shared/config/links.ts`**. É o
-único arquivo a tocar: nem a página `/links`, nem o Footer, nem o Contato têm
-URL escrita à mão.
+Toda URL pública vive em **`apps/web/src/shared/config/links.ts`**. A página `/links`, o rodapé e o contato leem de lá.
 
-### 1. Acrescente um item a `TREE_LINKS`
+1. **Acrescente um item a `TREE_LINKS`:**
 
-```ts
-{
-    id: "instagram",                          // único; key do React e dos testes
-    kind: "social",                           // "primary" (card) ou "social" (ícone)
-    label: { pt: "Instagram", en: "Instagram" },
-    href: "https://instagram.com/seu-usuario",
-    icon: IconInstagram,                      // componente de shared/ui/Icons
-    external: true,                           // false só para mailto e rotas internas
-}
-```
+    ```ts
+    {
+        id: "instagram",                     // único; key do React e dos testes
+        kind: "social",                      // "primary" (card) ou "social" (ícone)
+        label: { pt: "Instagram", en: "Instagram" },
+        href: "https://instagram.com/seu-usuario",
+        icon: IconInstagram,                 // componente de shared/ui/Icons.tsx
+        external: true,                      // false só para mailto e rotas internas
+    }
+    ```
 
-- **`primary`** vira um card grande empilhado. Aceita `sublabel` — o handle em
-  fonte mono exibido sob o rótulo.
-- **`social`** vira um botão compacto na linha de ícones, abaixo dos cards.
+    `primary` vira um card (aceita `sublabel`); `social` vira um botão compacto. `PRIMARY_LINKS` e `SOCIAL_LINKS` fazem a partição.
 
-Pronto: a página se adapta sozinha. Nenhum JSX de layout precisa mudar, e o
-`PRIMARY_LINKS` / `SOCIAL_LINKS` faz a partição.
+2. **Reaproveite o que já existe:** perfis, e-mail, site e currículo vêm de `PROFILE` (`shared/config/profile.ts`); projetos, de `PROJECT_URLS`; rotas internas, de `ROUTES`.
 
-### 2. Se o link já existe em outro lugar, reaproveite
+3. **Ícone:** use um export de `shared/ui/Icons.tsx` ou desenhe um novo lá, com os componentes-base existentes.
 
-Nunca reescreva uma URL que o projeto já conhece:
+4. **Chip de tecnologia (opcional):** adicione o SVG (com variantes `-Dark`/`-Light` quando houver) em `src/assets/skills/`, registre em `shared/config/skillIcons.ts` e nos créditos (`CREDITS.md`) e inclua em `TECH_STACK` (`pages/Links/index.tsx`).
 
-- perfis, e-mail, site e currículo → `PROFILE` (`shared/config/profile.ts`)
-- projetos próprios → `PROJECT_URLS`, no topo do mesmo `links.ts`
-- rotas internas → `ROUTES` (`shared/config/routes.ts`)
-
-```ts
-href: PROFILE.social.github.url; // ✅
-href: "https://github.com/https-shini"; // ❌ duplica a fonte
-```
-
-### 3. Ícone
-
-Use qualquer export de `shared/ui/Icons.tsx` — são 65 SVGs inline. Para um novo,
-desenhe-o lá com os componentes-base `F` (preenchido) ou `S` (contorno), seguindo
-os existentes, e importe-o em `links.ts`.
-
-### 4. Chip de tecnologia (opcional)
-
-Os chips de stack da `/links` usam SVGs locais em `src/assets/skills/`, com
-variante por tema. Para incluir um: adicione `<nome>-dark.svg` e
-`<nome>-light.svg` (ou um único arquivo, quando não houver variante), registre
-os créditos em `CREDITS.md` e acrescente a entrada em `TECH_STACK`
-(`pages/Links/index.tsx`).
-
-### 5. Verifique
-
-```bash
-npm test   # links.test.ts valida ids únicos, URLs sem duplicata,
-           # derivação de PROFILE e coerência do campo `external`
-```
+5. **Verifique:** `npm test` (`links.test.ts` valida ids únicos, URLs sem duplicata e coerência de `external`).
 
 ---
 
 ## 🚢 Como publicar uma versão
 
-A linha do tempo de `/release-notes` tem **duas camadas**: a configuração local
-define quais versões aparecem; as releases do GitHub complementam os dados.
+O histórico de `/release-notes` tem **duas camadas**: o arquivo local decide **quais** versões aparecem; o GitHub complementa data, link e corpo.
 
-### Publicar uma versão no histórico
+1. Atualize a versão em `package.json` **e** `apps/web/package.json`.
+2. Declare a entrada no topo de `apps/web/src/shared/config/releaseNotes.json`:
 
-Suba a tag e publique a release no GitHub, com o corpo em markdown. A
-`/api/release-notes` busca as releases com o `GITHUB_TOKEN`, converte o markdown
-em HTML **no servidor** e devolve `{version, date, title, html, url}` com cache de
-CDN (`s-maxage=3600`). **A versão só aparece no site se também estiver declarada
-em `apps/web/src/shared/config/releaseNotes.ts`.**
+    ```json
+    {
+        "version": "2.1.0",
+        "date": "2026-09-01",
+        "featured": true,
+        "title": { "pt": "…", "en": "…" },
+        "summary": { "pt": "…", "en": "…" },
+        "tags": ["design", "a11y"],
+        "changes": { "added": [{ "pt": "Novo recurso", "en": "New feature" }] }
+    }
+    ```
 
-```bash
-# Atualize a versão em package.json e apps/web/package.json.
-# Declare a entrada em apps/web/src/shared/config/releaseNotes.ts.
-npm run changelog
-npm run changelog:check
-# Faça o commit, crie a tag e publique a release no GitHub.
-```
+3. Regenere e confira o changelog:
 
-A versão exibida no badge do rodapé vem do `package.json`, injetada no build como
-`__APP_VERSION__` (`vite.config.ts`) — não existe número digitado à mão.
+    ```bash
+    npm run changelog
+    ```
 
-### Declarar a versão e o conteúdo editorial
+    ```bash
+    npm run changelog:check
+    ```
 
-Acrescente uma entrada local para incluir a versão no histórico. O corpo do
-GitHub pode ser complementado por texto bilíngue, mídia e destaque em
-`apps/web/src/shared/config/releaseNotes.ts`:
+4. Faça o commit, crie a tag e publique a release no GitHub com o corpo em markdown.
 
-```ts
-{
-    version: "2.1.0",                       // casa com a tag, com ou sem "v"
-    date: "2026-09-01",                     // ISO; o GitHub sobrescreve se houver release
-    featured: true,                         // trata como post: capa, corpo e mídia
-    title: { pt: "…", en: "…" },
-    summary: { pt: "…", en: "…" },          // uma linha, no cabeçalho colapsado
-    body: { pt: "…", en: "…" },             // substitui o HTML do GitHub
-    tags: ["design", "a11y"],               // alimenta os chips de filtro
-    changes: { added: [{ pt: "Novo recurso", en: "New feature" }] },
-}
-```
-
-A precedência é fixa e testada em `shared/lib/mergeReleaseNotes.ts`: o **GitHub
-manda** em `version`, `date` e `url`; o **local sobrepõe** `title`, `summary`,
-`body`, `media`, `tags`, `featured`, `changes` e `links`. Definir `body` local
-zera o `html` do GitHub — o mesmo conteúdo nunca aparece duas vezes.
-
-Sem rede ou com o rate limit estourado, a serverless responde
-`{"releases": []}` com status 200 e a linha do tempo se sustenta só na camada
-local. O selo de sincronização no cabeçalho informa o estado.
+A precedência é fixa e testada em `shared/lib/mergeReleaseNotes.ts`: o **GitHub manda** em `version`, `date` e `url`; o **local sobrepõe** `title`, `summary`, `body`, `media`, `tags`, `featured`, `changes` e `links`. Um `body` local substitui o HTML do GitHub. A versão exibida no rodapé vem do `package.json` (injetada como `__APP_VERSION__`), e um teste garante que ela é igual à primeira entrada de `releaseNotes.json`.
 
 ---
 
-## 🧪 Testes
+## 🎨 Design system e acessibilidade
 
-Suíte com **Vitest + React Testing Library** (ambiente jsdom) — **245 testes em 29 arquivos**, cobrindo também as funções serverless em `api/`:
+Tokens CSS em três níveis — primitivos (`--_*`), semânticos do tema escuro (`:root`) e ajustes do tema claro (`body.light-mode`) — em `shared/styles/tokens.css`, `globals.css` e `theme-patches.css`, nessa ordem.
 
-- **Utils** — `dateUtils` (durações e data por extenso), `academicDates`, `text`, `richText`, `mailto`, `careerDates`, `cache` (TTL e storage indisponível), `mergeReleaseNotes` (precedência GitHub × local, ordenação, imutabilidade)
-- **Serverless** — `_markdown` (conversão sem dependências; o escape do HTML **antecede** a transformação, e é isso que sanitiza — protocolos perigosos em links, atributos injetados, blockquote e headings limitados a h2–h4)
-- **Config** — `links` (ids únicos, URLs sem duplicata, derivação de `PROFILE`), `releaseNotes` (versão casa com o `package.json`, ordenação, bilíngue completo)
-- **Hooks** — `useTheme` (persistência, `prefers-color-scheme`, DOM), `useGithubStats` (cache, expiração e fallback), `useReleaseNotes` (cache com TTL, erro de rede, resposta malformada)
-- **Contexto** — `LangContext` (idioma inicial, toggle, persistência), `RouterContext` (navigate, popstate, normalização)
-- **UI base** — `Modal` (Esc, overlay, focus-trap, congelamento da página, fundo inerte), `Accordion` (teclado, ARIA, modo controlado, painel fechado fora da ordem de foco)
-- **Overlays** — `useScrollLock` (posição preservada, barra compensada, travas aninhadas), `useInertBackground` (marca os irmãos, poupa o overlay, compõe aninhado)
-- **Componentes** — `Hero`, `ContactForm` (validação, envio, erros), `Recommendations` (paginação do carrossel), `ReleaseNotes` (topo expandido, accordion, filtro, paginação)
-- **Páginas** — `LinksPage` (perfil, `rel` seguro nos externos, mailto sem nova aba, share nativo vs. clipboard, SEO da rota), `ReleaseNotesPage` (SEO, degradação para a camada local, permalink que expande na carga e no `hashchange`, âncora desconhecida), `ReleaseNotePage` (versão pedida, vizinhas, SEO próprio, carregando × inexistente)
-- **Rotas** — construtores e `matchReleaseNotes` (versão com e sem `v`, pré-lançamento, página inválida, ida e volta estável)
+| Categoria  | Exemplos                                                                     |
+| ---------- | ---------------------------------------------------------------------------- |
+| Cores      | `--color-brand`, `--color-brand-text`, `--color-bg`, `--color-surface-1/2/3` |
+| Tipografia | `--font-display` (Cabinet Grotesk), `--font-mono` (JetBrains Mono)           |
+| Escalas    | `--text-2xs` → `--text-7xl`, `--space-1` → `--space-16`, `--radius-*`        |
+| Movimento  | `--transition-fast/base/slow`                                                |
 
-```bash
-npm run test          # run único (CI)
-npm run test:watch    # watch mode
-```
+**Acessibilidade:** HTML semântico, ARIA nos componentes interativos, navegação por teclado, focus trap no menu e nos modais, `prefers-reduced-motion`, alvos de toque mínimos, um `h1` por página, `eslint-plugin-jsx-a11y` no lint e axe-core no CI.
+
+> Para texto na cor da marca, use `--color-brand-text` (passa AA nos dois temas); `--color-brand` é para preenchimentos, bordas e ícones. `--color-text-4` não serve para texto no tema escuro.
 
 ---
 
-## ✅ Qualidade e CI
+## 📚 Documentação complementar
 
-- **ESLint 9** (flat config) com `typescript-eslint`, `react-hooks`, `react-refresh` e `jsx-a11y`
-- **Prettier** + **EditorConfig** para estilo consistente
-- **Husky + lint-staged** — formatação automática no pre-commit
-- **Commitlint** — Conventional Commits obrigatórios (`feat:`, `fix:`, `docs:`…)
-- **GitHub Actions** (`.github/workflows/ci.yml`) — lint → type-check → format check → testes → build a cada push/PR; o pipeline falha se qualquer etapa falhar
-
----
-
-## ♿ Acessibilidade
-
-| Recurso               | Implementação                                                                              |
-| --------------------- | ------------------------------------------------------------------------------------------ |
-| Semântica HTML        | `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<address>`, `<footer>`, `<time>` |
-| ARIA                  | `aria-label`, `aria-labelledby`, `aria-expanded`, `aria-modal`, `aria-live` e afins        |
-| Navegação por teclado | Tab/Shift+Tab, Escape, setas nos carrosséis, foco visível em tudo                          |
-| Focus trap            | Menu mobile e modais capturam o foco                                                       |
-| Formulário            | Labels reais, `aria-invalid`, `aria-describedby` por erro, status com `role="status"`      |
-| Movimento reduzido    | `prefers-reduced-motion` remove animações e autoplay                                       |
-| Alvos de toque        | Mínimo de 24px em qualquer ponteiro (2.5.8) e 44px no toque (2.5.5)                        |
-| Hierarquia de títulos | Um `h1` por página; a timeline ajusta seu nível conforme o contexto (`headingLevel`)       |
-| Lint de a11y          | `eslint-plugin-jsx-a11y` no CI                                                             |
-
-**Contraste e o token `--color-brand-text`.** O crimson da marca (`--color-brand`,
-crimson-600) foi medido com axe-core sobre o build e **reprova o AA de 4.5:1 como
-texto** nos dois temas: 4.13:1 sobre o fundo escuro e 4.26:1 sobre o off-white do
-claro. Ele continua correto como **preenchimento**, onde o critério é 1.4.11, de
-3:1. Por isso existe `--color-brand-text`, que resolve para crimson-500 no escuro
-(5.29:1) e crimson-700 no claro (5.71:1).
-
-> Ao pintar texto com a cor da marca, use `--color-brand-text`. `--color-brand`
-> fica para fundos, bordas e ícones.
-
-**`--color-text-4` não serve para texto no tema escuro.** Lá ele é slate-600 e
-rende 2.56:1 — bom como tom decorativo, reprovado como leitura. O rodapé usava-o
-em cinco regras (tagline, títulos de coluna, localização, copyright, assinatura) e
-reprovava o AA em todas as páginas; hoje essas regras usam `--color-text-3`
-(~7.3:1). No tema claro o token é slate-500 e passa, então os overrides de
-`theme-patches.css` seguem como estavam.
-
-> Auditoria: **22/22** combinações limpas no axe-core — 11 perfis de dispositivo
-> (Galaxy Fold fechado a 280px até 4K, retrato e paisagem) nos dois temas, sem
-> violação WCAG A/AA e sem overflow horizontal.
+| Documento                                                                      | Conteúdo                                                            |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| [`docs/ANALISE_E_PLANO_DE_MELHORIAS.md`](docs/ANALISE_E_PLANO_DE_MELHORIAS.md) | diagnóstico, problemas com evidência e melhorias propostas          |
+| [`docs/ROADMAP_DE_IMPLEMENTACAO.md`](docs/ROADMAP_DE_IMPLEMENTACAO.md)         | tarefas em 8 fases, critérios de conclusão e estratégia de execução |
+| [`docs/INVENTARIO_TECNICO.md`](docs/INVENTARIO_TECNICO.md)                     | tecnologias, módulos, dependências, funções, variáveis e portões    |
+| [`docs/README.md`](docs/README.md)                                             | organização da pasta `docs/` (guias vivos × referências congeladas) |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md)                                           | fluxo de trabalho, portões do CI, merge local, autoria              |
+| [`scripts/README.md`](scripts/README.md)                                       | o que cada automação mede e por quê                                 |
+| [`CHANGELOG.md`](CHANGELOG.md)                                                 | histórico de versões (gerado)                                       |
 
 ---
 
-## 🗺 Roadmap
+## 🗺 Roadmap resumido
 
-- [ ] Backend próprio para o formulário de contato (`backend/`)
-- [ ] Testes E2E com Playwright
-- [ ] Página de estudo de caso por projeto
-- [ ] Blog técnico integrado
-- [ ] Deploy preview automático por PR
+Detalhes, dependências e critérios em [`docs/ROADMAP_DE_IMPLEMENTACAO.md`](docs/ROADMAP_DE_IMPLEMENTACAO.md).
+
+- [ ] **Fase 1 — Correções críticas:** conteúdo de `/contato` visível, `ErrorBoundary` e recuperação de chunk, `localStorage` resiliente, portões faltantes no CI, timeouts e cache de falhas nas funções.
+- [ ] **Fase 2 — Fundação:** limpeza de resíduos, utilitários comuns das funções, fonte única de identidade, i18n unificado.
+- [ ] **Fase 3 — Performance:** preload das traduções e fontes autoalojadas, sempre com medição antes/depois.
+- [ ] **Fase 4 — Funcionalidades:** backend de contato, decisão sobre a newsletter, sitemap sem âncoras, cartões bilíngues.
+- [ ] **Fase 5 — UX e acessibilidade:** feedback do formulário, fallback das rotas lazy, axe em estados interativos.
+- [ ] **Fase 6 — Plataforma:** CSP aplicada, atualizações automatizadas de dependências.
+- [ ] **Fase 7 — Validação:** testes dos módulos sem cobertura, validação em produção.
+- [ ] **Fase 8 — Evolução:** analytics sem cookies, estudos de caso e página de serviços.
 
 ---
 
 ## 🤝 Contribuição
 
-Este é um projeto pessoal, mas sugestões são bem-vindas:
+Projeto pessoal; sugestões são bem-vindas.
 
-1. Abra uma issue descrevendo a melhoria
-2. Fork + branch a partir de `main`
-3. Commits no padrão Conventional Commits (validados pelo commitlint)
-4. Abra um PR — o CI precisa passar (lint, tipos, testes, build)
+1. Abra uma issue (há modelos para bug, feature e tarefa).
+2. Faça um fork e uma branch a partir de `main`.
+3. Use Conventional Commits (validados pelo commitlint).
+4. Rode `npm run verify -- --browser` e abra um PR.
 
-### Autoria dos commits
-
-Todo o histórico deste repositório é assinado exclusivamente por
-**Guilherme Cruz**, com a sua própria conta do Git. Não há
-coautoria de terceiros no histórico, e commits enviados às branches do
-repositório não devem declarar coautor, cocriador ou qualquer outra
-atribuição além do autor.
-
-Contribuições externas entram por pull request a partir de um fork,
-preservando a autoria de quem as escreveu no commit do PR.
+O fluxo interno do autor (commits diretos na `main`, merge local com squash, regras de autoria) está em [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
 
@@ -634,7 +511,7 @@ São Paulo, SP — Brasil
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-311DB4?style=for-the-badge)](https://gcruz.dev.br)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-3E79E0?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/oguilherme-cruz)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:contato.guilhermescruz@gmail.com)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:contato@gcruz.dev.br)
 [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/https-shini)
 
 </div>
@@ -643,7 +520,7 @@ São Paulo, SP — Brasil
 
 ## 📜 Licença
 
-Distribuído sob a licença **MIT**. Veja `LICENSE` para mais informações.
+Distribuído sob a licença **MIT**. Veja [`LICENSE`](LICENSE).
 
 ---
 
