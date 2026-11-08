@@ -1183,7 +1183,7 @@ h3.devhub-stats__label {
 
 @media (min-width: 1440px) {
     .catalog__layout {
-        grid-template-columns: 264px minmax(0, 1fr);
+        grid-template-columns: 272px minmax(0, 1fr);
         gap: var(--space-10);
     }
 }
@@ -1769,13 +1769,21 @@ a.devhub-tree__item:hover {
 
 /* Monitores largos (referência: 1920×1080). O catálogo é a única página
    que é uma grade de muitos cartões, e em 1200px ela cabia em 3 colunas
-   de ~270px — cartões espremidos. Aqui a medida passa a --layout-wide
-   (1440px) para a PÁGINA INTEIRA, cabeçalho e rodapé inclusos: trocar o
+   de ~270px — cartões espremidos. Aqui a medida cresce com a janela
+   (até --layout-xwide) para a PÁGINA INTEIRA, cabeçalho e rodapé inclusos: trocar o
    token na raiz mantém o logotipo, o conteúdo e o rodapé na mesma
    margem, que é a regra do site (ver pages/Links/Links.css). */
 @media (min-width: 1440px) {
     :root:has(main.pp) {
         --layout-max: var(--layout-wide);
+    }
+}
+
+@media (min-width: 1600px) {
+    :root:has(main.pp) {
+        /* 92% da janela, até 1720px: em 1920 sobram ~100px de cada lado
+           (além do gutter) — respiro de moldura, sem faixas vazias. */
+        --layout-max: min(var(--layout-xwide), 92vw);
     }
 }
 
@@ -2273,4 +2281,10 @@ a.devhub-tree__item:hover {
 
 .pp-cta__btn {
     gap: var(--space-2);
+}
+
+@media (min-width: 1800px) {
+    .catalog__grid {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
 }

@@ -211,7 +211,9 @@ export const ProjectCard: React.FC<Props> = ({
                         {t("card.docs.title")}
                     </span>
                     <span className="pcard__docs-open" aria-hidden="true">
-                        {t("card.docs.open")}
+                        <span className="pcard__docs-open-text">
+                            {t("card.docs.open")}
+                        </span>
                         <IconArrowRight width={14} height={14} aria-hidden />
                     </span>
                 </button>

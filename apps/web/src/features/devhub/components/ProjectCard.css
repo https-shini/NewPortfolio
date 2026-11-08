@@ -7,6 +7,7 @@
 
 .pcard {
     --pcard-radius: var(--radius-xl);
+    container: pcard / inline-size;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -313,6 +314,15 @@ img.pcard__img {
 
 .pcard__docs:hover .pcard__docs-open svg {
     transform: translateX(3px);
+}
+
+/* Cartão estreito (4 colunas em 1920, por exemplo): "Abrir" vira só a
+   seta, para "Documentação do projeto" caber numa linha. O botão segue
+   nomeado pelo aria-label. */
+@container pcard (max-width: 340px) {
+    .pcard__docs-open-text {
+        display: none;
+    }
 }
 
 /* ── Ações: empilhadas, largura total, alvo de 44px ── */
