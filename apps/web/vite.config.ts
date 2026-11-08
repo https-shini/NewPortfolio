@@ -356,6 +356,15 @@ export default defineConfig({
 
         cssCodeSplit: true,
 
+        /* Ícones de tecnologia nunca entram no JS como data: URI. São ~80
+           SVGs e o registro (shared/config/skillIcons.ts) importa todos:
+           embutidos, viravam base64 — que comprime mal — no chunk de quem
+           importa o registro. Como arquivos, ficam em cache próprio e só
+           baixam quando aparecem (o SkillIcon usa loading="lazy"). O resto
+           segue a regra padrão do Vite (embute abaixo de 4 KB). */
+        assetsInlineLimit: (arquivo: string) =>
+            /[\\/]assets[\\/]skills[\\/]/.test(arquivo) ? false : undefined,
+
         rolldownOptions: {
             input: {
                 main: path.resolve(__dirname, "index.html"),

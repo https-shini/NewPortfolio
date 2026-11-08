@@ -11,7 +11,7 @@
    Cada nome passa pelo CATÁLOGO abaixo. É o catálogo que decide o
    ícone, e a regra é uma só:
 
-     · existe logotipo OFICIAL no Skill Icons (`assets/skills`)
+     · existe logotipo no Skill Icons da fork (`assets/skills`)
        → `icon` aponta para ele;
      · não existe → `generic`, um ícone neutro que diz a FINALIDADE
        (biblioteca, estilo, banco, servidor, segurança). Nunca um
@@ -109,7 +109,7 @@ const CATALOGO: Record<string, Entry> = {
     plpgsql: {
         name: "PL/pgSQL",
         color: "#336790",
-        icon: "sql",
+        icon: "postgres",
         aliases: ["plpgsql"],
     },
     react: {
@@ -160,54 +160,165 @@ const CATALOGO: Record<string, Entry> = {
         icon: "oracle",
         aliases: ["oracle", "oracledb"],
     },
-    /* Sem logotipo oficial no Skill Icons → ícone da finalidade. */
+    /* Bibliotecas e ferramentas — logotipos do catálogo ampliado da fork. */
     styled: {
         name: "Styled Components",
         color: "#DB7093",
-        generic: "style",
+        icon: "styledcomponents",
         aliases: ["styledcomponents"],
     },
     tailwind: {
         name: "Tailwind CSS",
         color: "#38BDF8",
-        generic: "style",
+        icon: "tailwind",
         aliases: ["tailwind", "tailwindcss"],
     },
     framer: {
         name: "Framer Motion",
         color: "#BB4BEB",
-        generic: "lib",
-        aliases: ["framermotion"],
+        icon: "motion",
+        aliases: ["framermotion", "motion"],
     },
     express: {
         name: "Express",
         color: NEUTRAL_LANGUAGE_COLOR,
-        generic: "server",
+        icon: "express",
         aliases: ["express", "expressjs"],
     },
     socketio: {
         name: "Socket.IO",
         color: NEUTRAL_LANGUAGE_COLOR,
-        generic: "server",
+        icon: "socketio",
         aliases: ["socketio"],
     },
     postgres: {
         name: "PostgreSQL",
         color: "#336791",
-        generic: "database",
+        icon: "postgres",
         aliases: ["postgresql", "postgres"],
     },
     jwt: {
         name: "JWT",
         color: "#D63AFF",
-        generic: "security",
+        icon: "jwt",
         aliases: ["jwt", "jsonwebtoken"],
     },
     pydantic: {
         name: "Pydantic",
         color: "#E92063",
-        generic: "lib",
+        icon: "pydantic",
         aliases: ["pydantic", "pydanticv2"],
+    },
+    nextjs: {
+        name: "Next.js",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "nextjs",
+        aliases: ["nextjs", "next"],
+    },
+    uvicorn: {
+        name: "Uvicorn",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "uvicorn",
+        aliases: ["uvicorn"],
+    },
+    lucide: {
+        name: "lucide-react",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "lucide",
+        aliases: ["lucide", "lucidereact"],
+    },
+    ruff: {
+        name: "ruff",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "ruff",
+        aliases: ["ruff"],
+    },
+    bandit: {
+        name: "bandit",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "bandit",
+        aliases: ["bandit"],
+    },
+    radon: {
+        name: "radon",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "radon",
+        aliases: ["radon"],
+    },
+    biome: {
+        name: "Biome",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "biome",
+        aliases: ["biome"],
+    },
+    golangci: {
+        name: "golangci-lint",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "golangci",
+        aliases: ["golangci", "golangcilint"],
+    },
+    githubapi: {
+        name: "GitHub API",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "github",
+        aliases: ["githubapi"],
+    },
+    githuboauth: {
+        name: "GitHub OAuth",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "github",
+        aliases: ["githuboauth"],
+    },
+    gemini: {
+        name: "Gemini",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "gemini",
+        aliases: ["gemini", "googlegemini"],
+    },
+    claude: {
+        name: "Claude",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "claude",
+        aliases: ["claude", "claudeai"],
+    },
+    openrouter: {
+        name: "OpenRouter",
+        color: NEUTRAL_LANGUAGE_COLOR,
+        icon: "openrouter",
+        aliases: ["openrouter"],
+    },
+    /* Linguagens medidas pelo GitHub: nome e cor do próprio GitHub; o
+       ícone segue a associação da fork (Dockerfile → Docker,
+       Procfile → Heroku), sem inventar uma marca para o formato. */
+    jupyter: {
+        name: "Jupyter Notebook",
+        color: "#DA5B0B",
+        icon: "jupyter",
+        aliases: ["jupyternotebook", "jupyter"],
+    },
+    jinja: {
+        name: "Jinja",
+        color: "#A52A22",
+        icon: "jinja",
+        aliases: ["jinja", "jinja2"],
+    },
+    svg: {
+        name: "SVG",
+        color: "#FF9900",
+        icon: "svg",
+        aliases: ["svg"],
+    },
+    dockerfile: {
+        name: "Dockerfile",
+        color: "#384D54",
+        icon: "docker",
+        aliases: ["dockerfile"],
+    },
+    procfile: {
+        name: "Procfile",
+        color: "#3B2F63",
+        icon: "heroku",
+        aliases: ["procfile"],
     },
 };
 
