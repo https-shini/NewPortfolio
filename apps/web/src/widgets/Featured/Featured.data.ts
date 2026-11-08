@@ -18,7 +18,12 @@ export interface ProjectSlide {
 export interface ArchitectureCard {
     icon: "layers" | "shield" | "package";
     title: { pt: string; en: string };
+    /** Texto corrido completo (leitura técnica). */
     text: { pt: string; en: string };
+    /** Introdução curta do cartão. */
+    summary: { pt: string; en: string };
+    /** Recursos listados no cartão. */
+    details: { pt: string; en: string }[];
 }
 
 export const FEATURED_PROJECT = {
@@ -140,6 +145,24 @@ export const FEATURED_PROJECT = {
                 pt: "Lint, segurança e complexidade para Python, JavaScript/TypeScript e Go, com revisão opcional por IA. O sistema também opera em modo totalmente estático.",
                 en: "Lint, security and complexity for Python, JavaScript/TypeScript and Go, with optional AI review. The system also runs in fully static mode.",
             },
+            summary: {
+                pt: "Verifique lint, segurança e complexidade para identificar pontos de melhoria no repositório.",
+                en: "Check lint, security and complexity to find what can be improved in the repository.",
+            },
+            details: [
+                {
+                    pt: "Análise de Python, JavaScript/TypeScript e Go.",
+                    en: "Analysis of Python, JavaScript/TypeScript and Go.",
+                },
+                {
+                    pt: "Revisão opcional por IA para complementar os achados.",
+                    en: "Optional AI review to complement the findings.",
+                },
+                {
+                    pt: "Operação totalmente estática, independente da revisão por IA.",
+                    en: "Fully static operation, independent of the AI review.",
+                },
+            ],
         },
         {
             icon: "shield",
@@ -151,6 +174,24 @@ export const FEATURED_PROJECT = {
                 pt: "Análise por URL pública ou seleção de repositórios com OAuth. A comparação de pull requests mostra a diferença de score entre base e head.",
                 en: "Analysis through a public URL or repository selection with OAuth. Pull request comparison shows the score difference between base and head.",
             },
+            summary: {
+                pt: "Conecte o repositório e entenda como cada pull request afeta a pontuação do código.",
+                en: "Connect the repository and see how each pull request affects the code score.",
+            },
+            details: [
+                {
+                    pt: "Análise de repositórios públicos por URL.",
+                    en: "Analysis of public repositories by URL.",
+                },
+                {
+                    pt: "Seleção de repositórios com autenticação OAuth.",
+                    en: "Repository selection with OAuth authentication.",
+                },
+                {
+                    pt: "Comparação de score entre a versão base e a proposta.",
+                    en: "Score comparison between the base and the proposed version.",
+                },
+            ],
         },
         {
             icon: "package",
@@ -162,6 +203,24 @@ export const FEATURED_PROJECT = {
                 pt: "Progresso em tempo real via SSE, com fallback para polling. PostgreSQL habilita histórico, cache por commit e comparação entre análises.",
                 en: "Real-time progress via SSE with polling fallback. PostgreSQL enables history, per-commit caching and comparison between analyses.",
             },
+            summary: {
+                pt: "Acompanhe a execução e compare resultados anteriores para observar a evolução da qualidade do código.",
+                en: "Follow each run and compare previous results to see how code quality evolves.",
+            },
+            details: [
+                {
+                    pt: "Progresso via SSE, com consultas periódicas como alternativa.",
+                    en: "Progress via SSE, with periodic polling as a fallback.",
+                },
+                {
+                    pt: "Histórico de análises e comparações em PostgreSQL.",
+                    en: "History of analyses and comparisons in PostgreSQL.",
+                },
+                {
+                    pt: "Cache por commit para reutilizar resultados da mesma versão.",
+                    en: "Per-commit cache to reuse results for the same version.",
+                },
+            ],
         },
     ] as ArchitectureCard[],
 } as const;
