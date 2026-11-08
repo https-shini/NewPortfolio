@@ -23,7 +23,7 @@ import {
     type CatalogSort,
 } from "@/features/devhub/catalog";
 import { Modal } from "@/shared/ui/Modal/Modal";
-import { GithubPanorama } from "@/features/devhub/components/GithubPanorama";
+import { GithubPanorama } from "@/features/devhub/components/panorama/GithubPanorama";
 import { useDevhubIndex, useDevhubPinned } from "@/features/devhub/useDevhub";
 import { formatDate, formatNumber } from "@/features/devhub/format";
 import { useLang } from "@/shared/hooks/useLang";

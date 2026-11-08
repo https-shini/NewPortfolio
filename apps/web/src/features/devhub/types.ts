@@ -189,10 +189,7 @@ export interface GithubProfile {
     name: string | null;
     createdAt: string;
     followers: number;
-    publicRepos: number;
-    ownRepos: number;
-    stars: number;
-    forks: number;
+    /** Totais históricos do perfil (contagem do GitHub). */
     pullRequests: number;
     issues: number;
     lastYear: {
@@ -206,14 +203,33 @@ export interface GithubProfile {
         reposContributed: number;
         restricted: number;
     };
-    calendar: { start: string; counts: number[] };
+    /** Calendário oficial, dia a dia, desde a criação da conta. */
+    days: { start: string; counts: number[] };
     streak: {
         total: number;
         since: string;
         current: ProfileStreak;
         longest: ProfileStreak;
     };
-    languages: { name: string; color: string | null; percent: number }[];
+    langs: { name: string; color: string | null }[];
+    repos: {
+        name: string;
+        fork: boolean;
+        stars: number;
+        forks: number;
+        createdAt: string;
+        lang: number | null;
+        languages: [number, number][];
+    }[];
+    /** Contribuições públicas: [dia, repositório(, quantidade)]. */
+    activity: {
+        repos: string[];
+        commits: [number, number, number][];
+        pullRequests: [number, number][];
+        issues: [number, number][];
+        reviews: [number, number][];
+        truncated: boolean;
+    };
     milestones: {
         busiestYear: { year: number; count: number } | null;
         busiestDay: { date: string; count: number } | null;
