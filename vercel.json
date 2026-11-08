@@ -62,27 +62,27 @@
         },
         {
             "source": "/links",
-            "destination": "/index.html"
+            "destination": "/rotas/links.html"
         },
         {
             "source": "/links/",
-            "destination": "/index.html"
+            "destination": "/rotas/links.html"
         },
         {
             "source": "/contato",
-            "destination": "/index.html"
+            "destination": "/rotas/contato.html"
         },
         {
             "source": "/contato/",
-            "destination": "/index.html"
+            "destination": "/rotas/contato.html"
         },
         {
             "source": "/projetos",
-            "destination": "/index.html"
+            "destination": "/rotas/projetos.html"
         },
         {
             "source": "/projetos/",
-            "destination": "/index.html"
+            "destination": "/rotas/projetos.html"
         },
         {
             "source": "/projetos/(.*)",
@@ -90,11 +90,11 @@
         },
         {
             "source": "/release-notes",
-            "destination": "/index.html"
+            "destination": "/rotas/release-notes.html"
         },
         {
             "source": "/release-notes/",
-            "destination": "/index.html"
+            "destination": "/rotas/release-notes.html"
         },
         {
             "source": "/release-notes/(.*)",
