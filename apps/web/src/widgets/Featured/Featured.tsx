@@ -107,14 +107,8 @@ export function Featured() {
                             {t("featured.kicker")}
                         </p>
                         <h2 className="featured__title" id="featured-title">
-                            Codex{" "}
-                            <span className="featured__title-detail">
-                                Code Validator
-                            </span>
+                            {t("featured.title")}
                         </h2>
-                        <p className="featured__subtitle">
-                            {t("featured.subtitle")}
-                        </p>
                     </div>
                     <ul
                         className="featured__badges"
@@ -142,6 +136,9 @@ export function Featured() {
                             <p className="featured__desc">
                                 {t("featured.body")}
                             </p>
+                            <p className="featured__desc">
+                                {t("featured.body2")}
+                            </p>
                         </div>
 
                         <div className="featured__summary">
@@ -152,6 +149,14 @@ export function Featured() {
                                 <strong>0–1000</strong>
                                 <span>{t("featured.summary.scoreText")}</span>
                             </p>
+                            <p className="featured__label featured__label--sub">
+                                {t("featured.report.title")}
+                            </p>
+                            <ul className="featured__report">
+                                <li>{t("featured.report.findings")}</li>
+                                <li>{t("featured.report.recommendations")}</li>
+                                <li>{t("featured.report.ai")}</li>
+                            </ul>
                         </div>
 
                         <div className="featured__actions">

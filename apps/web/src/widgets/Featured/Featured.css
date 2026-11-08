@@ -39,20 +39,6 @@
     color: var(--color-text-1);
 }
 
-.featured__title-detail {
-    font-size: 0.55em;
-    font-weight: 500;
-    letter-spacing: 0;
-    color: var(--color-text-3);
-}
-
-.featured__subtitle {
-    max-width: 60ch;
-    font-size: var(--text-lg);
-    line-height: var(--lh-relaxed);
-    color: var(--color-text-2);
-}
-
 .featured__badges {
     display: flex;
     flex-wrap: wrap;
@@ -193,6 +179,38 @@
 }
 
 /* Tecnologias: painel em largura total, uma coluna por camada. */
+/* "O relatório traz": lista curta com marcador da marca. */
+.featured__label--sub {
+    margin-top: var(--space-2);
+}
+
+.featured__report {
+    display: grid;
+    gap: var(--space-1);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.featured__report li {
+    position: relative;
+    padding-left: var(--space-4);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--color-text-2);
+}
+
+.featured__report li::before {
+    content: "";
+    position: absolute;
+    top: 0.6em;
+    left: 2px;
+    width: 5px;
+    height: 5px;
+    border-radius: var(--radius-full);
+    background: var(--color-brand);
+}
+
 .featured__stack {
     display: grid;
     gap: var(--space-4);
