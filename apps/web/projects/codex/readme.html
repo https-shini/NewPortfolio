@@ -87,7 +87,10 @@
         <!-- Mesmo bootstrap de tema da home, autorizado pelo hash da CSP. -->
         <script>
             (function () {
-                var saved = localStorage.getItem("portfolio-theme");
+                var saved = null;
+                try {
+                    saved = localStorage.getItem("portfolio-theme");
+                } catch (e) {}
                 var dark =
                     saved === "dark" ||
                     (!saved &&
