@@ -63,7 +63,7 @@ O repositório é um monorepo npm simples:
 | Versão                | `2.0.0` (em produção)                                                                                                                                                          |
 | Manutenção            | Ativa                                                                                                                                                                          |
 | CI                    | GitHub Actions em todo push e PR para `main` (`.github/workflows/ci.yml`)                                                                                                      |
-| CSP                   | Em modo `Report-Only`, ainda não aplicada                                                                                                                                      |
+| CSP                   | Em modo `Report-Only`. Já validada como bloqueante no navegador (fontes, tema e rotas sem violação); falta observar os relatórios de produção antes de aplicá-la               |
 | Formulário de contato | Código pronto; só aparece quando `VITE_FORM_ENDPOINT` está configurada                                                                                                         |
 | Pontos em aberto      | Diagnóstico e plano em [`docs/ANALISE_E_PLANO_DE_MELHORIAS.md`](docs/ANALISE_E_PLANO_DE_MELHORIAS.md) e [`docs/ROADMAP_DE_IMPLEMENTACAO.md`](docs/ROADMAP_DE_IMPLEMENTACAO.md) |
 
@@ -320,7 +320,7 @@ npm run verify -- --browser
 
 Sem `--browser`, `verify` executa lint (app e funções), tipos (app e funções), formatação, testes, artefatos derivados, build, CSP, orçamento de bundle e `npm audit`. Detalhes de cada auditoria em [`scripts/README.md`](scripts/README.md).
 
-**CI** (`.github/workflows/ci.yml`): o job `check` roda auditoria de dependências, lint, tipos, formatação, testes, artefatos derivados, build e CSP; o job `audit` baixa o build e roda as auditorias de navegador. Hoje `lint:api`, `type-check:api` e `audit:contato` rodam no `verify`, mas ainda não no CI — ver tarefas F1-07 e F1-08 do roadmap.
+**CI** (`.github/workflows/ci.yml`): o job `check` roda auditoria de dependências, lint, tipos, formatação, testes, artefatos derivados, build e CSP; o job `audit` baixa o build e roda as auditorias de navegador. A lista de portões é única — `scripts/portoes.mjs` —: o `verify` executa dela e `portoes.test.ts` reprova se algum portão não estiver no `ci.yml`.
 
 ---
 
@@ -448,15 +448,20 @@ A precedência é fixa e testada em `shared/lib/mergeReleaseNotes.ts`: o **GitHu
 
 Tokens CSS em três níveis — primitivos (`--_*`), semânticos do tema escuro (`:root`) e ajustes do tema claro (`body.light-mode`) — em `shared/styles/tokens.css`, `globals.css` e `theme-patches.css`, nessa ordem.
 
-| Categoria  | Exemplos                                                                     |
-| ---------- | ---------------------------------------------------------------------------- |
-| Cores      | `--color-brand`, `--color-brand-text`, `--color-bg`, `--color-surface-1/2/3` |
-| Tipografia | `--font-display` (Cabinet Grotesk), `--font-mono` (JetBrains Mono)           |
-| Escalas    | `--text-2xs` → `--text-7xl`, `--space-1` → `--space-16`, `--radius-*`        |
-| Layout     | `--layout-max` (1200px → 1440px → até 1720px), `--measure`, `--measure-wide` |
-| Movimento  | `--transition-fast/base/slow`                                                |
+| Categoria  | Exemplos                                                                      |
+| ---------- | ----------------------------------------------------------------------------- |
+| Cores      | `--color-brand`, `--color-brand-text`, `--color-bg`, `--color-surface-1/2/3`  |
+| Tipografia | `--font-display` (Cabinet Grotesk), `--font-mono` (JetBrains Mono)            |
+| Escalas    | `--text-2xs` → `--text-7xl`, `--space-1` → `--space-16`, `--radius-*`         |
+| Layout     | `--layout-max` (1200px → 1440px → até 1720px), `--measure`, `--measure-wide`  |
+| Páginas    | `--page-pad-top`, `--page-title-size` · classes `.page-shell` e `.page-title` |
+| Movimento  | `--transition-fast/base/slow`                                                 |
 
-**Largura do conteúdo.** Um padrão para o site inteiro, com Full HD (1920×1080) como referência de composição: `--layout-max` vale 1200px até 1439px, 1440px a partir de 1440px e `min(1720px, 92vw)` a partir de 1600px — em 1920 sobram ~100px de margem de cada lado. Header, seções e rodapé leem o mesmo token, então ficam alinhados. Parágrafos não acompanham o container: têm teto em `--measure` (68ch) ou `--measure-wide` (82ch).
+**Largura do conteúdo.** Um padrão para o site inteiro, com Full HD (1920×1080) como referência de composição: `--layout-max` vale 1200px até 1439px, 1440px a partir de 1440px e `min(1720px, 92vw)` a partir de 1600px — em 1920 sobram ~100px de margem de cada lado. Header, seções e rodapé leem o mesmo token, então ficam alinhados. Parágrafos não acompanham o container: têm teto em `--measure` (68ch) ou `--measure-wide` (82ch), e o texto é alinhado à esquerda (nunca justificado) com `text-wrap: pretty`.
+
+**Páginas internas.** Toda página que não é a home usa o mesmo recuo sob o header (`--page-pad-top`) e o mesmo título principal (`--page-title-size`, 60px no desktop), na escala de `/projetos`.
+
+**Falhas.** Um `ErrorBoundary` na raiz e por rota mostra uma tela de recuperação bilíngue em vez de página em branco; páginas lazy recarregam uma vez se o chunk sumiu depois de um deploy (`app/lazyComRetry.ts`); preferências passam por `shared/lib/storage.ts`, tolerante a armazenamento bloqueado.
 
 **Acessibilidade:** HTML semântico, ARIA nos componentes interativos, navegação por teclado, focus trap no menu e nos modais, `prefers-reduced-motion`, alvos de toque mínimos, um `h1` por página, `eslint-plugin-jsx-a11y` no lint e axe-core no CI.
 

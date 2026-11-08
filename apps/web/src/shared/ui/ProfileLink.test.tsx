@@ -49,10 +49,14 @@ describe("aviso antes do LinkedIn", () => {
         expect(confirm).toHaveAttribute("target", "_blank");
         expect(confirm).toHaveAttribute("rel", "noopener noreferrer");
         fireEvent.keyDown(dialog, { key: "Escape" });
-        await waitFor(() =>
-            expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+        /* Mesmo limite da abertura (5 s): o fechamento passa pela transição
+           do Modal e, com a suíte inteira rodando em paralelo, estourava o
+           1 s padrão do waitFor de vez em quando — falha intermitente. */
+        await waitFor(
+            () => expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+            { timeout: 5000 },
         );
-        await waitFor(() => expect(link).toHaveFocus());
+        await waitFor(() => expect(link).toHaveFocus(), { timeout: 5000 });
     });
 
     it("abrir em nova aba aponta primeiro para o aviso interno", () => {

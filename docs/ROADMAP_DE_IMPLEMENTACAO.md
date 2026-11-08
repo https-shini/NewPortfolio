@@ -50,7 +50,7 @@
 - **Conclusão:** `useScrollReveal()` chamado na página; teste de unidade com `IntersectionObserver` simulado verifica `.is-visible` em `#contato`.
 - **Riscos:** baixos.
 
-### F1-03 · `localStorage` resiliente no `LangContext` (MEL-02)
+### F1-03 · `localStorage` resiliente no `LangContext` (MEL-02) — ✅ feito
 
 - **Objetivo:** o app monta mesmo com armazenamento bloqueado.
 - **Prioridade / Complexidade:** Crítica / Baixa
@@ -59,7 +59,7 @@
 - **Conclusão:** teste em `LangContext.test.tsx` com `getItem`/`setItem` lançando `SecurityError` passa; nada mais muda de comportamento.
 - **Riscos:** baixos.
 
-### F1-04 · Scripts inline de tema protegidos + hash da CSP (MEL-02)
+### F1-04 · Scripts inline de tema protegidos + hash da CSP (MEL-02) — ✅ feito
 
 - **Objetivo:** o bootstrap de tema não aborta sem armazenamento.
 - **Prioridade / Complexidade:** Alta / Baixa
@@ -68,7 +68,7 @@
 - **Conclusão:** `try/catch` nos dois scripts (conteúdo idêntico); `node scripts/csp.mjs` executado e hash atualizado no `vercel.json` **no mesmo commit**; `npm run csp:check` verde.
 - **Riscos:** esquecer o hash → o tema abre errado quando a CSP for aplicada (o CI acusa).
 
-### F1-05 · `ErrorBoundary` na raiz (MEL-03)
+### F1-05 · `ErrorBoundary` na raiz (MEL-03) — ✅ feito
 
 - **Objetivo:** erro de render mostra mensagem bilíngue com ação de recarregar.
 - **Prioridade / Complexidade:** Crítica / Baixa
@@ -77,7 +77,7 @@
 - **Conclusão:** teste com componente que lança exibe o fallback; `audit:a11y` e `audit:bundle` verdes.
 - **Riscos:** o fallback não pode depender de `LangContext` estar saudável — usar o idioma de `document.documentElement.lang` como reserva.
 
-### F1-06 · Recuperação de chunk ausente após deploy (MEL-03)
+### F1-06 · Recuperação de chunk ausente após deploy (MEL-03) — ✅ feito
 
 - **Objetivo:** aba antiga que pede chunk inexistente recarrega uma vez, depois cai no fallback.
 - **Prioridade / Complexidade:** Alta / Baixa
@@ -86,7 +86,7 @@
 - **Conclusão:** teste com `import()` rejeitado: 1 chamada a `location.reload`, segunda falha mostra o fallback.
 - **Riscos:** laço de recarga — limitar com marcador em `sessionStorage` (tolerante a falha).
 
-### F1-07 · Lint e tipos das funções no CI (MEL-04)
+### F1-07 · Lint e tipos das funções no CI (MEL-04) — ✅ feito
 
 - **Objetivo:** `api/` protegida pelo CI, não só pelo `verify` local.
 - **Prioridade / Complexidade:** Alta / Baixa
@@ -95,7 +95,7 @@
 - **Conclusão:** os dois passos aparecem no log do CI; erro de tipo proposital em branch de teste reprova.
 - **Riscos:** nenhum relevante.
 
-### F1-08 · E2E de `/contato` no CI e verificação de opacidade (MEL-04, P-31)
+### F1-08 · E2E de `/contato` no CI e verificação de opacidade (MEL-04, P-31) — ✅ feito
 
 - **Objetivo:** a regressão de F1-02 não volta sem ser vista.
 - **Prioridade / Complexidade:** Alta / Baixa
@@ -104,7 +104,7 @@
 - **Conclusão:** `audit:contato` roda no CI; reverter F1-02 numa branch reprova a auditoria.
 - **Riscos:** elementos em transição de reveal — aguardar `transitionend` ou checar após rolar até o elemento.
 
-### F1-09 · Timeout nas chamadas ao GitHub (MEL-07)
+### F1-09 · Timeout nas chamadas ao GitHub (MEL-07) — ✅ feito
 
 - **Objetivo:** funções não ficam penduradas no GitHub.
 - **Prioridade / Complexidade:** Alta / Baixa
@@ -113,7 +113,7 @@
 - **Conclusão:** teste com `fetch` que nunca resolve termina no limite e devolve lista vazia / nulos.
 - **Riscos:** limite curto demais; começar com 3 s.
 
-### F1-10 · Não cachear falhas de métricas (MEL-06)
+### F1-10 · Não cachear falhas de métricas (MEL-06) — ✅ feito
 
 - **Objetivo:** oscilação do GitHub não prende o fallback por horas.
 - **Prioridade / Complexidade:** Alta / Baixa
@@ -130,7 +130,7 @@
 
 > Objetivo: reduzir duplicação e acoplamento sem mudar comportamento visível.
 
-### F2-01 · Limpar resíduos da arquitetura anterior (MEL-12)
+### F2-01 · Limpar resíduos da arquitetura anterior (MEL-12) — ✅ feito
 
 - **Objetivo:** comentários e configurações descrevem o que existe.
 - **Prioridade / Complexidade:** Média / Baixa
@@ -139,7 +139,7 @@
 - **Conclusão:** `grep -rn "rotaHtmlPlugin\|prerender\|qr.mjs\|apps/desktop\|apps/mobile" --exclude-dir=node_modules --exclude-dir=docs --exclude=CHANGELOG.md .` sem resultados.
 - **Riscos:** remover do `.gitignore` algo que ainda é gerado localmente — conferir com `git status` após `npm run build`.
 
-### F2-02 · Consolidar os testes de rotas (P-25)
+### F2-02 · Consolidar os testes de rotas (P-25) — ✅ feito
 
 - **Prioridade / Complexidade:** Baixa / Baixa
 - **Dependências:** — **∥**
@@ -147,7 +147,7 @@
 - **Conclusão:** um arquivo; número de casos de teste igual ou maior que a soma sem duplicatas.
 - **Riscos:** perder um caso — comparar a lista de `it(...)` antes/depois.
 
-### F2-03 · Paridade automática entre `verify` e CI
+### F2-03 · Paridade automática entre `verify` e CI — ✅ feito
 
 - **Objetivo:** impedir que um portão novo fique só local (causa de P-04).
 - **Prioridade / Complexidade:** Média / Baixa
@@ -156,7 +156,7 @@
 - **Conclusão:** remover um passo do `ci.yml` reprova o teste; exceções (`audit:perf`, `geometry`) declaradas explicitamente.
 - **Riscos:** parsing frágil do YAML — comparar por `npm run <script>` em texto.
 
-### F2-04 · Endurecer o workflow (MEL-14)
+### F2-04 · Endurecer o workflow (MEL-14) — ✅ feito
 
 - **Prioridade / Complexidade:** Baixa / Baixa
 - **Dependências:** — **∥**
@@ -182,7 +182,7 @@
 - **Conclusão:** `useScrollReveal` removido; `prefers-reduced-motion` só no hook; `audit:identity`, `audit:layers` e `geometry.mjs` sem diferença não intencional.
 - **Riscos:** mudança sutil de timing do stagger — gravar base de geometria **antes** de começar.
 
-### F2-07 · Um único `getUsedTags` (MEL-10c)
+### F2-07 · Um único `getUsedTags` (MEL-10c) — ✅ feito
 
 - **Prioridade / Complexidade:** Baixa / Baixa
 - **Dependências:** — **∥**
@@ -208,7 +208,7 @@
 - **Conclusão:** `grep -rc 'lang === "pt"' apps/web/src --include=*.tsx` = 0 fora de contextos; regra ESLint impede reintrodução; testes de completude bilíngue verdes.
 - **Riscos:** chave faltando num idioma (os testes pegam); textos alterados por engano — revisar o diff de `translations.json`.
 
-### F2-10 · `csp.mjs` reprova handlers inline (MEL-05, parte 3)
+### F2-10 · `csp.mjs` reprova handlers inline (MEL-05, parte 3) — ✅ feito
 
 - **Objetivo:** o portão de CSP enxerga o problema que bloqueia a aplicação da política.
 - **Prioridade / Complexidade:** Alta / Baixa
@@ -265,7 +265,7 @@
 
 ## Fase 4 — Melhorias funcionais
 
-### F4-01 · Sitemap sem âncoras (MEL-17 · T03 / issue #12)
+### F4-01 · Sitemap sem âncoras (MEL-17 · T03 / issue #12) — ✅ feito
 
 - **Prioridade / Complexidade:** Média / Baixa
 - **Dependências:** —
@@ -273,14 +273,14 @@
 - **Conclusão:** `dist/sitemap.xml` sem `#`; teste ou script conferindo.
 - **Riscos:** nenhum relevante.
 
-### F4-02 · Feed tolerante a datas inválidas (MEL-19)
+### F4-02 · Feed tolerante a datas inválidas (MEL-19) — ✅ feito
 
 - **Prioridade / Complexidade:** Baixa / Baixa
 - **Dependências:** F2-05 **∥**
 - **Módulos:** `api/feed.ts`, `api/feed.test.ts`
 - **Conclusão:** entrada com data inválida é omitida com aviso; resposta 200.
 
-### F4-03 · Endurecer `/api/csp-report` (MEL-20)
+### F4-03 · Endurecer `/api/csp-report` (MEL-20) — ✅ feito
 
 - **Prioridade / Complexidade:** Baixa / Baixa
 - **Dependências:** F2-05 **∥**
@@ -324,13 +324,13 @@
 
 ## Fase 5 — UX/UI e acessibilidade
 
-### F5-01 · Chips sem afordância falsa (MEL-24 · T05 / issue #14)
+### F5-01 · Chips sem afordância falsa (MEL-24 · T05 / issue #14) — ✅ feito
 
 - **Prioridade / Complexidade:** Baixa / Baixa
 - **Módulos:** `pages/Links/Links.css`
 - **Conclusão:** sem `:hover` de elevação em `.linktree__chip`; base de `audit:identity` regravada **intencionalmente** no mesmo commit.
 
-### F5-02 · Fallback visível nas rotas lazy (MEL-22)
+### F5-02 · Fallback visível nas rotas lazy (MEL-22) — ✅ feito
 
 - **Prioridade / Complexidade:** Baixa / Baixa
 - **Dependências:** F1-06
@@ -409,7 +409,7 @@
 - **Módulos:** `api/github-stats.test.ts` (se não criado em F1-10), `api/release-notes.test.ts`
 - **Conclusão:** cada arquivo público de `api/` com teste.
 
-### F7-03 · Regravar e conferir as bases de regressão visual
+### F7-03 · Regravar e conferir as bases de regressão visual — ✅ feito
 
 - **Prioridade / Complexidade:** Média / Baixa
 - **Dependências:** Fases 2, 3, 5
