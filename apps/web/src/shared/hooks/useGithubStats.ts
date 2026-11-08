@@ -40,7 +40,12 @@ export function useGithubStats(): GithubStats {
             .then((data) => {
                 if (cancelled || !data) return;
                 setStats(data);
-                writeCache(CACHE_KEY, data);
+                /* Só guarda o que veio de fato. Uma resposta toda nula (rate
+                   limit, GitHub fora) ficava uma hora no cache da aba, e a
+                   pessoa não via os números nem depois de o GitHub voltar. */
+                if (data.commits !== null || data.repos !== null) {
+                    writeCache(CACHE_KEY, data);
+                }
             })
             .catch(() => {
                 /* mantém o fallback do consumidor */

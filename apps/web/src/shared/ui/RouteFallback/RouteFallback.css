@@ -1,0 +1,42 @@
+/* Ocupa uma tela: o rodapé da próxima página não "pula" para cima
+   durante a carga. A barra fica sob o header fixo. */
+.route-fallback {
+    min-height: 100dvh;
+    padding-top: var(--header-height);
+}
+
+.route-fallback__barra {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 40%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--color-brand),
+        var(--color-accent),
+        transparent
+    );
+    z-index: var(--z-toast, 9999);
+    animation: route-fallback-varre 1.1s var(--ease-in-out, ease-in-out)
+        infinite;
+}
+
+@keyframes route-fallback-varre {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(250%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .route-fallback__barra {
+        animation: none;
+        width: 100%;
+        opacity: 0.6;
+    }
+}

@@ -138,7 +138,8 @@
        aqui tem ~300px no celular, e justificar sem hifenizar abriria
        buracos entre as palavras. O dicionário sai do `lang` do
        documento. */
-    text-align: justify;
+    text-align: start;
+    text-wrap: pretty;
     hyphens: auto;
 
     display: -webkit-box;

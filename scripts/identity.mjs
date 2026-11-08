@@ -82,8 +82,11 @@ const ALVOS = {
         ".about__objective",
         /* A seção de projetos da home virou carrossel com dados do
            GitHub: `.work-card`, `.work-card__emoji` e o `.badge` das
-           tecnologias saíram com ela. `.work__more` é o cartão estático
-           da seção (não depende da API) e `.work-btn--primary` o seu CTA. */
+           tecnologias saíram com ela. Os cartões novos (`.pcard`) dependem
+           da API, que a auditoria não chama; entram as partes da seção
+           que existem com ou sem dados: o cabeçalho, o cartão estático
+           (`.work__more`) e o seu CTA. */
+        ".work__head",
         ".work__more",
         ".work-btn--primary",
         ".rec-card",
@@ -96,6 +99,9 @@ const ALVOS = {
         ".featured__arrow",
         ".btn--primary",
         ".btn--outline",
+        /* `.badge` saiu de globals.css por não ter consumidor; o selo que
+           aparece na home é o do Destaque. */
+        ".featured__badge",
         ".header",
         ".header__ctrl",
         ".footer",

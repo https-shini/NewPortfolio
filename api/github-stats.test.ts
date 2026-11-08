@@ -87,7 +87,35 @@ describe("/api/github-stats", () => {
             "fetch",
             vi.fn(() => Promise.reject(new Error("rede"))),
         );
-        const { corpo } = await chamar();
+        const { corpo, headers } = await chamar();
         expect(corpo).toEqual({ commits: null, repos: null });
+        /* Falha não pode ficar uma hora na CDN. */
+        expect(headers["cache-control"]).toBe("s-maxage=60");
+    });
+
+    it("resposta parcial (um endpoint falhou) recebe só o cache curto", async () => {
+        vi.stubGlobal(
+            "fetch",
+            vi.fn((url: string) =>
+                url.includes("/search/commits")
+                    ? json({}, false)
+                    : json({ public_repos: 24 }),
+            ),
+        );
+        const { corpo, headers } = await chamar();
+        expect(corpo).toEqual({ commits: null, repos: 24 });
+        expect(headers["cache-control"]).toBe("s-maxage=60");
+    });
+
+    it("toda requisição ao GitHub leva um limite de tempo", async () => {
+        const fetchMock = vi.fn(() => json({}));
+        vi.stubGlobal("fetch", fetchMock);
+        await chamar();
+        for (const [, init] of fetchMock.mock.calls as unknown as [
+            string,
+            RequestInit,
+        ][]) {
+            expect(init.signal).toBeInstanceOf(AbortSignal);
+        }
     });
 });

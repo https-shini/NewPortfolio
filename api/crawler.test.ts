@@ -67,6 +67,25 @@ describe("/api/crawler", () => {
         expect(meta(corpo, "og:type")).toBe("website");
     });
 
+    it("dá cartão próprio ao acervo de projetos, com o texto da página", async () => {
+        const { corpo } = await pedir("/projetos");
+        expect(meta(corpo, "og:title")).toBe("Projetos — Guilherme Cruz");
+        expect(meta(corpo, "og:url")).toMatch(/\/projetos$/);
+        expect(meta(corpo, "description")).toContain("Repositórios públicos");
+    });
+
+    it("cada repositório ganha título com o próprio nome", async () => {
+        const { corpo } = await pedir("/projetos/meu-app.v2");
+        expect(meta(corpo, "og:title")).toContain("meu-app.v2");
+        expect(meta(corpo, "og:url")).toMatch(/\/projetos\/meu-app\.v2$/);
+    });
+
+    it("nome de repositório fora do formato cai no cartão padrão", async () => {
+        const { corpo } = await pedir('/projetos/<script>alert("x")</script>');
+        expect(corpo).not.toContain("<script>");
+        expect(meta(corpo, "og:title")).not.toContain("alert");
+    });
+
     it("a variante com barra final de /contato cai no mesmo cartão", async () => {
         /* A reescrita do vercel.json atende /contato e /contato/, então as
            duas chegam aqui. Sem a segunda no `resolverMeta`, um link com

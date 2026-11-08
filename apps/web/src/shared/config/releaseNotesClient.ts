@@ -1,5 +1,5 @@
 import dataUrl from "./releaseNotes.json?url";
-import type { ReleaseEntry, ReleaseTag } from "./releaseNotesModel";
+import type { ReleaseEntry } from "./releaseNotesModel";
 export * from "./releaseNotesModel";
 
 export const RELEASE_NOTES: ReleaseEntry[] = [];
@@ -25,10 +25,4 @@ export async function loadLocalReleaseNotes(): Promise<void> {
             throw error;
         });
     await pending;
-}
-
-export function getUsedTags(
-    entries: ReleaseEntry[] = RELEASE_NOTES,
-): ReleaseTag[] {
-    return [...new Set(entries.flatMap((entry) => entry.tags ?? []))];
 }

@@ -33,6 +33,25 @@ export const GITHUB_REST = "https://api.github.com";
  */
 export const CACHE_PADRAO = "s-maxage=3600, stale-while-revalidate=86400";
 
+/**
+ * Cache de resposta INCOMPLETA (algum dado do GitHub veio vazio por
+ * falha ou limite de taxa). Curto de propósito: uma oscilação de um
+ * minuto não pode virar uma hora de números zerados para todo mundo.
+ */
+export const CACHE_CURTO = "s-maxage=60";
+
+/**
+ * Teto de espera por resposta do GitHub. Sem ele, uma lentidão do lado
+ * de lá virava lentidão — ou estouro do tempo da função — do lado de cá,
+ * inclusive no cartão de compartilhamento, que espera esta resposta.
+ */
+export const TEMPO_LIMITE_MS = 8000;
+
+/** Sinal de cancelamento por tempo, um novo a cada requisição. */
+export function sinalComTempo(ms = TEMPO_LIMITE_MS): AbortSignal {
+    return AbortSignal.timeout(ms);
+}
+
 /** Há token configurado? Decide entre o caminho GraphQL e o REST público. */
 export function temToken(): boolean {
     return Boolean(process.env.GITHUB_TOKEN);
@@ -159,6 +178,7 @@ export async function consultarGraphQL<T>(
             method: "POST",
             headers: { ...headersGitHub(), "Content-Type": "application/json" },
             body: JSON.stringify({ query, variables }),
+            signal: sinalComTempo(),
         });
     } catch (erro) {
         throw new ErroPublico(
@@ -232,6 +252,7 @@ export async function buscarREST<T>(
     try {
         resposta = await fetch(`${GITHUB_REST}${caminho}`, {
             headers: headersGitHub(accept),
+            signal: sinalComTempo(),
         });
     } catch (erro) {
         throw new ErroPublico(

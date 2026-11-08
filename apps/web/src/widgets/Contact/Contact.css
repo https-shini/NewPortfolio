@@ -185,7 +185,8 @@
 }
 
 .contact__cta-desc {
-    text-align: justify;
+    text-align: start;
+    text-wrap: pretty;
     font-size: var(--text-md);
     line-height: var(--lh-relaxed);
     color: var(--color-text-3);
@@ -661,4 +662,12 @@
     .contact__alt-link {
         transition: none;
     }
+}
+
+/* /contato: a seção é a página inteira, então o recuo do topo é o das
+   páginas internas (tokens.css), e não o espaçamento entre seções da
+   home — que somado ao header deixava o título 30px mais baixo que o
+   das outras páginas. */
+.contact-page > .contact.section {
+    padding-top: var(--page-pad-top);
 }

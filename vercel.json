@@ -61,6 +61,28 @@
             "destination": "/api/crawler?path=/contato"
         },
         {
+            "source": "/projetos",
+            "has": [
+                {
+                    "type": "header",
+                    "key": "user-agent",
+                    "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+                }
+            ],
+            "destination": "/api/crawler?path=/projetos"
+        },
+        {
+            "source": "/projetos/:rest*",
+            "has": [
+                {
+                    "type": "header",
+                    "key": "user-agent",
+                    "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+                }
+            ],
+            "destination": "/api/crawler?path=/projetos/:rest*"
+        },
+        {
             "source": "/links",
             "destination": "/index.html"
         },
@@ -107,7 +129,7 @@
             "headers": [
                 {
                     "key": "Content-Security-Policy-Report-Only",
-                    "value": "default-src 'self'; script-src 'self' 'sha256-yUYxM2EpJKkRF4zKR8ew5RWXmfrKyv7zipm0rvDmhYI='; style-src 'self' 'unsafe-inline' https://api.fontshare.com; font-src 'self' https://cdn.fontshare.com; img-src 'self' data: https://*.githubusercontent.com https://opengraph.githubassets.com https://github.com; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp"
+                    "value": "default-src 'self'; script-src 'self' 'sha256-7LSaojJxyfr2wKPr5oz3Wx9F05UwJIbQZ+i+ZfwmsKM=' 'unsafe-hashes' 'sha256-C6b/4Iv4ZcrPnfjsnUI/tt1KLtFSZRbC4PywNhjbLfw='; style-src 'self' 'unsafe-inline' https://api.fontshare.com; font-src 'self' https://cdn.fontshare.com; img-src 'self' data: https://*.githubusercontent.com https://opengraph.githubassets.com https://github.com; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp"
                 },
                 {
                     "key": "Reporting-Endpoints",

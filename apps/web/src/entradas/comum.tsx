@@ -1,19 +1,15 @@
 /**
- * O que toda entrada de documento faz — e por que há mais de uma.
+ * Bootstrap do documento: fontes, CSS global, carga das traduções e
+ * montagem do React.
  *
- * Cada rota é servida por um HTML próprio, gerado em build a partir do
- * `index.html` (ver `rotaHtmlPlugin` em vite.config.ts). Cada documento
- * aponta para uma entrada diferente, e é isso que faz o Rollup dar a
- * cada rota **o seu** pedaço de JavaScript e a sua folha de estilo, já
- * ligados no HTML.
+ * Há dois documentos HTML no build — `index.html` (todas as rotas da
+ * SPA) e `projects/codex/readme.html` (a página técnica do Codex, com
+ * metadados próprios no HTML) —, e os dois chegam aqui por `main.tsx`.
+ * As páginas secundárias entram por `React.lazy` em `app/routes.tsx`.
  *
- * Antes havia um documento só: quem abria `/links` baixava e compilava a
- * home inteira para desenhar uma página que não usa nada dela — 21 KiB
- * de JS e 22 KiB de CSS que o PageSpeed media como não usados.
- *
- * A página da rota entra por `import` estático na entrada. Isso a põe no
- * grafo daquele documento (e só dele), e o `React.lazy` de `routes.tsx`
- * a encontra já no registro de módulos, sem ida à rede.
+ * Houve uma fase com um documento por rota, para cada página baixar só
+ * o próprio JavaScript; ela não existe mais. Se voltar, o lugar da
+ * decisão é a entrada `rolldownOptions.input` do vite.config.ts.
  */
 import React from "react";
 import { createRoot } from "react-dom/client";

@@ -3,6 +3,7 @@ import {
     GITHUB_REST,
     GITHUB_USER,
     headersGitHub,
+    sinalComTempo,
     temToken,
 } from "./_github.js";
 
@@ -52,7 +53,7 @@ export async function fetchGithubReleases(): Promise<ReleasePayload[]> {
     try {
         const response = await fetch(
             `${GITHUB_REST}/repos/${GITHUB_USER}/${GITHUB_REPO}/releases?per_page=${PER_PAGE}`,
-            { headers },
+            { headers, signal: sinalComTempo() },
         );
 
         if (!response.ok) {

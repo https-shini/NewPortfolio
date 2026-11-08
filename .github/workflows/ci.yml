@@ -10,10 +10,16 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Menor privilégio: o CI só lê o repositório. O upload/download de
+# artefato usa o token do runtime de Actions, não `contents: write`.
+permissions:
+  contents: read
+
 jobs:
   quality:
     name: Lint · Type-check · Test · Build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,8 +43,14 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Lint das funções serverless
+        run: npm run lint:api
+
       - name: Type-check
         run: npm run type-check
+
+      - name: Type-check das funções serverless
+        run: npm run type-check:api
 
       - name: Format check
         run: npm run format:check
@@ -87,6 +99,7 @@ jobs:
     name: Acessibilidade · Rolagem · Orçamento
     needs: quality
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - name: Checkout
@@ -174,6 +187,11 @@ jobs:
         env:
           BASE_URL: http://localhost:4173
         run: npm run audit:codex
+
+      - name: Rota /contato e o caminho até ela
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:contato
 
       - name: Overlays (scroll lock, inert background)
         env:

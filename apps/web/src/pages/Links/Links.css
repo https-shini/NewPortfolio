@@ -260,13 +260,10 @@
     color: var(--color-text-2);
     border: 1px solid var(--color-border-2);
     border-radius: var(--radius-md);
-    transition: var(--transition-base);
 }
-.linktree__chip:hover {
-    color: var(--color-text-1);
-    border-color: var(--color-border-brand);
-    transform: translateY(-2px);
-}
+/* Sem :hover. O chip é um <li> informativo, não um link: subir e trocar
+   a borda no hover prometia um clique que não leva a lugar nenhum
+   (afordância falsa, item T05 da auditoria de agosto). */
 /* O ícone é o que se reconhece à distância — o rótulo em mono de 12px só
    confirma. A 18px ele era menor que a caixa de texto ao lado e a marca
    de cada tecnologia virava mancha; a 22px ela volta a ser legível, e o

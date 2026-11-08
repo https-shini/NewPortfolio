@@ -16,7 +16,7 @@
    08. Section header
    09. Botões
    10. Card base
-   11. Badge
+   11. Badge (removido)
    12. Social link
    13. Reveal animation
    14. Keyframes globais
@@ -308,8 +308,36 @@ code {
     color: var(--color-text-3);
     /* Teto de leitura: o container cresce com a janela (tokens.css), a
        frase não. Em 1200px este texto já chegava a ~126 caracteres. */
+    /* Alinhado à esquerda, e não justificado, em todo o site: sem hifenização
+       o justificado abria "rios" de 3–4 espaços entre palavras nas colunas
+       mais estreitas (hero, cartões, celular). `text-wrap: pretty` evita a
+       palavra órfã na última linha, que era o que o justificado disfarçava. */
     max-width: min(100%, var(--measure-wide));
-    text-align: justify;
+    text-align: start;
+    text-wrap: pretty;
+}
+
+/* ── Páginas internas ──────────────────────────────────────────
+   `.page-shell` é o recuo padrão sob o header fixo; `.page-title`, o
+   título principal (h1) de toda página que não é a home. Declarado
+   depois de `.section-title` para vencer quando os dois convivem no
+   mesmo elemento (o widget Contact usado como página). Tokens em
+   tokens.css → "Páginas internas". */
+.page-shell {
+    padding-top: var(--page-pad-top);
+    padding-bottom: var(--section-pad-y);
+    /* Página curta não deixa o rodapé subir até o meio da tela. */
+    min-height: 65svh;
+}
+
+.page-title {
+    font-family: var(--font-display);
+    font-size: var(--page-title-size);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--color-text-1);
+    text-wrap: balance;
 }
 
 #subtitle-contact {
@@ -488,73 +516,12 @@ body.light-mode .card--interactive:hover {
 }
 
 /* ══════════════════════════════════════════════════════════════════════════════
-   11. BADGE
+   11. BADGE — removido
+   O utilitário `.badge` (e as variantes brand/accent/neutral/ghost) não
+   tinha mais nenhum consumidor: a seção Projetos da home, a última que o
+   usava, passou aos cartões do DevHub (`.pcard__badge`). Selos de cada
+   componente moram no CSS do próprio componente.
 ══════════════════════════════════════════════════════════════════════════════ */
-.badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: 0.3em 0.85em;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    font-weight: 500;
-    border-radius: var(--radius-sm);
-    border: 1px solid transparent;
-    white-space: nowrap;
-    line-height: 1;
-}
-
-.badge img {
-    width: 14px;
-    height: 14px;
-    flex-shrink: 0;
-}
-
-/* ── Brand ── */
-.badge--brand {
-    background: var(--color-brand-subtle);
-    color: var(--color-brand-light);
-    border-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
-}
-
-body.light-mode .badge--brand {
-    background: color-mix(in srgb, var(--_crimson-600) 10%, transparent);
-    color: var(--_crimson-700);
-    border-color: color-mix(in srgb, var(--_crimson-600) 25%, transparent);
-}
-
-/* ── Accent ── */
-.badge--accent {
-    background: var(--color-accent-subtle);
-    color: var(--color-accent-light);
-    border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
-}
-
-body.light-mode .badge--accent {
-    background: color-mix(in srgb, var(--_indigo-600) 10%, transparent);
-    color: var(--_indigo-700);
-    border-color: color-mix(in srgb, var(--_indigo-600) 25%, transparent);
-}
-
-/* ── Neutral ── */
-.badge--neutral {
-    background: var(--color-surface-3);
-    color: var(--color-text-3);
-    border-color: var(--color-border-2);
-}
-
-body.light-mode .badge--neutral {
-    background: var(--color-surface-3);
-    color: var(--color-text-2);
-    border-color: var(--color-border-3);
-}
-
-/* ── Ghost ── */
-.badge--ghost {
-    background: transparent;
-    color: var(--color-text-4);
-    border-color: var(--color-border-1);
-}
 
 /* ══════════════════════════════════════════════════════════════════════════════
    12. SOCIAL LINK
