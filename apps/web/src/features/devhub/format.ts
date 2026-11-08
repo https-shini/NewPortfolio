@@ -15,7 +15,7 @@ import type { Language } from "@/features/devhub/types";
 ───────────────────────────────────────────────────────── */
 
 /** Etiquetas BCP 47 do `Intl`. Espelham HREFLANG em config/routes.ts. */
-const LOCALE: Record<Lang, string> = { pt: "pt-BR", en: "en" };
+export const LOCALE: Record<Lang, string> = { pt: "pt-BR", en: "en" };
 
 const MS_POR_DIA = 86_400_000;
 

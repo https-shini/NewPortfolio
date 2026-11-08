@@ -1,0 +1,655 @@
+/* ─────────────────────────────────────────────────────────
+   GithubPanorama (.ghp) — janela de navegador com o perfil
+   ─────────────────────────────────────────────────────────
+   Segue o tema do site (claro e escuro) com os tokens; o rosa da
+   marca marca só o que é número principal e a atividade.
+───────────────────────────────────────────────────────── */
+
+/* ── Janela ── */
+.ghp__window {
+    overflow: hidden;
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-1);
+    box-shadow: var(--shadow-lg, var(--surface-edge));
+}
+
+.ghp__chrome {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    border-bottom: 1px solid var(--color-border-2);
+    background: var(--color-surface-2);
+}
+
+.ghp__dots {
+    display: none;
+    gap: 7px;
+}
+
+.ghp__dots span {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #ff5f57;
+}
+
+.ghp__dots span:nth-child(2) {
+    background: #febc2e;
+}
+
+.ghp__dots span:nth-child(3) {
+    background: #28c840;
+}
+
+.ghp__tab {
+    display: none;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 5px var(--space-3);
+    border: 1px solid var(--color-border-2);
+    border-bottom: 0;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: var(--color-surface-1);
+    font-size: var(--text-xs);
+    color: var(--color-text-2);
+    white-space: nowrap;
+}
+
+/* O único elemento interativo da moldura. */
+.ghp__address {
+    display: inline-flex;
+    flex: 1;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+    min-height: 32px;
+    padding: 0 var(--space-3);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    background: var(--color-surface-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-2);
+    text-decoration: none;
+    transition:
+        border-color 0.2s var(--ease-out),
+        color 0.2s var(--ease-out);
+}
+
+.ghp__url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ghp__address svg {
+    flex: none;
+    color: var(--color-text-3);
+}
+
+.ghp__address:hover {
+    border-color: var(--color-border-brand);
+    color: var(--color-text-1);
+}
+
+.ghp__address:hover .ghp__url {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.ghp__address:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 2px;
+}
+
+.ghp__body {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-4);
+}
+
+/* ── Indicadores principais ── */
+.ghp__kpis {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin: 0;
+}
+
+.ghp__kpi {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    gap: var(--space-1);
+    min-height: 96px;
+    padding: var(--space-4);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-2);
+}
+
+.ghp__kpi dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--color-brand-text);
+    font-variant-numeric: tabular-nums;
+}
+
+.ghp__kpi dt {
+    display: grid;
+    gap: 2px;
+}
+
+.ghp__kpi-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.ghp__kpi-hint {
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+/* ── Painéis ── */
+.ghp__cols,
+.ghp__activity {
+    display: grid;
+    align-items: stretch;
+    gap: var(--space-4);
+}
+
+/* Painéis são <section>: zera a margem que .pp dá a seções irmãs. */
+.ghp .ghp__body section {
+    margin: 0;
+}
+
+.ghp__panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-5);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-2);
+}
+
+.ghp__panel-head {
+    display: grid;
+    gap: var(--space-1);
+}
+
+.ghp__panel-title {
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+.ghp__panel-note {
+    font-size: var(--text-xs);
+    line-height: var(--lh-relaxed);
+    color: var(--color-text-3);
+}
+
+.ghp__sub {
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ls-wide);
+    text-transform: uppercase;
+    color: var(--color-text-3);
+}
+
+.ghp__rows {
+    display: grid;
+    margin: 0;
+}
+
+.ghp__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-2) 0;
+    border-bottom: 1px dashed var(--color-border-2);
+    font-size: var(--text-sm);
+}
+
+.ghp__row:last-child {
+    border-bottom: 0;
+}
+
+.ghp__row dt {
+    color: var(--color-text-2);
+}
+
+.ghp__row dd {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--color-text-1);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Linguagens ── */
+.ghp__langbar {
+    display: flex;
+    gap: 2px;
+    height: 10px;
+    overflow: hidden;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-4);
+}
+
+.ghp__langbar span {
+    min-width: 2px;
+}
+
+/* Uma linha por linguagem: nome, trilho proporcional e percentual —
+   legível no celular e sem sobra ao lado das estatísticas. */
+.ghp__langs {
+    display: grid;
+    gap: var(--space-3);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.ghp__langs li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-2);
+}
+
+.ghp__dot {
+    flex: none;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.ghp__lang-name {
+    flex: 0 0 9.5rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ghp__lang-track {
+    flex: 1;
+    height: 6px;
+    overflow: hidden;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-4);
+}
+
+.ghp__lang-track span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+}
+
+.ghp__lang-pct {
+    flex: none;
+    min-width: 3.5rem;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-1);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Calendário ── */
+/* As células acompanham a largura do painel e ocupam a linha inteira.
+   No celular há um piso de 10px por semana: o calendário rola dentro do
+   painel (a página nunca rola na horizontal). */
+.ghp__cal-wrap {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    border-radius: var(--radius-sm);
+}
+
+.ghp__cal-wrap:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 4px;
+}
+
+.ghp__cal {
+    display: grid;
+    gap: 6px;
+    min-width: calc(var(--weeks) * 13px);
+}
+
+.ghp__cal-months,
+.ghp__cal-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--weeks), minmax(0, 1fr));
+    column-gap: 3px;
+}
+
+.ghp__cal-months {
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+.ghp__cal-months span {
+    white-space: nowrap;
+}
+
+.ghp__cal-grid {
+    grid-template-rows: repeat(7, auto);
+    row-gap: 3px;
+}
+
+.ghp__cell {
+    display: block;
+    aspect-ratio: 1;
+    border-radius: 2px;
+    background: var(--color-surface-4);
+}
+
+.ghp__cell[data-l="1"] {
+    background: color-mix(
+        in srgb,
+        var(--color-brand) 30%,
+        var(--color-surface-4)
+    );
+}
+
+.ghp__cell[data-l="2"] {
+    background: color-mix(
+        in srgb,
+        var(--color-brand) 55%,
+        var(--color-surface-4)
+    );
+}
+
+.ghp__cell[data-l="3"] {
+    background: color-mix(
+        in srgb,
+        var(--color-brand) 78%,
+        var(--color-surface-4)
+    );
+}
+
+.ghp__cell[data-l="4"] {
+    background: var(--color-brand);
+}
+
+.ghp__legend {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+.ghp__legend .ghp__cell {
+    width: 11px;
+}
+
+/* Evolução mensal */
+.ghp__months {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: var(--space-1);
+    align-items: end;
+    height: 96px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.ghp__months li {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 4px;
+    height: 100%;
+    min-width: 0;
+}
+
+.ghp__bar {
+    align-self: end;
+    height: var(--h);
+    border-radius: 3px 3px 0 0;
+    background: linear-gradient(
+        to top,
+        color-mix(in srgb, var(--color-brand) 55%, transparent),
+        var(--color-brand)
+    );
+}
+
+.ghp__month-label {
+    overflow: hidden;
+    font-size: var(--text-2xs);
+    text-align: center;
+    color: var(--color-text-3);
+    white-space: nowrap;
+}
+
+/* ── Sequências ── */
+.ghp__streaks {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+}
+
+.ghp__streaks > div {
+    display: grid;
+    gap: 2px;
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border-1);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-1);
+}
+
+.ghp__streaks dt {
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.ghp__streaks dd {
+    margin: 0;
+}
+
+.ghp__streaks .ghp__streak-value {
+    order: -1;
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--color-text-1);
+    font-variant-numeric: tabular-nums;
+}
+
+.ghp__streaks dd small {
+    font-family: var(--font-sans, inherit);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-2);
+}
+
+.ghp__streak--main {
+    border-color: var(--color-border-brand) !important;
+}
+
+.ghp__streak--main .ghp__streak-value {
+    color: var(--color-brand-text);
+}
+
+.ghp__period {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+/* ── Marcos ── */
+.ghp__milestones {
+    display: grid;
+    gap: var(--space-3);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border-1);
+}
+
+.ghp__milestones ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.ghp__milestones li {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+    padding: 6px var(--space-3);
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+.ghp__milestones strong {
+    font-weight: 600;
+    color: var(--color-text-1);
+}
+
+/* ── Estados ── */
+.ghp__skeleton {
+    display: grid;
+    gap: var(--space-5);
+}
+
+.ghp__shimmer {
+    min-height: 96px;
+    background: linear-gradient(
+        90deg,
+        var(--color-surface-2),
+        var(--color-surface-3),
+        var(--color-surface-2)
+    );
+    background-size: 200% 100%;
+    animation: ghp-shimmer 1.4s linear infinite;
+}
+
+.ghp__cols .ghp__shimmer {
+    min-height: 220px;
+}
+
+@keyframes ghp-shimmer {
+    to {
+        background-position: -200% 0;
+    }
+}
+
+.ghp__error,
+.ghp__empty {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+    padding: var(--space-8) var(--space-4);
+    font-size: var(--text-sm);
+    text-align: center;
+    color: var(--color-text-2);
+}
+
+.ghp__error a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 32px;
+    font-weight: 600;
+    color: var(--color-brand-text);
+}
+
+.ghp__foot {
+    display: grid;
+    gap: var(--space-1);
+    margin-top: var(--space-3);
+    font-size: var(--text-xs);
+    color: var(--color-text-3);
+}
+
+/* ── Tablet ── */
+@media (min-width: 640px) {
+    .ghp__dots {
+        display: inline-flex;
+    }
+
+    .ghp__body {
+        gap: var(--space-6);
+        padding: var(--space-6);
+    }
+
+    .ghp__address {
+        flex: 0 1 380px;
+        margin-inline: auto;
+    }
+}
+
+@media (min-width: 768px) {
+    .ghp__tab {
+        display: inline-flex;
+        align-self: flex-end;
+        margin-bottom: calc(var(--space-2) * -1);
+    }
+
+    .ghp__kpis {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .ghp__cols {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* ── Desktop: calendário + sequências lado a lado ── */
+@media (min-width: 1100px) {
+    .ghp__body {
+        padding: var(--space-8);
+    }
+
+    .ghp__activity {
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+    }
+}
+
+@media (max-width: 639px) {
+    .ghp__lang-name {
+        flex-basis: 7.5rem;
+    }
+
+    .ghp__months li:nth-child(even) .ghp__month-label {
+        visibility: hidden;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ghp__shimmer {
+        animation: none;
+    }
+
+    .ghp__address {
+        transition: none;
+    }
+}
+
+body.reduce-motion .ghp__shimmer {
+    animation: none;
+}

@@ -173,3 +173,51 @@ export interface RepositoryStats {
     tree: RepoTreeEntry[] | null;
     contributors: { total: number; top: RepoContributor[] } | null;
 }
+
+/* ─────────────────────────────────────────────────────────
+   Panorama do perfil (op=profile) — espelha api/_github-perfil.ts
+───────────────────────────────────────────────────────── */
+
+export interface ProfileStreak {
+    days: number;
+    start: string | null;
+    end: string | null;
+}
+
+export interface GithubProfile {
+    login: string;
+    name: string | null;
+    createdAt: string;
+    followers: number;
+    publicRepos: number;
+    ownRepos: number;
+    stars: number;
+    forks: number;
+    pullRequests: number;
+    issues: number;
+    lastYear: {
+        from: string;
+        to: string;
+        contributions: number;
+        commits: number;
+        pullRequests: number;
+        issues: number;
+        reviews: number;
+        reposContributed: number;
+        restricted: number;
+    };
+    calendar: { start: string; counts: number[] };
+    streak: {
+        total: number;
+        since: string;
+        current: ProfileStreak;
+        longest: ProfileStreak;
+    };
+    languages: { name: string; color: string | null; percent: number }[];
+    milestones: {
+        busiestYear: { year: number; count: number } | null;
+        busiestDay: { date: string; count: number } | null;
+        topRepo: { name: string; stars: number } | null;
+    };
+    fetchedAt: string;
+}

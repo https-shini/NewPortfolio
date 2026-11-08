@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import {
     fetchIndex,
     fetchPinned,
+    fetchProfile,
     fetchProject,
     fetchStats,
 } from "@/features/devhub/api";
 import type {
     DevhubIndex,
     DevhubPinned,
+    GithubProfile,
     RepositoryDetail,
     RepositoryStats,
 } from "@/features/devhub/types";
@@ -68,6 +70,11 @@ function useRemoto<T>(
 /** O acervo inteiro — métricas, recentes e galeria. */
 export function useDevhubIndex(): AsyncState<DevhubIndex> {
     return useRemoto(fetchIndex, "index");
+}
+
+/** Panorama do perfil no GitHub (/projetos). */
+export function useDevhubProfile(): AsyncState<GithubProfile> {
+    return useRemoto(fetchProfile, "profile");
 }
 
 /** Os fixados no GitHub — a vitrine da home. */
