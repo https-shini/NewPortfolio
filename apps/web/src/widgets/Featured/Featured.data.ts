@@ -1,10 +1,16 @@
 /* Codex — Code Validator, TCC. Apresentação baseada no material técnico
    disponível e nas capturas da página pública; não distribui código interno. */
+import type { GenericTech } from "@/features/devhub/tech";
 import { PROJECT_URLS } from "@/shared/config/links";
+/** Camada da stack em que a tecnologia aparece. */
+export type TechGroup = "interface" | "api" | "analysis" | "integrations";
+
 export interface ProjectTech {
     key: string; // identificador estável da tecnologia
-    label: string; // display name
-    variant: "brand" | "accent" | "neutral";
+    label: string; // nome de exibição, como a tecnologia se escreve
+    group: TechGroup;
+    /** Ícone genérico quando o catálogo não tem a tecnologia. */
+    generic: GenericTech;
 }
 
 export interface ProjectSlide {
@@ -40,36 +46,87 @@ export const FEATURED_PROJECT = {
     detailsUrl: PROJECT_URLS.codex.details,
     liveUrl: PROJECT_URLS.codex.live,
     repoHost: "codex.shxred.app.br",
+    /* Stack conforme a página técnica do projeto (pages/Codex). */
     tech: [
-        {
-            key: "fastapi",
-            label: "FastAPI",
-            variant: "brand",
-        },
-        {
-            key: "python",
-            label: "Python",
-            variant: "brand",
-        },
         {
             key: "nextjs",
             label: "Next.js",
-            variant: "neutral",
+            group: "interface",
+            generic: "code",
         },
+        { key: "react", label: "React", group: "interface", generic: "code" },
+        { key: "ts", label: "TypeScript", group: "interface", generic: "code" },
         {
             key: "tailwind",
             label: "Tailwind CSS",
-            variant: "neutral",
+            group: "interface",
+            generic: "style",
         },
+        {
+            key: "lucide",
+            label: "lucide-react",
+            group: "interface",
+            generic: "lib",
+        },
+        { key: "python", label: "Python", group: "api", generic: "code" },
+        { key: "fastapi", label: "FastAPI", group: "api", generic: "server" },
+        { key: "uvicorn", label: "Uvicorn", group: "api", generic: "server" },
         {
             key: "postgres",
             label: "PostgreSQL",
-            variant: "accent",
+            group: "api",
+            generic: "database",
         },
         {
             key: "docker",
-            label: "Docker",
-            variant: "accent",
+            label: "Docker Compose",
+            group: "api",
+            generic: "server",
+        },
+        { key: "ruff", label: "ruff", group: "analysis", generic: "code" },
+        {
+            key: "bandit",
+            label: "bandit",
+            group: "analysis",
+            generic: "security",
+        },
+        { key: "radon", label: "radon", group: "analysis", generic: "code" },
+        { key: "biome", label: "Biome", group: "analysis", generic: "code" },
+        {
+            key: "golangci",
+            label: "golangci-lint",
+            group: "analysis",
+            generic: "code",
+        },
+        {
+            key: "github-api",
+            label: "GitHub API",
+            group: "integrations",
+            generic: "server",
+        },
+        {
+            key: "github-oauth",
+            label: "GitHub OAuth",
+            group: "integrations",
+            generic: "security",
+        },
+        {
+            key: "gemini",
+            label: "Gemini",
+            group: "integrations",
+            generic: "lib",
+        },
+        {
+            key: "claude",
+            label: "Claude",
+            group: "integrations",
+            generic: "lib",
+        },
+        {
+            key: "openrouter",
+            label: "OpenRouter",
+            group: "integrations",
+            generic: "lib",
         },
     ] as ProjectTech[],
     slides: [
@@ -146,21 +203,21 @@ export const FEATURED_PROJECT = {
                 en: "Lint, security and complexity for Python, JavaScript/TypeScript and Go, with optional AI review. The system also runs in fully static mode.",
             },
             summary: {
-                pt: "Verifique lint, segurança e complexidade para identificar pontos de melhoria no repositório.",
-                en: "Check lint, security and complexity to find what can be improved in the repository.",
+                pt: "Lint, segurança e complexidade avaliados por ferramentas consolidadas, com os achados normalizados num só relatório.",
+                en: "Lint, security and complexity assessed by established tools, with findings normalized into a single report.",
             },
             details: [
                 {
-                    pt: "Análise de Python, JavaScript/TypeScript e Go.",
-                    en: "Analysis of Python, JavaScript/TypeScript and Go.",
+                    pt: "Python com ruff, bandit e radon; JavaScript/TypeScript com Biome; Go com golangci-lint.",
+                    en: "Python with ruff, bandit and radon; JavaScript/TypeScript with Biome; Go with golangci-lint.",
                 },
                 {
-                    pt: "Revisão opcional por IA para complementar os achados.",
-                    en: "Optional AI review to complement the findings.",
+                    pt: "Revisão qualitativa opcional por IA (Gemini, Claude ou OpenRouter).",
+                    en: "Optional qualitative AI review (Gemini, Claude or OpenRouter).",
                 },
                 {
-                    pt: "Operação totalmente estática, independente da revisão por IA.",
-                    en: "Fully static operation, independent of the AI review.",
+                    pt: "Funciona também em modo totalmente estático, sem IA.",
+                    en: "Also runs in fully static mode, without AI.",
                 },
             ],
         },
@@ -175,21 +232,21 @@ export const FEATURED_PROJECT = {
                 en: "Analysis through a public URL or repository selection with OAuth. Pull request comparison shows the score difference between base and head.",
             },
             summary: {
-                pt: "Conecte o repositório e entenda como cada pull request afeta a pontuação do código.",
-                en: "Connect the repository and see how each pull request affects the code score.",
+                pt: "Conecte um repositório e veja como cada pull request altera a pontuação do código.",
+                en: "Connect a repository and see how each pull request changes the code score.",
             },
             details: [
                 {
-                    pt: "Análise de repositórios públicos por URL.",
-                    en: "Analysis of public repositories by URL.",
+                    pt: "Repositórios públicos analisados pela URL, sem login.",
+                    en: "Public repositories analyzed by URL, without sign-in.",
                 },
                 {
-                    pt: "Seleção de repositórios com autenticação OAuth.",
-                    en: "Repository selection with OAuth authentication.",
+                    pt: "Seleção dos próprios repositórios após login com GitHub OAuth.",
+                    en: "Selection of your own repositories after GitHub OAuth sign-in.",
                 },
                 {
-                    pt: "Comparação de score entre a versão base e a proposta.",
-                    en: "Score comparison between the base and the proposed version.",
+                    pt: "Comparação de pull requests: diferença de score entre base e head.",
+                    en: "Pull request comparison: score difference between base and head.",
                 },
             ],
         },
@@ -204,21 +261,21 @@ export const FEATURED_PROJECT = {
                 en: "Real-time progress via SSE with polling fallback. PostgreSQL enables history, per-commit caching and comparison between analyses.",
             },
             summary: {
-                pt: "Acompanhe a execução e compare resultados anteriores para observar a evolução da qualidade do código.",
-                en: "Follow each run and compare previous results to see how code quality evolves.",
+                pt: "Acompanhe cada análise em tempo real e compare com as anteriores para ver a qualidade evoluir.",
+                en: "Follow each analysis in real time and compare it with earlier ones to see quality evolve.",
             },
             details: [
                 {
-                    pt: "Progresso via SSE, com consultas periódicas como alternativa.",
-                    en: "Progress via SSE, with periodic polling as a fallback.",
+                    pt: "Progresso via SSE, com polling como alternativa.",
+                    en: "Progress via SSE, with polling as a fallback.",
                 },
                 {
-                    pt: "Histórico de análises e comparações em PostgreSQL.",
-                    en: "History of analyses and comparisons in PostgreSQL.",
+                    pt: "Histórico e comparação entre análises em PostgreSQL.",
+                    en: "History and comparison between analyses in PostgreSQL.",
                 },
                 {
-                    pt: "Cache por commit para reutilizar resultados da mesma versão.",
-                    en: "Per-commit cache to reuse results for the same version.",
+                    pt: "Cache por commit: resultados da mesma versão são reaproveitados.",
+                    en: "Per-commit cache: results for the same version are reused.",
                 },
             ],
         },

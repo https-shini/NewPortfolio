@@ -15,14 +15,18 @@ import {
 import { TechList } from "@/features/devhub/components/TechList";
 import { lookupTech, type Tech } from "@/features/devhub/tech";
 import { NEUTRAL_LANGUAGE_COLOR } from "@/features/devhub/types";
-import { FEATURED_PROJECT as project } from "./Featured.data";
+import {
+    FEATURED_PROJECT as project,
+    type ProjectTech,
+    type TechGroup,
+} from "./Featured.data";
 
 /* ─────────────────────────────────────────────────────────
    Featured — o projeto em destaque (#destaque)
    ─────────────────────────────────────────────────────────
-   Mesma linguagem de /projetos: painel com a linha de terminal do
-   cartão (`$ cd ~/codex`), chips de tecnologia com ícone oficial
-   (TechList) e a janela de navegador do panorama do GitHub, com uma
+   Mesma linguagem de /projetos: painel narrativo, chips de
+   tecnologia por camada (TechList, ícone oficial ou genérico) e a
+   janela de navegador do panorama do GitHub, com uma
    aba única do projeto e um carrossel MANUAL das capturas.
 
    Nada se move sozinho (WCAG 2.2.2): setas anterior/próxima
@@ -42,16 +46,30 @@ const ICONES = {
     package: IconPackage,
 } as const;
 
-/** Chip do catálogo; tecnologia fora dele ganha o ícone genérico. */
-const TECHS: Tech[] = project.tech.map(
-    (item) =>
-        lookupTech(item.label) ?? {
-            key: item.key,
-            name: item.label,
-            color: NEUTRAL_LANGUAGE_COLOR,
-            generic: "code",
-        },
-);
+/** Ordem das camadas da stack. */
+const GRUPOS: TechGroup[] = ["interface", "api", "analysis", "integrations"];
+
+/**
+ * Chip no padrão do TechList: ícone oficial e cor quando o catálogo
+ * conhece a tecnologia; senão, o ícone genérico da finalidade em tom
+ * neutro. O nome é sempre o dos dados ("Docker Compose", não "Docker").
+ */
+const paraChip = (item: ProjectTech): Tech => {
+    const doCatalogo = lookupTech(item.label);
+    return doCatalogo
+        ? { ...doCatalogo, key: item.key, name: item.label }
+        : {
+              key: item.key,
+              name: item.label,
+              color: NEUTRAL_LANGUAGE_COLOR,
+              generic: item.generic,
+          };
+};
+
+const STACK = GRUPOS.map((grupo) => ({
+    grupo,
+    techs: project.tech.filter((t) => t.group === grupo).map(paraChip),
+}));
 
 const dois = (n: number) => String(n).padStart(2, "0");
 
@@ -117,17 +135,14 @@ export function Featured() {
                         className="featured__story"
                         aria-labelledby="featured-lead"
                     >
-                        <p className="featured__prompt" aria-hidden="true">
-                            <span className="featured__prompt-icon">〈/〉</span>
-                            <span>
-                                <span className="featured__prompt-sign">$</span>{" "}
-                                cd ~/codex
-                            </span>
-                        </p>
-                        <h3 className="featured__lead" id="featured-lead">
-                            {t("featured.lead")}
-                        </h3>
-                        <p className="featured__desc">{t("featured.body")}</p>
+                        <div className="featured__intro">
+                            <h3 className="featured__lead" id="featured-lead">
+                                {t("featured.lead")}
+                            </h3>
+                            <p className="featured__desc">
+                                {t("featured.body")}
+                            </p>
+                        </div>
 
                         <div className="featured__summary">
                             <p className="featured__label">
@@ -137,20 +152,6 @@ export function Featured() {
                                 <strong>0–1000</strong>
                                 <span>{t("featured.summary.scoreText")}</span>
                             </p>
-                            <p className="featured__langs">
-                                <span>{t("featured.summary.languages")}</span>{" "}
-                                {t("featured.summary.languagesValue")}
-                            </p>
-                        </div>
-
-                        <div className="featured__stack">
-                            <p className="featured__label" aria-hidden="true">
-                                {t("featured.stack")}
-                            </p>
-                            <TechList
-                                techs={TECHS}
-                                label={t("featured.stack")}
-                            />
                         </div>
 
                         <div className="featured__actions">
@@ -325,6 +326,32 @@ export function Featured() {
                             </div>
                         </div>
                         <p className="featured__note">{t("featured.note")}</p>
+                    </div>
+                </div>
+
+                <div
+                    className="featured__stack"
+                    role="group"
+                    aria-labelledby="featured-stack"
+                >
+                    <p className="featured__label" id="featured-stack">
+                        {t("featured.stack")}
+                    </p>
+                    <div className="featured__stack-groups">
+                        {STACK.map(({ grupo, techs }) => (
+                            <div key={grupo} className="featured__stack-group">
+                                <p
+                                    className="featured__group"
+                                    aria-hidden="true"
+                                >
+                                    {t(`featured.stack.${grupo}`)}
+                                </p>
+                                <TechList
+                                    techs={techs}
+                                    label={t(`featured.stack.${grupo}`)}
+                                />
+                            </div>
+                        ))}
                     </div>
                 </div>
 
