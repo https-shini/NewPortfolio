@@ -403,6 +403,11 @@
         align-items: start;
         gap: var(--space-10);
         max-width: none;
+        /* O `main` centraliza os filhos: sem largura explícita a grade
+           encolhia até o próprio conteúdo (1080px) e o `space-between`
+           não tinha o que distribuir — em 1920 o par ficava no meio,
+           longe das margens do Header e do rodapé. */
+        width: 100%;
     }
 
     /* A identidade era alinhada à esquerda aqui, e o override some: ela
@@ -428,6 +433,18 @@
     }
     .linktree__bio {
         font-size: var(--text-md);
+    }
+}
+
+/* ── A partir de 1440px: o container cresce até 1720px (tokens.css) ──
+   Duas colunas de 520px nas pontas deixariam ~600px de vazio no meio.
+   A identidade ocupa o espaço livre à esquerda (continua centrada na
+   própria coluna) e o acervo de links ganha um pouco de largura, sem
+   chegar ao ponto de o ícone ficar perdido no cartão. */
+@media (min-width: 1440px) {
+    .linktree__palco {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 600px);
+        gap: var(--space-16);
     }
 }
 

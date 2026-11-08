@@ -109,18 +109,20 @@ O repositório é um monorepo npm simples:
 
 ## 🧭 Páginas e rotas
 
-| Rota                                                 | Página / destino     | Observação                       |
-| ---------------------------------------------------- | -------------------- | -------------------------------- |
-| `/`                                                  | `HomePage`           | carregada de forma síncrona      |
-| `/links`                                             | `LinksPage`          | autônoma, fora do menu principal |
-| `/contato`                                           | `ContactPage`        | reutiliza o widget `Contact`     |
-| `/release-notes`                                     | `ReleaseNotesPage`   | índice                           |
-| `/release-notes/page/N`                              | `ReleaseNotesPage`   | páginas seguintes do histórico   |
-| `/release-notes/vX.Y.Z`                              | `ReleaseNotePage`    | uma versão                       |
-| `/projects/codex/readme.html` (e `/projects/codex/`) | `CodexPage`          | documento HTML próprio no build  |
-| `/linkedin?to=…`                                     | `LinkedInNoticePage` | aviso antes do LinkedIn          |
-| qualquer outra                                       | `NotFoundPage`       | `noindex, follow`                |
-| `/feed.xml`                                          | `api/feed`           | reescrita no `vercel.json`       |
+| Rota                                                 | Página / destino     | Observação                             |
+| ---------------------------------------------------- | -------------------- | -------------------------------------- |
+| `/`                                                  | `HomePage`           | carregada de forma síncrona            |
+| `/links`                                             | `LinksPage`          | autônoma, fora do menu principal       |
+| `/contato`                                           | `ContactPage`        | reutiliza o widget `Contact`           |
+| `/projetos`                                          | `ProjectsPage`       | acervo de repositórios (`/api/devhub`) |
+| `/projetos/<repositório>`                            | `ProjectPage`        | uma página por repositório             |
+| `/release-notes`                                     | `ReleaseNotesPage`   | índice                                 |
+| `/release-notes/page/N`                              | `ReleaseNotesPage`   | páginas seguintes do histórico         |
+| `/release-notes/vX.Y.Z`                              | `ReleaseNotePage`    | uma versão                             |
+| `/projects/codex/readme.html` (e `/projects/codex/`) | `CodexPage`          | documento HTML próprio no build        |
+| `/linkedin?to=…`                                     | `LinkedInNoticePage` | aviso antes do LinkedIn                |
+| qualquer outra                                       | `NotFoundPage`       | `noindex, follow`                      |
+| `/feed.xml`                                          | `api/feed`           | reescrita no `vercel.json`             |
 
 O roteamento é próprio, sobre a History API (`app/RouterContext.tsx`). Os pathnames vivem em `shared/config/routes.ts`, o mapa rota → página em `app/routes.tsx` (páginas secundárias via `React.lazy`) e os construtores de URL das notas de versão (`releaseNotePath`, `releaseNotesPagePath`) em `routes.ts` — nenhuma URL é montada à mão.
 
@@ -451,7 +453,10 @@ Tokens CSS em três níveis — primitivos (`--_*`), semânticos do tema escuro 
 | Cores      | `--color-brand`, `--color-brand-text`, `--color-bg`, `--color-surface-1/2/3` |
 | Tipografia | `--font-display` (Cabinet Grotesk), `--font-mono` (JetBrains Mono)           |
 | Escalas    | `--text-2xs` → `--text-7xl`, `--space-1` → `--space-16`, `--radius-*`        |
+| Layout     | `--layout-max` (1200px → 1440px → até 1720px), `--measure`, `--measure-wide` |
 | Movimento  | `--transition-fast/base/slow`                                                |
+
+**Largura do conteúdo.** Um padrão para o site inteiro, com Full HD (1920×1080) como referência de composição: `--layout-max` vale 1200px até 1439px, 1440px a partir de 1440px e `min(1720px, 92vw)` a partir de 1600px — em 1920 sobram ~100px de margem de cada lado. Header, seções e rodapé leem o mesmo token, então ficam alinhados. Parágrafos não acompanham o container: têm teto em `--measure` (68ch) ou `--measure-wide` (82ch).
 
 **Acessibilidade:** HTML semântico, ARIA nos componentes interativos, navegação por teclado, focus trap no menu e nos modais, `prefers-reduced-motion`, alvos de toque mínimos, um `h1` por página, `eslint-plugin-jsx-a11y` no lint e axe-core no CI.
 

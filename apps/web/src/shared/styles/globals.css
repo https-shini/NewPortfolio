@@ -306,7 +306,9 @@ code {
     font-size: var(--text-lg);
     line-height: var(--lh-relaxed);
     color: var(--color-text-3);
-    max-width: 100%;
+    /* Teto de leitura: o container cresce com a janela (tokens.css), a
+       frase não. Em 1200px este texto já chegava a ~126 caracteres. */
+    max-width: min(100%, var(--measure-wide));
     text-align: justify;
 }
 

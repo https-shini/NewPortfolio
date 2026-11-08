@@ -580,6 +580,30 @@
     }
 }
 
+/* ── A partir de 1440px: a largura do site cresce (tokens.css) ────────────
+   Com o container em até 1720px, o par texto 650px + retrato 400px
+   deixava ~600px de vazio no meio. Texto e retrato crescem juntos; o
+   parágrafo para na medida de leitura, não na largura da coluna. */
+@media (min-width: 1440px) {
+    .hero__inner {
+        grid-template-columns: minmax(0, 1fr) clamp(400px, 27vw, 520px);
+        gap: clamp(var(--space-16), 5vw, 7rem);
+    }
+
+    .hero__content {
+        max-width: 760px;
+    }
+
+    .hero__desc {
+        max-width: var(--measure);
+    }
+
+    .hero__avatar-wrap {
+        width: clamp(380px, 25vw, 480px);
+        height: clamp(420px, 27.5vw, 530px);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     /* O deslize de entrada também é movimento. Antes a regra não o
        cobria porque a animação de então era sobretudo um fade; agora que

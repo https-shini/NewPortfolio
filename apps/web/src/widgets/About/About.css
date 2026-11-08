@@ -656,6 +656,43 @@
     }
 }
 
+/* ── A partir de 1440px: o container passa de 1200px (tokens.css) ─
+   Em coluna única, a biografia chegava a ~150 caracteres por linha.
+   Biografia e objetivo viram duas colunas de leitura lado a lado, e
+   as áreas de especialização ocupam a largura inteira abaixo.
+   A ordem do DOM (bio → áreas → objetivo) não muda: leitor de tela e
+   teclado seguem a mesma sequência de antes. */
+@media (min-width: 1440px) {
+    .about__layout {
+        grid-template-columns: minmax(0, 1fr) clamp(360px, 23vw, 420px);
+    }
+
+    .about__body {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+        grid-template-areas:
+            "bio objetivo"
+            "areas areas";
+        gap: var(--space-10) var(--space-12);
+        align-items: start;
+    }
+
+    .about__bio {
+        grid-area: bio;
+    }
+
+    .about__specs {
+        grid-area: areas;
+    }
+
+    .about__objective {
+        grid-area: objetivo;
+    }
+
+    /* As áreas continuam 2×2: em quatro colunas cada cartão cairia
+       para ~280px, e o texto justificado abria buracos entre palavras. */
+}
+
 /* ── prefers-reduced-motion ─────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
     .about,
