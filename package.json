@@ -63,6 +63,7 @@
         "typescript": "^5.9.3"
     },
     "dependencies": {
+        "@vercel/blob": "^2.9.0",
         "@vercel/og": "1.0.1"
     },
     "workspaces": [

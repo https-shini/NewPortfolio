@@ -32,6 +32,10 @@ const SERVIDOR: Record<string, string> = {
     "@vercel/og":
         "gera a imagem de compartilhamento por versão; os rastreadores não " +
         "executam JavaScript, então a imagem precisa sair pronta do servidor",
+    "@vercel/blob":
+        "guarda o cache persistente do DevHub (api/_devhub-store.ts): a " +
+        "sincronização de hora em hora grava os dados do GitHub num store " +
+        "privado, e o /api/devhub só lê dali — nenhuma visita consulta o GitHub",
 };
 
 /**

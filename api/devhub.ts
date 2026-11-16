@@ -1,36 +1,23 @@
-import { renderReadme } from "./_devhub-markdown.js";
-import { buscarEstatisticas } from "./_github-detalhe.js";
-import {
-    CACHE_PADRAO,
-    ErroPublico,
-    GITHUB_USER,
-    responderErro,
-} from "./_github.js";
-import {
-    buscarReadme,
-    buscarRepositorio,
-    listarAcervo,
-    listarFixados,
-    type Repository,
-} from "./_github-repos.js";
-import { buscarPerfil } from "./_github-perfil.js";
+import { CHAVES, obterStore } from "./_devhub-store.js";
+import type { Detalhe, Snapshot } from "./_devhub-sync.js";
+import { ErroPublico, responderErro } from "./_github.js";
+import type { Repository } from "./_github-repos.js";
 
 /* ─────────────────────────────────────────────────────────
-   /api/devhub — os projetos do GitHub para a /projetos
+   /api/devhub — os projetos do GitHub para o site
    ─────────────────────────────────────────────────────────
    O cliente não descreve o que quer: ele NOMEIA uma operação de
    uma lista fechada e manda, no máximo, o nome de um repositório.
-   A consulta é montada no servidor, a partir de texto fixo, e
-   nada do que chega pela rede entra nela como fragmento de query.
 
-       cliente → operação conhecida + parâmetro validado
-               → consulta fixa → GitHub
-               → normalização → contrato interno → cliente
+   Este endpoint NÃO consulta o GitHub. Ele lê o que a
+   sincronização agendada (`/api/devhub-sync`, de hora em hora)
+   gravou no store persistente:
 
-   Migrado do fork NewDevHub. Transporte, token, erro público e
-   normalização moram agora em `_github.ts` e `_github-repos.ts`,
-   compartilhados com `github-stats.ts` e `_releases.ts`; aqui
-   sobra só a fronteira HTTP: validar, despachar, responder.
+       GitHub → devhub-sync (cron) → store → /api/devhub → cliente
+
+   Assim nenhuma visita gasta cota do token nem espera o GitHub,
+   e a home, o catálogo e a página de cada projeto leem a MESMA
+   versão dos dados (o mesmo `lastSyncedAt`).
 ───────────────────────────────────────────────────────── */
 
 interface VercelRequest {
@@ -49,6 +36,8 @@ interface VercelResponse {
 ───────────────────────────────────────────────────────── */
 
 const OPERACOES = [
+    "catalog",
+    "detail",
     "index",
     "pinned",
     "profile",
@@ -60,6 +49,7 @@ type Operacao = (typeof OPERACOES)[number];
 
 /** Operações que exigem `name`; as demais o recusam. */
 const EXIGEM_NOME: ReadonlySet<Operacao> = new Set([
+    "detail",
     "project",
     "readme",
     "stats",
@@ -172,42 +162,118 @@ function interpretar(query: VercelRequest["query"]): Pedido {
 }
 
 /* ─────────────────────────────────────────────────────────
-   As operações
+   Leitura do store
+   ─────────────────────────────────────────────────────────
+   Cópia em memória por instância, por um minuto: o índice muda
+   de hora em hora, e não faz sentido ir ao store a cada pedido.
+   A CDN (CACHE_DEVHUB) absorve o resto.
 ───────────────────────────────────────────────────────── */
 
-async function opIndex(): Promise<{
-    repositories: Repository[];
-    followers: number | null;
-    fetchedAt: string;
-}> {
-    return { ...(await listarAcervo()), fetchedAt: new Date().toISOString() };
+/** Na CDN: 5 min fresco; até 1 h servindo o anterior enquanto revalida. */
+export const CACHE_DEVHUB = "s-maxage=300, stale-while-revalidate=3600";
+const MEMORIA_MS = 60_000;
+
+const memoria = new Map<string, { em: number; valor: unknown }>();
+
+async function lerComMemoria<T>(chave: string): Promise<T | null> {
+    const agora = Date.now();
+    const guardado = memoria.get(chave);
+    if (guardado && agora - guardado.em < MEMORIA_MS) {
+        return guardado.valor as T | null;
+    }
+    const valor = await obterStore().ler<T>(chave);
+    memoria.set(chave, { em: agora, valor });
+    return valor;
 }
 
-/** Os fixados do perfil — a vitrine da home. */
-async function opPinned(): Promise<{
-    repositories: Repository[];
-    source: "pinned" | "recent";
-    fetchedAt: string;
-}> {
-    return { ...(await listarFixados()), fetchedAt: new Date().toISOString() };
+/** Só para testes: esquece a cópia em memória. */
+export function _esquecerMemoria(): void {
+    memoria.clear();
 }
 
-/**
- * README em HTML seguro, convertido e sanitizado no servidor.
- *
- * Usa `_devhub-markdown.ts`, e não o `_markdown.ts` das notas de
- * versão: lá a entrada é texto meu e escapar tudo é a garantia mais
- * forte; aqui a entrada é README, que é metade HTML. O conversor
- * preserva o HTML do autor e o sanitizador reescreve cada tag a partir
- * de uma allowlist, com atributos e URLs conferidos.
- */
-async function opReadme(name: string): Promise<{ html: string | null }> {
-    const markdown = await buscarReadme(name);
-    if (markdown === null) return { html: null };
-    /* A origem vai junto porque caminho relativo em README aponta para o
-       repositório — `./docs/banner.png` só vira imagem visível depois de
-       reescrito para o arquivo cru no GitHub. */
-    return { html: renderReadme(markdown, { owner: GITHUB_USER, repo: name }) };
+async function snapshot(): Promise<Snapshot> {
+    let s: Snapshot | null;
+    try {
+        s = await lerComMemoria<Snapshot>(CHAVES.snapshot);
+    } catch (erro) {
+        throw new ErroPublico(
+            "sincronizacao_pendente",
+            "dados dos projetos indisponíveis no momento",
+            erro,
+        );
+    }
+    if (!s) {
+        throw new ErroPublico(
+            "sincronizacao_pendente",
+            "dados dos projetos ainda não sincronizados",
+        );
+    }
+    return s;
+}
+
+/** O repositório pelo nome — o GitHub não diferencia caixa. */
+function acharRepo(s: Snapshot, nome: string): Repository | null {
+    const alvo = nome.toLowerCase();
+    return (
+        s.index.repositories.find((r) => r.name.toLowerCase() === alvo) ??
+        s.pinned.repositories.find((r) => r.name.toLowerCase() === alvo) ??
+        null
+    );
+}
+
+async function detalhe(repo: Repository): Promise<Detalhe | null> {
+    try {
+        return await lerComMemoria<Detalhe>(CHAVES.detalhe(repo.name));
+    } catch {
+        /* Sem o detalhe, a página do projeto ainda vale: README e
+           estatísticas aparecem como indisponíveis. */
+        return null;
+    }
+}
+
+async function responder(pedido: Pedido): Promise<unknown> {
+    const s = await snapshot();
+    const meta = { fetchedAt: s.lastSyncedAt, lastSyncedAt: s.lastSyncedAt };
+
+    switch (pedido.op) {
+        case "catalog":
+            return { pinned: s.pinned, index: s.index, ...meta };
+        case "index":
+            return { ...s.index, ...meta };
+        case "pinned":
+            return { ...s.pinned, ...meta };
+        case "profile":
+            if (!s.profile) {
+                throw new ErroPublico(
+                    "sincronizacao_pendente",
+                    "panorama ainda não sincronizado",
+                );
+            }
+            return s.profile;
+    }
+
+    const repo = acharRepo(s, pedido.name!);
+    if (!repo) {
+        /* Inexistente e privado têm a mesma resposta: o acervo só tem
+           públicos, e dizer mais revelaria o que existe. */
+        return pedido.op === "readme" ? { html: null } : null;
+    }
+    const d = await detalhe(repo);
+    switch (pedido.op) {
+        case "project":
+            return repo;
+        case "readme":
+            return { html: d?.readmeHtml ?? null };
+        case "stats":
+            return d?.stats ?? null;
+        default:
+            return {
+                ...repo,
+                readmeHtml: d?.readmeHtml ?? null,
+                stats: d?.stats ?? null,
+                lastSyncedAt: s.lastSyncedAt,
+            };
+    }
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -257,20 +323,9 @@ export default async function handler(
     }
 
     try {
-        const corpo =
-            pedido.op === "index"
-                ? await opIndex()
-                : pedido.op === "pinned"
-                  ? await opPinned()
-                  : pedido.op === "profile"
-                    ? await buscarPerfil()
-                    : pedido.op === "stats"
-                      ? await buscarEstatisticas(pedido.name!)
-                      : pedido.op === "project"
-                        ? await buscarRepositorio(pedido.name!)
-                        : await opReadme(pedido.name!);
+        const corpo = await responder(pedido);
 
-        res.setHeader("Cache-Control", CACHE_PADRAO);
+        res.setHeader("Cache-Control", CACHE_DEVHUB);
         res.status(200).json(corpo);
     } catch (erro) {
         /* Qualquer coisa que escape vira um erro público genérico. Nada do
@@ -280,8 +335,8 @@ export default async function handler(
             erro instanceof ErroPublico
                 ? erro
                 : new ErroPublico(
-                      "upstream_indisponivel",
-                      "não foi possível consultar o GitHub",
+                      "sincronizacao_pendente",
+                      "dados dos projetos indisponíveis no momento",
                       erro,
                   ),
             "devhub",

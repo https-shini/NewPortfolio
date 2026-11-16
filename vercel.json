@@ -3,6 +3,17 @@
     "installCommand": "npx --yes npm@11.6.2 ci --include=dev",
     "buildCommand": "npm run build",
     "outputDirectory": "apps/web/dist",
+    "functions": {
+        "api/devhub-sync.ts": {
+            "maxDuration": 300
+        }
+    },
+    "crons": [
+        {
+            "path": "/api/devhub-sync",
+            "schedule": "0 * * * *"
+        }
+    ],
     "rewrites": [
         {
             "source": "/linkedin",

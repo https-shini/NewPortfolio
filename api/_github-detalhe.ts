@@ -51,6 +51,15 @@ export interface Contributor {
     avatarUrl: string | null;
 }
 
+export interface Deployment {
+    environment: string;
+    createdAt: string;
+    /** Último estado informado (SUCCESS, FAILURE, INACTIVE…), ou `null`. */
+    state: string | null;
+    /** Endereço publicado, quando o deploy informa um http(s). */
+    url: string | null;
+}
+
 export interface RepositoryStats {
     openIssues: number;
     totalIssues: number;
@@ -72,6 +81,8 @@ export interface RepositoryStats {
     tree: TreeEntry[] | null;
     /** Contribuidores públicos; `null` se a chamada falhou. */
     contributors: { total: number; top: Contributor[] } | null;
+    /** Deployments registrados no GitHub (os mais recentes). */
+    deployments: { total: number; latest: Deployment[] } | null;
 }
 
 const QUERY_DETALHE = `
@@ -87,6 +98,14 @@ const QUERY_DETALHE = `
             releases(first: 5, orderBy: { field: CREATED_AT, direction: DESC }) {
                 totalCount
                 nodes { name tagName publishedAt url isPrerelease }
+            }
+            deployments(first: 5, orderBy: { field: CREATED_AT, direction: DESC }) {
+                totalCount
+                nodes {
+                    environment
+                    createdAt
+                    latestStatus { state environmentUrl }
+                }
             }
             tree: object(expression: "HEAD:") {
                 ... on Tree { entries { name type } }
@@ -142,6 +161,17 @@ interface DetalheGQL {
                 isPrerelease?: boolean;
             } | null)[];
         };
+        deployments?: {
+            totalCount?: number;
+            nodes?: ({
+                environment?: string | null;
+                createdAt?: string;
+                latestStatus?: {
+                    state?: string | null;
+                    environmentUrl?: string | null;
+                } | null;
+            } | null)[];
+        } | null;
         tree?: { entries?: { name?: string; type?: string }[] } | null;
         defaultBranchRef?: {
             target?: {
@@ -297,5 +327,22 @@ export async function buscarEstatisticas(
                   )
             : null,
         contributors: pessoas,
+        deployments: r.deployments
+            ? {
+                  total: n(r.deployments.totalCount),
+                  latest: (r.deployments.nodes ?? [])
+                      .filter((d) => typeof d?.createdAt === "string")
+                      .map((d) => ({
+                          environment: d!.environment || "default",
+                          createdAt: d!.createdAt!,
+                          state: d!.latestStatus?.state ?? null,
+                          url: /^https?:\/\//i.test(
+                              d!.latestStatus?.environmentUrl ?? "",
+                          )
+                              ? d!.latestStatus!.environmentUrl!
+                              : null,
+                      })),
+              }
+            : null,
     };
 }
