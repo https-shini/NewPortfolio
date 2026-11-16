@@ -36,10 +36,55 @@ export function repo(over: Partial<Repository> = {}): Repository {
 }
 
 /** `fetch` falso que responde por `op`. */
+/**
+ * `catalog` e `detail` são compostos a partir das operações antigas
+ * (`index` + `pinned`; `project` + `readme` + `stats`) quando o teste
+ * não os define — assim cada teste descreve só os dados que importam.
+ */
+function composto(
+    op: string,
+    respostas: Record<string, unknown>,
+): { tem: boolean; valor?: unknown } {
+    if (op in respostas) return { tem: true, valor: respostas[op] };
+    if (op === "catalog") {
+        if (!("index" in respostas) && !("pinned" in respostas)) {
+            return { tem: false };
+        }
+        const pinned = (respostas.pinned as
+            { repositories: unknown[] } | undefined) ?? {
+            repositories: [],
+            source: "recent",
+            fetchedAt: "x",
+        };
+        const index = respostas.index ?? {
+            repositories: pinned.repositories,
+            followers: null,
+            fetchedAt: "x",
+        };
+        return { tem: true, valor: { pinned, index } };
+    }
+    if (op === "detail") {
+        if (!("project" in respostas)) return { tem: false };
+        const projeto = respostas.project as Record<string, unknown> | null;
+        if (projeto === null) return { tem: true, valor: null };
+        const readme = respostas.readme as { html?: string | null } | undefined;
+        return {
+            tem: true,
+            valor: {
+                ...projeto,
+                readmeHtml: readme?.html ?? null,
+                stats: respostas.stats ?? null,
+            },
+        };
+    }
+    return { tem: false };
+}
+
 export function fetchPorOp(respostas: Record<string, unknown>) {
     return (url: string) => {
         const op = new URL(url, "http://x").searchParams.get("op") ?? "";
-        if (!(op in respostas)) {
+        const r = composto(op, respostas);
+        if (!r.tem) {
             return Promise.resolve({
                 ok: false,
                 status: 502,
@@ -49,7 +94,7 @@ export function fetchPorOp(respostas: Record<string, unknown>) {
         return Promise.resolve({
             ok: true,
             status: 200,
-            json: () => Promise.resolve(respostas[op]),
+            json: () => Promise.resolve(r.valor),
         } as Response);
     };
 }

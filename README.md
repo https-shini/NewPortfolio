@@ -179,7 +179,8 @@ casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
 ├── vercel.json                  # Rewrites das rotas da SPA
 ├── api/                         # Serverless (token server-only, cache de CDN)
 │   ├── github-stats.ts          #   Métricas do perfil
-│   ├── devhub.ts                #   Repositórios e README (operações fechadas)
+│   ├── devhub.ts                #   Projetos do GitHub, lidos do cache persistente (operações fechadas)
+│   ├── devhub-sync.ts           #   Sincronização agendada (Vercel Cron, de hora em hora) e manual
 │   ├── release-notes.ts         #   Releases publicadas, já em HTML
 │   ├── feed.ts                  #   Feed Atom do histórico curado
 │   ├── crawler.ts               #   HTML para prévias de compartilhamento
@@ -187,6 +188,8 @@ casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
 │   ├── _markdown.ts             #   Markdown → HTML sem dependências; escapa antes de converter
 │   ├── _github.ts               #   Único acesso ao GitHub: token, transporte, erro público, cache
 │   ├── _github-repos.ts         #   Repositórios no contrato interno, com paginação
+│   ├── _devhub-sync.ts          #   Coleta, validação e gravação atômica do DevHub
+│   ├── _devhub-store.ts         #   Cache persistente (Vercel Blob privado) e trava
 │   └── _devhub-markdown.ts      #   README → HTML + `_devhub-sanitize.ts` (allowlist)
 │
 apps/web/
@@ -396,12 +399,14 @@ mudança visual proposital. É ferramenta manual, para refatoração de CSS.
 
 Definidas em `apps/web/.env.local` (ver `apps/web/.env.example`):
 
-| Variável                   | Obrigatória | Descrição                                                                                                                                                                                                                                                                                |
-| -------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_FORM_ENDPOINT`       | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail.                                                                                                                                                                      |
-| `VITE_NEWSLETTER_ENDPOINT` | Não         | Endpoint de inscrição no rodapé. Sem ele, abre um e-mail preenchido; com ele, envia POST `{ email, lang, source }`.                                                                                                                                                                      |
-| `VITE_SITE_URL`            | Não         | Domínio canônico injetado no `index.html` no build (canonical, Open Graph, JSON-LD). Default: `https://gcruz.dev.br`.                                                                                                                                                                    |
-| `GITHUB_TOKEN`             | Não         | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Lido só em `api/_github.ts` e usado por `/api/github-stats` (sem ele o card de commits cai no valor de fallback), `/api/release-notes` e `/api/devhub` (sem ele as duas caem para a API REST pública, sujeita a 60 req/h). |
+| Variável                   | Obrigatória  | Descrição                                                                                                                                                                                                                                                                                     |
+| -------------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_FORM_ENDPOINT`       | Não          | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail.                                                                                                                                                                           |
+| `VITE_NEWSLETTER_ENDPOINT` | Não          | Endpoint de inscrição no rodapé. Sem ele, abre um e-mail preenchido; com ele, envia POST `{ email, lang, source }`.                                                                                                                                                                           |
+| `VITE_SITE_URL`            | Não          | Domínio canônico injetado no `index.html` no build (canonical, Open Graph, JSON-LD). Default: `https://gcruz.dev.br`.                                                                                                                                                                         |
+| `GITHUB_TOKEN`             | Não          | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Lido só em `api/_github.ts` e usado por `/api/github-stats` (sem ele o card de commits cai no valor de fallback), `/api/release-notes` e `/api/devhub-sync` (sem ele as duas caem para a API REST pública, sujeita a 60 req/h). |
+| `BLOB_READ_WRITE_TOKEN`    | Sim (DevHub) | **Server-only**. Injetada pela Vercel ao conectar um store **privado** do Vercel Blob ao projeto. Guarda o cache persistente dos projetos; sem ela, `/api/devhub` responde 503. Ver [docs/guides/devhub-sincronizacao.md](docs/guides/devhub-sincronizacao.md).                               |
+| `CRON_SECRET`              | Sim (DevHub) | **Server-only**. Segredo que o Vercel Cron envia como `Authorization: Bearer …` a `/api/devhub-sync`; também protege o disparo manual. Sem ela, a sincronização recusa rodar.                                                                                                                 |
 
 > Variáveis com prefixo `VITE_` são expostas ao browser — nunca coloque segredos.
 

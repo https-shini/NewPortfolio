@@ -1,0 +1,53 @@
+name: Sincronização do DevHub
+
+# Dispara /api/devhub-sync de hora em hora, na hora cheia.
+#
+# Por que aqui, e não só no Vercel Cron: no plano Hobby a Vercel aceita
+# apenas cron diário (o deploy com "0 * * * *" é recusado). O vercel.json
+# mantém um cron diário como reserva; este workflow cobre as demais horas.
+# No plano Pro, basta pôr "0 * * * *" no vercel.json e remover este arquivo.
+#
+# Horário: o cron do GitHub Actions roda em UTC. "0 * * * *" é a hora cheia
+# UTC, que também é hora cheia em America/Sao_Paulo (UTC-3, sem horário de
+# verão). O GitHub pode atrasar execuções agendadas em alguns minutos em
+# horários de pico; a trava do endpoint impede sobreposição.
+#
+# Requer o segredo de repositório CRON_SECRET, com o MESMO valor da
+# variável CRON_SECRET da Vercel. Sem ele, o job avisa e termina sem falhar.
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: devhub-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Disparar sincronização
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: POST /api/devhub-sync
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::warning::CRON_SECRET não configurado nos segredos do repositório; sincronização não disparada."
+            exit 0
+          fi
+          status=$(curl -sS -o resposta.json -w "%{http_code}" -X POST \
+            --max-time 320 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            https://gcruz.dev.br/api/devhub-sync)
+          echo "HTTP $status"
+          # 409 = outra sincronização em andamento: não é falha.
+          if [ "$status" = "200" ] || [ "$status" = "409" ]; then
+            exit 0
+          fi
+          echo "::error::sincronização respondeu HTTP $status"
+          exit 1

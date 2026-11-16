@@ -375,25 +375,63 @@ function unir(...listas: Tech[][]): Tech[] {
  * do GitHub — foi medida, então é fato.
  */
 export function techsFromRepo(repo: Repository): Tech[] {
+    const deTopicos = repo.topics
+        .map(lookupTech)
+        .filter((t): t is Tech => t !== null);
+    return unir(languageTechs(repo), deTopicos);
+}
+
+/**
+ * Só as linguagens DETECTADAS pelo GitHub (medidas em bytes), sem
+ * repetição. É o que o cartão mostra como "linguagens" — tópico é
+ * outra coisa (ver `topicLabels`).
+ */
+export function languageTechs(repo: Repository): Tech[] {
     const langs =
         repo.languages.length > 0
             ? repo.languages
             : repo.primaryLanguage
               ? [repo.primaryLanguage]
               : [];
-    const deLinguagens = langs.map(
-        (l): Tech =>
-            lookupTech(l.name) ?? {
-                key: `lang:${norm(l.name)}`,
-                name: l.name,
-                color: l.color ?? NEUTRAL_LANGUAGE_COLOR,
-                generic: "code",
-            },
+    return unir(
+        langs.map(
+            (l): Tech =>
+                lookupTech(l.name) ?? {
+                    key: `lang:${norm(l.name)}`,
+                    name: l.name,
+                    color: l.color ?? NEUTRAL_LANGUAGE_COLOR,
+                    generic: "code",
+                },
+        ),
     );
-    const deTopicos = repo.topics
-        .map(lookupTech)
-        .filter((t): t is Tech => t !== null);
-    return unir(deLinguagens, deTopicos);
+}
+
+/** Um tópico do GitHub pronto para exibir. */
+export interface TopicLabel {
+    /** O tópico como o GitHub o guarda (minúsculas, hífen). */
+    topic: string;
+    /** Nome padronizado: o do catálogo quando é tecnologia conhecida. */
+    label: string;
+}
+
+/**
+ * Os tópicos cadastrados no GitHub, separados das linguagens:
+ *   · nome padronizado ("reactjs" e "react" viram "React");
+ *   · sem duplicidade (duas grafias da mesma tecnologia = um tópico);
+ *   · sem repetir uma linguagem já detectada ("javascript" num
+ *     repositório em que o GitHub mediu JavaScript).
+ */
+export function topicLabels(repo: Repository): TopicLabel[] {
+    const vistos = new Set(languageTechs(repo).map((t) => t.key));
+    const out: TopicLabel[] = [];
+    for (const topic of repo.topics) {
+        const tech = lookupTech(topic);
+        const chave = tech?.key ?? `topic:${norm(topic)}`;
+        if (!norm(topic) || vistos.has(chave)) continue;
+        vistos.add(chave);
+        out.push({ topic, label: tech?.name ?? topic });
+    }
+    return out;
 }
 
 /**
@@ -408,4 +446,21 @@ export function techsForDetail(
         .map(lookupTech)
         .filter((t): t is Tech => t !== null);
     return unir(doReadme, techsFromRepo(repo));
+}
+
+/**
+ * O `homepageUrl` só vira botão "Acessar projeto" se for http(s)
+ * absoluto. O servidor já normaliza; isto protege dados antigos em
+ * cache e qualquer origem que escape da normalização.
+ */
+export function homepageSegura(url: string | null | undefined): string | null {
+    if (typeof url !== "string" || !url.trim()) return null;
+    try {
+        const u = new URL(url.trim());
+        return u.protocol === "https:" || u.protocol === "http:"
+            ? u.toString().replace(/\/$/, "")
+            : null;
+    } catch {
+        return null;
+    }
 }

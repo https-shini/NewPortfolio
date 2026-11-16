@@ -701,12 +701,16 @@ export const ProjectsPage: React.FC = () => {
     );
 };
 
-/** Grade de cartões-fantasma enquanto o GitHub responde. */
+/** Grade de cartões-fantasma enquanto os dados carregam. */
 const Esqueleto: React.FC<{ quantidade: number; rotulo: string }> = ({
     quantidade,
     rotulo,
 }) => (
-    <ul className="devhub-grid" aria-busy="true" aria-label={rotulo}>
+    <ul
+        className="devhub-grid devhub-grid--3"
+        aria-busy="true"
+        aria-label={rotulo}
+    >
         {Array.from({ length: quantidade }, (_, i) => (
             <li key={i} className="devhub-skeleton">
                 <span className="devhub-skeleton__thumb" />

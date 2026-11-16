@@ -227,6 +227,24 @@ img.pcard__img {
     color: var(--color-text-3);
 }
 
+/* Tópicos do GitHub — separados das linguagens (TechList), em texto
+   discreto: classificam o projeto, não descrevem a stack medida. */
+.pcard__topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-3);
+}
+
+.pcard__topic {
+    overflow-wrap: anywhere;
+}
+
 .pcard__stats {
     display: flex;
     flex-wrap: wrap;

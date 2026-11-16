@@ -118,6 +118,51 @@ function cor(nome: string, daApi?: string | null): string {
 }
 
 /* ─────────────────────────────────────────────────────────
+   Metadados de exibição — endereço público e tópicos
+───────────────────────────────────────────────────────── */
+
+/**
+ * O `homepageUrl` do GitHub só vale como link de "Acessar projeto" se
+ * for um endereço http(s) absoluto. Campo vazio, texto solto
+ * ("em breve") ou esquema estranho (`javascript:`) viram `null` — e o
+ * botão some, em vez de levar a lugar nenhum.
+ */
+export function homepageValida(
+    bruto: string | null | undefined,
+): string | null {
+    const texto = typeof bruto === "string" ? bruto.trim() : "";
+    if (!texto) return null;
+    try {
+        const url = new URL(texto);
+        if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+        if (!url.hostname.includes(".")) return null;
+        /* Sem barra final na raiz: a mesma URL fica comparável. */
+        return url.pathname === "/" && !url.search && !url.hash
+            ? url.origin
+            : url.toString();
+    } catch {
+        return null;
+    }
+}
+
+/**
+ * Tópicos como o GitHub os padroniza (minúsculas, hífen), sem
+ * repetição e na ordem em que o dono os cadastrou.
+ */
+export function normalizarTopicos(lista: unknown[]): string[] {
+    const vistos = new Set<string>();
+    const out: string[] = [];
+    for (const bruto of lista) {
+        if (typeof bruto !== "string") continue;
+        const t = bruto.trim().toLowerCase().replace(/\s+/g, "-");
+        if (!t || vistos.has(t)) continue;
+        vistos.add(t);
+        out.push(t);
+    }
+    return out;
+}
+
+/* ─────────────────────────────────────────────────────────
    Caminho autenticado — GraphQL com consulta fixa
 ───────────────────────────────────────────────────────── */
 
@@ -264,7 +309,7 @@ export function doGraphQL(no: NoRepoGQL | null | undefined): Repository | null {
         fullName: no.nameWithOwner ?? `${GITHUB_USER}/${no.name}`,
         description: no.description ?? null,
         url: no.url,
-        homepageUrl: no.homepageUrl || null,
+        homepageUrl: homepageValida(no.homepageUrl),
         stargazerCount: Number(no.stargazerCount ?? 0),
         forkCount: Number(no.forkCount ?? 0),
         isArchived: Boolean(no.isArchived),
@@ -272,9 +317,9 @@ export function doGraphQL(no: NoRepoGQL | null | undefined): Repository | null {
         pushedAt: no.pushedAt ?? null,
         updatedAt: no.updatedAt,
         createdAt: no.createdAt ?? no.updatedAt,
-        topics: (no.repositoryTopics?.nodes ?? [])
-            .map((t) => t?.topic?.name)
-            .filter((n): n is string => typeof n === "string"),
+        topics: normalizarTopicos(
+            (no.repositoryTopics?.nodes ?? []).map((t) => t?.topic?.name),
+        ),
         primaryLanguage: primaria,
         languages: (no.languages?.edges ?? [])
             .map((e): Language | null =>
@@ -391,7 +436,7 @@ export function doREST(bruto: RepoREST | null | undefined): Repository | null {
         fullName,
         description: bruto.description ?? null,
         url: bruto.html_url,
-        homepageUrl: bruto.homepage || null,
+        homepageUrl: homepageValida(bruto.homepage),
         stargazerCount: Number(bruto.stargazers_count ?? 0),
         forkCount: Number(bruto.forks_count ?? 0),
         isArchived: Boolean(bruto.archived),
@@ -400,7 +445,7 @@ export function doREST(bruto: RepoREST | null | undefined): Repository | null {
         updatedAt: bruto.updated_at,
         createdAt: bruto.created_at ?? bruto.updated_at,
         topics: Array.isArray(bruto.topics)
-            ? bruto.topics.filter((t): t is string => typeof t === "string")
+            ? normalizarTopicos(bruto.topics)
             : [],
         primaryLanguage: primaria,
         /* Sem `size`: a listagem REST não divide por linguagem, e inventar
@@ -633,7 +678,7 @@ export const QTD_FIXADOS = 6;
  * recentemente atualizados, sem forks. A home mostra os dois do mesmo
  * jeito; o campo existe para não esconder a diferença de quem consome.
  */
-export async function listarFixados(): Promise<{
+export async function listarFixados(acervo?: Repository[]): Promise<{
     repositories: Repository[];
     source: "pinned" | "recent";
 }> {
@@ -664,7 +709,9 @@ export async function listarFixados(): Promise<{
         }
     }
 
-    const recentes = (await listarRepositorios())
+    /* Quem já tem o acervo em mãos (a sincronização) o passa, e o
+       substituto não refaz a listagem inteira. */
+    const recentes = (acervo ?? (await listarRepositorios()))
         .filter((r) => !r.isFork && !r.isArchived)
         .slice(0, QTD_FIXADOS);
     return { repositories: recentes, source: "recent" };

@@ -2,7 +2,67 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-const { default: handler, _reiniciarLimite } = await import("./devhub");
+const {
+    default: handler,
+    _reiniciarLimite,
+    _esquecerMemoria,
+} = await import("./devhub");
+const { criarStoreMemoria, definirStore } = await import("./_devhub-store");
+const { renderReadme } = await import("./_devhub-markdown");
+const { buscarEstatisticas } = await import("./_github-detalhe");
+const { buscarPerfil } = await import("./_github-perfil");
+const { buscarReadme, buscarRepositorio, listarAcervo, listarFixados } =
+    await import("./_github-repos");
+const { CACHE_PADRAO, ErroPublico, GITHUB_USER, responderErro } =
+    await import("./_github");
+
+/* ─────────────────────────────────────────────────────────
+   Duas camadas, um conjunto de garantias
+   ─────────────────────────────────────────────────────────
+   O `/api/devhub` não consulta mais o GitHub: lê o que a
+   sincronização agendada gravou (ver devhub-sync.test.ts). As
+   garantias desta suíte continuam valendo, cada uma na camada
+   em que mora agora:
+
+     · fronteira (operações, parâmetros, verbo, abuso) — no
+       handler, que valida ANTES de ler o store;
+     · token, normalização, paginação, falhas do GitHub — na
+       coleta, as mesmas funções que a sincronização executa.
+
+   `chamar` passa primeiro pelo handler. Se ele recusar, a
+   recusa é a resposta. Se aceitar e não houver dados
+   sincronizados (store vazio), a coleta da operação roda como a
+   sincronização a rodaria, com o mesmo tratamento de erro
+   público (`responderErro`). Assim cada teste exercita a
+   validação real E a coleta real.
+───────────────────────────────────────────────────────── */
+
+/** A coleta de uma operação, com as funções que a sincronização usa. */
+async function coletarOp(op: string, name?: string): Promise<unknown> {
+    switch (op) {
+        case "index":
+            return listarAcervo();
+        case "pinned":
+            return listarFixados();
+        case "profile":
+            return buscarPerfil();
+        case "stats":
+            return buscarEstatisticas(name!);
+        case "project":
+            return buscarRepositorio(name!);
+        case "readme": {
+            const md = await buscarReadme(name!);
+            return {
+                html:
+                    md === null
+                        ? null
+                        : renderReadme(md, { owner: GITHUB_USER, repo: name! }),
+            };
+        }
+        default:
+            throw new Error(`operação sem coleta: ${op}`);
+    }
+}
 
 /* ─────────────────────────────────────────────────────────
    O que estes testes vigiam
@@ -54,11 +114,38 @@ function chamar(
         },
     };
 
-    return handler({ method, query } as never, res as never).then(() => ({
-        headers,
-        codigo,
-        corpo,
-    }));
+    return handler({ method, query } as never, res as never).then(async () => {
+        const pendente =
+            codigo === 503 &&
+            (corpo as { error?: { code?: string } })?.error?.code ===
+                "sincronizacao_pendente";
+        if (pendente) {
+            /* Validado pelo handler e sem dados sincronizados: a
+                   coleta responde, como a sincronização a executaria. */
+            for (const k of Object.keys(headers)) delete headers[k];
+            try {
+                const valor = await coletarOp(
+                    String(query.op),
+                    query.name as string | undefined,
+                );
+                res.setHeader("Cache-Control", CACHE_PADRAO);
+                res.status(200).json(valor);
+            } catch (erro) {
+                responderErro(
+                    res,
+                    erro instanceof ErroPublico
+                        ? erro
+                        : new ErroPublico(
+                              "upstream_indisponivel",
+                              "não foi possível consultar o GitHub",
+                              erro,
+                          ),
+                    "devhub",
+                );
+            }
+        }
+        return { headers, codigo, corpo };
+    });
 }
 
 /** Resposta de rede com corpo JSON. */
@@ -126,6 +213,8 @@ let erros: string[];
 
 beforeEach(() => {
     _reiniciarLimite();
+    _esquecerMemoria();
+    definirStore(criarStoreMemoria());
     delete process.env.GITHUB_TOKEN;
     erros = [];
     vi.spyOn(console, "error").mockImplementation((...a: unknown[]) => {

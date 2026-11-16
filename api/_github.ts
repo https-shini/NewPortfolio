@@ -67,7 +67,8 @@ export type CodigoErro =
     | "parametro_invalido"
     | "limite_excedido"
     | "upstream_indisponivel"
-    | "upstream_invalido";
+    | "upstream_invalido"
+    | "sincronizacao_pendente";
 
 const STATUS_POR_CODIGO: Record<CodigoErro, number> = {
     metodo_nao_permitido: 405,
@@ -76,6 +77,7 @@ const STATUS_POR_CODIGO: Record<CodigoErro, number> = {
     limite_excedido: 429,
     upstream_indisponivel: 502,
     upstream_invalido: 502,
+    sincronizacao_pendente: 503,
 };
 
 /**
