@@ -1,5 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { act, render, screen, within, fireEvent } from "@testing-library/react";
+import {
+    act,
+    render,
+    screen,
+    within,
+    fireEvent,
+    waitFor,
+} from "@testing-library/react";
 import { Providers } from "@/app/providers";
 import { Routes } from "@/app/routes";
 import { NOT_FOUND_COPY } from "@/shared/config/notFound";
@@ -39,7 +46,10 @@ describe("página 404", () => {
         expect(window.location.pathname).toBe("/caminho/que/nao/existe");
         expect(document.getElementById("site-header")).toBeInTheDocument();
         expect(screen.getByRole("contentinfo")).toBeInTheDocument();
-        expect(document.title).toContain("404");
+        /* O título é escrito num efeito, depois da pintura: esperar por ele
+           em vez de ler no mesmo tick em que o h1 apareceu. Lido de uma vez
+           só, falhava de forma intermitente com a máquina carregada. */
+        await waitFor(() => expect(document.title).toContain("404"));
         expect(
             document.head.querySelector('meta[name="robots"]'),
         ).toHaveAttribute("content", "noindex, follow");

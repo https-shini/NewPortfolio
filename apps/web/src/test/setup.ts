@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { afterEach, vi } from "vitest";
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import dictionaries from "@/shared/lib/translations.json";
 import { initializeTranslations } from "@/shared/lib/translations";
 import { RELEASE_NOTES } from "@/shared/config/releaseNotes";
@@ -8,6 +8,13 @@ import { initializeReleaseNotes } from "@/shared/config/releaseNotesClient";
 
 initializeTranslations(dictionaries);
 initializeReleaseNotes(RELEASE_NOTES);
+
+/* As páginas são carregadas sob demanda (lazy): um `findBy*` espera o
+   chunk chegar. O padrão de 1 s bastava com a máquina livre e falhava
+   de forma intermitente com ela ocupada (medido: 404, Featured,
+   Formacoes e Work, todos passando em isolamento). O teto maior não
+   atrasa teste que passa — `findBy*` resolve assim que encontra. */
+configure({ asyncUtilTimeout: 4000 });
 
 /* Quase toda a suíte roda em jsdom, mas alguns casos precisam do node
    puro — a geração da imagem de compartilhamento, por exemplo, escolhe um

@@ -227,11 +227,25 @@ export function matches(
 
     if (s.pinnedOnly && !fixados.has(repo.name)) return false;
 
-    if (ignorar !== "includeForks" && !s.includeForks && repo.isFork) {
+    /* Fixado é escolha do dono. No recorte "só fixados", as exclusões
+       PADRÃO (sem forks, só ativos) não se aplicam: um fork fixado, como
+       o skill-icons, sumia do atalho e a contagem (5) discordava da
+       vitrine da home (6). O filtro explícito "arquivados" continua
+       valendo — ele é um pedido, não um padrão. */
+    const fixadoVence = s.pinnedOnly;
+
+    if (
+        ignorar !== "includeForks" &&
+        !s.includeForks &&
+        repo.isFork &&
+        !fixadoVence
+    ) {
         return false;
     }
     if (ignorar !== "status") {
-        if (s.status === "active" && repo.isArchived) return false;
+        if (s.status === "active" && repo.isArchived && !fixadoVence) {
+            return false;
+        }
         if (s.status === "archived" && !repo.isArchived) return false;
     }
     if (ignorar !== "languages" && s.languages.length > 0) {
