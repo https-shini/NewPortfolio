@@ -1,5 +1,6 @@
 import { readCache, writeCache } from "@/shared/lib/cache";
 import type {
+    DevhubCatalog,
     DevhubIndex,
     DevhubPinned,
     GithubProfile,
@@ -21,20 +22,36 @@ import type {
    saiu — a CSP do site só permite `connect-src 'self'`, e o
    servidor já tem o próprio caminho público quando falta token.
    Se a função não responde, a página mostra o estado de erro.
+
+   Uma fonte, duas chamadas: a home, o catálogo e os relacionados
+   leem o MESMO `op=catalog` (fixados + acervo da mesma
+   sincronização); a página e o modal de um projeto leem um único
+   `op=detail` (repositório + README + estatísticas). Pedidos
+   iguais em andamento são compartilhados, não repetidos.
 ───────────────────────────────────────────────────────── */
 
 const ENDPOINT = "/api/devhub";
 
-/* 30 min: o acervo muda devagar e a função ainda cacheia na CDN.
-   Isto evita a ida até ela a cada navegação dentro da aba. */
+/* 30 min: os dados mudam de hora em hora (sincronização agendada) e a
+   função ainda cacheia na CDN. Isto evita a ida até ela a cada
+   navegação dentro da aba. */
 const TTL = 1000 * 60 * 30;
 
 /* O sufixo de versão invalida caches gravados por um formato anterior. */
-const CACHE_INDEX = "devhub:v2:index";
-const CACHE_PINNED = "devhub:v2:pinned";
-const CACHE_STATS = "devhub:v2:stats:";
+const CACHE_CATALOG = "devhub:v3:catalog";
 const CACHE_PROFILE = "devhub:v3:profile";
-const cacheProjeto = (name: string) => `devhub:v2:project:${name}`;
+const cacheDetalhe = (name: string) => `devhub:v3:detail:${name}`;
+
+/** Pedidos em andamento, por chave de cache — dois consumidores, uma ida. */
+const emAndamento = new Map<string, Promise<unknown>>();
+
+function compartilhado<T>(chave: string, criar: () => Promise<T>): Promise<T> {
+    const atual = emAndamento.get(chave);
+    if (atual) return atual as Promise<T>;
+    const nova = criar().finally(() => emAndamento.delete(chave));
+    emAndamento.set(chave, nova);
+    return nova;
+}
 
 /** Falha de transporte ou de contrato — a página decide o que mostrar. */
 export class DevhubError extends Error {
@@ -93,6 +110,10 @@ function ehFixados(valor: unknown): valor is DevhubPinned {
     );
 }
 
+function ehCatalogo(valor: unknown): valor is DevhubCatalog {
+    return ehObjeto(valor) && ehIndice(valor.index) && ehFixados(valor.pinned);
+}
+
 function ehEstatisticas(valor: unknown): valor is RepositoryStats {
     return (
         ehObjeto(valor) &&
@@ -100,13 +121,6 @@ function ehEstatisticas(valor: unknown): valor is RepositoryStats {
         typeof valor.branches === "number" &&
         ehObjeto(valor.releases) &&
         Array.isArray(valor.releases.latest)
-    );
-}
-
-function ehReadme(valor: unknown): valor is { html: string | null } {
-    return (
-        ehObjeto(valor) &&
-        (valor.html === null || typeof valor.html === "string")
     );
 }
 
@@ -123,12 +137,14 @@ async function comCache<T>(
     const emCache = readCache<unknown>(chave, TTL);
     if (guarda(emCache)) return emCache;
 
-    const resposta = await buscar();
-    if (!guarda(resposta)) {
-        throw new DevhubError(`resposta de ${chave} fora do contrato`);
-    }
-    writeCache(chave, resposta);
-    return resposta;
+    return compartilhado(chave, async () => {
+        const resposta = await buscar();
+        if (!guarda(resposta)) {
+            throw new DevhubError(`resposta de ${chave} fora do contrato`);
+        }
+        writeCache(chave, resposta);
+        return resposta;
+    });
 }
 
 function ehPerfil(valor: unknown): valor is GithubProfile {
@@ -152,69 +168,66 @@ export function fetchProfile(): Promise<GithubProfile> {
     return comCache(CACHE_PROFILE, ehPerfil, () => pedir({ op: "profile" }));
 }
 
+/** Fixados + acervo, da mesma sincronização — a fonte da home e do catálogo. */
+export function fetchCatalog(): Promise<DevhubCatalog> {
+    return comCache(CACHE_CATALOG, ehCatalogo, () => pedir({ op: "catalog" }));
+}
+
 /** O acervo inteiro, com seguidores — galeria e métricas da /projetos. */
-export function fetchIndex(): Promise<DevhubIndex> {
-    return comCache(CACHE_INDEX, ehIndice, () => pedir({ op: "index" }));
+export async function fetchIndex(): Promise<DevhubIndex> {
+    return (await fetchCatalog()).index;
 }
 
 /** Os fixados no perfil do GitHub — a vitrine da home. */
-export function fetchPinned(): Promise<DevhubPinned> {
-    return comCache(CACHE_PINNED, ehFixados, () => pedir({ op: "pinned" }));
+export async function fetchPinned(): Promise<DevhubPinned> {
+    return (await fetchCatalog()).pinned;
+}
+
+function ehDetalhe(valor: unknown): valor is RepositoryDetail {
+    if (!ehRepositorio(valor)) return false;
+    const d = valor as Partial<RepositoryDetail>;
+    return (
+        (d.readmeHtml === null || typeof d.readmeHtml === "string") &&
+        (d.stats == null || ehEstatisticas(d.stats))
+    );
 }
 
 /**
- * Um projeto, com o README convertido e sanitizado no servidor.
- *
- * As duas operações vão em paralelo. O README é complemento: se só ele
- * falhar, a página ainda vale a visita, e a falha vira `readmeHtml: null`.
- * `null` como resultado é o repositório que não existe (a página mostra
- * "não encontrado", não erro de rede).
+ * Um projeto com a documentação já sincronizada: repositório, README
+ * (convertido e sanitizado no servidor) e estatísticas, numa ida só.
+ * `null` é o repositório que não existe (a página mostra "não
+ * encontrado", não erro de rede).
  */
 export async function fetchProject(
     name: string,
 ): Promise<RepositoryDetail | null> {
-    const chave = cacheProjeto(name);
+    const chave = cacheDetalhe(name);
     const emCache = readCache<unknown>(chave, TTL);
-    if (ehRepositorio(emCache) && "readmeHtml" in emCache) {
-        return emCache as RepositoryDetail;
-    }
+    if (ehDetalhe(emCache)) return emCache;
 
-    const [repo, readme] = await Promise.all([
-        pedir({ op: "project", name }),
-        pedir({ op: "readme", name }).catch(() => null),
-    ]);
-
-    if (repo === null) return null;
-    if (!ehRepositorio(repo)) {
-        throw new DevhubError("resposta de `project` fora do contrato");
-    }
-
-    const detalhe: RepositoryDetail = {
-        ...repo,
-        readmeHtml: ehReadme(readme) ? readme.html : null,
-    };
-    writeCache(chave, detalhe);
-    return detalhe;
+    return compartilhado(chave, async () => {
+        const resposta = await pedir({ op: "detail", name });
+        if (resposta === null) return null;
+        if (!ehDetalhe(resposta)) {
+            throw new DevhubError("resposta de `detail` fora do contrato");
+        }
+        const detalhe: RepositoryDetail = {
+            ...resposta,
+            stats: resposta.stats ?? null,
+        };
+        writeCache(chave, detalhe);
+        return detalhe;
+    });
 }
 
 /**
  * Estatísticas de um projeto (issues, PRs, commits, árvore, releases,
- * contribuidores). `null` = indisponível — sem token no servidor ou
- * repositório não público. Quem mostra trata `null` como "indisponível",
+ * deployments, contribuidores) — do mesmo `op=detail` do projeto.
+ * `null` = indisponível; quem mostra trata `null` como "indisponível",
  * nunca como zero.
  */
 export async function fetchStats(
     name: string,
 ): Promise<RepositoryStats | null> {
-    const chave = CACHE_STATS + name;
-    const emCache = readCache<unknown>(chave, TTL);
-    if (ehEstatisticas(emCache)) return emCache;
-
-    const resposta = await pedir({ op: "stats", name });
-    if (resposta === null) return null;
-    if (!ehEstatisticas(resposta)) {
-        throw new DevhubError(`resposta de ${chave} fora do contrato`);
-    }
-    writeCache(chave, resposta);
-    return resposta;
+    return (await fetchProject(name))?.stats ?? null;
 }

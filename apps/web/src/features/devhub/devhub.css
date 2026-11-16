@@ -2184,3 +2184,55 @@ a.devhub-tree__item:hover {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
+
+/* ─────────────────────────────────────────────────────────
+   Grade 3×3 — onde o layout prevê três colunas
+   ─────────────────────────────────────────────────────────
+   `.devhub-grid` usa auto-fill: em telas largas cabem 4 cartões
+   por linha, e 9 itens viravam 4 + 4 + 1. Aqui as colunas são
+   fixas e acompanham o catálogo (`.catalog__grid`): 1 coluna,
+   2 a partir de 640px, 3 a partir de 1280px. Carrosséis não usam
+   esta classe. */
+.devhub-grid--3 {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 640px) {
+    .devhub-grid--3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1280px) {
+    .devhub-grid--3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Deployments na aba de releases da página do projeto. */
+.devhub-deployments {
+    margin-top: var(--space-8);
+}
+
+.devhub-deployments__list {
+    display: grid;
+    gap: var(--space-3);
+    margin: var(--space-4) 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.devhub-deployments__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-2);
+}
+
+.devhub-deployments__state {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    text-transform: uppercase;
+}

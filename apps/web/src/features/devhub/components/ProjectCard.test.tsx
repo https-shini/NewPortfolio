@@ -168,16 +168,40 @@ describe("ProjectCard", () => {
         );
         const lista = screen.getByRole("list", { name: "Tecnologias" });
         const itens = within(lista).getAllByRole("listitem");
+        /* Só as linguagens DETECTADAS: tópico não entra como tecnologia. */
         expect(itens.map((li) => li.textContent)).toEqual([
             "JavaScript",
             "HTML",
             "Elixir",
-            expect.stringMatching(/^\+3/),
         ]);
         /* Oficial → <img> do Skill Icons; fora do catálogo → genérico. */
         expect(itens[0].querySelector("img")).not.toBeNull();
         expect(itens[2].querySelector(".tech__generic")).not.toBeNull();
-        expect(container.textContent).toContain("Mais 3 tecnologias");
+        expect(container.textContent).not.toContain("Mais 3 tecnologias");
+    });
+
+    it("tópicos ficam numa lista própria, padronizados e sem repetir linguagem", () => {
+        montar(
+            repo({
+                name: "topicos",
+                languages: [{ name: "JavaScript", color: "#f1e05a", size: 50 }],
+                topics: ["javascript", "react", "reactjs", "backend"],
+            }),
+        );
+        const lista = screen.getByRole("list", { name: "Tópicos" });
+        const itens = within(lista).getAllByRole("listitem");
+        /* "javascript" já é linguagem detectada; "reactjs" é "react". */
+        expect(itens.map((li) => li.textContent)).toEqual([
+            "#React",
+            "#backend",
+        ]);
+    });
+
+    it("homepage inválida não vira botão de acessar projeto", () => {
+        montar(repo({ name: "x", homepageUrl: "javascript:alert(1)" }));
+        expect(
+            screen.queryByRole("link", { name: /^Acessar projeto/ }),
+        ).toBeNull();
     });
 
     it("documentação do projeto abre o modal (sem link para a página interna)", async () => {

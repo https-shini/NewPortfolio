@@ -27,9 +27,11 @@ import {
     relatedRepos,
     siblingsOf,
 } from "@/features/devhub/selectors";
+import { homepageSegura, topicLabels } from "@/features/devhub/tech";
 import {
     NEUTRAL_LANGUAGE_COLOR,
     type Repository,
+    type RepositoryStats,
 } from "@/features/devhub/types";
 import { useLang } from "@/shared/hooks/useLang";
 import { useLinkProps } from "@/shared/hooks/useLinkProps";
@@ -248,7 +250,9 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
     const status = statusDe(repo);
     const atividade = new Date(lastActivity(repo)).toISOString();
     const temLinguagens = languageShares(repo.languages).length > 0;
-    const temPagesNaDemo = /\.github\.io(\/|$)/i.test(repo.homepageUrl ?? "");
+    const demo = homepageSegura(repo.homepageUrl);
+    const topicos = topicLabels(repo);
+    const temPagesNaDemo = /\.github\.io(\/|$)/i.test(demo ?? "");
     const stats = estat.data;
     const okStats = Boolean(stats);
 
@@ -307,10 +311,18 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
                 <ComStats loading={estat.loading} ok={okStats}>
                     {() =>
                         stats && (
-                            <ReleaseList
-                                repo={repo}
-                                releases={stats.releases}
-                            />
+                            <>
+                                <ReleaseList
+                                    repo={repo}
+                                    releases={stats.releases}
+                                />
+                                {stats.deployments &&
+                                    stats.deployments.total > 0 && (
+                                        <DeploymentList
+                                            deployments={stats.deployments}
+                                        />
+                                    )}
+                            </>
                         )
                     }
                 </ComStats>
@@ -419,17 +431,17 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
                                 </p>
                             )}
 
-                            {repo.topics.length > 0 && (
+                            {topicos.length > 0 && (
                                 <ul
                                     className="devhub-detail__topics"
                                     aria-label={t("devhub.detail.topics")}
                                 >
-                                    {repo.topics.map((topic) => (
+                                    {topicos.map((tp) => (
                                         <li
-                                            key={topic}
+                                            key={tp.topic}
                                             className="devhub-chip devhub-chip--muted"
                                         >
-                                            #{topic}
+                                            #{tp.label}
                                         </li>
                                     ))}
                                 </ul>
@@ -479,10 +491,10 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
                                         {t("devhub.detail.pages")}
                                     </a>
                                 )}
-                                {repo.homepageUrl && (
+                                {demo && (
                                     <a
                                         className="btn btn--primary"
-                                        href={repo.homepageUrl}
+                                        href={demo}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
@@ -572,7 +584,7 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
                         <p className="devhub-section__desc">
                             {t("devhub.related.desc")}
                         </p>
-                        <ul className="devhub-grid">
+                        <ul className="devhub-grid devhub-grid--3">
                             {relacionados.map((r, i) => (
                                 <li key={r.name}>
                                     <ProjectCard repo={r} index={i} />
@@ -595,5 +607,52 @@ export const ProjectPage: React.FC<Props> = ({ name }) => {
                 )}
             </div>
         </Moldura>
+    );
+};
+
+/** Os deployments mais recentes registrados no GitHub. */
+const DeploymentList: React.FC<{
+    deployments: NonNullable<RepositoryStats["deployments"]>;
+}> = ({ deployments }) => {
+    const { lang, t } = useLang();
+    return (
+        <section
+            className="devhub-deployments"
+            aria-labelledby="devhub-deployments-title"
+        >
+            <h3 id="devhub-deployments-title" className="devhub-section__title">
+                {t("devhub.detail.deployments")} (
+                {formatNumber(deployments.total, lang)})
+            </h3>
+            <ul className="devhub-deployments__list">
+                {deployments.latest.map((d) => (
+                    <li
+                        key={`${d.environment}-${d.createdAt}`}
+                        className="devhub-deployments__item"
+                    >
+                        <span className="devhub-chip devhub-chip--muted">
+                            {d.environment}
+                        </span>
+                        {d.state && (
+                            <span className="devhub-deployments__state">
+                                {d.state.toLowerCase()}
+                            </span>
+                        )}
+                        <time dateTime={d.createdAt}>
+                            {formatDate(d.createdAt, lang)}
+                        </time>
+                        {d.url && (
+                            <a
+                                href={d.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {new URL(d.url).host}
+                            </a>
+                        )}
+                    </li>
+                ))}
+            </ul>
+        </section>
     );
 };

@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { DevhubError, fetchIndex, fetchPinned, fetchProject } from "./api";
+import {
+    DevhubError,
+    fetchIndex,
+    fetchPinned,
+    fetchProject,
+    fetchStats,
+} from "./api";
 import { fetchPorOp, repo } from "@/test/repoFixture";
 
 afterEach(() => {
@@ -7,7 +13,7 @@ afterEach(() => {
 });
 
 describe("cliente /api/devhub", () => {
-    it("fetchIndex pede op=index e grava no cache da sessão", async () => {
+    it("fetchIndex lê o op=catalog e grava no cache da sessão", async () => {
         const indice = { repositories: [repo()], followers: 3, fetchedAt: "x" };
         const fetchMock = vi.fn(fetchPorOp({ index: indice }));
         vi.stubGlobal("fetch", fetchMock);
@@ -17,8 +23,29 @@ describe("cliente /api/devhub", () => {
         /* A segunda veio do sessionStorage. */
         expect(fetchMock).toHaveBeenCalledTimes(1);
         expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
-            "/api/devhub?op=index",
+            "/api/devhub?op=catalog",
         );
+    });
+
+    it("home e catálogo compartilham UMA ida ao servidor", async () => {
+        const fixados = {
+            repositories: [repo({ name: "f" })],
+            source: "pinned",
+            fetchedAt: "x",
+        };
+        const indice = {
+            repositories: [repo({ name: "f" }), repo({ name: "g" })],
+            followers: null,
+            fetchedAt: "x",
+        };
+        const fetchMock = vi.fn(fetchPorOp({ index: indice, pinned: fixados }));
+        vi.stubGlobal("fetch", fetchMock);
+
+        /* Em paralelo, como a /projetos pede os dois ao montar. */
+        const [p, i] = await Promise.all([fetchPinned(), fetchIndex()]);
+        expect(p.repositories.map((r) => r.name)).toEqual(["f"]);
+        expect(i.repositories).toHaveLength(2);
+        expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it("recusa resposta fora do contrato em vez de seguir com ela", async () => {
@@ -90,7 +117,32 @@ describe("cliente /api/devhub", () => {
         vi.stubGlobal("fetch", fetchMock);
         await fetchProject("a.b_c");
         expect(String(fetchMock.mock.calls[0]?.[0])).toBe(
-            "/api/devhub?op=project&name=a.b_c",
+            "/api/devhub?op=detail&name=a.b_c",
         );
+    });
+
+    it("projeto e estatísticas saem do mesmo op=detail", async () => {
+        const stats = {
+            openIssues: 1,
+            totalIssues: 2,
+            openPullRequests: 0,
+            totalPullRequests: 3,
+            branches: 2,
+            tags: 1,
+            releases: { total: 0, latest: [] },
+            commits: null,
+            tree: null,
+            contributors: null,
+            deployments: { total: 1, latest: [] },
+        };
+        const fetchMock = vi.fn(
+            fetchPorOp({ project: repo({ name: "s" }), stats }),
+        );
+        vi.stubGlobal("fetch", fetchMock);
+
+        const [p, s] = await Promise.all([fetchProject("s"), fetchStats("s")]);
+        expect(p?.name).toBe("s");
+        expect(s?.deployments?.total).toBe(1);
+        expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 });

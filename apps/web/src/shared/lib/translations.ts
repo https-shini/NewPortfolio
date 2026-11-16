@@ -528,6 +528,7 @@ export type TranslationKey =
     | "devhub.detail.activity"
     | "devhub.detail.languages"
     | "devhub.detail.topics"
+    | "devhub.detail.deployments"
     | "devhub.detail.viewOnGithub"
     | "devhub.detail.liveDemo"
     | "devhub.detail.noReadme"

@@ -54,6 +54,8 @@ export interface Repository {
 export interface RepositoryDetail extends Repository {
     /** README convertido e sanitizado no servidor; `null` se não houver. */
     readmeHtml: string | null;
+    /** Estatísticas sincronizadas; `null` = indisponível. */
+    stats?: RepositoryStats | null;
 }
 
 /** `op=index` — o acervo inteiro e o que alimenta as métricas. */
@@ -63,6 +65,8 @@ export interface DevhubIndex {
     followers: number | null;
     /** Momento da coleta, ISO. */
     fetchedAt: string;
+    /** Quando a sincronização agendada gravou estes dados. */
+    lastSyncedAt?: string;
 }
 
 /** `op=pinned` — a vitrine da home. */
@@ -71,6 +75,14 @@ export interface DevhubPinned {
     /** `pinned`: fixados no GitHub; `recent`: substituto sem fixados. */
     source: "pinned" | "recent";
     fetchedAt: string;
+    lastSyncedAt?: string;
+}
+
+/** `op=catalog` — fixados e acervo da MESMA sincronização. */
+export interface DevhubCatalog {
+    pinned: DevhubPinned;
+    index: DevhubIndex;
+    lastSyncedAt?: string;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -172,6 +184,15 @@ export interface RepositoryStats {
     } | null;
     tree: RepoTreeEntry[] | null;
     contributors: { total: number; top: RepoContributor[] } | null;
+    /** Deployments registrados no GitHub; ausente em dados antigos. */
+    deployments?: { total: number; latest: RepoDeployment[] } | null;
+}
+
+export interface RepoDeployment {
+    environment: string;
+    createdAt: string;
+    state: string | null;
+    url: string | null;
 }
 
 /* ─────────────────────────────────────────────────────────

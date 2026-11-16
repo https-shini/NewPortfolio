@@ -5,7 +5,11 @@ import { TechList } from "@/features/devhub/components/TechList";
 import { displayName } from "@/features/devhub/catalog";
 import { formatDate, formatNumber } from "@/features/devhub/format";
 import { lastActivity } from "@/features/devhub/selectors";
-import { techsFromRepo } from "@/features/devhub/tech";
+import {
+    homepageSegura,
+    languageTechs,
+    topicLabels,
+} from "@/features/devhub/tech";
 import {
     NEUTRAL_LANGUAGE_COLOR,
     type Repository,
@@ -80,10 +84,11 @@ export const ProjectCard: React.FC<Props> = ({
     const Titulo = headingLevel === 2 ? "h2" : "h3";
     const tituloId = `pcard-${repo.id}`;
     const nome = displayName(repo.name);
-    const demo = repo.homepageUrl;
+    const demo = homepageSegura(repo.homepageUrl);
     const tinta = repo.primaryLanguage?.color ?? NEUTRAL_LANGUAGE_COLOR;
     const atividade = new Date(lastActivity(repo)).toISOString();
-    const techs = techsFromRepo(repo);
+    const techs = languageTechs(repo);
+    const topicos = topicLabels(repo).slice(0, destaque ? 4 : 3);
     const abrir = () => setAberto(true);
     const gatilho = {
         onClick: abrir,
@@ -176,6 +181,19 @@ export const ProjectCard: React.FC<Props> = ({
                 </p>
 
                 <TechList techs={techs} limit={destaque ? 4 : 3} />
+
+                {topicos.length > 0 && (
+                    <ul
+                        className="pcard__topics"
+                        aria-label={t("devhub.detail.topics")}
+                    >
+                        {topicos.map((tp) => (
+                            <li key={tp.topic} className="pcard__topic">
+                                #{tp.label}
+                            </li>
+                        ))}
+                    </ul>
+                )}
 
                 {!destaque && (
                     <p className="pcard__stats">
