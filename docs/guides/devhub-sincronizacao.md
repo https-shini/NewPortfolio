@@ -32,13 +32,25 @@ linguagem já detectada.
 
 ## Agendamento
 
-- `vercel.json` → `crons: [{ "path": "/api/devhub-sync", "schedule": "0 * * * *" }]`.
-- O Vercel Cron roda em **UTC**. `0 * * * *` dispara em toda hora cheia UTC,
-  que também é hora cheia em `America/Sao_Paulo`: o fuso é UTC-3 fixo, sem
-  horário de verão desde 2019. Se o horário de verão voltar (UTC-2), o
-  deslocamento continua inteiro e o disparo continua na hora cheia.
-- O cron só existe em deployments de **produção**. Previews não sincronizam
-  sozinhos.
+O projeto está no plano **Hobby**, em que a Vercel só aceita cron diário: o
+deploy com `0 * * * *` no `vercel.json` é recusado ("Hobby accounts are
+limited to daily cron jobs"). Por isso, o agendamento é feito em duas partes:
+
+- **De hora em hora**: `.github/workflows/devhub-sync.yml`, com
+  `schedule: "0 * * * *"`, faz `POST /api/devhub-sync` com o segredo de
+  repositório `CRON_SECRET`. O GitHub pode atrasar execuções agendadas em
+  alguns minutos nos horários de pico. A trava impede que execuções se
+  sobreponham.
+- **Reserva diária**: `vercel.json` →
+  `crons: [{ "path": "/api/devhub-sync", "schedule": "0 3 * * *" }]`
+  (00:00 em São Paulo). Só existe em deployments de **produção**.
+- **No plano Pro**: troque o `vercel.json` para `0 * * * *` e remova o
+  workflow.
+
+Os dois agendadores rodam em **UTC**. `0 * * * *` dispara em toda hora cheia
+UTC, que também é hora cheia em `America/Sao_Paulo`: o fuso é UTC-3 fixo, sem
+horário de verão desde 2019. Se o horário de verão voltar (UTC-2), o
+deslocamento continua inteiro e o disparo continua na hora cheia.
 
 ## Garantias da sincronização
 
@@ -94,7 +106,7 @@ errado · `503` `CRON_SECRET` ou store não configurados.
    públicos.
 4. Depois do deploy, dispare uma sincronização manual (comando acima) para
    não esperar a próxima hora cheia.
-5. **Plano**: no Hobby, a Vercel limita o cron a uma execução por dia. Para
-   rodar de hora em hora é preciso o plano Pro. No Hobby, a alternativa é um
-   agendador externo (por exemplo, um workflow agendado do GitHub Actions)
-   chamando o endpoint manual com o mesmo `CRON_SECRET`.
+5. **GitHub → Settings → Secrets and variables → Actions**: segredo de
+   repositório `CRON_SECRET`, com o **mesmo valor** do item 2. Sem ele, o
+   workflow horário avisa e termina sem disparar nada, e sobra só a reserva
+   diária da Vercel.

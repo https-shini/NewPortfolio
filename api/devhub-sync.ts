@@ -5,16 +5,20 @@ import { sincronizar } from "./_devhub-sync.js";
 /* ─────────────────────────────────────────────────────────
    /api/devhub-sync — sincroniza o DevHub com o GitHub
    ─────────────────────────────────────────────────────────
-   Chamado de duas formas, com a MESMA autorização:
+   Chamado de três formas, com a MESMA autorização
+   (`Authorization: Bearer $CRON_SECRET`):
 
-     · pelo Vercel Cron, de hora em hora (`0 * * * *`, ver
-       vercel.json). A Vercel envia
-       `Authorization: Bearer $CRON_SECRET` sozinha;
+     · de hora em hora, pelo workflow agendado do GitHub Actions
+       (.github/workflows/devhub-sync.yml) — no plano Hobby a Vercel
+       só aceita cron diário;
+     · uma vez por dia, pelo Vercel Cron (vercel.json), como reserva.
+       A Vercel envia o cabeçalho sozinha. No plano Pro, o cron da
+       Vercel pode passar a `0 * * * *` e o workflow sai;
      · à mão, para forçar uma sincronização:
            curl -X POST https://gcruz.dev.br/api/devhub-sync \
                 -H "Authorization: Bearer $CRON_SECRET"
 
-   Horário: o cron da Vercel roda em UTC. `0 * * * *` dispara em
+   Horário: os dois agendadores rodam em UTC. `0 * * * *` dispara em
    toda hora cheia UTC, que é também hora cheia em
    America/Sao_Paulo — o fuso é UTC-3 fixo, sem horário de verão
    desde 2019. Se o horário de verão voltar, continua sendo hora
