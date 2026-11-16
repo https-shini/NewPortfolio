@@ -51,11 +51,11 @@ export const PROJECT_URLS = {
         repo: repo("AuthService"),
     },
     webChat: {
-        live: "https://chat-frontend-g42t.onrender.com",
+        live: "https://webchat.gcruz.dev.br",
         repo: repo("web-chat"),
     },
     finances: {
-        live: "https://financas-reactjs.vercel.app",
+        live: "https://financas.gcruz.dev.br",
         repo: repo("financas-reactjs"),
     },
 } as const;
