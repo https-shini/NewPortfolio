@@ -285,4 +285,31 @@ describe("catálogo — só fixados", () => {
         expect(url).toContain("lang=en");
         expect(fromSearch(url).pinnedOnly).toBe(true);
     });
+
+    it("fixado vence as exclusões padrão: fork e arquivado fixados entram", () => {
+        const repos = [
+            repo({ name: "fork-fixado", isFork: true }),
+            repo({ name: "arquivado-fixado", isArchived: true }),
+            repo({ name: "fork-solto", isFork: true }),
+            repo({ name: "normal" }),
+        ];
+        const fixados = new Set(["fork-fixado", "arquivado-fixado"]);
+        const nomesCom = (st: CatalogState) =>
+            runCatalog(repos, st, undefined, fixados).items.map((r) => r.name);
+
+        /* Visão padrão: esconde forks e arquivados, fixados ou não. */
+        expect(nomesCom(DEFAULT_CATALOG)).toEqual(["normal"]);
+        /* Só fixados: a escolha do dono vale mais que o padrão. */
+        expect(
+            nomesCom({ ...DEFAULT_CATALOG, pinnedOnly: true }).sort(),
+        ).toEqual(["arquivado-fixado", "fork-fixado"]);
+        /* O filtro EXPLÍCITO "arquivados" continua um pedido respeitado. */
+        expect(
+            nomesCom({
+                ...DEFAULT_CATALOG,
+                pinnedOnly: true,
+                status: "archived",
+            }),
+        ).toEqual(["arquivado-fixado"]);
+    });
 });
