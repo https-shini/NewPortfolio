@@ -38,6 +38,7 @@ export function matchReleaseNotes(path: string): ReleaseNotesMatch {
     const segments = rest.split("/");
 
     if (segments[0] === RELEASE_NOTES_PAGE_SEGMENT) {
+        if (segments.length > 2) return null;
         const page = Number(segments[1]);
         return {
             kind: "index",
@@ -49,6 +50,13 @@ export function matchReleaseNotes(path: string): ReleaseNotesMatch {
        é rota nossa. */
     if (segments.length > 1) return null;
 
-    const version = decodeURIComponent(segments[0] ?? "").replace(/^v/i, "");
-    return version ? { kind: "entry", version } : null;
+    try {
+        const version = decodeURIComponent(segments[0] ?? "").replace(
+            /^v/i,
+            "",
+        );
+        return version ? { kind: "entry", version } : null;
+    } catch {
+        return null;
+    }
 }

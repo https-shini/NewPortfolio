@@ -1,4 +1,5 @@
 import React from "react";
+import { useLinkProps } from "@/shared/hooks/useLinkProps";
 import { Header } from "@/widgets/Header/Header";
 import { Hero } from "@/widgets/Hero/Hero";
 import { About } from "@/widgets/About/About";
@@ -32,7 +33,8 @@ const META = {
 } as const;
 
 export const HomePage: React.FC = () => {
-    const { lang } = useLang();
+    const { lang, t } = useLang();
+    const servicesLink = useLinkProps(ROUTES.SERVICES);
     useReducedMotion();
     useScrollReveal();
     useDocumentMeta({ ...META[lang], path: ROUTES.HOME });
@@ -58,6 +60,17 @@ export const HomePage: React.FC = () => {
                 <Featured />
                 <Work />
                 <Recommendations />
+                <div
+                    className="container"
+                    style={{ paddingBlock: "var(--space-8)" }}
+                >
+                    <a
+                        className="btn btn--outline"
+                        {...servicesLink.anchorProps}
+                    >
+                        {t("nav.services")} <span aria-hidden="true">↗</span>
+                    </a>
+                </div>
                 <Contact />
             </main>
             <Footer />

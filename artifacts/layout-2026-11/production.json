@@ -1,0 +1,191 @@
+[
+  {
+    "route": "/projetos",
+    "status": 200,
+    "url": "https://gcruz.dev.br/projetos",
+    "title": "Projetos — Guilherme Cruz",
+    "layout": {
+      "tokens": {
+        "max": "min(1720px, 92vw)",
+        "wide": "1720px"
+      },
+      "shells": [
+        {
+          "cls": "header__inner",
+          "left": 100,
+          "width": 1720,
+          "padding": "32px",
+          "max": "1720px"
+        },
+        {
+          "cls": "container pp-hero__grid",
+          "left": 100,
+          "width": 1720,
+          "padding": "32px",
+          "max": "1720px"
+        },
+        {
+          "cls": "container",
+          "left": 100,
+          "width": 1720,
+          "padding": "32px",
+          "max": "1720px"
+        },
+        {
+          "cls": "container",
+          "left": 100,
+          "width": 1720,
+          "padding": "32px",
+          "max": "1720px"
+        },
+        {
+          "cls": "container",
+          "left": 100,
+          "width": 1720,
+          "padding": "32px",
+          "max": "1720px"
+        }
+      ]
+    }
+  },
+  {
+    "route": "/",
+    "status": 200,
+    "url": "https://gcruz.dev.br/",
+    "title": "Guilherme Cruz — Desenvolvedor de Software | React, TypeScript & Node.js",
+    "layout": {
+      "tokens": {
+        "max": "1200px",
+        "wide": "1720px"
+      },
+      "shells": [
+        {
+          "cls": "header__inner",
+          "left": 360,
+          "width": 1200,
+          "padding": "32px",
+          "max": "1200px"
+        },
+        {
+          "cls": "hero",
+          "left": 0,
+          "width": 1920,
+          "padding": "0px",
+          "max": "none"
+        },
+        {
+          "cls": "about section is-visible",
+          "left": 0,
+          "width": 1920,
+          "padding": "0px",
+          "max": "none"
+        },
+        {
+          "cls": "container",
+          "left": 360,
+          "width": 1200,
+          "padding": "32px",
+          "max": "1200px"
+        },
+        {
+          "cls": "career section is-visible",
+          "left": 0,
+          "width": 1920,
+          "padding": "0px",
+          "max": "none"
+        },
+        {
+          "cls": "container",
+          "left": 360,
+          "width": 1200,
+          "padding": "32px",
+          "max": "1200px"
+        },
+        {
+          "cls": "formations section is-visible",
+          "left": 0,
+          "width": 1920,
+          "padding": "0px",
+          "max": "none"
+        },
+        {
+          "cls": "container",
+          "left": 360,
+          "width": 1200,
+          "padding": "32px",
+          "max": "1200px"
+        },
+        {
+          "cls": "featured section is-visible",
+          "left": 0,
+          "width": 1920,
+          "padding": "0px",
+          "max": "none"
+        },
+        {
+          "cls": "container",
+          "left": 360,
+          "width": 1200,
+          "padding": "32px",
+          "max": "1200px"
+        },
+        {
+          "cls": "work section is-visible",
+          "left": 0,
+          "width": 1920,
+          "padding": "0px",
+          "max": "none"
+        },
+        {
+          "cls": "container",
+          "left": 360,
+          "width": 1200,
+          "padding": "32px",
+          "max": "1200px"
+        },
+        {
+          "cls": "rec section is-visible",
+          "left": 0,
+          "width": 1920,
+          "padding": "0px",
+          "max": "none"
+        },
+        {
+          "cls": "container",
+          "left": 360,
+          "width": 1200,
+          "padding": "32px",
+          "max": "1200px"
+        },
+        {
+          "cls": "contact section is-visible",
+          "left": 0,
+          "width": 1920,
+          "padding": "0px",
+          "max": "none"
+        },
+        {
+          "cls": "container",
+          "left": 360,
+          "width": 1200,
+          "padding": "32px",
+          "max": "1200px"
+        },
+        {
+          "cls": "container",
+          "left": 360,
+          "width": 1200,
+          "padding": "32px",
+          "max": "1200px"
+        },
+        {
+          "cls": "container",
+          "left": 360,
+          "width": 1200,
+          "padding": "32px",
+          "max": "1200px"
+        }
+      ]
+    }
+  }
+]

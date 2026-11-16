@@ -11,6 +11,7 @@ export type TranslationKey =
     | "nav.recommendations"
     | "nav.contact"
     | "nav.links"
+    | "nav.services"
 
     /* ── HERO ──────────────────────────────────────── */
     | "hero.greeting"
@@ -279,6 +280,7 @@ const pt: Translations = {
     "nav.recommendations": "Recomendações",
     "nav.contact": "Contato",
     "nav.links": "Links",
+    "nav.services": "Serviços",
 
     /* HERO */
     "hero.greeting": "Olá, eu sou",
@@ -576,6 +578,7 @@ const en: Translations = {
     "nav.recommendations": "Recommendations",
     "nav.contact": "Contact",
     "nav.links": "Links",
+    "nav.services": "Services",
 
     /* HERO */
     "hero.greeting": "Hi, I'm",

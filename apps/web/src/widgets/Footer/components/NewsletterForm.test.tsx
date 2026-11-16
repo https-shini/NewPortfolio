@@ -223,7 +223,9 @@ describe("NewsletterForm", () => {
         expect(campo()).toHaveAttribute("aria-invalid", "false");
         const id = campo().getAttribute("aria-describedby");
         expect(id).toBeTruthy();
-        expect(document.getElementById(id!)).toHaveTextContent(/tente de novo/i);
+        expect(document.getElementById(id!)).toHaveTextContent(
+            /tente de novo/i,
+        );
     });
 
     it("preenchimento do honeypot não chama a rede", async () => {

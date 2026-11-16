@@ -14,6 +14,16 @@ import { AmbientBackground } from "@/shared/ui/AmbientBackground/AmbientBackgrou
  * em ROUTES (shared/config/routes.ts), acrescente um caso aqui e o rewrite
  * correspondente no vercel.json da raiz.
  */
+const ServicesPage = lazy(() =>
+    import("@/pages/Services").then((m) => ({ default: m.ServicesPage })),
+);
+const QuotePage = lazy(() =>
+    import("@/pages/Quote").then((m) => ({ default: m.QuotePage })),
+);
+const ContactPage = lazy(() =>
+    import("@/pages/Contact").then((m) => ({ default: m.ContactPage })),
+);
+
 const LinksPage = lazy(() =>
     import("@/pages/Links").then((m) => ({ default: m.LinksPage })),
 );
@@ -92,7 +102,7 @@ export function matchReleaseNotes(path: string): ReleaseNotesMatch {
 }
 
 export const Routes: React.FC = () => {
-    const { path } = useRoute();
+    const { path, search } = useRoute();
 
     const ehLinks = path === ROUTES.LINKS;
     const releaseNotes = ehLinks ? null : matchReleaseNotes(path);
@@ -130,6 +140,18 @@ export const Routes: React.FC = () => {
             ) : path === ROUTES.LINKEDIN_NOTICE ? (
                 <Suspense fallback={null}>
                     <LinkedInNoticePage />
+                </Suspense>
+            ) : path === ROUTES.SERVICES ? (
+                <Suspense fallback={null}>
+                    <ServicesPage />
+                </Suspense>
+            ) : path === ROUTES.QUOTE ? (
+                <Suspense fallback={null}>
+                    <QuotePage key={search} />
+                </Suspense>
+            ) : path === ROUTES.CONTACT ? (
+                <Suspense fallback={null}>
+                    <ContactPage />
                 </Suspense>
             ) : path === ROUTES.HOME ? (
                 <HomePage />

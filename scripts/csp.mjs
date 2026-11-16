@@ -61,7 +61,9 @@ function scriptsInline(html) {
     return achados;
 }
 
-const documentos = readdirSync(DIST).filter((f) => f.endsWith(".html"));
+const documentos = readdirSync(DIST, { recursive: true })
+    .filter((file) => typeof file === "string" && file.endsWith(".html"))
+    .sort();
 if (!documentos.length) {
     console.error(
         "Nenhum documento em apps/web/dist/. Rode `npm run build` antes.",

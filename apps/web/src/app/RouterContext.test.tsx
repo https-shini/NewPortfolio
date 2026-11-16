@@ -13,6 +13,25 @@ const setPath = (path: string) => window.history.replaceState({}, "", path);
 describe("RouterContext", () => {
     beforeEach(() => setPath(ROUTES.HOME));
 
+    it("separa pathname, parâmetros e âncora e atualiza seleções na mesma rota", () => {
+        setPath("/servicos?lang=en");
+        const { result } = renderHook(() => useRouterContext(), { wrapper });
+        act(() =>
+            result.current.navigate("/orcamento?service=express#orcamento"),
+        );
+        expect(result.current.path).toBe(ROUTES.QUOTE);
+        expect(result.current.search).toBe("?service=express&lang=en");
+        expect(window.location.hash).toBe("#orcamento");
+        act(() => result.current.navigate("/orcamento?service=premium"));
+        expect(result.current.path).toBe(ROUTES.QUOTE);
+        expect(result.current.search).toBe("?service=premium&lang=en");
+        act(() => {
+            setPath("/orcamento?addon=page");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+        });
+        expect(result.current.search).toBe("?addon=page");
+    });
+
     it("começa na rota do pathname atual", () => {
         setPath(ROUTES.LINKS);
         const { result } = renderHook(() => useRouterContext(), { wrapper });

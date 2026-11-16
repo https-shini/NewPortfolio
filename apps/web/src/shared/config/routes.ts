@@ -11,6 +11,8 @@
 
 export const ROUTES = {
     HOME: "/",
+    SERVICES: "/servicos",
+    QUOTE: "/orcamento",
     LINKS: "/links",
     CODEX: "/projects/codex/readme.html",
     LINKEDIN_NOTICE: "/linkedin",

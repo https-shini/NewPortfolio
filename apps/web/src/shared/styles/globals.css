@@ -203,10 +203,13 @@ body.light-mode ::-webkit-scrollbar-thumb:hover {
 /* ══════════════════════════════════════════════════════════════════════════════
    06. SKIP LINK / SCREEN READER
 ══════════════════════════════════════════════════════════════════════════════ */
+/* O atalho aparece apenas com foco de teclado, não com foco de toque/restaurado. */
 .skip-link {
-    position: absolute;
-    top: -100%;
+    position: fixed;
+    top: var(--space-4);
     left: var(--space-4);
+    max-width: calc(100% - var(--space-8));
+    transform: translateY(calc(-100% - var(--space-4) - 4px));
     padding: var(--space-3) var(--space-6);
     background: var(--color-brand);
     color: #fff;
@@ -214,11 +217,13 @@ body.light-mode ::-webkit-scrollbar-thumb:hover {
     font-size: var(--text-sm);
     border-radius: var(--radius-md);
     z-index: var(--z-top);
-    transition: top var(--transition-fast);
+    pointer-events: none;
+    transition: transform var(--transition-fast);
 }
 
-.skip-link:focus {
-    top: var(--space-4);
+.skip-link:focus-visible {
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 .sr-only {

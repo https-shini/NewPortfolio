@@ -1,12 +1,18 @@
 /// <reference types="vitest/config" />
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin, type ViteDevServer } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 import { readFile, writeFile, copyFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
-import { renderNotFoundHtml } from "./build/notFound.ts";
+import { renderServicesHtml } from "./config/servicesMetadata.ts";
+import { renderNotFoundHtml } from "./config/notFound.ts";
+import { fillHomeMetadata } from "./config/homeMetadata.ts";
+import {
+    assertNoPrivateCodexDocuments,
+    isPrivateCodexDocument,
+} from "./config/privateDocuments.ts";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,7 +35,10 @@ function siteUrlHtmlPlugin() {
         transformIndexHtml: {
             order: "pre" as const,
             handler(html: string) {
-                return html.replaceAll("__SITE_URL__", SITE_URL);
+                return fillHomeMetadata(html).replaceAll(
+                    "__SITE_URL__",
+                    SITE_URL,
+                );
             },
         },
     };
@@ -130,6 +139,15 @@ function sitemapPlugin() {
             ]);
 
             const entries: SitemapEntry[] = [
+                {
+                    loc: `${SITE_URL}/servicos`,
+                    lastmod: lastModified([
+                        "apps/web/src/pages/Services",
+                        "apps/web/src/shared/config/services.ts",
+                    ]),
+                    changefreq: "monthly",
+                    priority: "0.9",
+                },
                 {
                     loc: `${SITE_URL}/projects/codex/readme.html`,
                     lastmod: lastModified([
@@ -277,8 +295,56 @@ function codexPageAliasPlugin() {
     };
 }
 
+function privateDocumentsPlugin(): Plugin {
+    const protect = (server: Pick<ViteDevServer, "middlewares">) => {
+        server.middlewares.use((request, response, next) => {
+            if (!isPrivateCodexDocument(request.url ?? "/")) return next();
+            response.statusCode = 404;
+            response.setHeader("Content-Type", "text/plain; charset=utf-8");
+            response.setHeader("Cache-Control", "no-store");
+            response.end("Not found");
+        });
+    };
+    return {
+        name: "codex-private-documents",
+        configureServer: protect,
+        configurePreviewServer: protect,
+        async buildStart() {
+            await assertNoPrivateCodexDocuments(
+                path.resolve(__dirname, "public/projects/codex"),
+            );
+        },
+        async closeBundle() {
+            await assertNoPrivateCodexDocuments(
+                path.resolve(__dirname, "dist/projects/codex"),
+            );
+        },
+    };
+}
+
 export default defineConfig({
     plugins: [
+        {
+            name: "services-html",
+            apply: "build",
+            async closeBundle() {
+                const output = path.resolve(__dirname, "dist");
+                const html = await readFile(
+                    path.join(output, "index.html"),
+                    "utf8",
+                );
+                await writeFile(
+                    path.join(output, "services.html"),
+                    renderServicesHtml(html, SITE_URL),
+                    "utf8",
+                );
+                await writeFile(
+                    path.join(output, "quote.html"),
+                    renderServicesHtml(html, SITE_URL, true),
+                    "utf8",
+                );
+            },
+        },
         react({
             jsxRuntime: "automatic",
         }),
@@ -286,6 +352,7 @@ export default defineConfig({
         sitemapPlugin(),
         notFoundPlugin(),
         codexPageAliasPlugin(),
+        privateDocumentsPlugin(),
     ],
 
     /* Constante de build — ver a declaração em src/vite-env.d.ts. */

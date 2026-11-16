@@ -164,6 +164,8 @@ export function linkKind(href: string): LinkKind {
     if (/^https?:\/\//.test(href)) return "external";
     /* Caminho interno: rota da SPA se registrada, senão arquivo estático
        servido de public/ (os PDFs do currículo, por exemplo). */
-    const isRoute = (Object.values(ROUTES) as string[]).includes(href);
+    const isRoute = (Object.values(ROUTES) as string[]).includes(
+        href.split(/[?#]/)[0].replace(/\/$/, "") || "/",
+    );
     return isRoute ? "route" : "file";
 }

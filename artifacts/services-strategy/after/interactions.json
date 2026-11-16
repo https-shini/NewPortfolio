@@ -1,0 +1,43 @@
+[
+  {
+    "theme": "dark",
+    "anchors": true,
+    "focus": true,
+    "hover": true,
+    "consoleErrors": 0,
+    "fonts": {
+      "cabinet": true,
+      "general": true
+    },
+    "widths": [
+      320,
+      360,
+      768,
+      1440
+    ],
+    "overflow": false
+  },
+  {
+    "theme": "light",
+    "anchors": true,
+    "focus": true,
+    "hover": true,
+    "consoleErrors": 0,
+    "fonts": {
+      "cabinet": true,
+      "general": true
+    },
+    "widths": [
+      320,
+      360,
+      768,
+      1440
+    ],
+    "overflow": false
+  },
+  {
+    "width": 320,
+    "lang": "en",
+    "overflow": false
+  }
+]

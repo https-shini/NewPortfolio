@@ -152,3 +152,19 @@ describe("/api/crawler", () => {
         expect(desc.length).toBeLessThanOrEqual(200);
     });
 });
+
+it("serviços têm metadados e schema próprios em português e inglês", async () => {
+    for (const lang of ["pt", "en"]) {
+        const res = resposta();
+        await handler(
+            { query: { path: "/servicos", lang }, headers: {} },
+            res as never,
+        );
+        expect(meta(res.corpo, "og:title")).toContain(
+            lang === "pt" ? "Desenvolvimento Web" : "Web Development",
+        );
+        expect(meta(res.corpo, "og:image")).toMatch(/api\/og\?page=services$/);
+        expect(res.corpo).toContain('"@type":"Service"');
+        expect(res.corpo).toContain('hreflang="en"');
+    }
+});

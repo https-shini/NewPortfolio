@@ -56,15 +56,15 @@ O repositório é um monorepo simples: a raiz orquestra os scripts via npm works
 
 ## 🧭 Páginas e rotas
 
-| Rota              | Página             | Conteúdo                                                        |
-| ----------------- | ------------------ | --------------------------------------------------------------- |
-| `/`               | `HomePage`         | Portfólio completo — as seções abaixo, navegadas por âncora     |
-| `/links`          | `LinksPage`        | **Social tree** (link-in-bio): perfil, stack e links públicos   |
-| `/release-notes`  | `ReleaseNotesPage` | Linha do tempo das versões (ver *Como publicar uma versão*)      |
-| `/release-notes/page/2` | `ReleaseNotesPage` | Páginas seguintes do histórico, de 4 em 4                |
-| `/release-notes/v2.0.0` | `ReleaseNotePage`  | Uma versão, com endereço próprio e conteúdo completo       |
-| rota desconhecida | `NotFoundPage` | Página 404 com atalhos para início, links, releases e contato |
-| `/feed.xml`       | `api/feed`         | Atom das notas de versão (função, não arquivo de build)         |
+| Rota                    | Página             | Conteúdo                                                      |
+| ----------------------- | ------------------ | ------------------------------------------------------------- |
+| `/`                     | `HomePage`         | Portfólio completo — as seções abaixo, navegadas por âncora   |
+| `/links`                | `LinksPage`        | **Social tree** (link-in-bio): perfil, stack e links públicos |
+| `/release-notes`        | `ReleaseNotesPage` | Linha do tempo das versões (ver _Como publicar uma versão_)   |
+| `/release-notes/page/2` | `ReleaseNotesPage` | Páginas seguintes do histórico, de 4 em 4                     |
+| `/release-notes/v2.0.0` | `ReleaseNotePage`  | Uma versão, com endereço próprio e conteúdo completo          |
+| rota desconhecida       | `NotFoundPage`     | Página 404 com atalhos para início, links, releases e contato |
+| `/feed.xml`             | `api/feed`         | Atom das notas de versão (função, não arquivo de build)       |
 
 Qualquer rota aceita `?lang=en` para abrir em inglês — é o que permite
 compartilhar um link no idioma de quem compartilha. O padrão (português)
@@ -138,20 +138,20 @@ casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
 
 ## 📄 Seções
 
-| #   | Seção               | Descrição                                                                              |
-| --- | ------------------- | -------------------------------------------------------------------------------------- |
-| 01  | **Hero**            | Apresentação com foto, status de disponibilidade, CTAs (projetos + CV) e links sociais |
-| 02  | **About**           | Bio, 4 áreas de especialização, stats com count-up e tech stack de 16 ícones           |
-| 03  | **Timeline**        | Carreira por empresa com trilha de posições, acordeão de detalhes e stats gerais       |
-| 04  | **Formações**       | Educação + certificações com filtros (tabs), limite expansível e cards com stagger     |
-| 05  | **Featured**        | TCC Codex — Code Validator, com capturas reais, lightbox, README, endpoints e arquitetura |
-| 06  | **Work**            | Grid de projetos com thumbnail local (WebP), badges de tecnologia e ações              |
-| 07  | **Recommendations** | Depoimentos em carrossel paginado (2 por página · 1 no mobile) com modal de leitura    |
-| 08  | **Contact**         | CTA de e-mail, formulário com validação (via env), links e perfil ATS-friendly         |
-| —   | **Links**           | Página `/links`: social tree autônoma, fora do menu (ver *Páginas e rotas*)             |
-| —   | **Release Notes**   | Linha do tempo das versões, aberta pelo badge de versão no rodapé                       |
-| —   | **Header**          | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile               |
-| —   | **Footer**          | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV            |
+| #   | Seção               | Descrição                                                                                          |
+| --- | ------------------- | -------------------------------------------------------------------------------------------------- |
+| 01  | **Hero**            | Apresentação com foto, status de disponibilidade, CTAs (projetos + CV) e links sociais             |
+| 02  | **About**           | Bio, 4 áreas de especialização, stats com count-up e tech stack de 16 ícones                       |
+| 03  | **Timeline**        | Carreira por empresa com trilha de posições, acordeão de detalhes e stats gerais                   |
+| 04  | **Formações**       | Educação + certificações com filtros (tabs), limite expansível e cards com stagger                 |
+| 05  | **Featured**        | TCC Codex — Code Validator, com capturas reais, lightbox, página técnica HTML e link para produção |
+| 06  | **Work**            | Grid de projetos com thumbnail local (WebP), badges de tecnologia e ações                          |
+| 07  | **Recommendations** | Depoimentos em carrossel paginado (2 por página · 1 no mobile) com modal de leitura                |
+| 08  | **Contact**         | CTA de e-mail, formulário com validação (via env), links e perfil ATS-friendly                     |
+| —   | **Links**           | Página `/links`: social tree autônoma, fora do menu (ver _Páginas e rotas_)                        |
+| —   | **Release Notes**   | Linha do tempo das versões, aberta pelo badge de versão no rodapé                                  |
+| —   | **Header**          | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile                           |
+| —   | **Footer**          | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV                        |
 
 ---
 
@@ -253,7 +253,7 @@ Tokens CSS em três níveis — primitivos (`--_*`), semânticos dark (`:root`) 
 | Categoria           | Exemplos de variáveis                                                    |
 | ------------------- | ------------------------------------------------------------------------ |
 | **Cores**           | `--color-brand`, `--color-accent`, `--color-bg`, `--color-surface-1/2/3` |
-| **Tipografia**      | `--font-display` (Cabinet Grotesk), `--font-mono` (JetBrains Mono)         |
+| **Tipografia**      | `--font-display` (Cabinet Grotesk), `--font-mono` (JetBrains Mono)       |
 | **Escala de texto** | `--text-2xs` → `--text-7xl`                                              |
 | **Espaçamento**     | `--space-1` → `--space-16`                                               |
 | **Bordas**          | `--radius-sm` → `--radius-2xl`, `--radius-full`                          |
@@ -304,6 +304,9 @@ Utilitários globais: `.btn`, `.badge`, `.section*`, `.container`, `.social-link
 
 ## 🚀 Como executar
 
+Use **Node.js 22.22.1 ou superior na linha 22, ou Node.js 24+**, e npm 9+.
+As ferramentas de testes e hooks de commit do lockfile não suportam Node 18.
+
 ```bash
 # 1. Clone o repositório
 git clone https://github.com/https-shini/NewPortfolio.git
@@ -351,15 +354,15 @@ Rodam contra o `dist/`, então exigem `npm run build` antes. Sobem o
 preview sozinhas; aponte `BASE_URL` para reaproveitar um servidor de pé.
 Detalhes e o porquê de cada uma em [`scripts/README.md`](scripts/README.md).
 
-| Script                       | O que verifica                                              |
-| ---------------------------- | ----------------------------------------------------------- |
-| `npm run audit:a11y`         | axe-core em 5 rotas × 2 temas × 2 idiomas, incluindo a 404    |
-| `npm run audit:overflow`     | rolagem horizontal em 5 rotas × 5 larguras                   |
-| `npm run audit:release-notes`| 28 verificações do índice e da página de versão              |
-| `npm run audit:not-found` | navegação da 404, recuperação, idioma e conteúdo sem JavaScript |
-| `npm run audit:modals`       | trava de rolagem, fundo inerte, diálogo em tela deitada      |
-| `npm run audit:bundle`       | tetos de tamanho do bundle                                   |
-| `npm run changelog`          | regenera o `CHANGELOG.md` a partir de `RELEASE_NOTES`        |
+| Script                        | O que verifica                                                  |
+| ----------------------------- | --------------------------------------------------------------- |
+| `npm run audit:a11y`          | axe-core em 5 rotas × 2 temas × 2 idiomas, incluindo a 404      |
+| `npm run audit:overflow`      | rolagem horizontal em 5 rotas × 5 larguras                      |
+| `npm run audit:release-notes` | 28 verificações do índice e da página de versão                 |
+| `npm run audit:not-found`     | navegação da 404, recuperação, idioma e conteúdo sem JavaScript |
+| `npm run audit:modals`        | trava de rolagem, fundo inerte, diálogo em tela deitada         |
+| `npm run audit:bundle`        | tetos de tamanho do bundle                                      |
+| `npm run changelog`           | regenera o `CHANGELOG.md` a partir de `RELEASE_NOTES`           |
 
 O `scripts/geometry.mjs` fica fora do CI de propósito: compara a caixa de
 ~93 mil elementos contra uma base gravada, o que exige regravá-la a cada
@@ -371,12 +374,12 @@ mudança visual proposital. É ferramenta manual, para refatoração de CSS.
 
 Definidas em `apps/web/.env.local` (ver `apps/web/.env.example`):
 
-| Variável             | Obrigatória | Descrição                                                                                                                                                                   |
-| -------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_FORM_ENDPOINT` | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail.                                                         |
-| `VITE_NEWSLETTER_ENDPOINT` | Não | Endpoint de inscrição no rodapé. Sem ele, abre um e-mail preenchido; com ele, envia POST `{ email, lang, source }`. |
-| `VITE_SITE_URL`      | Não         | Domínio canônico injetado no `index.html` no build (canonical, Open Graph, JSON-LD). Default: `https://gcruz.dev.br`.                                                       |
-| `GITHUB_TOKEN`       | Não         | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Usado pelas duas serverless: `/api/github-stats` (sem ela o card de commits cai no valor de fallback) e `/api/release-notes` (sem ela a busca pública continua funcionando, sujeita ao limite de requisições do GitHub). |
+| Variável                   | Obrigatória | Descrição                                                                                                                                                                                                                                                                              |
+| -------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_FORM_ENDPOINT`       | Não         | Endpoint do formulário de contato (Formspree ou similar). Sem ela, a seção Contato mantém apenas o fluxo de e-mail.                                                                                                                                                                    |
+| `VITE_NEWSLETTER_ENDPOINT` | Não         | Endpoint de inscrição no rodapé. Sem ele, abre um e-mail preenchido; com ele, envia POST `{ email, lang, source }`.                                                                                                                                                                    |
+| `VITE_SITE_URL`            | Não         | Domínio canônico injetado no `index.html` no build (canonical, Open Graph, JSON-LD). Default: `https://gcruz.dev.br`.                                                                                                                                                                  |
+| `GITHUB_TOKEN`             | Não         | **Server-only** (sem prefixo `VITE_`, configurado na Vercel). Usado pelas duas serverless: `/api/github-stats` (sem ela o card de commits cai no valor de fallback) e `/api/release-notes` (sem ela a busca pública continua funcionando, sujeita ao limite de requisições do GitHub). |
 
 > Variáveis com prefixo `VITE_` são expostas ao browser — nunca coloque segredos.
 
@@ -417,8 +420,8 @@ Nunca reescreva uma URL que o projeto já conhece:
 - rotas internas → `ROUTES` (`shared/config/routes.ts`)
 
 ```ts
-href: PROFILE.social.github.url;         // ✅
-href: "https://github.com/https-shini";  // ❌ duplica a fonte
+href: PROFILE.social.github.url; // ✅
+href: "https://github.com/https-shini"; // ❌ duplica a fonte
 ```
 
 ### 3. Ícone
@@ -541,7 +544,7 @@ npm run test:watch    # watch mode
 | Formulário            | Labels reais, `aria-invalid`, `aria-describedby` por erro, status com `role="status"`      |
 | Movimento reduzido    | `prefers-reduced-motion` remove animações e autoplay                                       |
 | Alvos de toque        | Mínimo de 24px em qualquer ponteiro (2.5.8) e 44px no toque (2.5.5)                        |
-| Hierarquia de títulos | Um `h1` por página; a timeline ajusta seu nível conforme o contexto (`headingLevel`)        |
+| Hierarquia de títulos | Um `h1` por página; a timeline ajusta seu nível conforme o contexto (`headingLevel`)       |
 | Lint de a11y          | `eslint-plugin-jsx-a11y` no CI                                                             |
 
 **Contraste e o token `--color-brand-text`.** O crimson da marca (`--color-brand`,
@@ -629,3 +632,17 @@ _Feito com ♥ em São Paulo — React + TypeScript + muito café_
 </div>
 
 <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6&height=100&section=footer"/>
+
+
+## Página de serviços
+
+`/servicos` reúne desenvolvimento web, consultoria, suporte, dados, integrações,
+sistemas empresariais e treinamento em PT-BR/EN. Inclui planos, avulsos, pacotes,
+e adicionais. Os CTAs abrem `/orcamento` com IDs pré-selecionados na URL;
+essa página concentra o simulador e os fluxos de orçamento, indicação e parceria.
+O catálogo e os preços ficam em `shared/config/serviceCatalog.ts`.
+
+Sem `VITE_FORM_ENDPOINT` compatível, o formulário prepara um e-mail que o visitante
+precisa enviar pelo próprio aplicativo ou webmail. O WhatsApp comercial é opcional
+(`VITE_BUSINESS_WHATSAPP`); sem número válido, o contato utiliza e-mail.
+Veja [configuração, regras e validação](docs/guides/services-strategy.md).

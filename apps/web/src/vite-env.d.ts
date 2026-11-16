@@ -1,6 +1,8 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
+    /** Número comercial opcional, formato E.164 com +. */
+    readonly VITE_BUSINESS_WHATSAPP?: string;
     /**
      * Endpoint do formulário de contato (ex.: https://formspree.io/f/XXXX).
      * Opcional — sem ele, a seção Contato mantém apenas o fluxo de mailto.

@@ -122,6 +122,27 @@
 .featured__gallery-header > :first-child {
     color: var(--color-text-2);
 }
+.featured__autoplay {
+    margin-left: auto;
+    min-width: max(44px, var(--tap-min));
+    min-height: max(44px, var(--tap-min));
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-2);
+    color: var(--color-text-2);
+    cursor: pointer;
+}
+.featured__autoplay:hover,
+.featured__autoplay:focus-visible {
+    border-color: var(--color-brand);
+    color: var(--color-brand-text);
+}
+.featured__slides {
+    position: relative;
+}
+.featured__slide:not(.is-active) {
+    display: none;
+}
 .featured__slide-trigger {
     display: block;
     position: relative;

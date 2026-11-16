@@ -83,3 +83,11 @@ describe("/api/og", () => {
         expect(r.headers["cache-control"]).toContain("s-maxage");
     }, 60_000);
 });
+
+it("gera cartão próprio de serviços em 1200 × 630", async () => {
+    const r = await chamar("/api/og?page=services");
+    expect(r.codigo).toBe(200);
+    expect([...r.bytes.subarray(0, 8)]).toEqual(ASSINATURA_PNG);
+    expect(r.bytes.readUInt32BE(16)).toBe(1200);
+    expect(r.bytes.readUInt32BE(20)).toBe(630);
+}, 60_000);

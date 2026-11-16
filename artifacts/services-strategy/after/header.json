@@ -1,0 +1,98 @@
+[
+  {
+    "theme": "dark",
+    "width": 320,
+    "path": "/",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "path": "/servicos",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "path": "/orcamento?addon=maintenance",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "dark",
+    "width": 360,
+    "path": "/",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "dark",
+    "width": 360,
+    "path": "/servicos",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "dark",
+    "width": 360,
+    "path": "/orcamento?addon=maintenance",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "path": "/",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "path": "/servicos",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "path": "/orcamento?addon=maintenance",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "light",
+    "width": 360,
+    "path": "/",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "light",
+    "width": 360,
+    "path": "/servicos",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  },
+  {
+    "theme": "light",
+    "width": 360,
+    "path": "/orcamento?addon=maintenance",
+    "controlsInViewport": true,
+    "touchTargets44px": true,
+    "menu": true
+  }
+]

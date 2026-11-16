@@ -113,7 +113,9 @@
     background: var(--color-bg);
     cursor: zoom-in;
 }
-.codex__image img {
+.codex__image img,
+.codex__static-image {
+    display: block;
     width: 100%;
     height: auto;
     aspect-ratio: 16 / 9;

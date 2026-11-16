@@ -51,7 +51,7 @@ export const NewsletterForm: React.FC = () => {
     /* Só o sucesso trava o campo. Em "já inscrito" a pessoa pode querer
        usar outro endereço, e travar seria impedi-la de fazer justamente
        o que a mensagem sugere. */
-    const travado = enviando || estado === "success" || estado === "mailto";
+    const travado = enviando || estado === "success";
     const problema = estado === "invalid" || estado === "error";
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -155,6 +155,8 @@ export const NewsletterForm: React.FC = () => {
                     autoComplete="email"
                     required
                     disabled={travado}
+                    aria-invalid={estado === "invalid" ? "true" : "false"}
+                    aria-describedby={problema ? "nl-email-status" : undefined}
                 />
                 <button
                     type="submit"
@@ -172,6 +174,7 @@ export const NewsletterForm: React.FC = () => {
 
             {/* Um leitor de tela não vê a cor mudar — precisa ouvir. */}
             <p
+                id="nl-email-status"
                 className={`footer__news-status${
                     estado === "success" ||
                     estado === "duplicate" ||

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { renderNotFoundHtml } from "../../../build/notFound";
+import { renderNotFoundHtml } from "../../../config/notFound";
 
 describe("HTML 404 de produção", () => {
     it("usa o documento da aplicação sem herdar indexação e dados estruturados da home", () => {

@@ -1,3 +1,7 @@
+import {
+    SERVICE_META,
+    serviceSchema,
+} from "../apps/web/src/shared/config/services.js";
 import { RELEASE_NOTES } from "../apps/web/src/shared/config/releaseNotes.js";
 import { fetchGithubReleases } from "./_releases.js";
 import { mergeReleaseNotes } from "../apps/web/src/shared/lib/mergeReleaseNotes.js";
@@ -73,7 +77,18 @@ const PADRAO: Meta = {
     tipo: "website",
 };
 
-async function resolverMeta(pathname: string): Promise<Meta> {
+async function resolverMeta(
+    pathname: string,
+    lang: "pt" | "en" = "pt",
+): Promise<Meta> {
+    if (/^\/servicos\/?$/.test(pathname))
+        return {
+            ...PADRAO,
+            titulo: SERVICE_META[lang].title,
+            descricao: SERVICE_META[lang].description,
+            url: `${SITE_URL}/servicos`,
+            imagem: `${SITE_URL}/api/og?page=services`,
+        };
     if (pathname === "/links" || pathname === "/links/") {
         return {
             ...PADRAO,
@@ -146,10 +161,12 @@ export default async function handler(
     const daUrl = req.url ? new URL(req.url, "http://localhost").pathname : "";
     const pathname = (daQuery || daUrl || "/").split("?")[0] || "/";
 
-    const m = await resolverMeta(pathname);
+    const lang = req.query.lang === "en" ? "en" : "pt";
+    const services = /^\/servicos\/?$/.test(pathname);
+    const m = await resolverMeta(pathname, lang);
 
     const html = `<!doctype html>
-<html lang="pt-BR">
+<html lang="${services && lang === "en" ? "en" : "pt-BR"}">
 <head>
 <meta charset="utf-8"/>
 <title>${esc(m.titulo)}</title>
@@ -158,7 +175,7 @@ export default async function handler(
 <link rel="canonical" href="${esc(m.url)}"/>
 <meta property="og:type" content="${m.tipo}"/>
 <meta property="og:site_name" content="${esc(AUTHOR)} — Portfolio"/>
-<meta property="og:locale" content="pt_BR"/>
+<meta property="og:locale" content="${services && lang === "en" ? "en_US" : "pt_BR"}"/>
 <meta property="og:locale:alternate" content="en_US"/>
 <meta property="og:url" content="${esc(m.url)}"/>
 <meta property="og:title" content="${esc(m.titulo)}"/>
@@ -171,11 +188,12 @@ ${m.publicado ? `<meta property="article:published_time" content="${esc(m.public
 <meta name="twitter:title" content="${esc(m.titulo)}"/>
 <meta name="twitter:description" content="${esc(m.descricao)}"/>
 <meta name="twitter:image" content="${esc(m.imagem)}"/>
+${services ? `<link rel="alternate" hreflang="pt-BR" href="${esc(m.url)}"/><link rel="alternate" hreflang="en" href="${esc(m.url)}?lang=en"/><link rel="alternate" hreflang="x-default" href="${esc(m.url)}"/><script type="application/ld+json">${JSON.stringify(serviceSchema(SITE_URL, lang)).replaceAll("<", "\\u003c")}</script>` : ""}
 </head>
 <body>
 <h1>${esc(m.titulo)}</h1>
 <p>${esc(m.descricao)}</p>
-<p><a href="${esc(m.url)}">Abrir no site</a></p>
+<p><a href="${esc(m.url)}">${services && lang === "en" ? "Open website" : "Abrir no site"}</a></p>
 </body>
 </html>
 `;
