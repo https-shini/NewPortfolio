@@ -1,0 +1,81 @@
+# ─────────────────────────────────────────────────────────
+# Homologação — a branch `homolog` espelha o último PR atualizado
+# ─────────────────────────────────────────────────────────
+# A Vercel gera um preview por PR, cada um num endereço diferente.
+# Para ter UM endereço fixo, este workflow copia o commit do PR que
+# acabou de receber push para a branch `homolog`. A Vercel publica
+# toda branch num endereço estável:
+#
+#   https://new-portfolio-git-homolog-httpsshinis-projects.vercel.app
+#
+# e, se o domínio for ligado à branch no painel da Vercel
+# (Settings → Domains → homolog.gcruz.dev.br → Git Branch: homolog):
+#
+#   https://homolog.gcruz.dev.br
+#
+# Por que branch, e não alias: o alias exige um token da Vercel
+# guardado no GitHub. Aqui basta o GITHUB_TOKEN do próprio Actions.
+#
+# Regras:
+#   · `homolog` é DESCARTÁVEL — um espelho, nunca recebe trabalho
+#     direto; por isso o push é forçado;
+#   · o último PR que recebeu push vence;
+#   · só PRs do próprio repositório (fork não escreve aqui);
+#   · rascunho também entra — homologar antes de pedir revisão é o
+#     ponto;
+#   · produção (`main`) nunca é tocada.
+#
+# Observação: `pull_request` roda o workflow que existe no PR. Um PR
+# só atualiza a homologação se a branch dele já tiver este arquivo —
+# ou seja, depois do merge na `main` e de a branch estar atualizada.
+# ─────────────────────────────────────────────────────────
+
+name: Homologação
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write
+
+# Dois pushes seguidos não podem gravar `homolog` fora de ordem.
+concurrency:
+  group: homolog-branch
+  cancel-in-progress: false
+
+jobs:
+  espelhar:
+    name: Atualizar branch homolog
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout do commit do PR
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          # Histórico completo: empurrar um clone raso para
+          # outra branch é recusado ("shallow update").
+          fetch-depth: 0
+
+      - name: Empurrar para homolog
+        env:
+          SHA: ${{ github.event.pull_request.head.sha }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          # A Vercel não publica de novo um commit que já publicou
+          # (o do PR já tem preview). Um commit vazio por cima dá um
+          # SHA novo com a mesma árvore — e força o deploy da branch.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898099+github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty --no-verify -m "chore(homolog): espelha PR #$PR (${SHA:0:7})"
+          git push --force origin "HEAD:refs/heads/homolog"
+          {
+              echo "### Homologação atualizada"
+              echo ""
+              echo "PR #$PR → commit \`${SHA:0:7}\`"
+              echo ""
+              echo "https://new-portfolio-git-homolog-httpsshinis-projects.vercel.app"
+          } >> "$GITHUB_STEP_SUMMARY"
