@@ -31,3 +31,6 @@ apps/web/links.html
 apps/web/release-notes.html
 apps/web/build/
 .maestri/
+
+# Anexos de ferramentas locais (imagens e documentos enviados numa sessão): nunca versionar
+.codex-attachments/
