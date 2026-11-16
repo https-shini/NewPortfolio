@@ -46,8 +46,8 @@ export const PROJECT_URLS = {
         details: ROUTES.CODEX,
     },
     authService: {
-        live: "https://authservice-mbul.onrender.com",
-        docs: "https://authservice-mbul.onrender.com/docs",
+        live: "https://authservice.gcruz.dev.br",
+        docs: "https://authservice.gcruz.dev.br/docs",
         repo: repo("AuthService"),
     },
     webChat: {
