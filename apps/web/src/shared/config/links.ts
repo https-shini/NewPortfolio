@@ -42,7 +42,7 @@ function repo(name: string): string {
  */
 export const PROJECT_URLS = {
     codex: {
-        live: "https://codex.shxred.app.br",
+        live: "https://firecode.shxred.app.br",
         details: ROUTES.CODEX,
     },
     authService: {

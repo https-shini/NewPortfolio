@@ -34,7 +34,7 @@ export function CodexPage() {
         ["implementacao", tr("Implementação", "Implementation")],
     ];
     useDocumentMeta({
-        title: "Codex — Code Validator | Guilherme Cruz",
+        title: "Firecode — Validador de repositórios | Guilherme Cruz",
         description: project.description[lang],
         path: ROUTES.CODEX,
     });
@@ -102,7 +102,13 @@ export function CodexPage() {
                                 <span aria-hidden="true">/</span> TCC
                             </p>
                             <h1>
-                                Codex<span>Code Validator</span>
+                                Firecode
+                                <span>
+                                    {tr(
+                                        "Validador de repositórios",
+                                        "Repository validator",
+                                    )}
+                                </span>
                             </h1>
                             <p className="codex__lead">
                                 {tr(
@@ -234,8 +240,8 @@ export function CodexPage() {
                         <div className="codex__prose">
                             <p>
                                 {tr(
-                                    "Linters identificam problemas pontuais. Entender a qualidade de um repositório exige relacionar esses achados com segurança, complexidade e organização do código. O Codex reúne essas perspectivas em uma avaliação estruturada.",
-                                    "Linters identify individual issues. Understanding repository quality requires connecting those findings with security, complexity and code organization. Codex brings these perspectives together in a structured assessment.",
+                                    "Linters identificam problemas pontuais. Entender a qualidade de um repositório exige relacionar esses achados com segurança, complexidade e organização do código. O Firecode reúne essas perspectivas em uma avaliação estruturada.",
+                                    "Linters identify individual issues. Understanding repository quality requires connecting those findings with security, complexity and code organization. Firecode brings these perspectives together in a structured assessment.",
                                 )}
                             </p>
                             <p>

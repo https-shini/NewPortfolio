@@ -138,20 +138,20 @@ casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
 
 ## 📄 Seções
 
-| #   | Seção               | Descrição                                                                                          |
-| --- | ------------------- | -------------------------------------------------------------------------------------------------- |
-| 01  | **Hero**            | Apresentação com foto, status de disponibilidade, CTAs (projetos + CV) e links sociais             |
-| 02  | **About**           | Bio, 4 áreas de especialização, stats com count-up e tech stack de 16 ícones                       |
-| 03  | **Timeline**        | Carreira por empresa com trilha de posições, acordeão de detalhes e stats gerais                   |
-| 04  | **Formações**       | Educação + certificações com filtros (tabs), limite expansível e cards com stagger                 |
-| 05  | **Featured**        | TCC Codex — Code Validator, com capturas reais, lightbox, página técnica HTML e link para produção |
-| 06  | **Work**            | Grid de projetos com thumbnail local (WebP), badges de tecnologia e ações                          |
-| 07  | **Recommendations** | Depoimentos em carrossel paginado (2 por página · 1 no mobile) com modal de leitura                |
-| 08  | **Contact**         | CTA de e-mail, formulário com validação (via env), links e perfil ATS-friendly                     |
-| —   | **Links**           | Página `/links`: social tree autônoma, fora do menu (ver _Páginas e rotas_)                        |
-| —   | **Release Notes**   | Linha do tempo das versões, aberta pelo badge de versão no rodapé                                  |
-| —   | **Header**          | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile                           |
-| —   | **Footer**          | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV                        |
+| #   | Seção               | Descrição                                                                                                        |
+| --- | ------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| 01  | **Hero**            | Apresentação com foto, status de disponibilidade, CTAs (projetos + CV) e links sociais                           |
+| 02  | **About**           | Bio, 4 áreas de especialização, stats com count-up e tech stack de 16 ícones                                     |
+| 03  | **Timeline**        | Carreira por empresa com trilha de posições, acordeão de detalhes e stats gerais                                 |
+| 04  | **Formações**       | Educação + certificações com filtros (tabs), limite expansível e cards com stagger                               |
+| 05  | **Featured**        | TCC Firecode — validador de repositórios, com capturas reais, lightbox, página técnica HTML e link para produção |
+| 06  | **Work**            | Grid de projetos com thumbnail local (WebP), badges de tecnologia e ações                                        |
+| 07  | **Recommendations** | Depoimentos em carrossel paginado (2 por página · 1 no mobile) com modal de leitura                              |
+| 08  | **Contact**         | CTA de e-mail, formulário com validação (via env), links e perfil ATS-friendly                                   |
+| —   | **Links**           | Página `/links`: social tree autônoma, fora do menu (ver _Páginas e rotas_)                                      |
+| —   | **Release Notes**   | Linha do tempo das versões, aberta pelo badge de versão no rodapé                                                |
+| —   | **Header**          | Navegação fixa com scroll spy, language pill, theme toggle e menu mobile                                         |
+| —   | **Footer**          | Grid de 4 colunas com brand, nav, projetos, contato e barra inferior com CV                                      |
 
 ---
 

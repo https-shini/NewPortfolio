@@ -38,7 +38,7 @@ describe("Featured — aba única e carrossel", () => {
         const user = userEvent.setup();
         montar();
         expect(screen.queryAllByRole("tab")).toHaveLength(0);
-        expect(screen.getByText("Codex Code Validator")).toBeInTheDocument();
+        expect(screen.getByText("Firecode")).toBeInTheDocument();
         expect(carrossel()).toHaveAttribute(
             "aria-roledescription",
             "carrossel",
