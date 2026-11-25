@@ -11,6 +11,7 @@ export type TranslationKey =
     | "nav.recommendations"
     | "nav.contact"
     | "nav.links"
+    | "nav.services"
 
     /* ── HERO ──────────────────────────────────────── */
     | "hero.greeting"

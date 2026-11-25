@@ -74,6 +74,20 @@ const PADRAO: Meta = {
     tipo: "website",
 };
 
+/** Metadados das páginas comerciais, em português (idioma padrão). */
+export const COMERCIAL = {
+    servicos: {
+        titulo: "GCRUZ | Desenvolvimento Web, Consultoria e Soluções de TI",
+        descricao:
+            "Criação de sites, desenvolvimento web, consultoria técnica, suporte remoto, automações e soluções de TI para pequenas empresas.",
+    },
+    orcamento: {
+        titulo: "Solicitar orçamento | GCRUZ",
+        descricao:
+            "Organize os serviços e adicionais de que precisa e prepare sua solicitação de proposta ao GCRUZ.",
+    },
+} as const;
+
 async function resolverMeta(pathname: string): Promise<Meta> {
     if (pathname === "/links" || pathname === "/links/") {
         return {
@@ -92,6 +106,30 @@ async function resolverMeta(pathname: string): Promise<Meta> {
             descricao:
                 "Fale com Guilherme Cruz — e-mail, LinkedIn, GitHub e central de links, com tempo de resposta e localização.",
             url: `${SITE_URL}/contato`,
+        };
+    }
+
+    /* Páginas comerciais. Os textos repetem SERVICE_META e QUOTE_META
+       (apps/web/src/shared/config/services.ts e quote.ts) porque esta
+       função é compilada fora do build do frontend; o teste
+       `crawler-commercial.test.ts` reprova se os dois divergirem. */
+    if (/^\/servicos\/?$/.test(pathname)) {
+        return {
+            ...PADRAO,
+            titulo: COMERCIAL.servicos.titulo,
+            descricao: COMERCIAL.servicos.descricao,
+            url: `${SITE_URL}/servicos`,
+            imagem: `${SITE_URL}/api/og?page=services`,
+        };
+    }
+
+    if (/^\/orcamento\/?$/.test(pathname)) {
+        return {
+            ...PADRAO,
+            titulo: COMERCIAL.orcamento.titulo,
+            descricao: COMERCIAL.orcamento.descricao,
+            url: `${SITE_URL}/orcamento`,
+            imagem: `${SITE_URL}/api/og?page=services`,
         };
     }
 

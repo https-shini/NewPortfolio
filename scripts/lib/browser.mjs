@@ -24,6 +24,8 @@ export const ROUTES = {
     contato: "/contato",
     releaseNotes: "/release-notes",
     releaseVersion: "/release-notes/v2.0.0",
+    servicos: "/servicos",
+    orcamento: "/orcamento?service=express",
     notFound: "/pagina-inexistente",
 };
 

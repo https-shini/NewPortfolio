@@ -215,6 +215,11 @@ jobs:
           BASE_URL: http://localhost:4173
         run: npm run audit:contato
 
+      - name: Serviços e orçamento (catálogo, simulador, formulário, SEO)
+        env:
+          BASE_URL: http://localhost:4173
+        run: npm run audit:services
+
       - name: Overlays (scroll lock, inert background)
         env:
           BASE_URL: http://localhost:4173

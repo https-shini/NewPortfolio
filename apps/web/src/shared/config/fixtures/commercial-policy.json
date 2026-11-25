@@ -1,0 +1,1120 @@
+{
+    "OFFERS": [
+        {
+            "id": "express",
+            "kind": "plan",
+            "category": "web",
+            "name": {
+                "pt": "Express",
+                "en": "Express"
+            },
+            "description": {
+                "pt": "Uma landing page com até quatro seções",
+                "en": "One landing page with up to four sections"
+            },
+            "price": 990,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Uma landing page com até quatro seções",
+                    "Design responsivo e informações essenciais",
+                    "Botão de contato e SEO técnico básico",
+                    "Uma rodada de revisão"
+                ],
+                "en": [
+                    "One landing page with up to four sections",
+                    "Responsive design and essential information",
+                    "Contact button and basic technical SEO",
+                    "One revision round"
+                ]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": [
+                "page",
+                "section",
+                "advanced-form",
+                "dns",
+                "analytics",
+                "revision",
+                "maintenance"
+            ],
+            "included": ["responsive", "basic-seo", "contact-button"],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "professional",
+            "kind": "plan",
+            "category": "web",
+            "name": {
+                "pt": "Profissional",
+                "en": "Professional"
+            },
+            "description": {
+                "pt": "Uma página com até seis seções",
+                "en": "One page with up to six sections"
+            },
+            "price": 1500,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Uma página com até seis seções",
+                    "Design responsivo e apresentação de serviços",
+                    "Galeria ou seção de portfólio",
+                    "Formulário padrão e SEO técnico básico",
+                    "Duas rodadas de revisão"
+                ],
+                "en": [
+                    "One page with up to six sections",
+                    "Responsive design and service presentation",
+                    "Gallery or portfolio section",
+                    "Standard form and basic technical SEO",
+                    "Two revision rounds"
+                ]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": [
+                "page",
+                "section",
+                "advanced-form",
+                "dns",
+                "analytics",
+                "revision",
+                "maintenance"
+            ],
+            "included": ["responsive", "basic-seo", "standard-form", "gallery"],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "premium",
+            "kind": "plan",
+            "category": "web",
+            "name": {
+                "pt": "Premium",
+                "en": "Premium"
+            },
+            "description": {
+                "pt": "Até três páginas simples ou landing page elaborada",
+                "en": "Up to three simple pages or an elaborate landing page"
+            },
+            "price": 2200,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Até três páginas simples ou landing page elaborada",
+                    "Estrutura ampliada e componentes personalizados",
+                    "Formulários e recursos dentro do escopo aprovado",
+                    "Responsividade e SEO técnico básico",
+                    "Revisões definidas em contrato; escopo precisa de confirmação"
+                ],
+                "en": [
+                    "Up to three simple pages or an elaborate landing page",
+                    "Expanded content and custom components",
+                    "Forms and features within the approved scope",
+                    "Responsive layout and basic technical SEO",
+                    "Contract-defined revisions; scope confirmation required"
+                ]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["dns", "analytics", "maintenance"],
+            "included": [
+                "responsive",
+                "basic-seo",
+                "advanced-form",
+                "page",
+                "section",
+                "revision"
+            ],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "diagnosis",
+            "kind": "service",
+            "category": "support",
+            "name": {
+                "pt": "Diagnóstico técnico remoto",
+                "en": "Remote technical diagnosis"
+            },
+            "description": {
+                "pt": "Investigação de um problema e orientação técnica",
+                "en": "Investigation of a problem and technical guidance"
+            },
+            "price": 149,
+            "billing": "from",
+            "scope": {
+                "pt": ["Investigação de um problema e orientação técnica"],
+                "en": ["Investigation of a problem and technical guidance"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["support-hour", "documentation"],
+            "included": [],
+            "unit": {
+                "pt": "até uma hora",
+                "en": "up to one hour"
+            }
+        },
+        {
+            "id": "consulting",
+            "kind": "service",
+            "category": "support",
+            "name": {
+                "pt": "Consultoria tecnológica",
+                "en": "Technology consulting"
+            },
+            "description": {
+                "pt": "Avaliação de necessidades e orientação sobre ferramentas",
+                "en": "Needs assessment and guidance on tools"
+            },
+            "price": 249,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Avaliação de necessidades e orientação sobre ferramentas"
+                ],
+                "en": ["Needs assessment and guidance on tools"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["support-hour", "documentation"],
+            "included": [],
+            "unit": {
+                "pt": "até 1h30",
+                "en": "up to 1.5 hours"
+            }
+        },
+        {
+            "id": "support",
+            "kind": "service",
+            "category": "support",
+            "name": {
+                "pt": "Suporte técnico remoto",
+                "en": "Remote technical support"
+            },
+            "description": {
+                "pt": "Atendimento remoto agendado para um escopo acordado",
+                "en": "Scheduled remote support for an agreed scope"
+            },
+            "price": 120,
+            "billing": "hour",
+            "scope": {
+                "pt": ["Atendimento remoto agendado para um escopo acordado"],
+                "en": ["Scheduled remote support for an agreed scope"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["documentation"],
+            "included": [],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "email",
+            "kind": "service",
+            "category": "support",
+            "name": {
+                "pt": "Configuração de e-mail profissional",
+                "en": "Business email setup"
+            },
+            "description": {
+                "pt": "Configuração conforme provedor e acessos autorizados",
+                "en": "Setup according to the provider and authorized access"
+            },
+            "price": 250,
+            "billing": "from",
+            "scope": {
+                "pt": ["Configuração conforme provedor e acessos autorizados"],
+                "en": ["Setup according to the provider and authorized access"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["email-account", "documentation"],
+            "included": [],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "sql",
+            "kind": "service",
+            "category": "data",
+            "name": {
+                "pt": "Consulta ou relatório SQL",
+                "en": "SQL query or report"
+            },
+            "description": {
+                "pt": "Consulta ou relatório de escopo definido; acesso autorizado",
+                "en": "A scoped query or report with authorized access"
+            },
+            "price": 350,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Consulta ou relatório de escopo definido; acesso autorizado"
+                ],
+                "en": ["A scoped query or report with authorized access"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["documentation"],
+            "included": [],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "files",
+            "kind": "service",
+            "category": "data",
+            "name": {
+                "pt": "Tratamento de arquivos e dados",
+                "en": "File and data processing"
+            },
+            "description": {
+                "pt": "Organização e tratamento de arquivos CSV ou JSON",
+                "en": "Organization and processing of CSV or JSON files"
+            },
+            "price": 250,
+            "billing": "from",
+            "scope": {
+                "pt": ["Organização e tratamento de arquivos CSV ou JSON"],
+                "en": ["Organization and processing of CSV or JSON files"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["documentation"],
+            "included": [],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "script",
+            "kind": "service",
+            "category": "automation",
+            "name": {
+                "pt": "Script de automação simples",
+                "en": "Simple automation script"
+            },
+            "description": {
+                "pt": "Uma tarefa delimitada em Python ou JavaScript",
+                "en": "One bounded task in Python or JavaScript"
+            },
+            "price": 450,
+            "billing": "from",
+            "scope": {
+                "pt": ["Uma tarefa delimitada em Python ou JavaScript"],
+                "en": ["One bounded task in Python or JavaScript"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["documentation"],
+            "included": [],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "api",
+            "kind": "service",
+            "category": "automation",
+            "name": {
+                "pt": "Integração simples com API",
+                "en": "Simple API integration"
+            },
+            "description": {
+                "pt": "Integração sujeita a API documentada e acesso autorizado",
+                "en": "Integration subject to documented API and authorized access"
+            },
+            "price": 650,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Integração sujeita a API documentada e acesso autorizado"
+                ],
+                "en": [
+                    "Integration subject to documented API and authorized access"
+                ]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["documentation"],
+            "included": [],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "functional",
+            "kind": "service",
+            "category": "business",
+            "name": {
+                "pt": "Diagnóstico funcional",
+                "en": "Functional diagnosis"
+            },
+            "description": {
+                "pt": "Análise técnica de comportamento e mensagens de erro",
+                "en": "Technical analysis of behavior and error messages"
+            },
+            "price": 249,
+            "billing": "from",
+            "scope": {
+                "pt": ["Análise técnica de comportamento e mensagens de erro"],
+                "en": ["Technical analysis of behavior and error messages"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["documentation"],
+            "included": [],
+            "unit": {
+                "pt": "até 1h30",
+                "en": "up to 1.5 hours"
+            }
+        },
+        {
+            "id": "process-consulting",
+            "kind": "service",
+            "category": "business",
+            "name": {
+                "pt": "Consultoria técnica de processos",
+                "en": "Technical process consulting"
+            },
+            "description": {
+                "pt": "Orientação operacional sobre um processo acordado",
+                "en": "Operational guidance on an agreed process"
+            },
+            "price": 350,
+            "billing": "from",
+            "scope": {
+                "pt": ["Orientação operacional sobre um processo acordado"],
+                "en": ["Operational guidance on an agreed process"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["documentation"],
+            "included": [],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "cnab",
+            "kind": "service",
+            "category": "business",
+            "name": {
+                "pt": "Análise técnica de arquivos CNAB",
+                "en": "Technical CNAB file analysis"
+            },
+            "description": {
+                "pt": "Análise de estrutura e inconsistências; sem homologação oficial",
+                "en": "Structure and inconsistency analysis; no official certification"
+            },
+            "price": 450,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Análise de estrutura e inconsistências; sem homologação oficial"
+                ],
+                "en": [
+                    "Structure and inconsistency analysis; no official certification"
+                ]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["documentation"],
+            "included": [],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "training",
+            "kind": "service",
+            "category": "training",
+            "name": {
+                "pt": "Treinamento remoto individual",
+                "en": "Individual remote training"
+            },
+            "description": {
+                "pt": "Capacitação sobre uma ferramenta ou rotina acordada",
+                "en": "Training on an agreed tool or routine"
+            },
+            "price": 150,
+            "billing": "hour",
+            "scope": {
+                "pt": ["Capacitação sobre uma ferramenta ou rotina acordada"],
+                "en": ["Training on an agreed tool or routine"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["documentation"],
+            "included": [],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "team-training",
+            "kind": "service",
+            "category": "training",
+            "name": {
+                "pt": "Treinamento de equipe pequena",
+                "en": "Small-team training"
+            },
+            "description": {
+                "pt": "Conteúdo e tamanho da equipe definidos na proposta",
+                "en": "Content and team size defined in the proposal"
+            },
+            "price": 350,
+            "billing": "from",
+            "scope": {
+                "pt": ["Conteúdo e tamanho da equipe definidos na proposta"],
+                "en": ["Content and team size defined in the proposal"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["training-hour", "documentation"],
+            "included": [],
+            "unit": {
+                "pt": "até duas horas",
+                "en": "up to two hours"
+            }
+        },
+        {
+            "id": "documentation",
+            "kind": "service",
+            "category": "training",
+            "name": {
+                "pt": "Documentação operacional",
+                "en": "Operational documentation"
+            },
+            "description": {
+                "pt": "Manual ou procedimento com escopo definido",
+                "en": "A manual or procedure with a defined scope"
+            },
+            "price": 250,
+            "billing": "from",
+            "scope": {
+                "pt": ["Manual ou procedimento com escopo definido"],
+                "en": ["A manual or procedure with a defined scope"]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": [],
+            "included": ["documentation"],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "digital-presence",
+            "kind": "package",
+            "category": "web",
+            "name": {
+                "pt": "Presença Digital",
+                "en": "Digital Presence"
+            },
+            "description": {
+                "pt": "Site profissional com até seis seções",
+                "en": "Professional website with up to six sections"
+            },
+            "price": 1500,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Site profissional com até seis seções",
+                    "Formulário de contato",
+                    "Publicação básica"
+                ],
+                "en": [
+                    "Professional website with up to six sections",
+                    "Contact form",
+                    "Basic publication"
+                ]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": [
+                "page",
+                "section",
+                "advanced-form",
+                "dns",
+                "analytics",
+                "revision",
+                "maintenance"
+            ],
+            "included": ["standard-form", "basic-seo"],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "business-diagnosis",
+            "kind": "package",
+            "category": "support",
+            "name": {
+                "pt": "Diagnóstico Empresarial de TI",
+                "en": "Business IT Diagnosis"
+            },
+            "description": {
+                "pt": "Reunião de diagnóstico",
+                "en": "Diagnostic meeting"
+            },
+            "price": 349,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Reunião de diagnóstico",
+                    "Análise de até dois problemas técnicos",
+                    "Recomendações priorizadas",
+                    "Relatório resumido"
+                ],
+                "en": [
+                    "Diagnostic meeting",
+                    "Analysis of up to two technical issues",
+                    "Prioritized recommendations",
+                    "Brief report"
+                ]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["support-hour"],
+            "included": ["documentation"],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "productivity",
+            "kind": "package",
+            "category": "automation",
+            "name": {
+                "pt": "Processos e Produtividade",
+                "en": "Processes & Productivity"
+            },
+            "description": {
+                "pt": "Análise de um processo manual",
+                "en": "Analysis of one manual process"
+            },
+            "price": 790,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Análise de um processo manual",
+                    "Proposta de melhoria",
+                    "Implementação simples com script ou tratamento de dados",
+                    "Instruções de utilização"
+                ],
+                "en": [
+                    "Analysis of one manual process",
+                    "Improvement proposal",
+                    "Simple script or data processing implementation",
+                    "Usage instructions"
+                ]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": [],
+            "included": ["documentation"],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "operational-training",
+            "kind": "package",
+            "category": "training",
+            "name": {
+                "pt": "Treinamento Operacional",
+                "en": "Operational Training"
+            },
+            "description": {
+                "pt": "Levantamento das dificuldades",
+                "en": "Assessment of difficulties"
+            },
+            "price": 490,
+            "billing": "from",
+            "scope": {
+                "pt": [
+                    "Levantamento das dificuldades",
+                    "Treinamento remoto de até duas horas",
+                    "Guia resumido de utilização"
+                ],
+                "en": [
+                    "Assessment of difficulties",
+                    "Up to two hours of remote training",
+                    "Brief usage guide"
+                ]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": ["training-hour"],
+            "included": ["documentation"],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        },
+        {
+            "id": "custom-web",
+            "kind": "service",
+            "category": "web",
+            "name": {
+                "pt": "Modernização ou software sob medida",
+                "en": "Modernization or custom software"
+            },
+            "description": {
+                "pt": "Modernização, correções frontend, aplicações simples, APIs ou funcionalidades sob avaliação",
+                "en": "Modernization, frontend fixes, simple apps, APIs or features subject to assessment"
+            },
+            "billing": "quote",
+            "scope": {
+                "pt": [
+                    "Modernização, correções frontend, aplicações simples, APIs ou funcionalidades sob avaliação"
+                ],
+                "en": [
+                    "Modernization, frontend fixes, simple apps, APIs or features subject to assessment"
+                ]
+            },
+            "exclusions": {
+                "pt": [
+                    "Licenças e despesas de terceiros não incluídas",
+                    "Atividades fora do escopo precisam de nova proposta"
+                ],
+                "en": [
+                    "Licenses and third-party costs excluded",
+                    "Out-of-scope work requires a separate proposal"
+                ]
+            },
+            "cta": {
+                "pt": "Solicitar proposta",
+                "en": "Request proposal"
+            },
+            "addonIds": [],
+            "included": [],
+            "unit": {
+                "pt": "",
+                "en": ""
+            }
+        }
+    ],
+    "ADDONS": [
+        {
+            "id": "page",
+            "name": {
+                "pt": "Página simples adicional",
+                "en": "Additional simple page"
+            },
+            "price": 350,
+            "billing": "from",
+            "group": "web"
+        },
+        {
+            "id": "section",
+            "name": {
+                "pt": "Seção adicional",
+                "en": "Additional section"
+            },
+            "price": 150,
+            "billing": "from",
+            "group": "web"
+        },
+        {
+            "id": "advanced-form",
+            "name": {
+                "pt": "Formulário avançado",
+                "en": "Advanced form"
+            },
+            "price": 250,
+            "billing": "from",
+            "group": "web"
+        },
+        {
+            "id": "dns",
+            "name": {
+                "pt": "Configuração de domínio e DNS",
+                "en": "Domain and DNS setup"
+            },
+            "price": 150,
+            "billing": "from",
+            "group": "web"
+        },
+        {
+            "id": "analytics",
+            "name": {
+                "pt": "Analytics e eventos básicos",
+                "en": "Analytics and basic events"
+            },
+            "price": 250,
+            "billing": "from",
+            "group": "web"
+        },
+        {
+            "id": "revision",
+            "name": {
+                "pt": "Revisão adicional",
+                "en": "Additional revision"
+            },
+            "price": 150,
+            "billing": "from",
+            "group": "web"
+        },
+        {
+            "id": "maintenance",
+            "name": {
+                "pt": "Manutenção web programada",
+                "en": "Scheduled web maintenance"
+            },
+            "price": 149,
+            "billing": "month",
+            "group": "web"
+        },
+        {
+            "id": "support-hour",
+            "name": {
+                "pt": "Hora adicional de suporte",
+                "en": "Additional support hour"
+            },
+            "price": 120,
+            "billing": "from",
+            "group": "technical"
+        },
+        {
+            "id": "training-hour",
+            "name": {
+                "pt": "Hora adicional de treinamento",
+                "en": "Additional training hour"
+            },
+            "price": 150,
+            "billing": "from",
+            "group": "technical"
+        },
+        {
+            "id": "documentation",
+            "name": {
+                "pt": "Documentação complementar",
+                "en": "Additional documentation"
+            },
+            "price": 200,
+            "billing": "from",
+            "group": "technical"
+        },
+        {
+            "id": "email-account",
+            "name": {
+                "pt": "Configuração adicional de conta de e-mail",
+                "en": "Additional email account setup"
+            },
+            "price": 100,
+            "billing": "from",
+            "group": "technical"
+        }
+    ],
+    "REFERRALS": {
+        "credits": [
+            {
+                "minimum": 150,
+                "maximum": 499,
+                "credit": 30
+            },
+            {
+                "minimum": 500,
+                "maximum": 999,
+                "credit": 75
+            },
+            {
+                "minimum": 1000,
+                "maximum": null,
+                "credit": 150
+            }
+        ],
+        "commission": {
+            "minimum": 10,
+            "maximum": 15
+        }
+    },
+    "COMMERCIAL_CONFIG": {
+        "currency": "BRL",
+        "locale": "pt-BR",
+        "depositPercent": 50,
+        "balancePercent": 50,
+        "maxHours": 40
+    }
+}

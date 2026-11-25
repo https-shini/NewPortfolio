@@ -87,8 +87,14 @@ export default async function handler(
     /* Versão desconhecida ainda rende um cartão: pode ser uma release
        publicada no GitHub depois do último deploy, e um cartão genérico
        é melhor do que uma imagem faltando. */
-    const titulo = entrada?.title.pt ?? "Notas de versão";
-    const data = entrada?.date ?? "";
+    /* `page=services` é o cartão das páginas comerciais (/servicos e
+       /orcamento): mesmo desenho, sem número de versão. Valor fechado, não
+       texto livre, então não abre conteúdo arbitrário no rasterizador. */
+    const services = searchParams.get("page") === "services";
+    const titulo = services
+        ? "Desenvolvimento, consultoria e soluções de TI"
+        : (entrada?.title.pt ?? "Notas de versão");
+    const data = services ? "" : (entrada?.date ?? "");
 
     const arvore = caixa(
         {
@@ -110,7 +116,7 @@ export default async function handler(
             }),
 
             caixa({ flexDirection: "column" }, [
-                ...(pedida
+                ...(!services && pedida
                     ? [
                           caixa(
                               {

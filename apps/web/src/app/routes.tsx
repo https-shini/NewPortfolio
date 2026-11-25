@@ -58,9 +58,15 @@ const ProjectPage = lazyComRetry(() =>
 const ContactPage = lazyComRetry(() =>
     import("@/pages/Contact").then((m) => ({ default: m.ContactPage })),
 );
+const ServicesPage = lazyComRetry(() =>
+    import("@/pages/Services").then((m) => ({ default: m.ServicesPage })),
+);
+const QuotePage = lazyComRetry(() =>
+    import("@/pages/Quote").then((m) => ({ default: m.QuotePage })),
+);
 
 export const Routes: React.FC = () => {
-    const { path } = useRoute();
+    const { path, search } = useRoute();
 
     const ehLinks = path === ROUTES.LINKS;
     const releaseNotes = ehLinks ? null : matchReleaseNotes(path);
@@ -95,6 +101,12 @@ export const Routes: React.FC = () => {
         pagina = <LinkedInNoticePage />;
     } else if (path === ROUTES.CONTACT) {
         pagina = <ContactPage />;
+    } else if (path === ROUTES.SERVICES) {
+        pagina = <ServicesPage />;
+    } else if (path === ROUTES.QUOTE) {
+        /* `key` pela query: um CTA de /servicos que leva a outra seleção
+           remonta a página, e a estimativa nasce da URL nova. */
+        pagina = <QuotePage key={search} />;
     } else if (path === ROUTES.HOME) {
         pagina = <HomePage />;
     } else {

@@ -167,7 +167,9 @@ export function linkKind(href: string): LinkKind {
     if (/^https?:\/\//.test(href)) return "external";
     /* Caminho interno: rota da SPA se registrada, senão arquivo estático
        servido de public/ (os PDFs do currículo, por exemplo). */
-    const caminho = href.split(/[?#]/)[0] ?? href;
+    /* Query, fragmento e barra final não mudam a rota: `/orcamento?…`,
+       `/servicos/` e `/` continuam sendo rotas da SPA. */
+    const caminho = (href.split(/[?#]/)[0] ?? href).replace(/\/$/, "") || "/";
     const isRoute =
         (Object.values(ROUTES) as string[]).includes(caminho) ||
         /* Rotas com parâmetro: `/projetos/AuthService`. Sem isto, a página

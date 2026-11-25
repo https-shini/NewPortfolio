@@ -1,0 +1,349 @@
+.services-strategy .services-hero {
+    grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr);
+    gap: var(--space-12);
+    padding: var(--space-10) 0 var(--space-16);
+}
+.services-strategy h1 {
+    max-width: 19ch;
+    font-size: clamp(2.5rem, 4.6vw, 4.4rem);
+}
+.services-strategy .services-lead {
+    max-width: 56ch;
+}
+.services-blueprint {
+    border: 1px solid var(--color-border-2);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-1);
+    padding: var(--space-8);
+    transform: rotate(1deg);
+}
+.services-blueprint-top {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-bottom: var(--space-6);
+    margin-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-border-2);
+    color: var(--color-text-2);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+.services-blueprint-top svg {
+    width: 24px;
+    height: 24px;
+    color: var(--color-brand-text);
+}
+.services-blueprint-top i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    margin-left: auto;
+}
+.services-blueprint ol {
+    list-style: none;
+    margin-bottom: var(--space-8);
+}
+.services-blueprint li {
+    display: flex;
+    gap: var(--space-4);
+    align-items: center;
+    padding: var(--space-4) 0;
+    font-size: 1.1rem;
+}
+.services-blueprint li span {
+    font: 0.75rem var(--font-mono);
+    color: var(--color-brand-text);
+}
+.services-blueprint > p:last-child {
+    font-size: 0.85rem;
+    border-top: 1px solid var(--color-border-2);
+    padding-top: var(--space-5);
+}
+.services-strategy .services-section {
+    padding: var(--space-16) 0;
+}
+.services-strategy .services-section > h2 {
+    max-width: 26ch;
+    margin-bottom: var(--space-6);
+}
+.services-strategy .services-section-intro {
+    margin-top: 0;
+}
+.services-solutions {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-4);
+}
+.services-solutions > article {
+    grid-column: span 2;
+    gap: var(--space-4);
+}
+.services-solutions > article:nth-last-child(-n + 2) {
+    grid-column: span 3;
+}
+.services-solutions h3 {
+    font-size: 1.3rem;
+}
+.services-solutions p {
+    font-size: 0.95rem;
+}
+.services-solutions .services-fineprint {
+    margin-top: 0;
+    font-size: 0.85rem;
+}
+.services-solution-price {
+    margin-top: auto;
+    font-family: var(--font-mono);
+    font-size: 0.8rem !important;
+    color: var(--color-text-1) !important;
+}
+.services-strategy .services-card {
+    padding: var(--space-6);
+    box-shadow: none;
+}
+.services-strategy .services-plan {
+    gap: var(--space-4);
+}
+.services-strategy .services-plan .services-question {
+    margin-top: auto;
+}
+.services-strategy .services-plan .services-price strong {
+    font-size: clamp(2rem, 3vw, 2.7rem);
+}
+.services-strategy .services-plan .services-question__panel {
+    font-size: 0.85rem;
+}
+.services-inline-callout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    padding: var(--space-6) 0 0;
+    margin-top: var(--space-6);
+    border-top: 1px solid var(--color-border-2);
+}
+.services-inline-callout p {
+    max-width: 65ch;
+    margin-top: var(--space-2);
+    font-size: 0.9rem;
+}
+.services-inline-callout > .btn {
+    flex-shrink: 0;
+}
+.services-custom,
+.services-maintenance {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: var(--space-12);
+    align-items: center;
+}
+.services-custom h2,
+.services-maintenance h2 {
+    margin-bottom: var(--space-6);
+}
+.services-custom .btn {
+    margin-top: var(--space-6);
+}
+.services-custom > div:last-child {
+    background: var(--color-surface-1);
+    border-left: 2px solid var(--color-brand);
+    padding: var(--space-8);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+}
+.services-custom > div:last-child > svg {
+    width: 36px;
+    height: 36px;
+    color: var(--color-brand-text);
+    margin-bottom: var(--space-6);
+}
+.services-custom ul,
+.services-maintenance ul {
+    padding-left: var(--space-5);
+}
+.services-custom li + li,
+.services-maintenance li + li {
+    margin-top: var(--space-3);
+}
+.services-custom--quiet > div:last-child {
+    border-left-color: var(--color-accent);
+}
+.services-maintenance ul {
+    margin-top: var(--space-6);
+    font-size: 0.9rem;
+}
+.services-subsection {
+    scroll-margin-top: 110px;
+}
+.services-strategy .services-question__trigger {
+    min-height: 64px;
+    font-weight: 600;
+}
+.services-strategy .services-question__panel-inner {
+    padding-bottom: var(--space-5);
+}
+.services-strategy .services-question__trigger::after {
+    content: "+";
+    color: var(--color-brand-text);
+    font-weight: 400;
+}
+.services-strategy
+    .services-question.is-open
+    > .services-question__trigger::after {
+    content: "−";
+}
+.services-strategy .services-addon-list li {
+    min-height: 48px;
+    align-items: center;
+}
+.services-text-link {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+}
+.services-strategy .services-rate-group {
+    margin-top: var(--space-4);
+}
+.services-benefits {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+}
+.services-benefits article {
+    border-top: 2px solid var(--color-border-brand);
+    padding-top: var(--space-5);
+}
+.services-benefits h3 {
+    font-size: 1.2rem;
+    margin-bottom: var(--space-3);
+}
+.services-benefits p {
+    font-size: 0.9rem;
+}
+.services-strategy .services-process {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.services-strategy #indicacoes .services-price strong {
+    font-size: 2rem;
+}
+.services-strategy .services-final {
+    margin-top: var(--space-8);
+    padding: var(--space-12) var(--space-8);
+    border: 1px solid var(--color-border-brand);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface-1);
+}
+.services-strategy .services-final h2 {
+    max-width: 24ch;
+}
+.services-strategy a:focus-visible,
+.quote-page a:focus-visible {
+    outline: 2px solid var(--color-brand-text);
+    outline-offset: 4px;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .services-solutions .services-card {
+        transition:
+            border-color 0.2s ease,
+            transform 0.2s ease;
+    }
+    .services-solutions .services-card:hover {
+        border-color: var(--color-border-brand);
+        transform: translateY(-3px);
+    }
+}
+@media (max-width: 1100px) {
+    .services-strategy .services-hero {
+        gap: var(--space-6);
+        grid-template-columns: 1.5fr 1fr;
+    }
+    .services-blueprint {
+        padding: var(--space-5);
+        transform: none;
+    }
+    .services-blueprint li {
+        font-size: 0.95rem;
+    }
+    .services-benefits {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 850px) {
+    .services-strategy .services-hero {
+        grid-template-columns: 1fr;
+    }
+    .services-blueprint {
+        display: none;
+    }
+    .services-strategy h1 {
+        max-width: 20ch;
+    }
+    .services-solutions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .services-solutions > article,
+    .services-solutions > article:nth-last-child(-n + 2) {
+        grid-column: auto;
+    }
+    .services-solutions > article:last-child {
+        grid-column: 1/-1;
+    }
+    .services-custom,
+    .services-maintenance {
+        gap: var(--space-6);
+    }
+}
+@media (max-width: 760px) {
+    .services-strategy .services-hero {
+        padding-top: var(--space-6);
+        padding-bottom: var(--space-10);
+    }
+    .services-strategy .services-section {
+        padding: var(--space-12) 0;
+    }
+    .services-custom,
+    .services-maintenance {
+        grid-template-columns: 1fr;
+    }
+    .services-inline-callout {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .services-strategy .services-process {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .services-strategy .services-final {
+        padding: var(--space-8) var(--space-5);
+    }
+    .services-strategy .services-lead {
+        font-size: 1.05rem;
+        line-height: 1.65;
+    }
+}
+@media (max-width: 480px) {
+    .services-solutions,
+    .services-benefits {
+        grid-template-columns: 1fr;
+    }
+    .services-solutions > article:last-child {
+        grid-column: auto;
+    }
+    .services-strategy .services-process {
+        grid-template-columns: 1fr;
+        gap: var(--space-5);
+    }
+    .services-strategy .services-process li {
+        padding-left: var(--space-5);
+        border-left: 1px solid var(--color-border-brand);
+    }
+    .services-strategy .services-process h3 {
+        margin-top: var(--space-2);
+    }
+    .services-custom > div:last-child {
+        padding: var(--space-6);
+    }
+    .services-strategy .services-referral-table {
+        font-size: 0.8rem;
+    }
+}

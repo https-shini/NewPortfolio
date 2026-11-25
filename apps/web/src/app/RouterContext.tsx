@@ -34,6 +34,8 @@ function getInitialPath(): string {
 interface RouterContextValue {
     /** Pathname corrente, já normalizado. */
     path: string;
+    /** Query string corrente (`?service=express`), ou "" sem parâmetros. */
+    search: string;
     /**
      * Navega para uma rota interna, empilhando no histórico do browser.
      *
@@ -52,39 +54,56 @@ export const RouterProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
     const [path, setPath] = useState<string>(getInitialPath);
+    const [search, setSearch] = useState<string>(() =>
+        typeof window === "undefined" ? "" : window.location.search,
+    );
 
     /* Botões voltar/avançar do browser. */
     useEffect(() => {
-        const handlePopState = () =>
+        const handlePopState = () => {
             setPath(normalize(window.location.pathname));
+            setSearch(window.location.search);
+        };
         window.addEventListener("popstate", handlePopState);
         return () => window.removeEventListener("popstate", handlePopState);
     }, []);
 
     const navigate = useCallback((to: RoutePath | string) => {
-        const next = normalize(to);
-        if (normalize(window.location.pathname) === next) return;
+        /* O destino é lido como URL de verdade: assim a query
+           (`/orcamento?service=express`) e o fragmento (`/#contato`) chegam
+           inteiros, e um endereço de outra origem nunca vira pushState. */
+        const destination = new URL(to, window.location.origin);
+        if (destination.origin !== window.location.origin) return;
+        const next = normalize(destination.pathname);
 
         // O idioma faz parte do link compartilhável também ao sair da 404.
         const lang = new URLSearchParams(window.location.search).get(
             LANG_PARAM,
         );
-        const destination = new URL(next, window.location.origin);
-        if (lang) destination.searchParams.set(LANG_PARAM, lang);
+        if (lang && !destination.searchParams.has(LANG_PARAM))
+            destination.searchParams.set(LANG_PARAM, lang);
+
+        if (
+            next === normalize(window.location.pathname) &&
+            destination.search === window.location.search &&
+            destination.hash === window.location.hash
+        )
+            return;
+
         window.history.pushState(
             {},
             "",
-            destination.pathname + destination.search,
+            next + destination.search + destination.hash,
         );
         setPath(next);
-
+        setSearch(destination.search);
         /* Rota nova começa do topo — o browser não faz isso em pushState. */
         window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     }, []);
 
     return (
         <RouterContext.Provider
-            value={{ path, navigate, isHome: path === ROUTES.HOME }}
+            value={{ path, search, navigate, isHome: path === ROUTES.HOME }}
         >
             {children}
         </RouterContext.Provider>

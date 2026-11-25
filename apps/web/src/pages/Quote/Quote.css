@@ -1,0 +1,30 @@
+.quote-heading {
+    padding: var(--space-8) 0 var(--space-12);
+}
+.quote-heading .services-eyebrow {
+    margin-top: var(--space-8);
+}
+.quote-page h1 {
+    max-width: 22ch;
+}
+.quote-page .services-estimator {
+    margin-top: var(--space-6);
+}
+.quote-page .services-estimator > div {
+    min-width: 0;
+}
+.quote-page .btn {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+}
+.quote-page #orcamento {
+    scroll-margin-top: 100px;
+    margin-top: var(--space-12);
+}
+.quote-page h2 {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+.quote-page section > .services-notice {
+    margin-top: var(--space-5);
+}

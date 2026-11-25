@@ -102,7 +102,7 @@ function sitemapPlugin() {
             const {
                 releaseNotePath,
                 releaseNotesPagePath,
-                RELEASE_NOTES_PAGE_SIZE,
+                releaseNotesTotalPages,
                 HREFLANG,
                 withLang,
             } = await import("./src/shared/config/routes.ts");
@@ -150,6 +150,18 @@ function sitemapPlugin() {
                     changefreq: "weekly",
                     priority: "0.9",
                 },
+                /* /orcamento fica fora de propósito: é `noindex` (cada
+                   combinação de query seria uma URL a mais no índice). */
+                {
+                    loc: `${SITE_URL}/servicos`,
+                    lastmod: lastModified([
+                        "apps/web/src/pages/Services",
+                        "apps/web/src/shared/config/serviceCatalog.ts",
+                        "apps/web/src/shared/config/servicesContent.ts",
+                    ]),
+                    changefreq: "monthly",
+                    priority: "0.8",
+                },
                 {
                     /* A /contato tem endereço próprio, canonical próprio
                        (`useDocumentMeta` com `ROUTES.CONTACT`) e metadados
@@ -169,7 +181,7 @@ function sitemapPlugin() {
                     loc: `${SITE_URL}/release-notes`,
                     lastmod: lastModified([
                         "apps/web/src/pages/ReleaseNotes",
-                        "apps/web/src/shared/config/releaseNotes.ts",
+                        "apps/web/src/shared/config/releaseNotes.json",
                     ]),
                     changefreq: "weekly",
                     priority: "0.7",
@@ -182,16 +194,17 @@ function sitemapPlugin() {
                prioridade. A home já está listada acima. */
 
             /* Índice paginado: a página 1 é o próprio /release-notes, já
-               listado acima, então o laço começa na 2. Com o histórico
-               atual não há página 2 — o laço simplesmente não roda. */
-            const totalPages = Math.ceil(
-                RELEASE_NOTES.length / RELEASE_NOTES_PAGE_SIZE,
-            );
+               listado acima, então o laço começa na 2. */
+            /* A versão mais recente fica no topo do índice, fora da
+               paginação: a conta é sobre o histórico, pela mesma função que o
+               widget usa. Contar sobre o total anunciava uma página a mais
+               sempre que `total % PAGE_SIZE === 1`. */
+            const totalPages = releaseNotesTotalPages(RELEASE_NOTES.length - 1);
             for (let page = 2; page <= totalPages; page++) {
                 entries.push({
                     loc: `${SITE_URL}${releaseNotesPagePath(page)}`,
                     lastmod: lastModified([
-                        "apps/web/src/shared/config/releaseNotes.ts",
+                        "apps/web/src/shared/config/releaseNotes.json",
                     ]),
                     changefreq: "weekly",
                     priority: "0.5",

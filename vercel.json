@@ -61,6 +61,50 @@
             "destination": "/api/crawler?path=/contato"
         },
         {
+            "source": "/servicos",
+            "has": [
+                {
+                    "type": "header",
+                    "key": "user-agent",
+                    "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+                }
+            ],
+            "destination": "/api/crawler?path=/servicos"
+        },
+        {
+            "source": "/servicos/",
+            "has": [
+                {
+                    "type": "header",
+                    "key": "user-agent",
+                    "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+                }
+            ],
+            "destination": "/api/crawler?path=/servicos"
+        },
+        {
+            "source": "/orcamento",
+            "has": [
+                {
+                    "type": "header",
+                    "key": "user-agent",
+                    "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+                }
+            ],
+            "destination": "/api/crawler?path=/orcamento"
+        },
+        {
+            "source": "/orcamento/",
+            "has": [
+                {
+                    "type": "header",
+                    "key": "user-agent",
+                    "value": "(?i).*(facebookexternalhit|twitterbot|linkedinbot|slackbot|slack-imgproxy|whatsapp|discordbot|telegrambot|redditbot|pinterest|skypeuripreview|embedly|quora link preview|nuzzel|bitlybot|vkshare|mastodon|bluesky).*"
+                }
+            ],
+            "destination": "/api/crawler?path=/orcamento"
+        },
+        {
             "source": "/projetos",
             "has": [
                 {
@@ -97,6 +141,22 @@
         {
             "source": "/contato/",
             "destination": "/rotas/contato.html"
+        },
+        {
+            "source": "/servicos",
+            "destination": "/rotas/servicos.html"
+        },
+        {
+            "source": "/servicos/",
+            "destination": "/rotas/servicos.html"
+        },
+        {
+            "source": "/orcamento",
+            "destination": "/rotas/orcamento.html"
+        },
+        {
+            "source": "/orcamento/",
+            "destination": "/rotas/orcamento.html"
         },
         {
             "source": "/projetos",

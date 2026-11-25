@@ -99,6 +99,8 @@ function rotuloSocial(nome: string, href: string, lang: "pt" | "en"): string {
 /* Rotas próprias do site, na ordem em que o rodapé as lista. A home fica
    de fora: ela já é o logo da coluna Brand e a primeira âncora. */
 const PAGE_ITEMS: PageItem[] = [
+    { to: ROUTES.PROJECTS, key: "devhub.title" },
+    { to: ROUTES.SERVICES, key: "nav.services" },
     { to: ROUTES.LINKS, key: "nav.links" },
     /* A âncora `#contato` desta mesma lista social continua existindo e
        continua levando à seção da home. Esta entrada é o endereço próprio,

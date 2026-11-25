@@ -40,6 +40,7 @@ export const PORTOES_NAVEGADOR = [
     "audit:linkedin",
     "audit:codex",
     "audit:contato",
+    "audit:services",
     "audit:modals",
 ];
 

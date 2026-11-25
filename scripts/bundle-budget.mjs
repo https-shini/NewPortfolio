@@ -30,7 +30,11 @@ const TETOS = [
     // de tecnologia (catálogo + TechList) e o ícone do TypeScript, que o
     // Vite embute como data URI junto dos outros. Teto refeito sobre
     // 151.1 KB medidos, com ~10% de folga.
-    { nome: "JS total", limite: 165, alvo: (f) => f.tipo === "js" },
+    // /servicos e /orcamento: ~26.6 KB gzip em chunks só dessas rotas
+    // (catálogo, textos bilíngues, simulador e formulário). O JS principal
+    // da home foi de 34.0 para 34.2 KB (link do rodapé e da home, roteador
+    // com query e fragmento). Teto refeito sobre 176.3 KB medidos, ~10%.
+    { nome: "JS total", limite: 194, alvo: (f) => f.tipo === "js" },
     {
         nome: "vendor (react + react-dom)",
         limite: 50,
@@ -45,7 +49,10 @@ const TETOS = [
     // quatro imagens de terceiros por componentes próprios (calendário,
     // linguagens, sequências). Tudo em chunks de rota/lazy; a home não
     // muda. Teto refeito sobre 49.7 KB medidos, com ~10% de folga.
-    { nome: "CSS total", limite: 55, alvo: (f) => f.tipo === "css" },
+    // /servicos e /orcamento: ~4.2 KB gzip de CSS próprio dessas rotas
+    // (Commercial, Services, Quote); o CSS principal da home não muda
+    // (mesmo arquivo, mesmo hash). Teto refeito sobre 57.8 KB, ~10%.
+    { nome: "CSS total", limite: 64, alvo: (f) => f.tipo === "css" },
 ];
 
 function listar(dir, tipo) {

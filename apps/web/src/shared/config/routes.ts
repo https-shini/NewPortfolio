@@ -24,6 +24,11 @@ export const ROUTES = {
        filtros e uma página por repositório. A âncora `#projetos` da home
        continua existindo; esta é a camada técnica, com endereço próprio. */
     PROJECTS: "/projetos",
+    /* Canal comercial: a vitrine dos serviços e, separada dela, a página
+       que monta a solicitação. A seleção viaja pela query
+       (`/orcamento?service=express`), nunca por dados pessoais. */
+    SERVICES: "/servicos",
+    QUOTE: "/orcamento",
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];

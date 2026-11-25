@@ -70,6 +70,40 @@ describe("RouterContext", () => {
         expect(window.history.length).toBe(lengthBefore);
     });
 
+    it("navigate entrega a query e o fragmento ao destino", () => {
+        setPath(ROUTES.HOME);
+        const { result } = renderHook(() => useRouterContext(), { wrapper });
+        act(() => result.current.navigate("/orcamento?service=express"));
+        expect(result.current.path).toBe("/orcamento");
+        expect(result.current.search).toBe("?service=express");
+        expect(window.location.search).toBe("?service=express");
+
+        act(() => result.current.navigate("/#contato"));
+        expect(result.current.path).toBe(ROUTES.HOME);
+        expect(window.location.hash).toBe("#contato");
+    });
+
+    it("mesma rota com query diferente empilha; popstate restaura a query", () => {
+        setPath("/orcamento?service=express");
+        const { result } = renderHook(() => useRouterContext(), { wrapper });
+        act(() => result.current.navigate("/orcamento?service=premium"));
+        expect(result.current.search).toBe("?service=premium");
+
+        act(() => {
+            window.history.replaceState({}, "", "/orcamento?service=express");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+        });
+        expect(result.current.search).toBe("?service=express");
+    });
+
+    it("recusa endereço de outra origem", () => {
+        setPath(ROUTES.LINKS);
+        const { result } = renderHook(() => useRouterContext(), { wrapper });
+        act(() => result.current.navigate("https://example.com/links"));
+        expect(result.current.path).toBe(ROUTES.LINKS);
+        expect(window.location.host).not.toBe("example.com");
+    });
+
     it("exige o Provider", () => {
         expect(() => renderHook(() => useRouterContext())).toThrow(
             /RouterProvider/,

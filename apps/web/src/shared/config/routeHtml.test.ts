@@ -21,6 +21,8 @@ describe("HTML por rota estática", () => {
                 ROUTES.LINKS,
                 ROUTES.PROJECTS,
                 ROUTES.RELEASE_NOTES,
+                ROUTES.SERVICES,
+                ROUTES.QUOTE,
             ].sort(),
         );
     });
@@ -71,5 +73,41 @@ describe("HTML por rota estática", () => {
                 expect(regra?.destination, fonte).toBe(`/${rota.file}`);
             }
         }
+    });
+
+    it("/servicos troca o Person da home por Service, com hreflang e imagem própria", () => {
+        const rota = ROUTE_DOCUMENTS.find((r) => r.path === ROUTES.SERVICES)!;
+        const doc = new DOMParser().parseFromString(
+            renderRouteHtml(indexHtml, rota, SITE),
+            "text/html",
+        );
+        const blocos = doc.querySelectorAll(
+            'script[type="application/ld+json"]',
+        );
+        expect(blocos).toHaveLength(1);
+        expect(JSON.parse(blocos[0].textContent!)["@type"]).toBe("Service");
+        expect(meta(doc, 'meta[name="robots"]')).toBe("index, follow");
+        expect(meta(doc, 'meta[property="og:image"]')).toBe(
+            `${SITE}/api/og?page=services`,
+        );
+        expect(
+            doc.querySelector('link[hreflang="en"]')?.getAttribute("href"),
+        ).toBe(`${SITE}/servicos?lang=en`);
+    });
+
+    it("/orcamento não é indexável e não carrega o Person da home", () => {
+        const rota = ROUTE_DOCUMENTS.find((r) => r.path === ROUTES.QUOTE)!;
+        const doc = new DOMParser().parseFromString(
+            renderRouteHtml(indexHtml, rota, SITE),
+            "text/html",
+        );
+        expect(meta(doc, 'meta[name="robots"]')).toBe("noindex, follow");
+        expect(doc.querySelectorAll('meta[name="robots"]')).toHaveLength(1);
+        expect(
+            JSON.parse(
+                doc.querySelector('script[type="application/ld+json"]')!
+                    .textContent!,
+            )["@type"],
+        ).toBe("WebPage");
     });
 });

@@ -116,6 +116,8 @@ O repositório é um monorepo npm simples:
 | `/contato`                                           | `ContactPage`        | reutiliza o widget `Contact`           |
 | `/projetos`                                          | `ProjectsPage`       | acervo de repositórios (`/api/devhub`) |
 | `/projetos/<repositório>`                            | `ProjectPage`        | uma página por repositório             |
+| `/servicos`                                          | `ServicesPage`       | catálogo comercial e planos            |
+| `/orcamento?service=…`                               | `QuotePage`          | simulador e solicitação; `noindex`     |
 | `/release-notes`                                     | `ReleaseNotesPage`   | índice                                 |
 | `/release-notes/page/N`                              | `ReleaseNotesPage`   | páginas seguintes do histórico         |
 | `/release-notes/vX.Y.Z`                              | `ReleaseNotePage`    | uma versão                             |
@@ -126,7 +128,7 @@ O repositório é um monorepo npm simples:
 
 O roteamento é próprio, sobre a History API (`app/RouterContext.tsx`). Os pathnames vivem em `shared/config/routes.ts`, o mapa rota → página em `app/routes.tsx` (páginas secundárias via `React.lazy`) e os construtores de URL das notas de versão (`releaseNotePath`, `releaseNotesPagePath`) em `routes.ts` — nenhuma URL é montada à mão.
 
-> **Rota nova exige quatro lugares:** `ROUTES` em `shared/config/routes.ts`, o caso em `app/routes.tsx`, a reescrita em `vercel.json` (e a reescrita por user-agent, se a rota tiver cartão próprio em `api/crawler.ts`) e a entrada no sitemap em `apps/web/vite.config.ts`. Sem a reescrita, o acesso direto devolve 404.
+> **Rota nova exige cinco lugares:** `ROUTES` em `shared/config/routes.ts`, o caso em `app/routes.tsx`, o documento em `apps/web/config/routeHtml.ts`, a reescrita em `vercel.json` (e a reescrita por user-agent, se a rota tiver cartão próprio em `api/crawler.ts`) e a entrada no sitemap em `apps/web/vite.config.ts`. Sem a reescrita, o acesso direto devolve 404. O `routeHtml.test.ts` confere `ROUTES` contra o `vercel.json`.
 
 ---
 

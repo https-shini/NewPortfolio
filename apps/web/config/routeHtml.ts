@@ -1,5 +1,7 @@
 import translations from "../src/shared/lib/translations.json" with { type: "json" };
 import { ROUTES } from "../src/shared/config/routes.ts";
+import { SERVICE_META, serviceSchema } from "../src/shared/config/services.ts";
+import { QUOTE_META } from "../src/shared/config/quote.ts";
 
 /* ─────────────────────────────────────────────────────────
    Um documento HTML por rota estática
@@ -28,6 +30,14 @@ export interface RouteMeta {
     file: string;
     title: string;
     description: string;
+    /** Diretiva de robôs própria (ex.: "noindex, follow"). */
+    robots?: string;
+    /** Imagem de compartilhamento própria, em caminho absoluto do site. */
+    image?: string;
+    /** Dados estruturados que substituem o `Person` da home. */
+    jsonLd?: (siteUrl: string) => object;
+    /** Emite `hreflang` pt-BR / en / x-default para a rota. */
+    alternates?: boolean;
 }
 
 const rota = (
@@ -40,6 +50,21 @@ const rota = (
     file: `rotas/${nome}.html`,
     title: `${PT[titulo]} — ${AUTOR}`,
     description: PT[descricao],
+});
+
+/** Rota cujo texto não mora em translations.json, e sim num módulo próprio
+    (as páginas comerciais, que têm conteúdo e regras de negócio tipados). */
+const rotaPropria = (
+    path: string,
+    nome: string,
+    meta: { title: string; description: string },
+    extra: Omit<RouteMeta, "path" | "file" | "title" | "description">,
+): RouteMeta => ({
+    path,
+    file: `rotas/${nome}.html`,
+    title: meta.title,
+    description: meta.description,
+    ...extra,
 });
 
 /** Rotas estáticas com documento próprio — mesmos textos do `useDocumentMeta`. */
@@ -63,6 +88,25 @@ export const ROUTE_DOCUMENTS: RouteMeta[] = [
         "releaseNotes.title",
         "releaseNotes.meta.description",
     ),
+    rotaPropria(ROUTES.SERVICES, "servicos", SERVICE_META.pt, {
+        image: "/api/og?page=services",
+        jsonLd: (site) => serviceSchema(site, "pt"),
+        alternates: true,
+    }),
+    /* Indexável não: cada combinação de query seria uma URL a mais no
+       índice. O canonical aponta para /orcamento limpo e o sitemap não a
+       lista. */
+    rotaPropria(ROUTES.QUOTE, "orcamento", QUOTE_META.pt, {
+        robots: "noindex, follow",
+        image: "/api/og?page=services",
+        jsonLd: (site) => ({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: QUOTE_META.pt.title,
+            url: `${site}${ROUTES.QUOTE}`,
+        }),
+        alternates: true,
+    }),
 ];
 
 const escape = (value: string) =>
@@ -112,5 +156,63 @@ export function renderRouteHtml(
             `<meta ${key.startsWith("og:") ? "property" : "name"}="${key}" content="${escape(value)}" />`,
         );
     }
+
+    if (meta.robots) {
+        const robots = /<meta\b[^>]*name="robots"[^>]*>/i;
+        if (!robots.test(result))
+            throw new Error('index.html sem a meta "robots"');
+        result = result.replace(
+            robots,
+            `<meta name="robots" content="${escape(meta.robots)}" />`,
+        );
+    }
+
+    if (meta.image) {
+        const imagem = `${siteUrl}${meta.image}`;
+        for (const key of ["og:image", "twitter:image"]) {
+            const tag = new RegExp(
+                `<meta\\b[^>]*(?:name|property)="${key}"[^>]*>`,
+                "i",
+            );
+            if (!tag.test(result))
+                throw new Error(`index.html sem a meta "${key}"`);
+            result = result.replace(
+                tag,
+                `<meta ${key.startsWith("og:") ? "property" : "name"}="${key}" content="${escape(imagem)}" />`,
+            );
+        }
+    }
+
+    if (meta.jsonLd) {
+        const bloco =
+            /<script\b[^>]*type="application\/ld\+json"[^>]*>[\s\S]*?<\/script>/i;
+        if (!bloco.test(result))
+            throw new Error("index.html sem o bloco JSON-LD");
+        /* `<` escapado: o JSON vai dentro de <script>, e um `</script>` num
+           texto encerraria o bloco antes da hora. */
+        const json = JSON.stringify(meta.jsonLd(siteUrl)).replace(
+            /</g,
+            "\\u003c",
+        );
+        result = result.replace(
+            bloco,
+            `<script type="application/ld+json">${json}</script>`,
+        );
+    }
+
+    if (meta.alternates) {
+        const links = [
+            ["pt-BR", url],
+            ["en", `${url}?lang=en`],
+            ["x-default", url],
+        ]
+            .map(
+                ([lang, href]) =>
+                    `<link rel="alternate" hreflang="${lang}" href="${escape(href)}" />`,
+            )
+            .join("");
+        result = result.replace(/<\/head>/i, `${links}</head>`);
+    }
+
     return result;
 }

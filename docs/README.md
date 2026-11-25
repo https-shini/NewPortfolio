@@ -34,6 +34,9 @@ isso não são `guides/`.
 | [`github-project.md`](guides/github-project.md)             | como este repositório é planejado: fluxo, campos, rótulos, regras      |
 | [`github-project-setup.md`](guides/github-project-setup.md) | o que clicar para configurar o board, e como usá-lo no dia a dia       |
 | [`vulnerabilidades.md`](guides/vulnerabilidades.md)         | alertas do `npm audit` em aberto: risco, motivo e condição para fechar |
+| [`servicos-integracao.md`](guides/servicos-integracao.md)   | como `/servicos` e `/orcamento` se ligam à arquitetura atual           |
+| [`services-strategy.md`](guides/services-strategy.md)       | política comercial preservada e decisões da reformulação de 01/11      |
+| [`services.md`](guides/services.md)                         | histórico da primeira implementação comercial                          |
 
 Se algo aqui divergir do board, do README ou de uma issue,
 **`github-project.md` vale** e a divergência é defeito.

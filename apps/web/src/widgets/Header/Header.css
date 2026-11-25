@@ -632,3 +632,16 @@
         min-height: var(--tap-comfort);
     }
 }
+
+/* Mantém todos os controles visíveis em 320px sem reduzir alvos de toque. */
+@media (max-width: 360px) {
+    .header__inner,
+    .mobile-nav__topo {
+        padding-inline: var(--space-4);
+        gap: var(--space-2);
+    }
+    .header__actions,
+    .mobile-nav__acoes {
+        gap: var(--space-1);
+    }
+}
