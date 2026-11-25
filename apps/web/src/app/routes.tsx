@@ -97,9 +97,7 @@ export const Routes: React.FC = () => {
                         <ProjectPage key={projetos.name} name={projetos.name} />
                     )}
                 </Suspense>
-            ) : path === ROUTES.CODEX ||
-              path === "/projects/codex" ||
-              path === "/projects/codex/index.html" ? (
+            ) : path === ROUTES.FIRECODE ? (
                 <Suspense fallback={null}>
                     <CodexPage />
                 </Suspense>

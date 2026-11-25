@@ -22,9 +22,9 @@ describe("metadados HTML de entrada", () => {
             expect(element.outerHTML).not.toMatch(/__ROTA_[A-Z_]+__/);
         }
     });
-    it("não altera os metadados próprios da apresentação Codex", () => {
+    it("não altera os metadados próprios da apresentação do Firecode", () => {
         const html = readFileSync(
-            resolve(process.cwd(), "projects/codex/readme.html"),
+            resolve(process.cwd(), "projects/firecode/index.html"),
             "utf8",
         );
         expect(fillHomeMetadata(html)).toBe(html);

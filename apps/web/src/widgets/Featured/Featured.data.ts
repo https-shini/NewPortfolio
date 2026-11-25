@@ -33,7 +33,7 @@ export interface ArchitectureCard {
 }
 
 export const FEATURED_PROJECT = {
-    id: "codex",
+    id: "firecode",
     name: "Firecode",
     tagline: {
         pt: "TCC em engenharia de software: o repositório passa pelo teste de fogo da análise estática e da inteligência artificial.",
@@ -43,8 +43,8 @@ export const FEATURED_PROJECT = {
         pt: "Uma aplicação que combina análise estática e revisão por inteligência artificial para avaliar repositórios do GitHub. Transforma lint, segurança e complexidade em um score de 0 a 1000 (40% análise estática, 60% revisão por IA), com um relatório do que corrigir primeiro.",
         en: "An application combining static analysis and AI review to evaluate GitHub repositories. It turns lint, security and complexity findings into a score from 0 to 1000 (40% static analysis, 60% AI review), with a report on what to fix first.",
     },
-    detailsUrl: PROJECT_URLS.codex.details,
-    liveUrl: PROJECT_URLS.codex.live,
+    detailsUrl: PROJECT_URLS.firecode.details,
+    liveUrl: PROJECT_URLS.firecode.live,
     repoHost: "firecode.shxred.app.br",
     /* Stack conforme a página técnica do projeto (pages/Codex). */
     tech: [
@@ -131,7 +131,7 @@ export const FEATURED_PROJECT = {
     ] as ProjectTech[],
     slides: [
         {
-            src: "/projects/codex/overview.webp",
+            src: "/projects/firecode/overview.webp",
             label: {
                 pt: "Visão geral",
                 en: "Overview",
@@ -146,7 +146,7 @@ export const FEATURED_PROJECT = {
             },
         },
         {
-            src: "/projects/codex/pipeline.webp",
+            src: "/projects/firecode/pipeline.webp",
             label: {
                 pt: "Do código ao relatório",
                 en: "From code to report",
@@ -161,7 +161,7 @@ export const FEATURED_PROJECT = {
             },
         },
         {
-            src: "/projects/codex/features.webp",
+            src: "/projects/firecode/features.webp",
             label: {
                 pt: "Além da nota",
                 en: "Beyond the score",
@@ -176,7 +176,7 @@ export const FEATURED_PROJECT = {
             },
         },
         {
-            src: "/projects/codex/score.webp",
+            src: "/projects/firecode/score.webp",
             label: {
                 pt: "Critérios transparentes",
                 en: "Transparent criteria",

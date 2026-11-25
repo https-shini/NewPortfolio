@@ -4,13 +4,14 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
-import { readFile, writeFile, copyFile, mkdir } from "node:fs/promises";
+import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { renderNotFoundHtml } from "./config/notFound.ts";
 import { fillHomeMetadata } from "./config/homeMetadata.ts";
 import { ROUTE_DOCUMENTS, renderRouteHtml } from "./config/routeHtml.ts";
+import { ROUTES } from "./src/shared/config/routes.ts";
 import {
-    assertNoPrivateCodexDocuments,
-    isPrivateCodexDocument,
+    assertNoPrivateProjectDocuments,
+    isPrivateProjectDocument,
 } from "./config/privateDocuments.ts";
 import { lastModified } from "./config/lastModified.ts";
 
@@ -118,10 +119,10 @@ function sitemapPlugin() {
 
             const entries: SitemapEntry[] = [
                 {
-                    loc: `${SITE_URL}/projects/codex/readme.html`,
+                    loc: `${SITE_URL}${ROUTES.FIRECODE}`,
                     lastmod: lastModified([
                         "apps/web/src/pages/Codex",
-                        "apps/web/projects/codex/readme.html",
+                        "apps/web/projects/firecode/index.html",
                     ]),
                     changefreq: "monthly",
                     priority: "0.8",
@@ -298,25 +299,30 @@ function routeDocumentsPlugin() {
     };
 }
 
-/** Preserve the shorter URL without maintaining a second HTML source. */
-function codexPageAliasPlugin() {
+/** Rotas limpas no dev e no preview, como as rewrites do vercel.json:
+    /projects/firecode (com ou sem barra) é servida pelo index.html da pasta,
+    em vez de cair no fallback da SPA. */
+function cleanUrlsPlugin(): Plugin {
+    const rewrite = (server: Pick<ViteDevServer, "middlewares">) => {
+        server.middlewares.use((request, _response, next) => {
+            const [pathname, query] = (request.url ?? "/").split("?", 2);
+            if (/^\/projects\/firecode\/?$/.test(pathname ?? "")) {
+                request.url = `/projects/firecode/index.html${query ? `?${query}` : ""}`;
+            }
+            next();
+        });
+    };
     return {
-        name: "codex-page-alias",
-        apply: "build" as const,
-        async closeBundle() {
-            const output = path.resolve(__dirname, "dist/projects/codex");
-            await copyFile(
-                path.join(output, "readme.html"),
-                path.join(output, "index.html"),
-            );
-        },
+        name: "clean-urls",
+        configureServer: rewrite,
+        configurePreviewServer: rewrite,
     };
 }
 
 function privateDocumentsPlugin(): Plugin {
     const protect = (server: Pick<ViteDevServer, "middlewares">) => {
         server.middlewares.use((request, response, next) => {
-            if (!isPrivateCodexDocument(request.url ?? "/")) return next();
+            if (!isPrivateProjectDocument(request.url ?? "/")) return next();
             response.statusCode = 404;
             response.setHeader("Content-Type", "text/plain; charset=utf-8");
             response.setHeader("Cache-Control", "no-store");
@@ -324,17 +330,17 @@ function privateDocumentsPlugin(): Plugin {
         });
     };
     return {
-        name: "codex-private-documents",
+        name: "project-private-documents",
         configureServer: protect,
         configurePreviewServer: protect,
         async buildStart() {
-            await assertNoPrivateCodexDocuments(
-                path.resolve(__dirname, "public/projects/codex"),
+            await assertNoPrivateProjectDocuments(
+                path.resolve(__dirname, "public/projects/firecode"),
             );
         },
         async closeBundle() {
-            await assertNoPrivateCodexDocuments(
-                path.resolve(__dirname, "dist/projects/codex"),
+            await assertNoPrivateProjectDocuments(
+                path.resolve(__dirname, "dist/projects/firecode"),
             );
         },
     };
@@ -349,7 +355,7 @@ export default defineConfig({
         sitemapPlugin(),
         notFoundPlugin(),
         routeDocumentsPlugin(),
-        codexPageAliasPlugin(),
+        cleanUrlsPlugin(),
         privateDocumentsPlugin(),
     ],
 
@@ -404,7 +410,10 @@ export default defineConfig({
         rolldownOptions: {
             input: {
                 main: path.resolve(__dirname, "index.html"),
-                codex: path.resolve(__dirname, "projects/codex/readme.html"),
+                firecode: path.resolve(
+                    __dirname,
+                    "projects/firecode/index.html",
+                ),
             },
             output: {
                 /* React/ReactDOM raramente mudam — isolá-los preserva o

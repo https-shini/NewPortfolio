@@ -36,7 +36,7 @@ export function CodexPage() {
     useDocumentMeta({
         title: "Firecode — Validador de repositórios | Guilherme Cruz",
         description: project.description[lang],
-        path: ROUTES.CODEX,
+        path: ROUTES.FIRECODE,
     });
     const figure = (index: number, hero = false) => {
         const slide = project.slides[index]!;
