@@ -3,6 +3,7 @@
     "installCommand": "npx --yes npm@11.6.2 ci --include=dev",
     "buildCommand": "npm run build",
     "outputDirectory": "apps/web/dist",
+    "trailingSlash": false,
     "functions": {
         "api/devhub-sync.ts": {
             "maxDuration": 300
@@ -14,13 +15,71 @@
             "schedule": "0 3 * * *"
         }
     ],
+    "redirects": [
+        {
+            "source": "/index.html",
+            "destination": "/",
+            "permanent": true
+        },
+        {
+            "source": "/404.html",
+            "destination": "/404",
+            "permanent": true
+        },
+        {
+            "source": "/rotas/contato.html",
+            "destination": "/contato",
+            "permanent": true
+        },
+        {
+            "source": "/rotas/links.html",
+            "destination": "/links",
+            "permanent": true
+        },
+        {
+            "source": "/rotas/projetos.html",
+            "destination": "/projetos",
+            "permanent": true
+        },
+        {
+            "source": "/rotas/release-notes.html",
+            "destination": "/release-notes",
+            "permanent": true
+        },
+        {
+            "source": "/projects/firecode/index.html",
+            "destination": "/projects/firecode",
+            "permanent": true
+        },
+        {
+            "source": "/projects/firecode/readme.html",
+            "destination": "/projects/firecode",
+            "permanent": true
+        },
+        {
+            "source": "/projects/codex/:imagem(overview|pipeline|features|score).webp",
+            "destination": "/projects/firecode/:imagem.webp",
+            "permanent": true
+        },
+        {
+            "source": "/projects/codex",
+            "destination": "/projects/firecode",
+            "permanent": true
+        },
+        {
+            "source": "/projects/codex/:resto*",
+            "destination": "/projects/firecode",
+            "permanent": true
+        },
+        {
+            "source": "/projects",
+            "destination": "/projetos",
+            "permanent": true
+        }
+    ],
     "rewrites": [
         {
             "source": "/linkedin",
-            "destination": "/index.html"
-        },
-        {
-            "source": "/linkedin/",
             "destination": "/index.html"
         },
         {
@@ -76,23 +135,15 @@
             "destination": "/rotas/links.html"
         },
         {
-            "source": "/links/",
-            "destination": "/rotas/links.html"
-        },
-        {
             "source": "/contato",
             "destination": "/rotas/contato.html"
         },
         {
-            "source": "/contato/",
-            "destination": "/rotas/contato.html"
+            "source": "/projects/firecode",
+            "destination": "/projects/firecode/index.html"
         },
         {
             "source": "/projetos",
-            "destination": "/rotas/projetos.html"
-        },
-        {
-            "source": "/projetos/",
             "destination": "/rotas/projetos.html"
         },
         {
@@ -101,10 +152,6 @@
         },
         {
             "source": "/release-notes",
-            "destination": "/rotas/release-notes.html"
-        },
-        {
-            "source": "/release-notes/",
             "destination": "/rotas/release-notes.html"
         },
         {

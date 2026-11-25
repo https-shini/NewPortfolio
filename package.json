@@ -33,6 +33,7 @@
         "audit:not-found": "node scripts/e2e-not-found.mjs",
         "audit:linkedin": "node scripts/e2e-linkedin.mjs",
         "audit:codex": "node scripts/e2e-codex.mjs",
+        "audit:urls": "node scripts/audit-urls.mjs",
         "audit:contato": "node scripts/e2e-contato.mjs",
         "audit:bundle": "node scripts/bundle-budget.mjs",
         "audit:modals": "node scripts/e2e-modals.mjs",
