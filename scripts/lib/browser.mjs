@@ -22,6 +22,8 @@ export const ROUTES = {
     home: "/",
     links: "/links",
     contato: "/contato",
+    projetos: "/projetos",
+    firecode: "/projects/firecode",
     releaseNotes: "/release-notes",
     releaseVersion: "/release-notes/v2.0.0",
     notFound: "/pagina-inexistente",
