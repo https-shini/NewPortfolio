@@ -26,7 +26,7 @@ try {
             page.on("pageerror", (e) => errors.push(e.message));
             await visit(page, preview.url, route);
             await page.locator(".codex h1").waitFor();
-            assert.match(await page.locator("h1").innerText(), /Codex/);
+            assert.match(await page.locator("h1").innerText(), /Firecode/);
             assert.equal(await page.locator(".codex__image img").count(), 4);
             for (const img of await page.locator(".codex__image img").all()) {
                 await img.scrollIntoViewIfNeeded();
@@ -285,10 +285,10 @@ try {
     await page.goto(`${preview.url}${route}`, {
         waitUntil: "domcontentloaded",
     });
-    assert.match(await page.locator("h1").innerText(), /Codex/);
+    assert.match(await page.locator("h1").innerText(), /Firecode/);
     assert.equal(await page.locator(".codex__static-image").count(), 4);
     assert.equal(
-        await page.locator('a[href="https://codex.shxred.app.br"]').count(),
+        await page.locator('a[href="https://firecode.shxred.app.br"]').count(),
         1,
     );
     assert.equal(

@@ -1,4 +1,4 @@
-/* Codex — Code Validator, TCC. Apresentação baseada no material técnico
+/* Firecode — validador de repositórios (TCC; antes "Codex"). Apresentação baseada no material técnico
    disponível e nas capturas da página pública; não distribui código interno. */
 import type { GenericTech } from "@/features/devhub/tech";
 import { PROJECT_URLS } from "@/shared/config/links";
@@ -34,18 +34,18 @@ export interface ArchitectureCard {
 
 export const FEATURED_PROJECT = {
     id: "codex",
-    name: "Codex — Code Validator",
+    name: "Firecode",
     tagline: {
-        pt: "TCC em engenharia de software: análise estática e inteligência artificial para compreender e acompanhar a qualidade do código.",
-        en: "A software engineering capstone: static analysis and artificial intelligence to understand and track code quality.",
+        pt: "TCC em engenharia de software: o repositório passa pelo teste de fogo da análise estática e da inteligência artificial.",
+        en: "A software engineering capstone: the repository goes through a trial by fire of static analysis and artificial intelligence.",
     },
     description: {
-        pt: "Uma aplicação que combina análise estática e revisão por inteligência artificial para avaliar repositórios do GitHub. Transforma lint, segurança e complexidade em um score de 0 a 1000, com um relatório para orientar melhorias.",
-        en: "An application combining static analysis and AI review to evaluate GitHub repositories. It turns lint, security and complexity findings into a score from 0 to 1000, with a report to guide improvements.",
+        pt: "Uma aplicação que combina análise estática e revisão por inteligência artificial para avaliar repositórios do GitHub. Transforma lint, segurança e complexidade em um score de 0 a 1000 (40% análise estática, 60% revisão por IA), com um relatório do que corrigir primeiro.",
+        en: "An application combining static analysis and AI review to evaluate GitHub repositories. It turns lint, security and complexity findings into a score from 0 to 1000 (40% static analysis, 60% AI review), with a report on what to fix first.",
     },
     detailsUrl: PROJECT_URLS.codex.details,
     liveUrl: PROJECT_URLS.codex.live,
-    repoHost: "codex.shxred.app.br",
+    repoHost: "firecode.shxred.app.br",
     /* Stack conforme a página técnica do projeto (pages/Codex). */
     tech: [
         {
@@ -141,8 +141,8 @@ export const FEATURED_PROJECT = {
                 en: "Static analysis + AI",
             },
             description: {
-                pt: "Página pública do Codex, com apresentação da proposta e demonstração do pipeline. A demonstração usa dados de exemplo, como indicado no próprio site.",
-                en: "Codex's public page introducing the project and its pipeline demo. The demo uses sample data, as indicated on the site.",
+                pt: "Página pública do projeto, com apresentação da proposta e demonstração do pipeline. A demonstração usa dados de exemplo, como indicado no próprio site.",
+                en: "The project's public page introducing the project and its pipeline demo. The demo uses sample data, as indicated on the site.",
             },
         },
         {
@@ -228,8 +228,8 @@ export const FEATURED_PROJECT = {
                 en: "GitHub integration",
             },
             text: {
-                pt: "Análise por URL pública ou seleção de repositórios com OAuth. A comparação de pull requests mostra a diferença de score entre base e head.",
-                en: "Analysis through a public URL or repository selection with OAuth. Pull request comparison shows the score difference between base and head.",
+                pt: "Login com GitHub OAuth e acesso somente leitura a qualquer repositório do usuário, público ou privado. Cada push reanalisa o projeto, e a comparação de pull requests mostra a diferença de score entre base e head.",
+                en: "GitHub OAuth sign-in with read-only access to any of the user's repositories, public or private. Every push triggers a new analysis, and pull request comparison shows the score difference between base and head.",
             },
             summary: {
                 pt: "Conecte um repositório e veja como cada pull request altera a pontuação do código.",
@@ -237,12 +237,12 @@ export const FEATURED_PROJECT = {
             },
             details: [
                 {
-                    pt: "Repositórios públicos analisados pela URL, sem login.",
-                    en: "Public repositories analyzed by URL, without sign-in.",
+                    pt: "Login com GitHub OAuth: qualquer repositório seu, público ou privado, com acesso somente leitura e revogável.",
+                    en: "GitHub OAuth sign-in: any of your repositories, public or private, with read-only, revocable access.",
                 },
                 {
-                    pt: "Seleção dos próprios repositórios após login com GitHub OAuth.",
-                    en: "Selection of your own repositories after GitHub OAuth sign-in.",
+                    pt: "Reanálise automática por webhook a cada push na branch padrão.",
+                    en: "Automatic reanalysis via webhook on every push to the default branch.",
                 },
                 {
                     pt: "Comparação de pull requests: diferença de score entre base e head.",

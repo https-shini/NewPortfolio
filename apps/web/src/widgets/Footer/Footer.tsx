@@ -112,7 +112,11 @@ const PAGE_ITEMS: PageItem[] = [
    quais projetos o rodapé lista e em que ordem. */
 const PROJECT_ITEMS: ProjectItem[] = [
     /* TCC apresentado na seção Destaque — link interno */
-    { label: "Codex — TCC", href: `#${SECTION_IDS.FEATURED}`, external: false },
+    {
+        label: "Firecode — TCC",
+        href: `#${SECTION_IDS.FEATURED}`,
+        external: false,
+    },
     {
         label: "Web Chat",
         href: PROJECT_URLS.webChat.live,
