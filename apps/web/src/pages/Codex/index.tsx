@@ -1,8 +1,12 @@
 import { lazy, Suspense, useState } from "react";
 import { Header } from "@/widgets/Header/Header";
 import { Footer } from "@/widgets/Footer/Footer";
-import { FEATURED_PROJECT as project } from "@/widgets/Featured/Featured.data";
+import {
+    FEATURED_PROJECT as project,
+    slideSrc,
+} from "@/widgets/Featured/Featured.data";
 import { useLang } from "@/shared/hooks/useLang";
+import { useTheme } from "@/shared/hooks/useTheme";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { ROUTES } from "@/shared/config/routes";
@@ -22,6 +26,7 @@ const Gallery = lazy(() =>
 
 export function CodexPage() {
     const { lang } = useLang();
+    const { theme } = useTheme();
     useReducedMotion();
     const [image, setImage] = useState<number | null>(null);
     const tr = (pt: string, en: string) => (lang === "pt" ? pt : en);
@@ -52,7 +57,7 @@ export function CodexPage() {
                     aria-label={`${tr("Ampliar", "Enlarge")}: ${slide.label[lang]}`}
                 >
                     <img
-                        src={slide.src}
+                        src={slideSrc(slide, theme)}
                         alt={`${project.name} — ${slide.label[lang]}`}
                         width={1920}
                         height={1080}
