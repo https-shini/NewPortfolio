@@ -537,9 +537,10 @@
     font-family: var(--font-mono, "JetBrains Mono", monospace);
     font-size: var(--text-xs);
     font-weight: 400;
-    color: var(--color-brand);
+    /* brand-text, e não brand a 70%: com opacidade o número caía para
+       2,5:1 (escuro) e 3,2:1 (claro), abaixo dos 4,5:1 do AA. */
+    color: var(--color-brand-text);
     letter-spacing: 0.1em;
-    opacity: 0.7;
     align-self: center;
 }
 
