@@ -65,6 +65,38 @@ try {
         /* A seção vem do widget reaproveitado, não de uma cópia. */
         assert.equal(await page.locator("section.contact").count(), 1);
 
+        /* Os cartões nascem com opacity: 0 ([data-reveal]) e só aparecem
+           quando a página chama useScrollReveal. A /contato não chamava, e
+           subia mostrando só o título. Contar elementos no DOM não pega
+           isso; a opacidade, sim. */
+        const opacidades = await page
+            .locator("section.contact [data-reveal]")
+            .evaluateAll((els) =>
+                els.map((el) => getComputedStyle(el).opacity),
+            );
+        assert.ok(opacidades.length > 0, "há cartões com [data-reveal]");
+        assert.deepEqual(
+            opacidades,
+            opacidades.map(() => "1"),
+            "todos os cartões de contato visíveis",
+        );
+        /* O WhatsApp é o botão principal (verde) e aponta para a conta
+           comercial; e-mail, LinkedIn e GitHub vêm logo abaixo. */
+        const whatsapp = page.locator(".contact__whatsapp-btn");
+        assert.ok(await whatsapp.isVisible(), "botão do WhatsApp visível");
+        assert.match(
+            (await whatsapp.getAttribute("href")) ?? "",
+            /^https:\/\/wa\.me\/message\//,
+        );
+        for (const nome of [/e-mail/i, /linkedin/i, /github/i])
+            assert.ok(
+                await page
+                    .locator(".contact__alt-links a", { hasText: nome })
+                    .first()
+                    .isVisible(),
+                `atalho ${nome} visível`,
+            );
+
         /* ── O caminho do visitante ────────────────────────────────────
            É o link do rodapé que estava levando à 404. Partir da home e
            clicar nele é o que reproduz o relato original. */

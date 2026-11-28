@@ -6,6 +6,7 @@ import { ScrollUtils } from "@/shared/ui/ScrollUtils";
 import { Contact } from "@/widgets/Contact/Contact";
 import { useLang } from "@/shared/hooks/useLang";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
+import { useScrollReveal } from "@/shared/hooks/useScrollReveal";
 import { useDocumentMeta } from "@/shared/hooks/useDocumentMeta";
 import { ROUTES } from "@/shared/config/routes";
 import { PROFILE } from "@/shared/config/profile";
@@ -45,6 +46,11 @@ import { PROFILE } from "@/shared/config/profile";
 export const ContactPage: React.FC = () => {
     const { lang, t } = useLang();
     useReducedMotion();
+    /* O widget Contact marca os cartões com [data-reveal], que nascem com
+       opacity: 0. Sem o hook — que só a home chamava —, a página subia com
+       o título e mais nada: e-mail, WhatsApp, LinkedIn e os dados de
+       contato ficavam invisíveis. */
+    useScrollReveal();
 
     useDocumentMeta({
         title: `${t("contact.title")} — ${PROFILE.name}`,
