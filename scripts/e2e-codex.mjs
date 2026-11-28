@@ -12,7 +12,7 @@ const require = createRequire(import.meta.url);
 const axe = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
 const preview = await startPreview();
 const browser = await launchBrowser();
-const route = "/projects/codex/readme.html";
+const route = "/projects/firecode";
 try {
     for (const theme of ["dark", "light"]) {
         for (const lang of ["pt", "en"]) {
@@ -88,7 +88,7 @@ try {
             ]) {
                 // A barreira deve negar documentos mesmo para navegação HTML e nomes codificados.
                 const response = await page.request.get(
-                    `${preview.url}/projects/codex/${file}`,
+                    `${preview.url}/projects/firecode/${file}`,
                     { headers: { Accept: "text/html" } },
                 );
                 assert.equal(response.status(), 404);
@@ -149,9 +149,7 @@ try {
             );
             assert.equal(
                 await page
-                    .locator(
-                        '.featured__actions a[href^="/projects/codex/readme.html"]',
-                    )
+                    .locator('.featured__actions a[href^="/projects/firecode"]')
                     .count(),
                 1,
             );
@@ -249,10 +247,11 @@ try {
             await page.locator(".codex h1").waitFor();
             await page.reload();
             await page.locator(".codex h1").waitFor();
-            for (const alias of [
-                "/projects/codex/",
-                "/projects/codex/index.html",
-            ]) {
+            /* Com barra final, o mesmo documento e a mesma canônica. Os
+               endereços antigos (/projects/codex/*) e o arquivo
+               index.html são redirecionados pela Vercel — ver
+               scripts/audit-urls.mjs e o teste do vercel.json. */
+            for (const alias of ["/projects/firecode/"]) {
                 await visit(page, preview.url, alias);
                 await page.locator(".codex h1").waitFor();
                 assert.ok(
@@ -264,7 +263,7 @@ try {
                 );
             }
             const denied = await page.goto(
-                `${preview.url}/projects/codex/README.md`,
+                `${preview.url}/projects/firecode/README.md`,
             );
             assert.equal(denied.status(), 404);
             assert.equal(

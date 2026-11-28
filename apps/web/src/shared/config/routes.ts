@@ -12,7 +12,9 @@
 export const ROUTES = {
     HOME: "/",
     LINKS: "/links",
-    CODEX: "/projects/codex/readme.html",
+    /* Página técnica do TCC em destaque. Endereço limpo: o arquivo que a
+       serve (dist/projects/firecode/index.html) não aparece na URL. */
+    FIRECODE: "/projects/firecode",
     LINKEDIN_NOTICE: "/linkedin",
     RELEASE_NOTES: "/release-notes",
     /* A seção `#contato` da home continua existindo — esta é a mesma

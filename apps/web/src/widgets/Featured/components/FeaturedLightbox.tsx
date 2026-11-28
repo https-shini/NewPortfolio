@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import "./FeaturedLightbox.css";
 import { useLang } from "@/shared/hooks/useLang";
+import { useTheme } from "@/shared/hooks/useTheme";
 import { Modal } from "@/shared/ui/Modal/Modal";
 import {
     IconClose,
@@ -9,7 +10,7 @@ import {
     IconExternalLink,
     IconSearch,
 } from "@/shared/ui/Icons";
-import type { ProjectSlide } from "../Featured.data";
+import { slideSrc, type ProjectSlide } from "../Featured.data";
 
 interface FeaturedLightboxProps {
     slides: ProjectSlide[];
@@ -38,6 +39,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
     onClose,
 }) => {
     const { lang, t } = useLang();
+    const { theme } = useTheme();
     const [index, setIndex] = useState(initialIndex);
     const [direction, setDirection] = useState<Direction>("none");
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -161,15 +163,17 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                     {/* Backdrop blur of the image */}
                     <div
                         className="fl-stage-backdrop"
-                        style={{ backgroundImage: `url(${slide.src})` }}
+                        style={{
+                            backgroundImage: `url(${slideSrc(slide, theme)})`,
+                        }}
                         aria-hidden="true"
                     />
 
                     {/* Actual image */}
                     <figure className="fl-figure">
                         <img
-                            key={slide.src}
-                            src={slide.src}
+                            key={slideSrc(slide, theme)}
+                            src={slideSrc(slide, theme)}
                             alt={`${projectName} — ${slide.label[lang]}`}
                             className={`fl-image${imageLoaded ? " is-loaded" : ""}`}
                             onLoad={() => setImageLoaded(true)}
@@ -280,7 +284,7 @@ export const FeaturedLightbox: React.FC<FeaturedLightboxProps> = ({
                             aria-current={i === index}
                         >
                             <img
-                                src={s.src}
+                                src={slideSrc(s, theme)}
                                 alt=""
                                 loading="lazy"
                                 decoding="async"

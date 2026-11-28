@@ -154,7 +154,10 @@ preservando no commit a autoria de quem a escreveu.
 
 ## O que o CI verifica
 
-Dois jobs, em `push` para `main` e em todo `pull_request`.
+Três jobs, em `push` para `main` e em todo `pull_request`. A auditoria de
+dependências (`npm audit --audit-level=low`) roda em job próprio: quando
+reprova, o vermelho aparece sem impedir que as demais portas rodem. As
+pendências em aberto ficam em `docs/guides/vulnerabilidades.md`.
 
 **Qualidade e build**
 
@@ -182,7 +185,7 @@ Dois jobs, em `push` para `main` e em todo `pull_request`.
 | `npm run audit:modals`        | trava de rolagem e fundo inerte nos overlays                       |
 | `npm run audit:bundle`        | orçamento de JS e CSS, medido **por documento**                    |
 
-`npm run audit:perf` e `npm run rolagem` existem e **não** rodam no CI: os
+`npm run audit:perf` e `node scripts/rolagem.mjs` existem e **não** rodam no CI: os
 dois medem tempo, e tempo varia demais entre execuções de runner para servir
 de porta. São instrumentos de investigação, não guardas.
 

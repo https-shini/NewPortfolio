@@ -27,7 +27,7 @@ se o idioma declarado no documento divergir do renderizado.
 ```bash
 node scripts/a11y.mjs             # relatório legível
 node scripts/a11y.mjs --json      # saída para máquina
-node scripts/a11y.mjs --baseline  # regrava docs/a11y-baseline.json
+node scripts/a11y.mjs --baseline  # regrava docs/reference/a11y-baseline.json
 ```
 
 As `moderate` viram aviso e não barram: valem correção, não valem travar uma
@@ -276,7 +276,7 @@ que se mede é exatamente o que seria publicado, sem construir duas vezes.
 
 O `geometry.mjs` fica de fora, pelo motivo descrito acima.
 
-## `docs/a11y-baseline.json`
+## `docs/reference/a11y-baseline.json`
 
 O estado que se quer preservar, não um alvo a perseguir. Hoje é zero
 violação em 16 combinações; qualquer regressão futura aparece como diferença
@@ -294,13 +294,31 @@ simulado; o teste não depende da disponibilidade do LinkedIn.
 npm run audit:linkedin
 ```
 
+## `audit-urls.mjs`
+
+Confere os endereços públicos **contra um deploy real**: o `vite preview`
+não aplica o `vercel.json`. Sem seguir redirecionamentos, verifica que cada
+rota responde 200 com a própria canonical; que `/index.html`, `/404.html`,
+`/rotas/*.html`, `/projects/firecode/index.html`, a barra final e os endereços
+antigos `/projects/codex/*` redirecionam (308) para o endereço limpo; que uma
+rota inexistente responde 404; que código, configuração, `.env`, `.git`,
+`node_modules`, documentação e source maps não são servidos; que os recursos
+públicos (imagens, PDFs do currículo, sitemap) continuam acessíveis; e que os
+cabeçalhos de segurança estão presentes.
+
+```bash
+BASE_URL=https://gcruz.dev.br npm run audit:urls
+```
+
 ## `e2e-codex.mjs`
 
-Valida a página `/projects/codex/readme.html` nos dois idiomas e temas:
+Valida a página do TCC em destaque, `/projects/firecode`, nos dois idiomas e temas:
 quatro imagens com dimensões naturais de 1920 × 1080, abertura e navegação
 da galeria por teclado, restauração de foco, âncoras, ausência de documentos públicos,
 acessibilidade WCAG, quatro larguras, retorno à home, recarregamento direto
-e aliases `/projects/codex/` e `/projects/codex/index.html`. O HTML é a
+e a variante com barra final `/projects/firecode/`. Os endereços antigos
+(`/projects/codex/*`) são redirecionados pela Vercel e conferidos por
+`audit-urls.mjs`. O HTML é a
 apresentação técnica; o documento original permanece fora da distribuição pública.
 Na home, valida também seleção de capturas, setas, teclado, ampliação,
 restauração de foco, acessibilidade e responsividade da seção `/#destaque`.

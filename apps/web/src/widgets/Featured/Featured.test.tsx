@@ -8,9 +8,10 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LangProvider } from "@/app/LangContext";
+import { ThemeProvider } from "@/app/ThemeContext";
 import { Featured } from "./Featured";
-import { FEATURED_PROJECT } from "./Featured.data";
-import { LANG_KEY } from "@/shared/config/constants";
+import { FEATURED_PROJECT, slideSrc } from "./Featured.data";
+import { LANG_KEY, THEME_KEY } from "@/shared/config/constants";
 
 /**
  * Janela com uma aba única do projeto e um carrossel MANUAL das
@@ -20,12 +21,15 @@ import { LANG_KEY } from "@/shared/config/constants";
 const SLIDES = FEATURED_PROJECT.slides;
 const N = SLIDES.length;
 
-const montar = (lang: "pt" | "en" = "pt") => {
+const montar = (lang: "pt" | "en" = "pt", theme: "dark" | "light" = "dark") => {
     localStorage.setItem(LANG_KEY, lang);
+    localStorage.setItem(THEME_KEY, theme);
     return render(
-        <LangProvider>
-            <Featured />
-        </LangProvider>,
+        <ThemeProvider>
+            <LangProvider>
+                <Featured />
+            </LangProvider>
+        </ThemeProvider>,
     );
 };
 
@@ -182,4 +186,35 @@ describe("Featured — o lightbox", () => {
             expect(screen.getByRole("dialog")).toBeInTheDocument(),
         );
     });
+});
+
+describe("Featured — capturas por tema", () => {
+    it("toda captura tem versão escura e clara, na pasta do Firecode", () => {
+        for (const slide of SLIDES) {
+            expect(slide.src).toMatch(/^\/projects\/firecode\/[a-z]+\.webp$/);
+            expect(slide.srcLight).toBe(
+                slide.src.replace(".webp", "-light.webp"),
+            );
+        }
+    });
+
+    it("slideSrc escolhe a captura do tema e cai na escura sem variante", () => {
+        const [primeiro] = SLIDES;
+        expect(slideSrc(primeiro!, "dark")).toBe(primeiro!.src);
+        expect(slideSrc(primeiro!, "light")).toBe(primeiro!.srcLight);
+        expect(slideSrc({ ...primeiro!, srcLight: undefined }, "light")).toBe(
+            primeiro!.src,
+        );
+    });
+
+    it.each(["dark", "light"] as const)(
+        "no tema %s, o carrossel mostra a captura correspondente",
+        (theme) => {
+            montar("pt", theme);
+            const img = within(carrossel()).getByRole("img", {
+                name: new RegExp(SLIDES[0]!.label.pt),
+            });
+            expect(img).toHaveAttribute("src", slideSrc(SLIDES[0]!, theme));
+        },
+    );
 });

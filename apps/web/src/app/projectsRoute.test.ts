@@ -21,7 +21,7 @@ describe("matchProjects", () => {
         "/projetos/%ZZ",
         "/projetos/nome%20com%20espaco",
         "/projetos/<script>",
-        "/projects/codex/readme.html",
+        "/projects/firecode",
     ])("recusa %s", (path) => {
         expect(matchProjects(path)).toBeNull();
     });

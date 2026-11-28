@@ -14,7 +14,9 @@ export interface ProjectTech {
 }
 
 export interface ProjectSlide {
-    src: string; // image URL
+    src: string; // captura no tema escuro (padrão do site)
+    /** Mesma tela no tema claro; quando existe, acompanha o tema ativo. */
+    srcLight?: string;
     label: { pt: string; en: string };
     sub: { pt: string; en: string };
     /** Descrição rica para exibir no lightbox (texto contextual) */
@@ -33,7 +35,7 @@ export interface ArchitectureCard {
 }
 
 export const FEATURED_PROJECT = {
-    id: "codex",
+    id: "firecode",
     name: "Firecode",
     tagline: {
         pt: "TCC em engenharia de software: o repositório passa pelo teste de fogo da análise estática e da inteligência artificial.",
@@ -43,8 +45,8 @@ export const FEATURED_PROJECT = {
         pt: "Uma aplicação que combina análise estática e revisão por inteligência artificial para avaliar repositórios do GitHub. Transforma lint, segurança e complexidade em um score de 0 a 1000 (40% análise estática, 60% revisão por IA), com um relatório do que corrigir primeiro.",
         en: "An application combining static analysis and AI review to evaluate GitHub repositories. It turns lint, security and complexity findings into a score from 0 to 1000 (40% static analysis, 60% AI review), with a report on what to fix first.",
     },
-    detailsUrl: PROJECT_URLS.codex.details,
-    liveUrl: PROJECT_URLS.codex.live,
+    detailsUrl: PROJECT_URLS.firecode.details,
+    liveUrl: PROJECT_URLS.firecode.live,
     repoHost: "firecode.shxred.app.br",
     /* Stack conforme a página técnica do projeto (pages/Codex). */
     tech: [
@@ -131,7 +133,8 @@ export const FEATURED_PROJECT = {
     ] as ProjectTech[],
     slides: [
         {
-            src: "/projects/codex/overview.webp",
+            src: "/projects/firecode/overview.webp",
+            srcLight: "/projects/firecode/overview-light.webp",
             label: {
                 pt: "Visão geral",
                 en: "Overview",
@@ -141,27 +144,29 @@ export const FEATURED_PROJECT = {
                 en: "Static analysis + AI",
             },
             description: {
-                pt: "Página pública do projeto, com apresentação da proposta e demonstração do pipeline. A demonstração usa dados de exemplo, como indicado no próprio site.",
-                en: "The project's public page introducing the project and its pipeline demo. The demo uses sample data, as indicated on the site.",
+                pt: "Página pública do Firecode: proposta, os números do projeto (5 ferramentas, menos de 60 s por análise, nota de 0 a 1000) e uma demonstração do pipeline com dados de exemplo, como indicado no próprio site.",
+                en: "Firecode's public page: the pitch, the project's numbers (5 tools, under 60 s per analysis, a score from 0 to 1000) and a pipeline demo with sample data, as stated on the site.",
             },
         },
         {
-            src: "/projects/codex/pipeline.webp",
+            src: "/projects/firecode/pipeline.webp",
+            srcLight: "/projects/firecode/pipeline-light.webp",
             label: {
                 pt: "Do código ao relatório",
                 en: "From code to report",
             },
             sub: {
-                pt: "Três etapas integradas",
-                en: "Three integrated stages",
+                pt: "Três etapas automáticas",
+                en: "Three automatic stages",
             },
             description: {
-                pt: "Captura real da explicação do fluxo: conectar o GitHub, executar as ferramentas de análise estática e revisar o código com IA.",
-                en: "Real capture of the workflow explanation: connect GitHub, run static analysis tools and review code with AI.",
+                pt: "O fluxo completo: conectar o GitHub por OAuth, rodar a análise estática (ruff, bandit, radon e Biome) e a revisão por IA. O progresso chega ao vivo por streaming.",
+                en: "The full flow: connect GitHub through OAuth, run static analysis (ruff, bandit, radon and Biome) and the AI review. Progress arrives live through streaming.",
             },
         },
         {
-            src: "/projects/codex/features.webp",
+            src: "/projects/firecode/features.webp",
+            srcLight: "/projects/firecode/features-light.webp",
             label: {
                 pt: "Além da nota",
                 en: "Beyond the score",
@@ -171,12 +176,13 @@ export const FEATURED_PROJECT = {
                 en: "System features",
             },
             description: {
-                pt: "Seção pública que apresenta sugestões de código, comparação de pull requests, histórico e achados consolidados. Os exemplos visuais são demonstrativos.",
-                en: "Public section presenting code suggestions, pull request comparisons, history and consolidated findings. The visual examples are illustrative.",
+                pt: "O que o relatório entrega além da nota: sugestões de código lado a lado, comparação de pull requests, histórico, reanálise automática por webhook e achados consolidados. Os exemplos são demonstrativos.",
+                en: "What the report delivers beyond the score: side-by-side code suggestions, pull request comparison, history, automatic webhook reanalysis and consolidated findings. The examples are illustrative.",
             },
         },
         {
-            src: "/projects/codex/score.webp",
+            src: "/projects/firecode/score.webp",
+            srcLight: "/projects/firecode/score-light.webp",
             label: {
                 pt: "Critérios transparentes",
                 en: "Transparent criteria",
@@ -186,8 +192,8 @@ export const FEATURED_PROJECT = {
                 en: "Score simulator",
             },
             description: {
-                pt: "Simulador da página pública: explore as faixas de classificação de 0 a 1000. A nota exibida é uma simulação, não o resultado de uma análise real.",
-                en: "Public page simulator: explore rating bands from 0 to 1000. The displayed score is simulated, not the result of a real analysis.",
+                pt: "Simulador das faixas de 0 a 1000 e do peso da nota: 40% análise estática e 60% revisão por IA; sem IA, só a parte estática. A nota exibida é uma simulação, não o resultado de uma análise real.",
+                en: "Simulator of the 0–1000 bands and of how the score is weighted: 40% static analysis and 60% AI review; without AI, only the static part. The displayed score is simulated, not the result of a real analysis.",
             },
         },
     ] as ProjectSlide[],
@@ -281,3 +287,8 @@ export const FEATURED_PROJECT = {
         },
     ] as ArchitectureCard[],
 } as const;
+
+/** Captura do tema ativo: a clara quando existe e o tema é claro. */
+export function slideSrc(slide: ProjectSlide, theme: "light" | "dark"): string {
+    return theme === "light" && slide.srcLight ? slide.srcLight : slide.src;
+}

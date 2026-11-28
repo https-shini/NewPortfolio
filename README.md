@@ -56,15 +56,41 @@ O repositório é um monorepo simples: a raiz orquestra os scripts via npm works
 
 ## 🧭 Páginas e rotas
 
-| Rota                    | Página             | Conteúdo                                                      |
-| ----------------------- | ------------------ | ------------------------------------------------------------- |
-| `/`                     | `HomePage`         | Portfólio completo — as seções abaixo, navegadas por âncora   |
-| `/links`                | `LinksPage`        | **Social tree** (link-in-bio): perfil, stack e links públicos |
-| `/release-notes`        | `ReleaseNotesPage` | Linha do tempo das versões (ver _Como publicar uma versão_)   |
-| `/release-notes/page/2` | `ReleaseNotesPage` | Páginas seguintes do histórico, de 4 em 4                     |
-| `/release-notes/v2.0.0` | `ReleaseNotePage`  | Uma versão, com endereço próprio e conteúdo completo          |
-| rota desconhecida       | `NotFoundPage`     | Página 404 com atalhos para início, links, releases e contato |
-| `/feed.xml`             | `api/feed`         | Atom das notas de versão (função, não arquivo de build)       |
+| Rota                    | Página             | Conteúdo                                                        |
+| ----------------------- | ------------------ | --------------------------------------------------------------- |
+| `/`                     | `HomePage`         | Portfólio completo — as seções abaixo, navegadas por âncora     |
+| `/projetos`             | `ProjectsPage`     | Acervo de repositórios do GitHub: panorama, busca e filtros     |
+| `/projetos/<repo>`      | `ProjectPage`      | Um repositório: README, linguagens e estatísticas               |
+| `/projects/firecode`    | `CodexPage`        | Página técnica do TCC em destaque (Firecode), também sem JS     |
+| `/contato`              | `ContactPage`      | Contato com endereço próprio (a seção `#contato` da home segue) |
+| `/links`                | `LinksPage`        | **Social tree** (link-in-bio): perfil, stack e links públicos   |
+| `/linkedin`             | `LinkedInNotice`   | Aviso antes de abrir o perfil do LinkedIn                       |
+| `/release-notes`        | `ReleaseNotesPage` | Linha do tempo das versões (ver _Como publicar uma versão_)     |
+| `/release-notes/page/2` | `ReleaseNotesPage` | Páginas seguintes do histórico, de 4 em 4                       |
+| `/release-notes/v2.0.0` | `ReleaseNotePage`  | Uma versão, com endereço próprio e conteúdo completo            |
+| rota desconhecida       | `NotFoundPage`     | Página 404 com atalhos para início, links, releases e contato   |
+| `/feed.xml`             | `api/feed`         | Atom das notas de versão (função, não arquivo de build)         |
+
+### Endereços públicos e arquivos internos
+
+Cada página tem **um** endereço, sem extensão e sem barra final. Os arquivos
+que o build gera para servir essas páginas existem em `dist/`, mas nunca são
+a URL pública — o `vercel.json` cuida das duas pontas:
+
+- `trailingSlash: false` — `/links/` redireciona para `/links`.
+- **Rewrites** servem cada rota pelo seu documento (`/projetos` →
+  `dist/rotas/projetos.html`, `/projects/firecode` →
+  `dist/projects/firecode/index.html`).
+- **Redirects permanentes** levam quem pede o arquivo para a rota:
+  `/index.html` → `/`, `/rotas/*.html` → a rota, `/projects/firecode/index.html`
+  → `/projects/firecode`, e `/404.html` → `/404` (que responde 404 de
+  verdade, em vez de 200).
+- O endereço antigo do TCC (`/projects/codex/*`, de quando se chamava Codex)
+  redireciona para `/projects/firecode`, com as capturas mapeadas uma a uma.
+- `/projects` sozinho não tem página e leva ao acervo, `/projetos`.
+
+O teste `routeHtml.test.ts` trava essas regras; `scripts/audit-urls.mjs`
+confere o comportamento contra um deploy real (`BASE_URL=… npm run audit:urls`).
 
 Qualquer rota aceita `?lang=en` para abrir em inglês — é o que permite
 compartilhar um link no idioma de quem compartilha. O padrão (português)
@@ -76,8 +102,8 @@ as releases do GitHub e a camada editorial local. Um arquivo estático
 congelaria no último deploy e perderia justamente as releases publicadas
 depois dele.
 
-Rastreadores de rede social não executam JavaScript, então `/links` e
-`/release-notes/*` são roteados por user-agent (`vercel.json`) para
+Rastreadores de rede social não executam JavaScript, então `/links`,
+`/contato` e `/release-notes/*` são roteados por user-agent (`vercel.json`) para
 `api/crawler`, que devolve HTML com as meta tags certas de cada rota. A
 imagem do cartão de cada versão sai de `api/og`.
 
@@ -120,8 +146,9 @@ casamento inverso vive em `matchReleaseNotes`, em `app/routes.tsx`.
 > **Deploy — atenção ao Root Directory.** O `vercel.json` fica na **raiz do
 > repositório**, não em `apps/web/`: o Root Directory do projeto na Vercel é a
 > raiz, e um `vercel.json` dentro de `apps/web/` é simplesmente ignorado. Ele
-> reescreve `/links` e `/release-notes/*` para `index.html`; sem isso o acesso
-> direto retorna 404. Ao criar uma rota nova, acrescente-a ali também.
+> reescreve cada rota para o seu documento (ver _Endereços públicos e arquivos
+> internos_); sem isso o acesso direto retorna 404. Ao criar uma rota nova,
+> acrescente a rewrite ali e a rota em `ROUTE_DOCUMENTS` quando for estática.
 >
 > Pela mesma razão, as funções serverless vivem em **`api/` na raiz** do
 > repositório, e não em `apps/web/api/` — de onde nunca chegaram a ser
@@ -381,8 +408,8 @@ Detalhes e o porquê de cada uma em [`scripts/README.md`](scripts/README.md).
 
 | Script                        | O que verifica                                                  |
 | ----------------------------- | --------------------------------------------------------------- |
-| `npm run audit:a11y`          | axe-core em 5 rotas × 2 temas × 2 idiomas, incluindo a 404      |
-| `npm run audit:overflow`      | rolagem horizontal em 5 rotas × 5 larguras                      |
+| `npm run audit:a11y`          | axe-core em 8 rotas × 2 temas × 2 idiomas, incluindo a 404      |
+| `npm run audit:overflow`      | rolagem horizontal em 8 rotas × 5 larguras                      |
 | `npm run audit:release-notes` | 28 verificações do índice e da página de versão                 |
 | `npm run audit:not-found`     | navegação da 404, recuperação, idioma e conteúdo sem JavaScript |
 | `npm run audit:modals`        | trava de rolagem, fundo inerte, diálogo em tela deitada         |

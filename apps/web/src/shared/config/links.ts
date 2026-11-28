@@ -41,9 +41,9 @@ function repo(name: string): string {
  * comparável entre consumidores.
  */
 export const PROJECT_URLS = {
-    codex: {
+    firecode: {
         live: "https://firecode.shxred.app.br",
-        details: ROUTES.CODEX,
+        details: ROUTES.FIRECODE,
     },
     authService: {
         live: "https://authservice.gcruz.dev.br",

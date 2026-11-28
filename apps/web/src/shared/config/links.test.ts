@@ -90,10 +90,10 @@ describe("TREE_LINKS — derivação de PROFILE (sem URL reescrita à mão)", ()
 });
 
 describe("PROJECT_URLS", () => {
-    it("Codex oferece detalhes internos sem documento ou repositório público", () => {
-        expect(PROJECT_URLS.codex.details).toBe(ROUTES.CODEX);
-        expect(PROJECT_URLS.codex).not.toHaveProperty("docs");
-        expect(PROJECT_URLS.codex).not.toHaveProperty("repo");
+    it("Firecode oferece detalhes internos sem documento ou repositório público", () => {
+        expect(PROJECT_URLS.firecode.details).toBe(ROUTES.FIRECODE);
+        expect(PROJECT_URLS.firecode).not.toHaveProperty("docs");
+        expect(PROJECT_URLS.firecode).not.toHaveProperty("repo");
     });
     it("as URLs de repositório derivam do perfil do GitHub", () => {
         Object.values(PROJECT_URLS).forEach((project) => {

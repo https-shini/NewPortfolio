@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useRef, useState } from "react";
 import "./Featured.css";
 import { useLang } from "@/shared/hooks/useLang";
+import { useTheme } from "@/shared/hooks/useTheme";
 import {
     IconArrowRight,
     IconChevronLeft,
@@ -17,6 +18,7 @@ import { lookupTech, type Tech } from "@/features/devhub/tech";
 import { NEUTRAL_LANGUAGE_COLOR } from "@/features/devhub/types";
 import {
     FEATURED_PROJECT as project,
+    slideSrc,
     type ProjectTech,
     type TechGroup,
 } from "./Featured.data";
@@ -75,6 +77,7 @@ const dois = (n: number) => String(n).padStart(2, "0");
 
 export function Featured() {
     const { lang, t } = useLang();
+    const { theme } = useTheme();
     const [atual, setAtual] = useState(0);
     const [ampliada, setAmpliada] = useState<number | null>(null);
     const toque = useRef<{ x: number; y: number } | null>(null);
@@ -267,7 +270,7 @@ export function Featured() {
                                     }}
                                 >
                                     <img
-                                        src={slide.src}
+                                        src={slideSrc(slide, theme)}
                                         alt={`${project.name} — ${slide.label[lang]}`}
                                         width={1920}
                                         height={1080}
