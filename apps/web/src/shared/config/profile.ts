@@ -83,6 +83,14 @@ export const PROFILE = {
            PROJECT_URLS: era o exercício do curso da Rocketseat, outro
            projeto. Ele saiu, e não foi substituído por nenhum item de
            TREE_LINKS — o comentário anterior afirmava isso e estava errado. */
+        /* Conta comercial do WhatsApp (link de mensagem do WhatsApp
+           Business). O número não aparece no site: o wa.me/message abre a
+           conversa sem expô-lo na página nem no código. */
+        whatsapp: {
+            label: "WhatsApp",
+            handle: "WhatsApp Business",
+            url: "https://wa.me/message/76PGFNMOZAEWP1",
+        },
         devlinks: {
             label: "Social Links",
             handle: "Social Links",

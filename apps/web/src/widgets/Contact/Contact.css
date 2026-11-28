@@ -192,17 +192,21 @@
 }
 
 /* Botão principal de e-mail */
-.contact__email-btn {
+/* Botão principal — WhatsApp. O único verde do site, de propósito: é o
+   canal mais direto e precisa quebrar o padrão. Texto verde-escuro sobre o
+   verde da marca (7.5:1); as cores vêm de tokens.css e valem nos dois temas. */
+.contact__whatsapp-btn {
     display: flex;
     align-items: center;
     gap: var(--space-4);
     padding: var(--space-5) var(--space-6);
-    background: var(--color-brand);
+    background: var(--color-whatsapp);
     border: none;
     border-radius: var(--radius-xl);
-    color: #fff;
+    color: var(--color-whatsapp-ink);
     text-decoration: none;
     cursor: pointer;
+    box-shadow: var(--color-whatsapp-glow);
     transition:
         background var(--transition-fast),
         transform var(--transition-fast),
@@ -210,21 +214,21 @@
     width: 100%;
 }
 
-.contact__email-btn:hover {
-    background: var(--color-brand-hover);
+.contact__whatsapp-btn:hover {
+    background: var(--color-whatsapp-hover);
     transform: translateY(-3px);
-    box-shadow: var(--color-brand-glow), var(--shadow-lg);
+    box-shadow: var(--color-whatsapp-glow), var(--shadow-lg);
 }
 
-.contact__email-btn:active {
+.contact__whatsapp-btn:active {
     transform: translateY(-1px);
 }
 
-.contact__email-btn-icon {
+.contact__whatsapp-btn-icon {
     width: 44px;
     height: 44px;
     border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.15);
+    background: color-mix(in srgb, var(--color-whatsapp-ink) 14%, transparent);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -232,17 +236,17 @@
     transition: background var(--transition-fast);
 }
 
-.contact__email-btn:hover .contact__email-btn-icon {
-    background: rgba(255, 255, 255, 0.25);
+.contact__whatsapp-btn:hover .contact__whatsapp-btn-icon {
+    background: color-mix(in srgb, var(--color-whatsapp-ink) 22%, transparent);
 }
 
-.contact__email-btn-icon svg {
-    width: 20px;
-    height: 20px;
+.contact__whatsapp-btn-icon svg {
+    width: 22px;
+    height: 22px;
     fill: currentColor;
 }
 
-.contact__email-btn-body {
+.contact__whatsapp-btn-body {
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -251,30 +255,30 @@
     text-align: left;
 }
 
-.contact__email-btn-label {
-    font-size: var(--text-2xs);
-    font-weight: 700;
-    letter-spacing: var(--ls-wider);
+.contact__whatsapp-btn-label {
+    font-size: var(--text-sm);
+    font-weight: 800;
+    letter-spacing: var(--ls-wide);
     text-transform: uppercase;
-    opacity: 0.75;
 }
 
-.contact__email-btn-value {
+/* Quebra linha em vez de cortar: no celular o texto inteiro cabe em duas
+   linhas, e "orçam…" não dizia nada. */
+.contact__whatsapp-btn-value {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
 }
 
-.contact__email-btn-arrow {
+.contact__whatsapp-btn-arrow {
     font-size: var(--text-lg);
+    font-weight: 700;
     transition: transform var(--transition-fast);
     flex-shrink: 0;
 }
 
-.contact__email-btn:hover .contact__email-btn-arrow {
+.contact__whatsapp-btn:hover .contact__whatsapp-btn-arrow {
     transform: translateX(4px) translateY(-4px);
 }
 
@@ -305,23 +309,41 @@
     gap: var(--space-3);
 }
 
+/* Cada canal na cor da própria marca: o bloco do ícone vem preenchido e a
+   borda tingida, para que os três chamem atenção sem competir com o verde.
+   --alt-cor e --alt-icone são definidos pelos modificadores abaixo. */
 .contact__alt-link {
+    --alt-cor: var(--color-brand);
+    --alt-icone: var(--color-text-inverse);
     display: flex;
     align-items: center;
     gap: var(--space-3);
     padding: var(--space-4);
     background: var(--color-surface-2);
-    border: 1px solid var(--color-border-2);
+    border: 1px solid
+        color-mix(in srgb, var(--alt-cor) 40%, var(--color-border-2));
     border-radius: var(--radius-xl);
     color: var(--color-text-2);
     text-decoration: none;
     transition: all var(--transition-fast);
 }
 
+.contact__alt-link--email {
+    --alt-cor: var(--color-brand);
+}
+
+.contact__alt-link--linkedin {
+    --alt-cor: var(--color-linkedin);
+}
+
+.contact__alt-link--github {
+    --alt-cor: var(--color-github-tile);
+    --alt-icone: var(--color-github-icon);
+}
+
 .contact__alt-link:hover {
-    border-color: var(--color-border-brand);
-    background: var(--color-brand-subtle);
-    color: var(--color-brand-light);
+    border-color: var(--alt-cor);
+    background: color-mix(in srgb, var(--alt-cor) 12%, var(--color-surface-2));
     transform: translateY(-2px);
 }
 
@@ -329,19 +351,17 @@
     width: 36px;
     height: 36px;
     border-radius: var(--radius-md);
-    background: var(--color-surface-3);
+    background: var(--alt-cor);
+    color: var(--alt-icone);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition:
-        background var(--transition-fast),
-        color var(--transition-fast);
+    transition: transform var(--transition-fast);
 }
 
 .contact__alt-link:hover .contact__alt-link-icon {
-    background: var(--color-brand);
-    color: #fff;
+    transform: scale(1.06);
 }
 
 .contact__alt-link-icon svg {
@@ -635,7 +655,13 @@
         grid-template-columns: 1fr 1fr;
     }
 
-    .contact__email-btn-value {
+    /* E-mail na linha inteira (o endereço precisa de espaço); LinkedIn e
+       GitHub seguem em par logo abaixo. */
+    .contact__alt-link--email {
+        grid-column: 1 / -1;
+    }
+
+    .contact__whatsapp-btn-value {
         font-size: var(--text-sm);
     }
 
@@ -657,8 +683,9 @@
         animation: none;
     }
 
-    .contact__email-btn,
-    .contact__alt-link {
+    .contact__whatsapp-btn,
+    .contact__alt-link,
+    .contact__alt-link-icon {
         transition: none;
     }
 }

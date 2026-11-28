@@ -8,6 +8,7 @@ import {
     IconGitHub,
     IconLinkedIn,
     IconGmail,
+    IconWhatsApp,
     /* Para redes secundárias, use nos itens kind:"social" abaixo:
        IconInstagram, IconDevTo, IconTwitterX */
 } from "@/shared/ui/Icons";
@@ -122,6 +123,15 @@ export const TREE_LINKS: readonly TreeLink[] = [
         sublabel: PROFILE.social.linkedin.handle,
         href: PROFILE.social.linkedin.url,
         icon: IconLinkedIn,
+        external: true,
+    },
+    {
+        id: "whatsapp",
+        kind: "primary",
+        label: { pt: "WhatsApp comercial", en: "Business WhatsApp" },
+        sublabel: PROFILE.social.whatsapp.handle,
+        href: PROFILE.social.whatsapp.url,
+        icon: IconWhatsApp,
         external: true,
     },
     {

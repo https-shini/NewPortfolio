@@ -12,6 +12,7 @@ import {
     IconBolt,
     IconDev,
     IconShare,
+    IconWhatsApp,
 } from "@/shared/ui/Icons";
 import { PROFILE } from "@/shared/config/profile";
 import { buildMailtoHref } from "@/shared/lib/mailto";
@@ -41,6 +42,13 @@ const PROFILE_DATA: ProfileRow[] = [
         value: PROFILE.email,
         href: `mailto:${PROFILE.email}`,
         noteKey: "contact.meta.response",
+    },
+    {
+        icon: <IconWhatsApp />,
+        label: PROFILE.social.whatsapp.label,
+        value: { pt: "Conta comercial", en: "Business account" },
+        href: PROFILE.social.whatsapp.url,
+        noteKey: "contact.meta.whatsapp",
     },
     {
         icon: <IconLinkedIn />,
@@ -176,34 +184,34 @@ export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
                             "contact__cta-desc",
                         )}
 
-                        {/* ── Botão principal de email ──────────────── */}
+                        {/* ── Botão principal: WhatsApp ────────────────
+                               O canal mais direto para quem quer um
+                               projeto, e o único verde do site. */}
                         <ProfileLink
-                            href={mailtoHref}
-                            className="contact__email-btn"
-                            aria-label={
-                                lang === "pt"
-                                    ? `Enviar e-mail para ${PROFILE.email} (abre cliente de e-mail)`
-                                    : `Email ${PROFILE.email} (opens email client)`
-                            }
+                            href={PROFILE.social.whatsapp.url}
+                            className="contact__whatsapp-btn"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={t("contact.whatsapp.aria")}
                         >
                             <div
-                                className="contact__email-btn-icon"
+                                className="contact__whatsapp-btn-icon"
                                 aria-hidden="true"
                             >
-                                <IconEmail />
+                                <IconWhatsApp />
                             </div>
 
-                            <div className="contact__email-btn-body">
-                                <span className="contact__email-btn-label">
-                                    {t("contact.email.now")}
+                            <div className="contact__whatsapp-btn-body">
+                                <span className="contact__whatsapp-btn-label">
+                                    {t("contact.whatsapp.now")}
                                 </span>
-                                <span className="contact__email-btn-value">
-                                    {PROFILE.email}
+                                <span className="contact__whatsapp-btn-value">
+                                    {t("contact.whatsapp.value")}
                                 </span>
                             </div>
 
                             <span
-                                className="contact__email-btn-arrow"
+                                className="contact__whatsapp-btn-arrow"
                                 aria-hidden="true"
                             >
                                 ↗
@@ -215,11 +223,36 @@ export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
                             {lang === "pt" ? "ou" : "or"}
                         </div>
 
-                        {/* ── Links alternativos ────────────────────── */}
+                        {/* ── Outros canais, cada um na cor da marca ─── */}
                         <div className="contact__alt-links">
                             <ProfileLink
+                                href={mailtoHref}
+                                className="contact__alt-link contact__alt-link--email"
+                                aria-label={
+                                    lang === "pt"
+                                        ? `Enviar e-mail para ${PROFILE.email} (abre cliente de e-mail)`
+                                        : `Email ${PROFILE.email} (opens email client)`
+                                }
+                            >
+                                <div
+                                    className="contact__alt-link-icon"
+                                    aria-hidden="true"
+                                >
+                                    <IconEmail />
+                                </div>
+                                <div className="contact__alt-link-body">
+                                    <span className="contact__alt-link-name">
+                                        E-mail
+                                    </span>
+                                    <span className="contact__alt-link-handle">
+                                        {PROFILE.email}
+                                    </span>
+                                </div>
+                            </ProfileLink>
+
+                            <ProfileLink
                                 href={PROFILE.social.linkedin.url}
-                                className="contact__alt-link"
+                                className="contact__alt-link contact__alt-link--linkedin"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={
@@ -246,7 +279,7 @@ export const Contact: React.FC<ContactProps> = ({ headingLevel = 2 }) => {
 
                             <ProfileLink
                                 href={PROFILE.social.github.url}
-                                className="contact__alt-link"
+                                className="contact__alt-link contact__alt-link--github"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={
