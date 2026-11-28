@@ -133,3 +133,16 @@ describe("linkKind", () => {
         expect(linkKind("mailto:alguem@exemplo.com")).toBe("mailto");
     });
 });
+
+describe("WhatsApp comercial", () => {
+    it("é um link de mensagem do wa.me, externo e sem número exposto", () => {
+        const link = TREE_LINKS.find((l) => l.id === "whatsapp");
+        expect(link?.kind).toBe("primary");
+        expect(link?.external).toBe(true);
+        expect(link?.href).toBe(PROFILE.social.whatsapp.url);
+        expect(PROFILE.social.whatsapp.url).toMatch(
+            /^https:\/\/wa\.me\/message\/[A-Z0-9]+$/,
+        );
+        expect(linkKind(link!.href)).toBe("external");
+    });
+});

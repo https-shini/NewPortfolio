@@ -119,6 +119,18 @@ export const IconLinkedIn: React.FC<IconProps> = (props) => (
     </F>
 );
 
+/* Desenhado aqui no grid 24×24: balão com contorno vazado (evenodd) e o
+   fone ao centro — reconhecível como WhatsApp sem copiar o arquivo da marca. */
+export const IconWhatsApp: React.FC<IconProps> = (props) => (
+    <F {...props} aria-label="WhatsApp" aria-hidden={false}>
+        <path
+            fillRule="evenodd"
+            d="M12 1a11 11 0 0 0-9.5 16.53L1 23l5.62-1.47A11 11 0 1 0 12 1Zm0 2a9 9 0 1 1-4.6 16.74l-.36-.21-3.13.82.84-3.05-.23-.37A9 9 0 0 1 12 3Z"
+        />
+        <path d="M8.55 6.85c.22-.22.53-.32.84-.27l.86.13c.3.05.55.25.66.53l.8 1.94c.12.3.06.63-.16.86l-.74.8c.6 1.2 1.6 2.2 2.8 2.8l.8-.74c.23-.22.56-.28.86-.16l1.94.8c.28.11.48.36.53.66l.13.86c.05.31-.05.62-.27.84-.72.72-1.76.99-2.73.7-3-.9-5.33-3.23-6.23-6.23-.29-.97-.02-2.01.7-2.73Z" />
+    </F>
+);
+
 export const IconTwitterX: React.FC<IconProps> = (props) => (
     <F {...props} aria-label="X (Twitter)" aria-hidden={false}>
         <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />

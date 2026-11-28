@@ -70,6 +70,14 @@
     --_green-500: #22c55e;
     --_green-600: #16a34a;
     --_green-700: #15803d;
+    --_green-950: #052e16;
+
+    /* ── Marcas de terceiros (canais de contato) ──────────────────────────── */
+    --_whatsapp-500: #25d366;
+    --_whatsapp-600: #1ebe5d;
+    --_linkedin-600: #0a66c2;
+    --_github-50: #f0f6fc;
+    --_github-900: #181717;
     --_amber-400: #fbbf24;
     --_amber-500: #f59e0b;
     --_amber-800: #92400e;
@@ -185,6 +193,20 @@
         var(--_green-500) 35%,
         transparent
     );
+
+    /* ╌╌ Canais de contato ╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌
+       O botão do WhatsApp é o único verde do site, de propósito: o canal
+       mais direto precisa saltar aos olhos. Texto verde-escuro sobre o
+       verde da marca: 7.5:1 — branco ficaria em 1.98:1 e reprovaria o AA.
+       Iguais nos dois temas; só o GitHub inverte (bloco claro no escuro). */
+    --color-whatsapp: var(--_whatsapp-500);
+    --color-whatsapp-hover: var(--_whatsapp-600);
+    --color-whatsapp-ink: var(--_green-950);
+    --color-whatsapp-glow: 0 10px 32px
+        color-mix(in srgb, var(--_whatsapp-500) 38%, transparent);
+    --color-linkedin: var(--_linkedin-600);
+    --color-github-tile: var(--_github-50);
+    --color-github-icon: var(--_github-900);
 
     /* ── Categorias de mudança das notas de versão ──────────────────
        Uma cor por eixo de evolução, para que a lista de mudanças seja
@@ -460,6 +482,10 @@ body.light-mode {
         var(--_green-600) 30%,
         transparent
     );
+
+    /* GitHub: bloco escuro sobre o fundo claro. */
+    --color-github-tile: var(--_github-900);
+    --color-github-icon: var(--_github-50);
 
     /* ── Categorias de mudança das notas de versão ──────────────────
        Uma cor por eixo de evolução, para que a lista de mudanças seja

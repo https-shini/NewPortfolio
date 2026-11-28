@@ -153,7 +153,6 @@
         "contact.meta.devlinks": "Confira meus links sociais e projetos",
         "contact.meta.location": "Disponível para trabalho remoto ou presencial",
         "contact.label.location": "Localização",
-        "contact.email.now": "Enviar e-mail agora",
         "contact.form.title": "Ou envie uma mensagem direta",
         "contact.form.name": "Nome",
         "contact.form.email": "E-mail",
@@ -607,7 +606,11 @@
         "ghp.api.badges.title": "Critérios das conquistas",
         "ghp.api.badges.text": "Critérios próprios e fixos, com 4 níveis cada, calculados sobre o histórico completo do perfil. Não são rankings do GitHub e não mudam com os filtros. Em destaque, os níveis já alcançados.",
         "ghp.api.badges.col.badge": "Selo",
-        "ghp.api.badges.col.level": "Nível {n}"
+        "ghp.api.badges.col.level": "Nível {n}",
+        "contact.meta.whatsapp": "Conversa direta para orçamentos e projetos",
+        "contact.whatsapp.aria": "Conversar com Guilherme Cruz no WhatsApp comercial (abre em nova aba)",
+        "contact.whatsapp.now": "Conversar no WhatsApp",
+        "contact.whatsapp.value": "Conta comercial · orçamentos e projetos"
     },
     "en": {
         "nav.home": "Home",
@@ -763,7 +766,6 @@
         "contact.meta.devlinks": "Check out my social links and projects",
         "contact.meta.location": "Available remotely and on-site",
         "contact.label.location": "Location",
-        "contact.email.now": "Send an email now",
         "contact.form.title": "Or send a direct message",
         "contact.form.name": "Name",
         "contact.form.email": "Email",
@@ -1217,6 +1219,10 @@
         "ghp.api.badges.title": "Achievement criteria",
         "ghp.api.badges.text": "Fixed in-house criteria, 4 levels each, calculated over the full profile history. They are not GitHub rankings and are not affected by filters. Highlighted values are levels already reached.",
         "ghp.api.badges.col.badge": "Badge",
-        "ghp.api.badges.col.level": "Level {n}"
+        "ghp.api.badges.col.level": "Level {n}",
+        "contact.meta.whatsapp": "Direct chat for quotes and projects",
+        "contact.whatsapp.aria": "Chat with Guilherme Cruz on business WhatsApp (opens in new tab)",
+        "contact.whatsapp.now": "Chat on WhatsApp",
+        "contact.whatsapp.value": "Business account · quotes and projects"
     }
 }
