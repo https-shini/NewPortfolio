@@ -63,8 +63,10 @@
           400ms. O atraso do terceiro entrava um a um no tempo de tela branca.
 
           `media="print"` faz o navegador buscar sem bloquear a pintura; o
-          onload devolve para `all` assim que chega. O <noscript> cobre quem
-          não roda JavaScript, e aí bloquear é o comportamento correto.
+          script de tema (fim do <head>) devolve para `all` assim que a folha
+          chega — sem `onload=""` no <link>, que a CSP aplicada bloquearia.
+          O <noscript> cobre quem não roda JavaScript, e aí bloquear é o
+          comportamento correto.
 
           A troca de fonte aparece — mas já aparecia: as famílias usam
           `display=swap` e todas têm pilha de sistema em tokens.css. A escolha
@@ -100,7 +102,7 @@
             href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,600,700&f[]=general-sans@400,500,600&display=swap"
             rel="stylesheet"
             media="print"
-            onload="this.media = 'all'"
+            id="fontes-remotas"
         />
         <noscript>
             <link
@@ -162,6 +164,17 @@
                     document.body.classList.toggle("dark-mode", dark);
                     document.body.classList.toggle("light-mode", !dark);
                 });
+                /* Fontes remotas: chegam com media="print" para não segurar
+                   a pintura e passam a valer assim que carregam. Antes era
+                   um onload="" no <link>, que a CSP bloqueia. */
+                var fontes = document.getElementById("fontes-remotas");
+                if (fontes) {
+                    var aplicar = function () {
+                        fontes.media = "all";
+                    };
+                    if (fontes.sheet) aplicar();
+                    else fontes.addEventListener("load", aplicar);
+                }
             })();
         </script>
     </head>
