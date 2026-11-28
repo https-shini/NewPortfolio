@@ -144,7 +144,7 @@ export const Hero: React.FC = () => {
                         </ProfileLink>
                         <ProfileLink
                             href={PROFILE.social.whatsapp.url}
-                            className="social-link social-link--whatsapp"
+                            className="social-link"
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={t("contact.whatsapp.aria")}
