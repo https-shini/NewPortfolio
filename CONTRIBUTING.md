@@ -189,6 +189,11 @@ pendências em aberto ficam em `docs/guides/vulnerabilidades.md`.
 dois medem tempo, e tempo varia demais entre execuções de runner para servir
 de porta. São instrumentos de investigação, não guardas.
 
+`npm run audit:urls` e `npm run audit:csp` também ficam fora do CI, por outro
+motivo: o `vite preview` não aplica o `vercel.json` (redirects e cabeçalhos).
+Rode os dois contra um deploy (`BASE_URL=…`) depois de mudar rotas, rewrites,
+cabeçalhos ou qualquer `<script>`/`<link>` dos HTML de entrada.
+
 ### Quando uma auditoria reprova
 
 Ela reprova com o motivo. Duas regras:

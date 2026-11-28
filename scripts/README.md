@@ -294,6 +294,23 @@ simulado; o teste não depende da disponibilidade do LinkedIn.
 npm run audit:linkedin
 ```
 
+## `audit-csp.mjs`
+
+Percorre o site **sob a CSP aplicada** — 8 rotas × PT/EN × escuro/claro —,
+abrindo a ampliação das capturas, as abas do panorama, a paleta Ctrl+K e a
+troca de tema, e registra cada evento `securitypolicyviolation`. Falha se
+houver qualquer violação. Precisa de um servidor que envie os cabeçalhos do
+`vercel.json` (o `vite preview` não envia): um deploy real ou o `dist/`
+servido com eles.
+
+```bash
+BASE_URL=https://gcruz.dev.br npm run audit:csp
+```
+
+A folha do Fontshare é respondida localmente para que o carregamento das
+fontes rode de verdade: foi assim que apareceu o `onload=""` inline no
+`<link>`, que a CSP bloqueava e deixava o site sem as fontes da marca.
+
 ## `audit-urls.mjs`
 
 Confere os endereços públicos **contra um deploy real**: o `vite preview`
