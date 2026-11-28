@@ -179,7 +179,11 @@ const FooterBrand = memo<FooterBrandProps>(
                             <li key={id}>
                                 <ProfileLink
                                     href={href}
-                                    className="social-link"
+                                    className={
+                                        id === "whatsapp"
+                                            ? "social-link social-link--whatsapp"
+                                            : "social-link"
+                                    }
                                     target={externo ? "_blank" : undefined}
                                     rel={
                                         externo

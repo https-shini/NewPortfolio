@@ -17,7 +17,9 @@ import {
     IconGitHub,
     IconLinkedIn,
     IconGmail,
+    IconWhatsApp,
 } from "@/shared/ui/Icons";
+import { PROFILE } from "@/shared/config/profile";
 /* Variantes geradas por `scripts/imagens.mjs`. O avatar mede 200px no
    celular e 380px a partir de 1440px; 480, 620 e 760 cobrem as combinações
    reais de tamanho × densidade. É imagem `eager` com prioridade alta — os bytes dela estão
@@ -139,6 +141,15 @@ export const Hero: React.FC = () => {
                             }
                         >
                             <IconLinkedIn />
+                        </ProfileLink>
+                        <ProfileLink
+                            href={PROFILE.social.whatsapp.url}
+                            className="social-link social-link--whatsapp"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={t("contact.whatsapp.aria")}
+                        >
+                            <IconWhatsApp />
                         </ProfileLink>
                         <ProfileLink
                             href={`mailto:${AUTHOR_EMAIL}`}
